@@ -1114,6 +1114,19 @@ def cem_search(
 # ── Database loading ─────────────────────────────────────────────────────────
 
 async def load_paths(df: pd.DataFrame) -> tuple[dict, dict]:
+    import pickle
+    from pathlib import Path
+    data_dir = Path("data")
+    prices_path = data_dir / "prices.pkl"
+    probs_path = data_dir / "probs.pkl"
+    if prices_path.exists() and probs_path.exists():
+        print("  [Data] Loading cached prices and probabilities from data/*.pkl", flush=True)
+        with open(prices_path, "rb") as f:
+            prices = pickle.load(f)
+        with open(probs_path, "rb") as f:
+            probs = pickle.load(f)
+        return prices, probs
+
     conn = await connect()
     try:
         symbols = sorted(set(df["symbol"].astype(str).unique()) | {"SPY", "QQQ"})
