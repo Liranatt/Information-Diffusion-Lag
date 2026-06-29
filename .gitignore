@@ -1,0 +1,40 @@
+# ── Secrets ──────────────────────────────────────────────────────
+.env
+.env.*
+*.key
+
+# ── Virtual environments ─────────────────────────────────────────
+.venv/
+venv/
+env/
+
+# ── Python ───────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# ── Backtest outputs (large, regenerable from the DB) ────────────
+main_backtesting/output/
+second_phase_testing/backtest_data/
+theory_testing/trade_graphs/
+theory_testing/backtest_cointegration/results/
+database/plots/
+
+# ── Scratch / local analysis ─────────────────────────────────────
+scratch*.py
+
+# ── IDE (may contain DB connection details) ──────────────────────
+.idea/
+
+# ── Data, Logs, and Experiment Results ───────────────────────────
+*.csv
+*.log
+data/experiment_*
+data/rf_experiment_*
+data/opp_cost_trades.csv
+main_backtesting/
+!main_backtesting/**/*.py
