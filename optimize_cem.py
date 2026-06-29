@@ -1557,29 +1557,7 @@ def main() -> None:
             ax.set_title(f"OOS Equity: {label} ({benchmark}) | Sharpe: {adv['sharpe']:.2f} | MaxDD: {oos_stats['max_dd']:+.2f}%")
             ax.set_ylabel("Equity ($)")
             
-            # Annotate Best and Worst trades
-            if not oos_trades.empty:
-                try:
-                    best_trade = oos_trades.loc[oos_trades["pnl"].idxmax()]
-                    worst_trade = oos_trades.loc[oos_trades["pnl"].idxmin()]
-
-                    for tr, t_label, t_color, y_offset in [(best_trade, "BEST", "lightgreen", 50), (worst_trade, "WORST", "salmon", -50)]:
-                        t_date = pd.to_datetime(tr["exit_date"])
-                        eq_row = oos_equity[oos_equity["date"] == tr["exit_date"]]
-                        if not eq_row.empty:
-                            t_eq = eq_row["equity"].values[0]
-                            pos_pct = float(tr.get("_position_size_pct", 0.0)) * 100.0
-                            market_id = str(tr.get('market_id', ''))
-                            if len(market_id) > 15: market_id = market_id[:12] + "..."
-                            ax.annotate(
-                                f"{t_label}: {tr['symbol']}\nMarket: {market_id}\nPnL: {tr['pnl_pct']:+.1f}%\nAlloc: {pos_pct:.1f}%",
-                                xy=(t_date, t_eq), xytext=(0, y_offset),
-                                textcoords="offset points", ha="center", va="center",
-                                bbox=dict(boxstyle="round,pad=0.5", fc=t_color, alpha=0.9),
-                                arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=0", color="black", linewidth=1.5)
-                            )
-                except Exception as e:
-                    print(f"    Failed to annotate trades: {e}")
+            # Best/Worst trade annotations removed as requested
             
             ax.legend(loc='upper left')
             ax.grid(True, linestyle='--', alpha=0.7)
