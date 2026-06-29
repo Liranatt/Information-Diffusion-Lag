@@ -1391,7 +1391,7 @@ def main() -> None:
     if not preview_folds:
         raise ValueError("Not enough data to create any Walk-Forward folds.")
     
-    oos_start = preview_folds[0]["eval_start"]
+    oos_start = pd.Timestamp("2026-01-01", tz="UTC")
     oos_end = max_t - pd.Timedelta(days=1)
     
     train_df = rows_completed_before(df, oos_start)
@@ -1399,11 +1399,15 @@ def main() -> None:
         raise ValueError("No train rows have t_e before the OOS start. A label-complete policy cannot be fitted.")
     
     train_eval_end = oos_start - pd.Timedelta(days=1)
+    
+    oos_candidates_count = len(df[(df["t_theta"] >= oos_start) & (df["t_theta"] <= oos_end)])
 
     print(
         f"  Total Candidates = {len(df)}\n"
         f"  Walk-Forward OOS Timeline = {oos_start.date()} to {oos_end.date()}\n"
-        f"  Initial Train Fit Cutoff = t_e < {oos_start.date()}",
+        f"  Initial Train Fit Cutoff = t_e < {oos_start.date()}\n"
+        f"  Train Samples (t_e < {oos_start.date()}) = {len(train_df)}\n"
+        f"  Test OOS Samples = {oos_candidates_count}",
         flush=True,
     )
 
@@ -1515,17 +1519,12 @@ def main() -> None:
                 "wf_folds": len(fold_audits),
                 "train_fit_label_cutoff": str(oos_start.date()),
                 "train_fit_candidates": len(train_df),
-                "train_return_pct": train_stats["total_return"],
-                "train_benchmark_return_pct": train_stats["benchmark_return"],
-                "train_excess_return_pct": train_stats["excess_return"],
-                "train_max_dd_pct": train_stats["max_dd"],
-                "train_trades": train_stats["n_trades"],
                 "policy_base_position_size_pct": round(float(logged_policy.get("position_size_pct", 0.1)) * 100.0, 4),
                 "policy_max_concurrent": int(logged_policy.get("max_concurrent", 10)),
                 "policy_json": json.dumps(logged_policy, sort_keys=True),
             }
-            result.update(_stage_metrics("val", oos_stats))
-            result.update(_stage_metrics("oos", oos_stats))
+            result.update(_stage_metrics("train", train_stats))
+            result.update(_stage_metrics("test", oos_stats))
             all_results.append(result)
 
             adv = _calc_advanced_metrics(oos_equity["equity"])
@@ -1584,28 +1583,28 @@ def main() -> None:
             
             ax.legend(loc='upper left')
             ax.grid(True, linestyle='--', alpha=0.7)
-            fig.savefig(f"data/cem_{slug}_{benchmark}_individual.png", dpi=300, bbox_inches="tight")
+            fig.savefig(str(RESULTS_CSV.parent / f"cem_{slug}_{benchmark}_individual.png"), dpi=300, bbox_inches="tight")
             plt.close(fig)
 
     print(f"\n\n{'=' * 78}")
-    print("  VALIDATION RESULTS — SPY benchmark")
+    print("  K-FOLD / TRAIN RESULTS — SPY benchmark")
     print(f"{'=' * 78}")
-    _print_table([row for row in all_results if row["benchmark"] == "SPY"], prefix="val", label="Val")
+    _print_table([row for row in all_results if row["benchmark"] == "SPY"], prefix="train", label="K-Fold")
 
     print(f"\n{'=' * 78}")
-    print("  VALIDATION RESULTS — QQQ benchmark")
+    print("  K-FOLD / TRAIN RESULTS — QQQ benchmark")
     print(f"{'=' * 78}")
-    _print_table([row for row in all_results if row["benchmark"] == "QQQ"], prefix="val", label="Val")
+    _print_table([row for row in all_results if row["benchmark"] == "QQQ"], prefix="train", label="K-Fold")
 
     print(f"\n{'=' * 78}")
     print("  FINAL TEST RESULTS — SPY benchmark")
     print(f"{'=' * 78}")
-    _print_table([row for row in all_results if row["benchmark"] == "SPY"], prefix="oos", label="Test")
+    _print_table([row for row in all_results if row["benchmark"] == "SPY"], prefix="test", label="Test")
 
     print(f"\n{'=' * 78}")
     print("  FINAL TEST RESULTS — QQQ benchmark")
     print(f"{'=' * 78}")
-    _print_table([row for row in all_results if row["benchmark"] == "QQQ"], prefix="oos", label="Test")
+    _print_table([row for row in all_results if row["benchmark"] == "QQQ"], prefix="test", label="Test")
 
     RESULTS_CSV.parent.mkdir(parents=True, exist_ok=True)
     with open(RESULTS_CSV, "w", newline="", encoding="utf-8") as handle:
