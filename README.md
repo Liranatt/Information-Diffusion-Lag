@@ -29,6 +29,25 @@ To ensure our results reflect true deployable edge rather than in-sample overfit
 
 ## Setup and Usage
 
+### Prerequisites
+
+- Python 3.10+
+
+### Installation
+
+```bash
+git clone https://github.com/<your-username>/cem_clean_repo.git
+cd cem_clean_repo
+python -m venv .venv
+# Windows
+.venv\Scripts\activate
+# macOS / Linux
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+### Running
+
 All data is pre-packaged. To run the full Cross-Entropy Method optimizer and generate trading logs:
 ```bash
 python optimize_cem.py
