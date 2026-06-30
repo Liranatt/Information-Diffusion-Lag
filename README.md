@@ -36,7 +36,7 @@ To ensure our results reflect true deployable edge rather than in-sample overfit
 ### Installation
 
 ```bash
-git clone https://github.com/<your-username>/cem_clean_repo.git
+git clone https://github.com/Liranatt/Information-Diffusion-Lag.git
 cd cem_clean_repo
 python -m venv .venv
 # Windows
