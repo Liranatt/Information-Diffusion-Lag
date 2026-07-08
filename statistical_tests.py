@@ -1,11 +1,17 @@
 import asyncio
 import os
+import sys
 from pathlib import Path
 
 import pandas as pd
 import numpy as np
 from scipy import stats
 from pipeline.data_loader import load_prices_from_db
+
+# Console output contains non-cp1252 glyphs ("→"). Without this, the default
+# Windows codepage raises UnicodeEncodeError mid-run and silently truncates the
+# test suite -- run_spa() for QQQ and run_jensens_alpha() never execute.
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 
 def ib_cost(shares: int, price: float, is_sell: bool) -> float:
@@ -35,11 +41,11 @@ async def run_tests():
 
     for benchmark in ['SPY', 'QQQ']:
         print(f"\n{'=' * 60}")
-        print(f"  STATISTICAL TESTS FOR {benchmark} (T1+T3 Configuration)")
+        print(f"  STATISTICAL TESTS FOR {benchmark} (T1+T2+T3 Configuration)")
         print(f"{'=' * 60}")
 
-        trade_log_path  = repo_root / 'data' / 'experiment_trade_logs_clean'  / f'{benchmark.lower()}_t1_t3_test.csv'
-        equity_log_path = repo_root / 'data' / 'experiment_equity_logs_clean' / f'{benchmark.lower()}_t1_t3_test.csv'
+        trade_log_path  = repo_root / 'data' / 'experiment_trade_logs_clean'  / f'{benchmark.lower()}_t1_t2_t3_test.csv'
+        equity_log_path = repo_root / 'data' / 'experiment_equity_logs_clean' / f'{benchmark.lower()}_t1_t2_t3_test.csv'
 
         # ── Load trade log ────────────────────────────────────────────
         try:
@@ -169,5 +175,218 @@ async def run_tests():
                   "it is largely 'eaten' by transaction costs at the portfolio level.")
 
 
+def jensens_alpha_test(
+    benchmark: str,
+    equity_dir: Path,
+    experiment_slugs: list[str],
+    rf_annual: float = 0.05,
+) -> list[dict]:
+    """Jensen's Alpha via CAPM regression: Rp - Rf = alpha + beta*(Rm - Rf) + e"""
+    daily_rf = (1 + rf_annual) ** (1 / 252) - 1
+    results = []
+
+    for slug in experiment_slugs:
+        path = equity_dir / f"{benchmark.lower()}_{slug}_test.csv"
+        if not path.exists():
+            continue
+        df = pd.read_csv(path)
+        rp = df["equity"].pct_change().dropna().values
+        rm = df["benchmark_equity"].pct_change().dropna().values
+        n = min(len(rp), len(rm))
+        rp, rm = rp[:n], rm[:n]
+
+        y = rp - daily_rf
+        x = rm - daily_rf
+        X = np.column_stack([np.ones(n), x])
+        beta_vec, residuals, _, _ = np.linalg.lstsq(X, y, rcond=None)
+        alpha_daily = beta_vec[0]
+        beta = beta_vec[1]
+
+        y_hat = X @ beta_vec
+        resid = y - y_hat
+        se = np.sqrt(np.sum(resid ** 2) / (n - 2) / np.sum((x - x.mean()) ** 2))
+        se_alpha = np.sqrt(np.sum(resid ** 2) / (n - 2) * (1 / n + x.mean() ** 2 / np.sum((x - x.mean()) ** 2)))
+        t_alpha = alpha_daily / se_alpha if se_alpha > 0 else 0.0
+        p_alpha = 1 - stats.t.cdf(t_alpha, df=n - 2)
+
+        alpha_annual = alpha_daily * 252
+        results.append({
+            "strategy": slug,
+            "alpha_daily_bps": alpha_daily * 10_000,
+            "alpha_annual_pct": alpha_annual * 100,
+            "beta": beta,
+            "t_statistic": t_alpha,
+            "p_value": p_alpha,
+            "n_days": n,
+        })
+
+    return results
+
+
+async def run_jensens_alpha():
+    repo_root = Path(__file__).resolve().parent
+    equity_dir = repo_root / "data" / "experiment_equity_logs_clean"
+
+    for benchmark in ["SPY", "QQQ"]:
+        print(f"\n{'=' * 60}")
+        print(f"  JENSEN'S ALPHA (CAPM) — {benchmark} benchmark")
+        print(f"  Rp - Rf = alpha + beta*(Rm - Rf)")
+        print(f"  Rf = 5.0% annual (10Y Treasury approx)")
+        print(f"{'=' * 60}")
+
+        results = jensens_alpha_test(benchmark, equity_dir, EXPERIMENT_SLUGS)
+        if not results:
+            print("  No equity logs found.")
+            continue
+
+        print(f"  {'Strategy':<22} {'Alpha(bps/d)':>12} {'Alpha(%/yr)':>11} "
+              f"{'Beta':>6} {'t-stat':>7} {'p-value':>8}")
+        print(f"  {'-' * 70}")
+
+        for r in results:
+            sig = "*" if r["p_value"] < 0.05 else ""
+            print(f"  {r['strategy']:<22} {r['alpha_daily_bps']:>+11.2f} "
+                  f"{r['alpha_annual_pct']:>+10.2f}% {r['beta']:>6.3f} "
+                  f"{r['t_statistic']:>7.3f} {r['p_value']:>8.4f}{sig}")
+
+        best = min(results, key=lambda r: r["p_value"])
+        print(f"\n  Best: {best['strategy']} "
+              f"(alpha={best['alpha_annual_pct']:+.2f}%/yr, p={best['p_value']:.4f})")
+
+        # `best` is the argmin of p over len(results) strategies, so its p-value
+        # cannot be read against a nominal 5% threshold -- that is the classic
+        # multiple-comparisons error. Bonferroni is the floor of the correction,
+        # not the whole of it: each strategy here is itself the argmax of a CEM
+        # search over 120 (non-WF) or 607 (WF) policy evaluations, so the true
+        # trial count is ~7,290, not len(results). Treat even a "pass" below as
+        # provisional until a Deflated Sharpe Ratio is computed from
+        # output/cem_population.csv.
+        k = len(results)
+        bonferroni = 0.05 / k
+        print(f"  Bonferroni threshold for k={k} reported strategies: p < {bonferroni:.4f}")
+
+        if best["p_value"] < bonferroni:
+            print(f"  SIGNIFICANT after Bonferroni: evidence of skill-based excess return")
+        elif best["p_value"] < 0.05:
+            print(f"  NOT significant after Bonferroni "
+                  f"(nominal p={best['p_value']:.4f} survives 5% only because it is "
+                  f"the best of {k} searched strategies)")
+        else:
+            print(f"  NOT significant at 5%, even before correcting for k={k}")
+
+
+def hansen_spa_test(
+    benchmark: str,
+    equity_dir: Path,
+    experiment_slugs: list[str],
+    n_bootstrap: int = 10_000,
+    avg_block_length: float = 10.0,
+    seed: int = 42,
+) -> dict:
+    """Hansen's Superior Predictive Ability test (Hansen 2005).
+
+    Tests H0: no strategy beats B&H after adjusting for multiple comparisons.
+    Uses stationary bootstrap (Politis & Romano 1994).
+    """
+    excess_returns = []
+    names = []
+
+    for slug in experiment_slugs:
+        path = equity_dir / f"{benchmark.lower()}_{slug}_test.csv"
+        if not path.exists():
+            continue
+        df = pd.read_csv(path)
+        strat = np.log(df["equity"].values[1:] / df["equity"].values[:-1])
+        bench = np.log(df["benchmark_equity"].values[1:] / df["benchmark_equity"].values[:-1])
+        excess_returns.append(strat - bench)
+        names.append(slug)
+
+    if not excess_returns:
+        return {"p_consistent": None}
+
+    D = np.column_stack(excess_returns)
+    T, k = D.shape
+    d_bar = D.mean(axis=0)
+    d_var = D.var(axis=0, ddof=1)
+    d_std = np.sqrt(d_var / T)
+
+    t_values = d_bar / d_std
+    t_spa = float(np.max(t_values))
+    best_idx = int(np.argmax(t_values))
+
+    rng = np.random.default_rng(seed)
+    p_new = 1.0 / avg_block_length
+
+    starts = rng.integers(0, T, size=(n_bootstrap, T))
+    uniforms = rng.random(size=(n_bootstrap, T))
+    indices = np.empty((n_bootstrap, T), dtype=np.intp)
+    indices[:, 0] = starts[:, 0]
+    for t in range(1, T):
+        new_block = uniforms[:, t] < p_new
+        indices[:, t] = np.where(new_block, starts[:, t], (indices[:, t - 1] + 1) % T)
+
+    D_boot = D[indices]
+    d_bar_boot = D_boot.mean(axis=1)
+
+    threshold = np.sqrt(d_var * 2.0 * np.log(np.log(max(T, 3))) / T)
+    g_consistent = d_bar * (d_bar >= -threshold).astype(float)
+    g_upper = d_bar.copy()
+    g_lower = np.zeros(k)
+
+    results = {}
+    for variant, g in [("consistent", g_consistent), ("upper", g_upper), ("lower", g_lower)]:
+        centered = d_bar_boot - g[None, :]
+        t_boot = np.max(centered / d_std[None, :], axis=1)
+        results[f"p_{variant}"] = float(np.mean(t_boot >= t_spa))
+
+    results["t_statistic"] = t_spa
+    results["best_strategy"] = names[best_idx]
+    results["best_daily_excess_bps"] = float(d_bar[best_idx] * 10_000)
+    results["n_strategies"] = k
+    results["n_days"] = T
+    return results
+
+
+EXPERIMENT_SLUGS = [
+    "baseline", "t1_frictionpenalty", "t2_trainwindows", "t3_kelly",
+    "t1_t2", "t1_t3", "t2_t3", "t1_t2_t3",
+    "t4_geopriority", "t1_t2_t3_t4",
+]
+
+
+async def run_spa():
+    repo_root = Path(__file__).resolve().parent
+    equity_dir = repo_root / "data" / "experiment_equity_logs_clean"
+
+    for benchmark in ["SPY", "QQQ"]:
+        print(f"\n{'=' * 60}")
+        print(f"  HANSEN'S SPA TEST — {benchmark} benchmark")
+        print(f"  H0: no strategy beats {benchmark} B&H (data-snooping adjusted)")
+        print(f"{'=' * 60}")
+
+        spa = hansen_spa_test(benchmark, equity_dir, EXPERIMENT_SLUGS)
+        if spa.get("p_consistent") is None:
+            print("  No equity logs found.")
+            continue
+
+        print(f"  {spa['n_strategies']} strategies, {spa['n_days']} trading days, "
+              f"10,000 stationary bootstrap replications")
+        print(f"  Best strategy: {spa['best_strategy']}  "
+              f"(avg daily excess: {spa['best_daily_excess_bps']:+.1f} bps/day)")
+        print(f"  Test statistic: {spa['t_statistic']:.3f}")
+        print(f"  p-value (consistent): {spa['p_consistent']:.4f}")
+        print(f"  p-value (upper/conservative): {spa['p_upper']:.4f}")
+        print(f"  p-value (lower/liberal): {spa['p_lower']:.4f}")
+
+        if spa["p_consistent"] < 0.05:
+            print(f"  → REJECT H0 at 5%: significant evidence of superior predictive ability")
+        elif spa["p_consistent"] < 0.10:
+            print(f"  → REJECT H0 at 10% (marginal)")
+        else:
+            print(f"  → FAIL TO REJECT H0 at 10%")
+
+
 if __name__ == '__main__':
     asyncio.run(run_tests())
+    asyncio.run(run_spa())
+    asyncio.run(run_jensens_alpha())

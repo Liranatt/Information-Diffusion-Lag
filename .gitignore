@@ -38,3 +38,6 @@ data/rf_experiment_*
 data/opp_cost_trades.csv
 main_backtesting/
 !main_backtesting/**/*.py
+
+# ── Namespaced run outputs (optimize_cem.py --run-id) ────────────
+runs/

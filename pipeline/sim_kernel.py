@@ -480,7 +480,7 @@ def scan_candidate(
     entry_point = points[int(entry_pt_index)]
     exit_bar = bars[int(exit_gindex)]
     return (
-        entry_point[0],          # entry_ts (original Timestamp)
+        bars[int(_entry_gindex)][0], # entry_ts (rolled to asset's valid trading day)
         float(entry_point[1]),   # entry_prob
         float(entry_price),
         exit_bar[0],             # exit_ts (original Timestamp)
