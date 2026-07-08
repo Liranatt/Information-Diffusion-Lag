@@ -5,9 +5,11 @@ profit locks, probability-based entry/exit, signal polarity.
 """
 from __future__ import annotations
 
+import json
 import os
 import re
 from dataclasses import dataclass
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -156,15 +158,93 @@ _POLARITY_RULES = (
 
 
 def explain_polarity(question: str) -> tuple[int, list[str]]:
-    """Return (polarity, names of rules that fired). Used by the audit tool."""
+    """Regex-only polarity: (sign, names of rules that fired).
+
+    This is the *fallback*, used for pairs with no LLM label -- notably new
+    markets appearing in live trading. Prefer `resolve_polarity`.
+    """
     q = (question or "").strip()
     fired = [name for name, test in _POLARITY_RULES if test(q)]
     return (-1 if len(fired) % 2 else 1), fired
 
 
-def question_polarity(question: str) -> int:
+# ── LLM labels, and the domain facts the LLM gets wrong ──────────────────────
+#
+# `LLM/label_polarity.py` asks Gemini, per (question, symbol) pair: "if this
+# market resolves YES, is that bullish or bearish for a LONG position in this
+# symbol?" That is a causal question about the asset, which no regex can answer.
+# It caught 30 rows the keyword rules missed, in three families the rules cannot
+# express:
+#   - "...blockade of the Strait of Hormuz has been LIFTED by June 21"  (no rule)
+#   - "US inflation >0.1% from July to August"   (R3 matches "above", not ">")
+#   - "Will J.D. Vance have a diplomatic meeting with Iran by June 30?"
+#       de-escalation -> bearish crude, with zero lexical markers.
+#
+# But the LLM is not an oracle. It is confidently (conf=1.00) and *consistently*
+# wrong about container-carrier economics: it reasons "port strike -> shipping
+# disruption -> ZIM down". The opposite is true -- port congestion spikes freight
+# rates and carriers rally. ZIM around the Oct 2024 ILA east-coast strike, all
+# TRAIN-period data (< 2026-01-01, so no OOS leakage):
+#
+#       2024-09-20  $20.06     run-up into the strike
+#       2024-09-30  $25.66     +28%
+#       2024-10-03  $21.67     tentative deal announced
+#       2024-10-04  $18.95     -12.6% in one session
+#
+# So a port strike is BULLISH ZIM and its ending is BEARISH. These four
+# overrides encode that fact. Every entry must cite its evidence.
+POLARITY_OVERRIDES: dict[tuple[str, str], int] = {
+    # Container carriers gain from port congestion; see the ZIM tape above.
+    ("east coast port strike ends by friday?", "ZIM"): -1,
+    ("east coast port strike ends by next friday?", "ZIM"): -1,
+    ("east coast port strike ends in october?", "ZIM"): -1,
+    ("longshoremen east coast strike by oct 1?", "ZIM"): +1,
+}
+
+_LABELS_PATH = Path(__file__).resolve().parent.parent / "data" / "polarity_labels.json"
+_LLM_LABELS: dict[tuple[str, str], int] | None = None
+
+
+def _norm(question: str, symbol: str) -> tuple[str, str]:
+    return (question or "").strip().lower(), (symbol or "").strip().upper()
+
+
+def _llm_labels() -> dict[tuple[str, str], int]:
+    global _LLM_LABELS
+    if _LLM_LABELS is None:
+        if _LABELS_PATH.exists():
+            raw = json.loads(_LABELS_PATH.read_text(encoding="utf-8"))
+            _LLM_LABELS = {
+                _norm(rec["question"], rec["symbol"]): int(rec["polarity"])
+                for rec in raw.values()
+            }
+        else:
+            _LLM_LABELS = {}
+    return _LLM_LABELS
+
+
+def resolve_polarity(question: str, symbol: str | None = None) -> tuple[int, str]:
+    """Return (polarity, source) where source is override | llm | regex.
+
+    Precedence is deliberate: a hand-verified domain fact beats the LLM, and the
+    LLM beats the keyword fallback. `symbol=None` can only use the fallback,
+    because polarity is a property of the (question, symbol) pair -- "OPEC
+    production above 18M bpd" is bearish for USO and would be bullish for a
+    producer's own stock.
+    """
+    if symbol is not None:
+        key = _norm(question, symbol)
+        if key in POLARITY_OVERRIDES:
+            return POLARITY_OVERRIDES[key], "override"
+        label = _llm_labels().get(key)
+        if label is not None:
+            return label, "llm"
+    return explain_polarity(question)[0], "regex"
+
+
+def question_polarity(question: str, symbol: str | None = None) -> int:
     """+1 if a YES resolution is bullish for the linked symbol, -1 if bearish."""
-    return explain_polarity(question)[0]
+    return resolve_polarity(question, symbol)[0]
 
 
 def effective_prob_path(prob_path: list[tuple], polarity: int) -> list[tuple]:
@@ -176,22 +256,28 @@ def effective_prob_path(prob_path: list[tuple], polarity: int) -> list[tuple]:
 
 # `_market_arrays` in the numba kernel caches on `(id(probs), mkt)`, so handing
 # it a freshly-built dict on every call would both defeat the cache and risk
-# id-reuse collisions after GC. Memoize one effective-probs dict per source
+# id-reuse collisions after GC. Memoize the effective-probs dicts per source
 # `probs` identity, holding a strong reference to the source so its id cannot be
 # recycled while we still key on it.
-_EFF_PROBS_CACHE: dict[int, tuple[dict, dict]] = {}
+#
+# Keyed by polarity as well as source, because polarity belongs to the
+# (question, symbol) pair while a probability path belongs to the market: 87
+# markets carry more than one symbol, so two symbols could in principle disagree
+# and a single dict-per-market would silently serve one of them the wrong path.
+# Two dicts at most, so the kernel cache still hits.
+_EFF_PROBS_CACHE: dict[tuple[int, int], tuple[dict, dict]] = {}
 
 
-def _effective_probs(probs: dict, mkt: str, question: str) -> dict:
-    """A dict view of `probs` whose `mkt` entry is polarity-corrected."""
-    key = id(probs)
+def _effective_probs(probs: dict, mkt: str, polarity: int) -> dict:
+    """A dict view of `probs` whose `mkt` entry is corrected for `polarity`."""
+    key = (id(probs), polarity)
     cached = _EFF_PROBS_CACHE.get(key)
     if cached is None or cached[0] is not probs:
         cached = (probs, {})
         _EFF_PROBS_CACHE[key] = cached
     _source, eff = cached
     if mkt not in eff:
-        eff[mkt] = effective_prob_path(probs.get(mkt, []), question_polarity(question))
+        eff[mkt] = effective_prob_path(probs.get(mkt, []), polarity)
     return eff
 
 
@@ -232,8 +318,8 @@ def _simulate_one_py(
     # Re-polarize before anything reads the path: entry_day, the theta_out exit
     # and `converged` must all see "high == bullish".
     question = str(row.get("question", ""))
-    polarity = question_polarity(question)
-    probs = _effective_probs(probs, mkt, question)
+    polarity, polarity_source = resolve_polarity(question, sym)
+    probs = _effective_probs(probs, mkt, polarity)
 
     is_earnings = "earnings" in str(row.get("feat_archetype", "")).lower()
     closes = prices.get(sym, [])
@@ -314,6 +400,7 @@ def _simulate_one_py(
                 market_id=mkt, symbol=sym,
                 question=question,
                 polarity=polarity,
+                polarity_source=polarity_source,
                 pct=round(ent[1], 3),
                 converged=converged,
                 asset_confidence=row.get("confidence_score"),
@@ -343,6 +430,7 @@ def _simulate_one_py(
         market_id=mkt, symbol=sym,
         question=question,
         polarity=polarity,
+        polarity_source=polarity_source,
         pct=round(ent[1], 3),
         converged=converged,
         asset_confidence=row.get("confidence_score"),
@@ -382,8 +470,8 @@ def simulate_one(
     # The kernel never sees `question`, so polarity must be resolved here. See
     # the block above `explain_polarity` for why this is a flip, not a filter.
     question = str(row.get("question", ""))
-    polarity = question_polarity(question)
-    probs = _effective_probs(probs, mkt, question)
+    polarity, polarity_source = resolve_polarity(question, sym)
+    probs = _effective_probs(probs, mkt, polarity)
 
     t_theta = pd.Timestamp(row["t_theta"]).tz_convert("UTC")
     t_e = pd.Timestamp(row["t_e"]).tz_convert("UTC")
@@ -436,6 +524,7 @@ def simulate_one(
         market_id=mkt, symbol=sym,
         question=question,
         polarity=polarity,
+        polarity_source=polarity_source,
         pct=round(entry_prob, 3),
         converged=converged,
         asset_confidence=row.get("confidence_score"),

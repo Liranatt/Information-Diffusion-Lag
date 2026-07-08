@@ -70,7 +70,7 @@ from pipeline.strategy import (
     clear_kernel_caches,
     simulate_one,
     entry_day,
-    question_polarity,
+    resolve_polarity,
     effective_prob_path,
 )
 from pipeline.trade_forensics import combine_forensic_csvs, write_trade_forensics
@@ -461,8 +461,9 @@ def _diagnose_candidate_rejection(
     # dropped. Diverging here would make the disposition log lie about why a
     # candidate was rejected.
     question = str(row.get("question", ""))
-    polarity = question_polarity(question)
+    polarity, polarity_source = resolve_polarity(question, sym)
     diag["polarity"] = polarity
+    diag["polarity_source"] = polarity_source
 
     closes = prices.get(sym, [])
     win = [(t, h, l, c) for t, h, l, c in closes if t_theta - pd.Timedelta(days=30) <= t <= t_e]

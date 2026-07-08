@@ -18,7 +18,7 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-from pipeline.strategy import explain_polarity  # noqa: E402
+from pipeline.strategy import explain_polarity, resolve_polarity  # noqa: E402
 
 CANDIDATES = Path(__file__).resolve().parent.parent / "data" / "candidates.parquet"
 
@@ -38,46 +38,57 @@ def main() -> int:
     pairs = (
         df[["question", "symbol"]]
         .fillna("")
+        .astype(str)
         .drop_duplicates()
         .sort_values(["question", "symbol"])
     )
 
-    by_question = pairs.groupby("question")["symbol"].apply(
-        lambda s: ",".join(sorted(set(s)))
-    )
-
-    inverted: list[tuple[str, str, list[str]]] = []
-    risky_but_bullish: list[tuple[str, str]] = []
-
-    for question, symbols in by_question.items():
-        polarity, fired = explain_polarity(question)
-        if polarity == -1:
-            inverted.append((question, symbols, fired))
-        elif RISKY.search(question):
-            risky_but_bullish.append((question, symbols))
+    rows = []
+    for question, symbol in pairs.itertuples(index=False, name=None):
+        polarity, source = resolve_polarity(question, symbol)
+        _, fired = explain_polarity(question)
+        rows.append(
+            {
+                "question": question,
+                "symbol": symbol,
+                "polarity": polarity,
+                "source": source,
+                "rules": ",".join(fired) or "(none fired)",
+            }
+        )
+    audit = pd.DataFrame(rows)
 
     n_rows_inverted = int(
-        df["question"].fillna("").map(lambda q: explain_polarity(q)[0] == -1).sum()
+        sum(resolve_polarity(str(q), str(s))[0] == -1 for q, s in zip(df["question"], df["symbol"]))
     )
 
     print("=" * 100)
-    print(f"  POLARITY AUDIT — {len(by_question)} unique questions, {len(df)} candidate rows")
+    print(f"  POLARITY AUDIT — {len(pairs)} (question, symbol) pairs, {len(df)} candidate rows")
     print("=" * 100)
+    print("\n  resolved by source:")
+    for source, n in audit["source"].value_counts().items():
+        print(f"    {source:<10} {n}")
 
-    print(f"\n[-1] BEARISH-YES — probability path is flipped ({len(inverted)} questions, "
+    inverted = audit[audit.polarity == -1]
+    print(f"\n[-1] BEARISH-YES — probability path is flipped ({len(inverted)} pairs, "
           f"{n_rows_inverted} candidate rows)\n")
-    for question, symbols, fired in sorted(inverted):
-        print(f"  {symbols:<12} {question}")
-        print(f"  {'':<12} rules: {', '.join(fired)}")
+    for r in inverted.itertuples():
+        print(f"  {r.symbol:<6} [{r.source}] {r.question}")
+        if r.source == "regex":
+            print(f"  {'':<6} rules: {r.rules}")
 
-    print(f"\n[+1] CONTAINS A RISKY TOKEN BUT CLASSIFIED BULLISH — review these "
-          f"({len(risky_but_bullish)} questions)\n")
-    for question, symbols in sorted(risky_but_bullish):
-        print(f"  {symbols:<12} {question}")
+    bullish = audit[audit.polarity == 1]
+    risky = bullish[bullish.question.str.contains(RISKY)]
+    print(f"\n[+1] CONTAINS A RISKY TOKEN BUT RESOLVED BULLISH — review these "
+          f"({len(risky)} pairs)\n")
+    for r in risky.itertuples():
+        print(f"  {r.symbol:<6} [{r.source}] {r.question}")
 
     print("\n" + "=" * 100)
     print("  Every line above must be read. A wrong sign is a trade taken in the")
     print("  wrong direction, and it will still book a P&L that looks plausible.")
+    print("  `override` rows encode a domain fact the LLM got wrong; see")
+    print("  POLARITY_OVERRIDES in pipeline/strategy.py for the evidence.")
     print("=" * 100)
     return 0
 

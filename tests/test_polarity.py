@@ -11,9 +11,12 @@ import math
 import pytest
 
 from pipeline.strategy import (
+    POLARITY_OVERRIDES,
+    _effective_probs,
     effective_prob_path,
     explain_polarity,
     question_polarity,
+    resolve_polarity,
 )
 
 
@@ -130,8 +133,68 @@ def test_flip_preserves_volatility_and_negates_slope():
 def test_iran_hero_trades_fall_below_enter_floor(question, raw_entry_prob, expected_effective):
     """Both were entered long USO. T4 QQQ's fitted enter_floor was 0.763.
     Under the flip neither can trigger an entry."""
-    polarity = question_polarity(question)
+    polarity = question_polarity(question, "USO")
     assert polarity == -1
     (_, effective), = effective_prob_path([(0, raw_entry_prob)], polarity)
     assert math.isclose(effective, expected_effective, abs_tol=1e-9)
     assert effective < 0.763
+
+
+# ── Resolution precedence: override > llm > regex ────────────────────────────
+
+def test_symbol_none_falls_back_to_regex():
+    """Polarity belongs to the (question, symbol) pair; without a symbol we can
+    only use the keyword fallback."""
+    _, source = resolve_polarity("Will Cintas beat quarterly earnings?", None)
+    assert source == "regex"
+
+
+def test_llm_label_is_used_when_present():
+    """The LLM catches inversions with no lexical marker at all -- no regex will
+    ever classify a "diplomatic meeting" as bearish crude."""
+    q = "Will J.D. Vance have a diplomatic meeting with Iran by June 30?"
+    assert explain_polarity(q)[1] == [], "regex must fire no rule here"
+    polarity, source = resolve_polarity(q, "USO")
+    assert (polarity, source) == (-1, "llm")
+
+
+def test_regex_operator_gap_is_covered_by_llm():
+    """R3 matches the word "above", not the ">" operator."""
+    q = "US inflation >0.1% from July to August 2024?"
+    assert explain_polarity(q)[0] == 1, "regex misses the > operator"
+    assert resolve_polarity(q, "SHY") == (-1, "llm")
+
+
+def test_override_beats_the_llm_on_carrier_economics():
+    """Gemini says (conf 1.00) "strike ends -> shipping normalizes -> ZIM up".
+    ZIM fell 17.7% when the Oct 2024 ILA strike ended. Port congestion spikes
+    freight rates; carriers rally on disruption and sell off on resolution."""
+    assert resolve_polarity("East coast port strike ends in October?", "ZIM") == (-1, "override")
+    assert resolve_polarity("Longshoremen east coast strike by Oct 1?", "ZIM") == (+1, "override")
+
+
+def test_every_override_is_keyed_lowercase_and_upper_symbol():
+    """resolve_polarity normalizes before lookup; a mis-cased key is dead code."""
+    for question, symbol in POLARITY_OVERRIDES:
+        assert question == question.lower()
+        assert symbol == symbol.upper()
+
+
+# ── The cache must not serve one symbol another symbol's path ────────────────
+
+def test_effective_probs_keyed_by_polarity_not_just_market():
+    """87 markets carry more than one symbol. If two ever disagree on polarity,
+    a dict-keyed-only-by-market would hand one of them the wrong path."""
+    probs = {"mkt1": [(0, 0.8)]}
+    bull = _effective_probs(probs, "mkt1", 1)
+    bear = _effective_probs(probs, "mkt1", -1)
+    assert bull is not bear
+    assert bull["mkt1"] == [(0, 0.8)]
+    assert bear["mkt1"] == [(0, pytest.approx(0.2))]
+
+
+def test_effective_probs_is_stable_across_calls():
+    """The numba kernel caches on id(probs_dict); a fresh dict per call would
+    defeat the cache and risk id-reuse collisions after GC."""
+    probs = {"mkt1": [(0, 0.8)]}
+    assert _effective_probs(probs, "mkt1", -1) is _effective_probs(probs, "mkt1", -1)
