@@ -65,7 +65,14 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 from database.db_connection import connect
 from database.backtesting.schema import SCHEMA
-from pipeline.strategy import DEFAULT_POLICY, clear_kernel_caches, simulate_one, long_unfavorable, entry_day
+from pipeline.strategy import (
+    DEFAULT_POLICY,
+    clear_kernel_caches,
+    simulate_one,
+    entry_day,
+    question_polarity,
+    effective_prob_path,
+)
 from pipeline.trade_forensics import combine_forensic_csvs, write_trade_forensics
 
 
@@ -450,29 +457,34 @@ def _diagnose_candidate_rejection(
         "_candidate_order": candidate_order,
     }
 
-    if long_unfavorable(str(row.get("question", ""))):
-        diag["disposition"] = "long_unfavorable_question"
-        return diag
+    # Mirror simulate_one exactly: a bearish-YES question is re-polarized, not
+    # dropped. Diverging here would make the disposition log lie about why a
+    # candidate was rejected.
+    question = str(row.get("question", ""))
+    polarity = question_polarity(question)
+    diag["polarity"] = polarity
 
     closes = prices.get(sym, [])
     win = [(t, h, l, c) for t, h, l, c in closes if t_theta - pd.Timedelta(days=30) <= t <= t_e]
     if len(win) < 2:
         diag["disposition"] = "insufficient_price_window"
         return diag
-        
-    mkt_probs = probs.get(mkt, [])
+
+    mkt_probs = effective_prob_path(probs.get(mkt, []), polarity)
     if not mkt_probs:
         diag["disposition"] = "no_probability_data"
         return diag
-        
+
     ent = entry_day(mkt_probs, t_theta, policy)
     if ent is None:
         diag["disposition"] = "below_entry_floor"
         return diag
-        
+
     diag["entry_prob"] = round(ent[1], 3)
-    
+
     p_surge = row.get("feat_prob_surge_since_t0")
+    if p_surge is not None and polarity == -1:
+        p_surge = -p_surge
     if p_surge is not None and p_surge > policy.get("max_prob_surge", 999.0):
         diag["disposition"] = "prob_surge_exceeded"
         return diag

@@ -1,17 +1,18 @@
 """Core trade simulation engine.
 
 Extracted from general_testing/liran_strategy.py. ATR trailing stops,
-profit locks, probability-based entry/exit, long-unfavorable filter.
+profit locks, probability-based entry/exit, signal polarity.
 """
 from __future__ import annotations
 
 import os
+import re
 from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
 
-from pipeline.sim_kernel import HAVE_NUMBA, clear_caches as clear_kernel_caches, scan_candidate
+from pipeline.sim_kernel import HAVE_NUMBA, clear_caches as _clear_sim_kernel_caches, scan_candidate
 
 # The numba kernel is used automatically when numba is importable. It produces
 # output identical to the pure-Python reference (_simulate_one_py); set
@@ -80,16 +81,136 @@ def entry_day(
     return None
 
 
-def long_unfavorable(question: str) -> bool:
-    """Return True if the market's YES outcome is bearish for a long position."""
-    q = " " + (question or "").lower() + " "
-    if (" above " in q or " hike" in q or " raise" in q) and (
-        "inflation" in q or "cpi" in q or "rate" in q
-    ):
-        return True
-    return any(w in q for w in (
-        " miss ", " misses ", " fall ", " decline", " crash", " fails to ", " reject"
-    ))
+# ── Signal polarity ──────────────────────────────────────────────────────────
+#
+# The world-builder (LLM/build_world.py) picks symbols that benefit from the
+# *event occurring*, and its prompt explicitly forbids reasoning about which way
+# an asset's price would move. Nothing downstream ever recorded a per-candidate
+# direction. Meanwhile `entry_day` fires on HIGH P(YES) and the book is
+# structurally long-only.
+#
+# So a question that asks whether the event will NOT occur, or will CEASE, is
+# inverted: "Military action against Iran ends by April 10?" at P(YES)=0.986
+# bought USO -- i.e. went long crude at 98.6% confidence the war was over.
+#
+# The fix is not to drop these candidates. P(no strike) = 0.30 means
+# P(strike) = 0.70, which is a perfectly good long-oil signal. We flip the
+# probability path (`p_eff = 1 - p`) and let the unchanged entry/exit rules run
+# on it. The book stays long-only; only the signal is re-polarized.
+#
+# Each rule below toggles the sign, so composition works: "Will inflation not be
+# above 2.5%?" fires R1 and R3 and lands back on +1 (YES = tame inflation =
+# bullish), which the old boolean filter got wrong.
+#
+# This is a keyword heuristic, and keyword heuristics are exactly what caused the
+# original bug. Run `python -m pipeline.polarity_audit` to eyeball every
+# classification before trusting a run. Known unresolved gap: `above` is
+# subject-dependent ("Robinhood subscribers above 4.2M" is bullish, "annual
+# inflation above 2.5%" is bearish, "OPEC production above 18M bpd" is bearish
+# for the USO it maps to). R3/R4 encode the two bearish subjects present in the
+# current universe; a new subject will need a new rule, or the LLM polarity pass.
+
+# R1 -- explicit negation of the event.
+_NEG_RE = re.compile(r"^\s*no\b|\bnot\b|\bnever\b|\bwithout\b|\brefrains?\s+from\b", re.I)
+
+# R2 -- the event ceases / reverses. `\bends?\b` must not fire on "by end of May",
+# which is a date, not a cessation.
+_CESSATION_RE = re.compile(
+    r"\bends?\b(?!\s+of\b)|\bending\b(?!\s+of\b)"
+    r"|\bceasefire\b|\bde-?escalat\w*|\bwithdraw\w*|\breturns?\s+to\s+normal\b",
+    re.I,
+)
+
+# R3 -- a macro level rising is bearish for equities.
+_MACRO_UP_RE = re.compile(r"\babove\b|\bexceeds?\b|\bhikes?\b|\braises?\b", re.I)
+_MACRO_SUBJ_RE = re.compile(r"\binflation\b|\bcpi\b|\brates?\b", re.I)
+
+# R4 -- more commodity supply is bearish for the commodity's long proxy. The
+# commodity context is required: "Tractor Supply (TSCO)" is a retailer, and
+# without the guard "Will Tractor Supply rise above $300?" would flip to -1.
+_SUPPLY_UP_RE = re.compile(r"\babove\b|\bexceeds?\b|\brises?\b|\bincreases?\b", re.I)
+_SUPPLY_SUBJ_RE = re.compile(r"\bproduction\b|\boutput\b|\bsupply\b", re.I)
+_COMMODITY_RE = re.compile(r"\bcrude\b|\boil\b|\bopec\b|\bbarrels?\b|\bnatural\s+gas\b|\bgas\b", re.I)
+
+# R5 -- an adverse corporate/market event. Note "below" is deliberately absent:
+# it would match the company "Five Below (FIVE)".
+_BEARISH_EVENT_RE = re.compile(
+    r"\bmiss(?:es|ed)?\b|\bfalls?\b|\bfallen\b|\bdeclin\w*|\bcrash\w*"
+    r"|\bfails?\s+to\b|\brejects?\b|\bdowngrade\w*|\bbankrupt\w*"
+    r"|\bdefaults?\b|\blayoffs?\b",
+    re.I,
+)
+
+_POLARITY_RULES = (
+    ("R1_negation", lambda q: bool(_NEG_RE.search(q))),
+    ("R2_cessation", lambda q: bool(_CESSATION_RE.search(q))),
+    ("R3_macro_level_up", lambda q: bool(_MACRO_UP_RE.search(q) and _MACRO_SUBJ_RE.search(q))),
+    (
+        "R4_commodity_supply_up",
+        lambda q: bool(
+            _SUPPLY_UP_RE.search(q) and _SUPPLY_SUBJ_RE.search(q) and _COMMODITY_RE.search(q)
+        ),
+    ),
+    ("R5_bearish_event", lambda q: bool(_BEARISH_EVENT_RE.search(q))),
+)
+
+
+def explain_polarity(question: str) -> tuple[int, list[str]]:
+    """Return (polarity, names of rules that fired). Used by the audit tool."""
+    q = (question or "").strip()
+    fired = [name for name, test in _POLARITY_RULES if test(q)]
+    return (-1 if len(fired) % 2 else 1), fired
+
+
+def question_polarity(question: str) -> int:
+    """+1 if a YES resolution is bullish for the linked symbol, -1 if bearish."""
+    return explain_polarity(question)[0]
+
+
+def effective_prob_path(prob_path: list[tuple], polarity: int) -> list[tuple]:
+    """Re-polarize a probability path so that "high" always means "bullish"."""
+    if polarity == 1:
+        return prob_path
+    return [(t, 1.0 - v) for t, v in prob_path]
+
+
+# `_market_arrays` in the numba kernel caches on `(id(probs), mkt)`, so handing
+# it a freshly-built dict on every call would both defeat the cache and risk
+# id-reuse collisions after GC. Memoize one effective-probs dict per source
+# `probs` identity, holding a strong reference to the source so its id cannot be
+# recycled while we still key on it.
+_EFF_PROBS_CACHE: dict[int, tuple[dict, dict]] = {}
+
+
+def _effective_probs(probs: dict, mkt: str, question: str) -> dict:
+    """A dict view of `probs` whose `mkt` entry is polarity-corrected."""
+    key = id(probs)
+    cached = _EFF_PROBS_CACHE.get(key)
+    if cached is None or cached[0] is not probs:
+        cached = (probs, {})
+        _EFF_PROBS_CACHE[key] = cached
+    _source, eff = cached
+    if mkt not in eff:
+        eff[mkt] = effective_prob_path(probs.get(mkt, []), question_polarity(question))
+    return eff
+
+
+def _effective_prob_surge(row, polarity: int):
+    """`feat_prob_surge_since_t0` is a delta on the raw path, so it flips too."""
+    surge = row.get("feat_prob_surge_since_t0")
+    if polarity == 1 or surge is None:
+        return surge
+    try:
+        value = float(surge)
+    except (TypeError, ValueError):
+        return surge
+    return surge if value != value else -value  # NaN passes through unchanged
+
+
+def clear_kernel_caches() -> None:
+    """Drop cached numpy views AND the polarity-corrected probability paths."""
+    _clear_sim_kernel_caches()
+    _EFF_PROBS_CACHE.clear()
 
 
 def _simulate_one_py(
@@ -108,8 +229,11 @@ def _simulate_one_py(
     t_theta = pd.Timestamp(row["t_theta"]).tz_convert("UTC")
     t_e = pd.Timestamp(row["t_e"]).tz_convert("UTC")
 
-    if long_unfavorable(str(row.get("question", ""))):
-        return None
+    # Re-polarize before anything reads the path: entry_day, the theta_out exit
+    # and `converged` must all see "high == bullish".
+    question = str(row.get("question", ""))
+    polarity = question_polarity(question)
+    probs = _effective_probs(probs, mkt, question)
 
     is_earnings = "earnings" in str(row.get("feat_archetype", "")).lower()
     closes = prices.get(sym, [])
@@ -124,7 +248,7 @@ def _simulate_one_py(
         return None
     entry_ts = ent[0]
 
-    p_surge = row.get("feat_prob_surge_since_t0")
+    p_surge = _effective_prob_surge(row, polarity)
     r_surge = row.get("feat_runup_since_t0")
     if p_surge is not None and p_surge > policy.get("max_prob_surge", 999.0):
         return None
@@ -188,7 +312,8 @@ def _simulate_one_py(
             converged = "YES" if mkt_probs and mkt_probs[-1][1] >= 0.5 else "NO" if mkt_probs else "UNKNOWN"
             return dict(
                 market_id=mkt, symbol=sym,
-                question=str(row.get("question", "")),
+                question=question,
+                polarity=polarity,
                 pct=round(ent[1], 3),
                 converged=converged,
                 asset_confidence=row.get("confidence_score"),
@@ -216,7 +341,8 @@ def _simulate_one_py(
     converged = "YES" if mkt_probs and mkt_probs[-1][1] >= 0.5 else "NO" if mkt_probs else "UNKNOWN"
     return dict(
         market_id=mkt, symbol=sym,
-        question=str(row.get("question", "")),
+        question=question,
+        polarity=polarity,
         pct=round(ent[1], 3),
         converged=converged,
         asset_confidence=row.get("confidence_score"),
@@ -252,8 +378,12 @@ def simulate_one(
         return _simulate_one_py(row, prices, probs, policy)
 
     sym, mkt = row["symbol"], row["market_id"]
-    if long_unfavorable(str(row.get("question", ""))):
-        return None
+
+    # The kernel never sees `question`, so polarity must be resolved here. See
+    # the block above `explain_polarity` for why this is a flip, not a filter.
+    question = str(row.get("question", ""))
+    polarity = question_polarity(question)
+    probs = _effective_probs(probs, mkt, question)
 
     t_theta = pd.Timestamp(row["t_theta"]).tz_convert("UTC")
     t_e = pd.Timestamp(row["t_e"]).tz_convert("UTC")
@@ -267,7 +397,7 @@ def simulate_one(
         t_theta,
         t_e,
         is_earnings,
-        row.get("feat_prob_surge_since_t0"),
+        _effective_prob_surge(row, polarity),
         row.get("feat_runup_since_t0"),
         policy,
     )
@@ -298,11 +428,14 @@ def simulate_one(
     else:
         reason = "end_of_window"
 
+    # `probs` is the polarity-corrected view, so `converged` reports whether the
+    # bullish thesis resolved true -- not whether the raw market resolved YES.
     mkt_probs = probs.get(mkt, [])
     converged = "YES" if mkt_probs and mkt_probs[-1][1] >= 0.5 else "NO" if mkt_probs else "UNKNOWN"
     return dict(
         market_id=mkt, symbol=sym,
-        question=str(row.get("question", "")),
+        question=question,
+        polarity=polarity,
         pct=round(entry_prob, 3),
         converged=converged,
         asset_confidence=row.get("confidence_score"),
