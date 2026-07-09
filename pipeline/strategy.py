@@ -69,14 +69,13 @@ def entry_day(
     pts = [(t, v) for t, v in prob_path if t >= first_eligible_day]
     if not pts:
         return None
-    p0 = pts[0][1]
-    if p0 >= policy["enter_strong"]:
-        return pts[0][0], p0
     held = 0
     for t, v in pts:
-        if v >= policy["enter_floor"]:
+        if v >= policy["enter_strong"]:
+            return t, v
+        elif v >= policy["enter_floor"]:
             held += 1
-            if held > policy["hold_days"]:
+            if held >= policy["hold_days"]:
                 return t, v
         else:
             held = 0
@@ -344,7 +343,11 @@ def _simulate_one_py(
     entry_idx = next((i for i, b in enumerate(win) if b[0] >= entry_ts), -1)
     if entry_idx == -1:
         return None
-    path = win[entry_idx:]
+    resolution_cut = t_e - pd.Timedelta(days=1)
+    if win[entry_idx][0] >= resolution_cut:
+        return None
+
+    path = [bar for bar in win[entry_idx:] if bar[0] < resolution_cut]
     if len(path) < 2:
         return None
 
@@ -358,7 +361,6 @@ def _simulate_one_py(
 
     prob_path = {t.normalize(): v for t, v in probs.get(mkt, [])}
 
-    resolution_cut = t_e - pd.Timedelta(days=1)
     atr_mult = policy["atr_mult"]
     lock_activate = policy["lock_activate"]
     theta_out = policy["theta_out"]
@@ -373,24 +375,22 @@ def _simulate_one_py(
         if i > 0:
             stop_dist = atr_mult * atr_pct
 
-            if not is_earnings:
-                if ret_l <= peak - stop_dist:
-                    reason = f"trailing_{atr_mult:.1f}ATR"
-                    c = max(l, entry_price * (1.0 + peak - stop_dist))
+            if prob_path.get(t.normalize(), 1.0) < theta_out:
+                reason = f"poly<{theta_out}"
+            elif ret_l <= peak - stop_dist:
+                reason = f"trailing_{atr_mult:.1f}ATR"
+                c = max(l, entry_price * (1.0 + peak - stop_dist))
+                ret_c = c / entry_price - 1.0
+            elif peak >= lock_activate:
+                hard_floor_pct = int(peak * 100)
+                hard_floor = hard_floor_pct / 100.0
+                if ret_l < hard_floor:
+                    reason = f"profit_lock_{hard_floor_pct}%"
+                    c = max(l, entry_price * (1.0 + hard_floor))
                     ret_c = c / entry_price - 1.0
-                elif peak >= lock_activate:
-                    hard_floor_pct = int(peak * 100)
-                    hard_floor = hard_floor_pct / 100.0
-                    if ret_l < hard_floor:
-                        reason = f"profit_lock_{hard_floor_pct}%"
-                        c = max(l, entry_price * (1.0 + hard_floor))
-                        ret_c = c / entry_price - 1.0
 
-            if reason is None:
-                if prob_path.get(t.normalize(), 1.0) < theta_out:
-                    reason = f"poly<{theta_out}"
-                elif t >= resolution_cut:
-                    reason = "resolution-1d"
+            if reason is None and i == len(path) - 1:
+                reason = "resolution-1d"
 
         if reason:
             lo = min(ll / entry_price - 1.0 for _, _, ll, _ in path[:i + 1])

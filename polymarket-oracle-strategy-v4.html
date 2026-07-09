@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="slides-format" content="viewport">
+<title>T1 FrictionPenalty Strategy</title>
+<style>
+:root {
+  --paper: #f7f3eb;
+  --paper-2: #eee6d8;
+  --ink: #151515;
+  --muted: #5d625f;
+  --line: #d6cdbc;
+  --panel: #fffaf1;
+  --teal: #008f8c;
+  --teal-dark: #006e6a;
+  --amber: #c48722;
+  --red: #be4435;
+  --green: #2f8f54;
+  --black: #0d0e0f;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; }
+body {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+}
+.deck { position: relative; width: 100vw; height: 100vh; background:
+  linear-gradient(90deg, rgba(21,21,21,0.035) 1px, transparent 1px),
+  linear-gradient(180deg, rgba(21,21,21,0.035) 1px, transparent 1px),
+  var(--paper);
+  background-size: 56px 56px;
+}
+.slide {
+  position: absolute;
+  inset: 0;
+  display: none;
+  padding: 34px 48px 78px;
+  overflow: hidden;
+}
+.slide.active { display: grid; grid-template-rows: auto 1fr; gap: 18px; }
+.slide::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 10px;
+  background: linear-gradient(90deg, var(--teal), var(--amber), var(--red));
+}
+.topline { display: flex; justify-content: space-between; align-items: center; gap: 20px; font-size: 0.85rem; color: var(--muted); }
+.course { font-weight: 700; color: var(--teal-dark); }
+.slide-no { color: var(--muted); }
+h1, h2, h3, p { margin: 0; }
+h1 { font-size: 4rem; line-height: 0.98; max-width: 950px; }
+h2 { font-size: 2.65rem; line-height: 1.04; max-width: 1000px; }
+h3 { font-size: 1.04rem; line-height: 1.2; }
+.subhead { font-size: 1.28rem; line-height: 1.45; color: var(--muted); max-width: 930px; margin-top: 14px; }
+.kicker { color: var(--red); font-weight: 800; font-size: 0.9rem; text-transform: uppercase; }
+.body-grid { display: grid; gap: 18px; align-content: center; min-height: 0; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: stretch; min-height: 0; }
+.wide-left { grid-template-columns: 1.18fr 0.82fr; }
+.wide-right { grid-template-columns: 0.85fr 1.15fr; }
+.panel, .metric, .step, .callout, .formula, .rank-row, .timeline-box {
+  border: 1px solid var(--line);
+  background: rgba(255,250,241,0.86);
+  border-radius: 8px;
+  box-shadow: 0 12px 24px rgba(13,14,15,0.06);
+}
+.panel { padding: 20px; }
+.panel.dark { background: var(--black); color: white; border-color: var(--black); }
+.panel.dark .muted, .panel.dark p { color: #d7d2c8; }
+.muted { color: var(--muted); line-height: 1.45; }
+.hero-layout { display: grid; grid-template-columns: 0.88fr 1.12fr; gap: 24px; align-items: center; }
+.hero-metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.metric { padding: 18px; min-height: 124px; display: flex; flex-direction: column; justify-content: center; }
+.metric-value { font-size: 2.45rem; font-weight: 850; line-height: 1; color: var(--teal-dark); }
+.metric-label { margin-top: 10px; font-weight: 800; }
+.metric-note { margin-top: 6px; color: var(--muted); font-size: 0.92rem; line-height: 1.35; }
+.thesis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.thesis .panel { min-height: 160px; }
+.big-number { font-size: 3rem; font-weight: 850; color: var(--teal-dark); }
+.timeline { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: center; gap: 10px; }
+.timeline-box { padding: 18px; min-height: 122px; }
+.timeline-box strong { display: block; font-size: 1.55rem; margin-bottom: 8px; }
+.arrow-line { height: 3px; width: 56px; background: var(--ink); position: relative; }
+.arrow-line::after { content: ""; position: absolute; right: -1px; top: -5px; border-left: 10px solid var(--ink); border-top: 6px solid transparent; border-bottom: 6px solid transparent; }
+.pipeline { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.step { padding: 18px; min-height: 176px; }
+.step-index { width: 34px; height: 34px; border-radius: 50%; background: var(--ink); color: white; display: grid; place-items: center; font-weight: 850; margin-bottom: 14px; }
+.list { display: grid; gap: 12px; }
+.list-item { display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: start; line-height: 1.43; }
+.dot { width: 12px; height: 12px; border-radius: 50%; background: var(--teal); margin-top: 6px; }
+.formula { padding: 18px; background: var(--black); color: white; }
+.formula code { display: block; white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 1rem; line-height: 1.65; color: #f2efe8; }
+.param-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+.param-grid div { border: 1px solid var(--line); border-radius: 8px; padding: 13px; background: var(--panel); min-height: 86px; }
+.param-grid span { display: block; color: var(--muted); font-size: 0.9rem; }
+.param-grid strong { display: block; font-size: 1.45rem; margin-top: 8px; }
+.checks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.check { border-left: 5px solid var(--teal); background: var(--panel); padding: 14px; border-radius: 8px; }
+.check strong { display: block; margin-bottom: 6px; }
+.equity-svg { width: 100%; height: auto; display: block; }
+.chart-bg { fill: #fffaf1; stroke: #d6cdbc; }
+.grid-line { stroke: #d7cebd; stroke-width: 1; }
+.axis-line { stroke: #151515; stroke-width: 1.2; }
+.axis-label { fill: #68645d; font-size: 13px; }
+.strategy-line { fill: none; stroke: #008f8c; stroke-width: 4; stroke-linejoin: round; stroke-linecap: round; }
+.bench-line { fill: none; stroke: #c48722; stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; stroke-dasharray: 8 7; }
+.strategy-dot { fill: #008f8c; }
+.bench-dot { fill: #c48722; }
+.strategy-label { fill: #006e6a; font-size: 18px; font-weight: 800; }
+.bench-label { fill: #9b6716; font-size: 18px; font-weight: 800; }
+.result-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.compact-metric { padding: 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); }
+.compact-metric strong { display: block; font-size: 1.7rem; color: var(--teal-dark); }
+.compact-metric span { color: var(--muted); }
+.rank-list { display: grid; gap: 9px; }
+.rank-row { display: grid; grid-template-columns: 190px 1fr 92px 92px; gap: 12px; align-items: center; padding: 10px 12px; }
+.rank-row.winner { border-color: var(--teal); background: #eef9f4; }
+.rank-label { display: flex; gap: 10px; align-items: center; min-width: 0; }
+.rank-label span { width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; background: var(--ink); color: white; font-weight: 850; flex: 0 0 auto; }
+.rank-label strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rank-bar { height: 18px; background: #eadfcd; border-radius: 8px; overflow: hidden; }
+.rank-bar span { display: block; height: 100%; background: linear-gradient(90deg, var(--teal), var(--amber)); }
+.rank-value { font-weight: 850; color: var(--teal-dark); }
+.rank-meta { color: var(--muted); font-size: 0.92rem; }
+.footer-note { color: var(--muted); font-size: 0.92rem; line-height: 1.4; }
+.nav {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(247,243,235,0.92);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 7px;
+  box-shadow: 0 12px 30px rgba(13,14,15,0.12);
+}
+.nav button { border: 0; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; background: var(--ink); color: white; font-size: 1.25rem; }
+.counter { min-width: 48px; text-align: center; color: var(--muted); font-weight: 700; }
+@media (max-width: 980px) {
+  html, body { overflow: auto; }
+  .deck { min-height: 100vh; }
+  .slide { position: static; min-height: 100vh; padding: 28px 20px 82px; }
+  .hero-layout, .two-col, .pipeline, .thesis, .timeline, .result-grid { grid-template-columns: 1fr; }
+  .arrow-line { width: 3px; height: 38px; margin-left: 20px; }
+  .arrow-line::after { right: -5px; top: auto; bottom: -1px; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 10px solid var(--ink); border-bottom: 0; }
+  h1 { font-size: 2.6rem; }
+  h2 { font-size: 2rem; }
+  .rank-row { grid-template-columns: 1fr; }
+  .param-grid, .checks, .hero-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+</style>
+</head>
+<body>
+<main class="deck">
+
+<section class="slide active" data-slide="1">
+  <div class="topline"><span class="course">Algorithmic Trading Foundations 2026</span><span class="slide-no">01 / 10</span></div>
+  <div class="hero-layout">
+    <div>
+      <div class="kicker">Selected strategy</div>
+      <h1>T1 FrictionPenalty</h1>
+      <p class="subhead">A Polymarket-anchored event strategy where CEM optimizes trade rules under a cost-aware daily-equity objective &mdash; with Walk-Forward expanding-window training and dynamic fractional Kelly position sizing.</p>
+    </div>
+    <div class="hero-metrics">
+      
+<div class="metric">
+  <div class="metric-value">+51.86%</div>
+  <div class="metric-label">T1 OOS return</div>
+  <div class="metric-note">April 29, 2025 to May 27, 2026</div>
+</div>
+
+<div class="metric">
+  <div class="metric-value">+35.32%</div>
+  <div class="metric-label">SPY buy-and-hold</div>
+  <div class="metric-note">same window</div>
+</div>
+
+<div class="metric">
+  <div class="metric-value">+16.53%</div>
+  <div class="metric-label">Excess return</div>
+  <div class="metric-note">net of modeled costs</div>
+</div>
+
+<div class="metric">
+  <div class="metric-value">2.49</div>
+  <div class="metric-label">Daily-equity Sharpe</div>
+  <div class="metric-note">SPY 2.35</div>
+</div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-slide="2">
+  <div class="topline"><span class="course">1. Core idea</span><span class="slide-no">02 / 10</span></div>
+  <div class="body-grid">
+    <div>
+      <div class="kicker">Information diffusion lag</div>
+      <h2>The bet is not on Polymarket. The bet is on delayed equity repricing.</h2>
+      <p class="subhead">Prediction markets aggregate event information quickly. Broad ETFs and index arbitrage react first; fundamentally exposed single names can reprice more slowly.</p>
+    </div>
+    <div class="timeline">
+      <div class="timeline-box"><strong>T0</strong><p class="muted">Event appears on Polymarket and enters the monitored universe.</p></div>
+      <div class="arrow-line"></div>
+      <div class="timeline-box"><strong>T&theta;</strong><p class="muted">Probability crosses the confidence threshold. A candidate can become tradable.</p></div>
+      <div class="arrow-line"></div>
+      <div class="timeline-box"><strong>Te - 1</strong><p class="muted">Position exits before binary event resolution to avoid announcement volatility.</p></div>
+    </div>
+    <div class="thesis">
+      <div class="panel"><h3>Signal source</h3><p class="muted">Polymarket probability is treated as an upstream oracle, not as a trading venue.</p></div>
+      <div class="panel"><h3>Economic target</h3><p class="muted">U.S.-listed equities with a plausible causal exposure to the event outcome.</p></div>
+      <div class="panel"><h3>Execution edge</h3><p class="muted">Capture the anticipatory run-up before the event resolves, then step aside.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-slide="3">
+  <div class="topline"><span class="course">2. Data sources and cleaning</span><span class="slide-no">03 / 10</span></div>
+  <div class="body-grid">
+    <div>
+      <div class="kicker">Point-in-time candidate construction</div>
+      <h2>Every candidate is built only after a live event clears the oracle gate.</h2>
+    </div>
+    <div class="two-col">
+      <div class="panel">
+        <h3>Sources</h3>
+        <div class="list" style="margin-top:14px">
+          <div class="list-item"><span class="dot"></span><p class="muted"><strong>Polymarket Gamma API:</strong> active markets, tags, probability paths, market timing.</p></div>
+          <div class="list-item"><span class="dot"></span><p class="muted"><strong>Gemini router:</strong> relevance filter, causal channel, exposed tickers, connection strength.</p></div>
+          <div class="list-item"><span class="dot"></span><p class="muted"><strong>Interactive Brokers / price data:</strong> tradable U.S. symbols, daily bars, benchmark paths.</p></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Cleaning and guards</h3>
+        <div class="list" style="margin-top:14px">
+          <div class="list-item"><span class="dot"></span><p class="muted">Discard markets with relevance below 0.50 or invalid IB symbols.</p></div>
+          <div class="list-item"><span class="dot"></span><p class="muted">Use T0, T&theta;, and Te to separate entry eligibility from training-label eligibility.</p></div>
+          <div class="list-item"><span class="dot"></span><p class="muted">Clip price and probability paths at each evaluation boundary to prevent future-path leakage.</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Feature families</h3>
+      <p class="muted">Polymarket state, time-to-resolution, connection strength, recent asset and benchmark trends, ATR, firm descriptors, event archetype, and sector context.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-slide="4">
+  <div class="topline"><span class="course">3. Model architecture</span><span class="slide-no">04 / 10</span></div>
+  <div class="body-grid">
+    <div>
+      <div class="kicker">CEM optimizer, not a return predictor</div>
+      <h2>The LLM routes events. CEM decides if the route is economically tradable.</h2>
+    </div>
+    <div class="pipeline">
+      <div class="step"><div class="step-index">1</div><h3>Signal intake</h3><p class="muted">Poll Polymarket, keep only financially relevant event tags and durations.</p></div>
+      <div class="step"><div class="step-index">2</div><h3>Semantic router</h3><p class="muted">Gemini maps the event to a tight set of exposed U.S. equities.</p></div>
+      <div class="step"><div class="step-index">3</div><h3>CEM policy search</h3><p class="muted">Sample trade-rule parameters, simulate portfolios, retain the elite policies.</p></div>
+      <div class="step"><div class="step-index">4</div><h3>Portfolio sim</h3><p class="muted">Track cash, benchmark rotation, costs, concurrent positions, and daily NAV.</p></div>
+</section>
+
+<section class="slide" data-slide="5">
+  <div class="topline"><span class="course">4. T1 objective</span><span class="slide-no">05 / 10</span></div>
+  <div class="two-col wide-right">
+    <div class="body-grid">
+      <div>
+        <div class="kicker">Why T1 is different</div>
+        <h2>T1 adds cost awareness directly to the optimizer's fitness.</h2>
+      </div>
+      <div class="panel">
+        <h3>Interpretation</h3>
+        <p class="muted">This is not a live pre-entry hurdle. It is a CEM fitness pressure: prefer policies whose realized trades clear friction by enough to matter.</p>
+      </div>
+      <div class="panel">
+        <h3>Friction failure</h3>
+        <p class="muted">A trade fails the T1 hurdle when gross P&amp;L is less than 3x its modeled transaction cost.</p>
+      </div>
+    </div>
+    <div class="body-grid">
+      <div class="formula">
+        <code>score = Sharpe_daily
+        - 0.30 * abs(max_drawdown)
+        - 2.00 * friction_fail_rate
+
+friction_fail_rate =
+  mean(gross_pnl &lt; 3 * txn_cost)</code>
+      </div>
+      <div class="panel">
+        <h3>Optimized policy selected by T1/SPY</h3>
+        
+<div class="param-grid">
+  <div><span>entry strong</span><strong>0.751</strong></div>
+  <div><span>entry floor</span><strong>0.722</strong></div>
+  <div><span>theta out</span><strong>0.534</strong></div>
+  <div><span>ATR mult</span><strong>1.93</strong></div>
+  <div><span>hold days</span><strong>3</strong></div>
+  <div><span>position</span><strong>13.7%</strong></div>
+  <div><span>concurrency</span><strong>9</strong></div>
+  <div><span>run-up cap</span><strong>7.9%</strong></div>
+  <div><span>lock activate</span><strong>2.0%</strong></div>
+  <div><span>prob surge cap</span><strong>22.2%</strong></div>
+</div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-slide="6">
+  <div class="topline"><span class="course">5. Trade logic and costs</span><span class="slide-no">06 / 10</span></div>
+  <div class="body-grid">
+    <div>
+      <div class="kicker">From event to position</div>
+      <h2>A trade must survive probability, price-run-up, cost, and portfolio constraints.</h2>
+    </div>
+    <div class="checks">
+      <div class="check"><strong>Entry</strong><p class="muted">Enter immediately above <code>enter_strong</code>, or require persistence above <code>enter_floor</code> for the optimized hold window.</p></div>
+      <div class="check"><strong>Pre-entry rejection</strong><p class="muted">Reject entries after excessive probability surge or if the asset already ran too far.</p></div>
+      <div class="check"><strong>Exit</strong><p class="muted">Exit on probability invalidation, ATR/profit-lock where applicable, or the Te - 1 boundary.</p></div>
+      <div class="check"><strong>Portfolio</strong><p class="muted">Target 13.7% per position, cap at 9 concurrent positions, and value the portfolio daily.</p></div>
+    </div>
+    <div class="panel dark">
+      <h3>Cost realism</h3>
+      <p class="muted">Each trade is modeled as four funded legs: sell benchmark, buy asset, sell asset, rebuy benchmark. Costs include IB-style commission, sell-side SEC fee, and 5 bp slippage.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-slide="7">
+  <div class="topline"><span class="course">6. Backtesting design</span><span class="slide-no">07 / 10</span></div>
+  <div class="body-grid">
+    <div>
+      <div class="kicker">Leakage-safe OOS protocol</div>
+      <h2>Every result shown is strictly out-of-sample &mdash; no policy was trained on data it was later tested on.</h2>
+    </div>
+    <div class="two-col">
+      <div class="panel">
+        <h3>No look-ahead</h3>
+        <p class="muted" style="margin-top: 8px;">The CEM policy was entirely frozen before the test window began.</p>
+      </div>
+      <div class="panel">
+        <h3>True portfolio NAV</h3>
+        <p class="muted" style="margin-top: 8px;">Sharpe, Sortino, and max drawdown reflect daily equity, not summed trade P&amp;L.</p>
+      </div>
+    </div>
+    <div class="footer-note" style="margin-top: 6px;">
+      April 29, 2025 to May 27, 2026 &middot; $100,000 starting capital &middot; same opportunity-cost basis as SPY benchmark
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-slide="8">
+  <div class="topline"><span class="course">7. Terminal OOS results</span><span class="slide-no">08 / 10</span></div>
+  <div class="body-grid">
+    <div>
+      <div class="kicker">T1/SPY wins the paper result</div>
+      <h2>+51.86% net return with a 2.49 daily-equity Sharpe.</h2>
+    </div>
+    <div class="two-col wide-left">
+      <div class="panel">
+        
+<svg class="equity-svg" viewBox="0 0 920 360" role="img" aria-label="T1 strategy equity versus SPY buy and hold">
+  <rect x="0" y="0" width="920" height="360" rx="8" class="chart-bg"/>
+  <line x1="66" y1="288.17" x2="892" y2="288.17" class="grid-line"/><text x="56" y="292.17" text-anchor="end" class="axis-label">100k</text><line x1="66" y1="240.50" x2="892" y2="240.50" class="grid-line"/><text x="56" y="244.50" text-anchor="end" class="axis-label">110k</text><line x1="66" y1="192.83" x2="892" y2="192.83" class="grid-line"/><text x="56" y="196.83" text-anchor="end" class="axis-label">120k</text><line x1="66" y1="145.17" x2="892" y2="145.17" class="grid-line"/><text x="56" y="149.17" text-anchor="end" class="axis-label">130k</text><line x1="66" y1="97.50" x2="892" y2="97.50" class="grid-line"/><text x="56" y="101.50" text-anchor="end" class="axis-label">140k</text><line x1="66" y1="49.83" x2="892" y2="49.83" class="grid-line"/><text x="56" y="53.83" text-anchor="end" class="axis-label">150k</text>
+  <line x1="66" y1="312" x2="892" y2="312" class="axis-line"/>
+  <text x="66.00" y="344" text-anchor="middle" class="axis-label">2025-04</text><text x="341.33" y="344" text-anchor="middle" class="axis-label">2025-09</text><text x="616.67" y="344" text-anchor="middle" class="axis-label">2026-01</text><text x="892.00" y="344" text-anchor="middle" class="axis-label">2026-05</text>
+  <path d="M66.00,288.41 L69.06,288.22 L72.12,284.85 L75.18,277.73 L78.24,280.52 L81.30,284.56 L84.36,282.55 L87.41,279.19 L90.47,279.81 L93.53,263.81 L96.59,260.51 L99.65,259.86 L102.71,257.40 L105.77,254.19 L108.83,253.63 L111.89,255.35 L114.95,263.92 L118.01,263.72 L121.07,267.14 L124.13,256.81 L127.19,259.74 L130.24,257.75 L133.30,258.32 L136.36,255.47 L139.42,252.57 L142.48,252.71 L145.54,255.18 L148.60,249.95 L151.66,249.49 L154.72,246.57 L157.78,248.05 L160.84,246.00 L163.90,251.79 L166.96,246.91 L170.01,251.33 L173.07,251.41 L176.13,254.12 L179.19,249.09 L182.25,243.40 L185.31,243.11 L188.37,239.03 L191.43,236.42 L194.49,233.90 L197.55,234.07 L200.61,231.67 L203.67,227.47 L206.73,231.47 L209.79,231.76 L212.84,228.57 L215.90,227.06 L218.96,228.95 L222.02,227.93 L225.08,230.22 L228.14,228.43 L231.20,225.16 L234.26,225.55 L237.32,224.53 L240.38,224.45 L243.44,219.86 L246.50,219.68 L249.56,217.38 L252.61,217.52 L255.67,218.96 L258.73,219.65 L261.79,221.69 L264.85,230.58 L267.91,222.47 L270.97,225.22 L274.03,221.09 L277.09,221.54 L280.15,217.31 L283.21,218.39 L286.27,212.59 L289.33,210.70 L292.39,210.65 L295.44,211.94 L298.50,212.06 L301.56,215.06 L304.62,216.52 L307.68,218.71 L310.74,210.34 L313.80,212.77 L316.86,210.47 L319.92,209.21 L322.98,207.24 L326.04,210.56 L329.10,214.66 L332.16,211.69 L335.21,207.07 L338.27,208.68 L341.33,207.32 L344.39,206.03 L347.45,204.42 L350.51,199.77 L353.57,199.96 L356.63,196.95 L359.69,197.73 L362.75,198.44 L365.81,195.79 L368.87,194.56 L371.93,191.87 L374.99,194.98 L378.04,196.79 L381.10,199.41 L384.16,196.17 L387.22,194.58 L390.28,192.43 L393.34,190.48 L396.40,189.82 L399.46,189.83 L402.52,187.77 L405.58,189.91 L408.64,186.49 L411.70,188.16 L414.76,203.72 L417.81,195.13 L420.87,195.82 L423.93,193.30 L426.99,197.18 L430.05,193.97 L433.11,188.04 L436.17,188.05 L439.23,191.04 L442.29,187.64 L445.35,182.93 L448.41,176.08 L451.47,174.52 L454.53,174.23 L457.59,180.72 L460.64,178.81 L463.70,177.71 L466.76,184.66 L469.82,182.65 L472.88,188.89 L475.94,188.32 L479.00,179.34 L482.06,178.00 L485.12,177.67 L488.18,187.40 L491.24,187.50 L494.30,192.87 L497.36,197.67 L500.41,195.48 L503.47,204.14 L506.53,198.57 L509.59,190.24 L512.65,184.85 L515.71,180.85 L518.77,177.67 L521.83,180.34 L524.89,179.26 L527.95,177.24 L531.01,176.81 L534.07,175.69 L537.13,177.46 L540.19,177.97 L543.24,174.08 L546.30,172.71 L549.36,179.06 L552.42,179.95 L555.48,181.54 L558.54,187.95 L561.60,183.60 L564.66,180.07 L567.72,176.43 L570.78,173.74 L573.84,171.67 L576.90,171.73 L579.96,173.84 L583.01,174.56 L586.07,178.93 L589.13,177.85 L592.19,173.95 L595.25,170.44 L598.31,172.35 L601.37,172.41 L604.43,168.50 L607.49,167.57 L610.55,168.76 L613.61,171.69 L616.67,170.07 L619.73,170.57 L622.79,182.65 L625.84,175.94 L628.90,172.87 L631.96,172.65 L635.02,169.65 L638.08,167.28 L641.14,167.34 L644.20,168.53 L647.26,170.30 L650.32,167.35 L653.38,172.40 L656.44,175.26 L659.50,182.62 L662.56,171.46 L665.61,168.60 L668.67,170.18 L671.73,170.31 L674.79,179.48 L677.85,179.07 L680.91,178.13 L683.97,175.18 L687.03,176.73 L690.09,172.48 L693.15,178.52 L696.21,174.27 L699.27,169.29 L702.33,172.59 L705.39,175.43 L708.44,175.10 L711.50,180.29 L714.56,176.17 L717.62,179.45 L720.68,187.11 L723.74,182.06 L726.80,182.99 L729.86,183.72 L732.92,192.53 L735.98,195.77 L739.04,189.99 L742.10,188.48 L745.16,196.51 L748.21,197.91 L751.27,207.54 L754.33,201.70 L757.39,203.59 L760.45,200.46 L763.51,210.53 L766.57,219.96 L769.63,221.78 L772.69,206.02 L775.75,201.82 L778.81,201.31 L781.87,198.65 L784.93,198.40 L787.99,184.00 L791.04,180.65 L794.10,181.04 L797.16,175.34 L800.22,168.17 L803.28,163.47 L806.34,161.99 L809.40,154.71 L812.46,155.93 L815.52,159.91 L818.58,153.80 L821.64,156.16 L824.70,151.45 L827.76,150.40 L830.81,153.38 L833.87,153.48 L836.93,147.40 L839.99,145.70 L843.05,147.96 L846.11,143.02 L849.17,134.39 L852.23,136.32 L855.29,131.14 L858.35,129.69 L861.41,130.66 L864.47,127.11 L867.53,122.08 L870.59,129.81 L873.64,130.25 L876.70,134.47 L879.76,128.02 L882.82,126.76 L885.88,124.25 L888.94,120.01 L892.00,120.12" class="bench-line"/>
+  <path d="M66.00,288.41 L69.06,288.22 L72.12,284.85 L75.18,277.73 L78.24,280.52 L81.30,284.56 L84.36,282.55 L87.41,279.19 L90.47,279.81 L93.53,263.81 L96.59,260.51 L99.65,259.86 L102.71,257.40 L105.77,254.19 L108.83,253.63 L111.89,255.35 L114.95,263.92 L118.01,263.72 L121.07,267.14 L124.13,256.81 L127.19,259.74 L130.24,257.75 L133.30,258.32 L136.36,255.47 L139.42,252.57 L142.48,252.71 L145.54,255.18 L148.60,249.95 L151.66,249.56 L154.72,245.29 L157.78,246.34 L160.84,244.29 L163.90,250.15 L166.96,249.35 L170.01,249.89 L173.07,250.11 L176.13,254.20 L179.19,257.05 L182.25,251.58 L185.31,251.46 L188.37,247.37 L191.43,246.22 L194.49,245.20 L197.55,245.36 L200.61,243.08 L203.67,239.09 L206.73,242.89 L209.79,243.17 L212.84,240.13 L215.90,238.70 L218.96,240.49 L222.02,239.52 L225.08,241.70 L228.14,240.00 L231.20,236.89 L234.26,237.26 L237.32,236.29 L240.38,236.30 L243.44,231.13 L246.50,231.09 L249.56,228.91 L252.61,229.13 L255.67,222.84 L258.73,222.64 L261.79,207.65 L264.85,210.74 L267.91,202.81 L270.97,205.50 L274.03,201.46 L277.09,201.91 L280.15,197.77 L283.21,198.83 L286.27,193.15 L289.33,191.30 L292.39,191.25 L295.44,192.52 L298.50,192.64 L301.56,195.56 L304.62,196.99 L307.68,199.14 L310.74,190.95 L313.80,193.33 L316.86,191.08 L319.92,189.84 L322.98,187.92 L326.04,191.17 L329.10,195.18 L332.16,192.27 L335.21,187.75 L338.27,189.33 L341.33,188.00 L344.39,186.74 L347.45,185.16 L350.51,180.61 L353.57,180.80 L356.63,177.95 L359.69,178.08 L362.75,178.09 L365.81,171.55 L368.87,173.03 L371.93,168.02 L374.99,166.02 L378.04,171.51 L381.10,179.82 L384.16,175.81 L387.22,172.67 L390.28,172.84 L393.34,174.28 L396.40,174.07 L399.46,173.14 L402.52,174.71 L405.58,174.07 L408.64,174.63 L411.70,174.93 L414.76,186.13 L417.81,180.46 L420.87,179.28 L423.93,176.19 L426.99,180.31 L430.05,177.21 L433.11,167.71 L436.17,163.07 L439.23,167.83 L442.29,162.74 L445.35,161.25 L448.41,157.37 L451.47,171.00 L454.53,178.99 L457.59,178.74 L460.64,168.34 L463.70,167.93 L466.76,177.15 L469.82,171.27 L472.88,164.86 L475.94,163.78 L479.00,158.12 L482.06,160.85 L485.12,168.87 L488.18,202.36 L491.24,202.65 L494.30,209.61 L497.36,211.34 L500.41,212.58 L503.47,217.12 L506.53,205.66 L509.59,214.78 L512.65,177.55 L515.71,174.95 L518.77,169.21 L521.83,168.10 L524.89,170.41 L527.95,168.90 L531.01,170.88 L534.07,164.91 L537.13,163.67 L540.19,169.71 L543.24,162.95 L546.30,156.08 L549.36,158.41 L552.42,156.46 L555.48,159.85 L558.54,163.70 L561.60,162.27 L564.66,151.52 L567.72,148.69 L570.78,146.61 L573.84,144.99 L576.90,145.04 L579.96,146.68 L583.01,147.24 L586.07,150.81 L589.13,149.86 L592.19,142.66 L595.25,139.63 L598.31,146.43 L601.37,145.57 L604.43,145.16 L607.49,144.61 L610.55,149.66 L613.61,147.87 L616.67,142.04 L619.73,143.07 L622.79,146.79 L625.84,142.00 L628.90,142.89 L631.96,143.21 L635.02,143.38 L638.08,142.01 L641.14,150.55 L644.20,150.17 L647.26,147.01 L650.32,152.03 L653.38,150.35 L656.44,142.16 L659.50,151.14 L662.56,141.78 L665.61,139.51 L668.67,126.46 L671.73,133.12 L674.79,128.60 L677.85,117.67 L680.91,128.37 L683.97,112.43 L687.03,112.43 L690.09,115.31 L693.15,140.54 L696.21,130.02 L699.27,116.96 L702.33,110.39 L705.39,113.70 L708.44,113.64 L711.50,115.94 L714.56,113.42 L717.62,113.67 L720.68,110.55 L723.74,108.86 L726.80,110.54 L729.86,107.22 L732.92,123.63 L735.98,121.59 L739.04,116.72 L742.10,114.40 L745.16,123.07 L748.21,128.13 L751.27,128.91 L754.33,125.10 L757.39,123.24 L760.45,112.91 L763.51,119.87 L766.57,126.33 L769.63,124.34 L772.69,121.67 L775.75,121.33 L778.81,112.42 L781.87,108.91 L784.93,109.74 L787.99,96.31 L791.04,91.37 L794.10,95.56 L797.16,91.58 L800.22,90.87 L803.28,85.38 L806.34,85.03 L809.40,78.91 L812.46,78.67 L815.52,81.72 L818.58,81.77 L821.64,87.66 L824.70,83.83 L827.76,82.35 L830.81,92.09 L833.87,87.18 L836.93,92.45 L839.99,89.22 L843.05,85.99 L846.11,78.32 L849.17,67.47 L852.23,59.18 L855.29,56.64 L858.35,63.50 L861.41,68.92 L864.47,74.91 L867.53,73.96 L870.59,70.17 L873.64,66.34 L876.70,67.34 L879.76,58.74 L882.82,56.83 L885.88,44.74 L888.94,43.70 L892.00,41.34" class="strategy-line"/>
+  <circle cx="892.00" cy="41.34" r="5" class="strategy-dot"/>
+  <circle cx="892.00" cy="120.12" r="5" class="bench-dot"/>
+  <text x="888" y="29.34" text-anchor="end" class="strategy-label">$151.8k</text>
+  <text x="888" y="142.12" text-anchor="end" class="bench-label">$135.3k</text>
+</svg>
+
+      </div>
+      <div class="body-grid">
+        <div style="font-size: 0.9rem; font-weight: 800; color: var(--teal-dark); margin-bottom: 8px;">T1 Strategy</div>
+        <div class="result-grid" style="margin-bottom: 16px;">
+          <div class="compact-metric"><strong>+51.86%</strong><span>Net return</span></div>
+          <div class="compact-metric"><strong>2.49</strong><span>Sharpe</span></div>
+          <div class="compact-metric"><strong>3.25</strong><span>Sortino</span></div>
+          <div class="compact-metric"><strong>-9.83%</strong><span>Max DD</span></div>
+        </div>
+        <div style="font-size: 0.9rem; font-weight: 800; color: var(--muted); margin-bottom: 8px;">SPY B&amp;H</div>
+        <div class="result-grid">
+          <div class="compact-metric" style="background: transparent; border: 1px dashed var(--line);"><strong style="color: var(--muted);">+35.32%</strong><span>Net return</span></div>
+          <div class="compact-metric" style="background: transparent; border: 1px dashed var(--line);"><strong style="color: var(--muted);">2.35</strong><span>Sharpe</span></div>
+          <div class="compact-metric" style="background: transparent; border: 1px dashed var(--line);"><strong style="color: var(--muted);">3.46</strong><span>Sortino</span></div>
+          <div class="compact-metric" style="background: transparent; border: 1px dashed var(--line);"><strong style="color: var(--muted);">-9.12%</strong><span>Max DD</span></div>
+        </div>
+        <div class="panel dark" style="margin-top: 18px;">
+          <h3>Strategy Comparison</h3>
+          <p class="muted" style="margin-top: 8px;">T1 outperforms the SPY buy-and-hold benchmark across absolute return (+51.86% vs +35.32%) and risk-adjusted metrics (Sharpe 2.49 vs 2.35), demonstrating a consistent edge even after accounting for full transaction costs and slippage.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-slide="9">
+  <div class="topline"><span class="course">8. Ablation evidence</span><span class="slide-no">09 / 10</span></div>
+  <div class="body-grid">
+    <div>
+      <div class="kicker">Why T1 is selected</div>
+      <h2>Across SPY ablations, plain T1 is the clear winner.</h2>
+    </div>
+    <div class="two-col wide-left">
+      <div class="panel">
+        <div class="rank-list">
+          
+<div class="rank-row winner">
+  <div class="rank-label"><span>1</span><strong>T1 FrictionPenalty</strong></div>
+  <div class="rank-bar"><span style="width:100.0%"></span></div>
+  <div class="rank-value">+51.86%</div>
+  <div class="rank-meta">Sharpe 2.49</div>
+</div>
+
+<div class="rank-row ">
+  <div class="rank-label"><span>2</span><strong>T1+T3</strong></div>
+  <div class="rank-bar"><span style="width:54.5%"></span></div>
+  <div class="rank-value">+28.22%</div>
+  <div class="rank-meta">Sharpe 1.85</div>
+</div>
+
+<div class="rank-row ">
+  <div class="rank-label"><span>3</span><strong>T1+T2</strong></div>
+  <div class="rank-bar"><span style="width:49.2%"></span></div>
+  <div class="rank-value">+25.48%</div>
+  <div class="rank-meta">Sharpe 1.59</div>
+</div>
+
+<div class="rank-row ">
+  <div class="rank-label"><span>4</span><strong>T3 Kelly</strong></div>
+  <div class="rank-bar"><span style="width:48.0%"></span></div>
+  <div class="rank-value">+24.84%</div>
+  <div class="rank-meta">Sharpe 1.77</div>
+</div>
+
+<div class="rank-row ">
+  <div class="rank-label"><span>5</span><strong>T2+T3</strong></div>
+  <div class="rank-bar"><span style="width:41.5%"></span></div>
+  <div class="rank-value">+21.46%</div>
+  <div class="rank-meta">Sharpe 1.60</div>
+</div>
+
+<div class="rank-row ">
+  <div class="rank-label"><span>6</span><strong>Baseline</strong></div>
+  <div class="rank-bar"><span style="width:39.6%"></span></div>
+  <div class="rank-value">+20.51%</div>
+  <div class="rank-meta">Sharpe 1.38</div>
+</div>
+
+<div class="rank-row ">
+  <div class="rank-label"><span>7</span><strong>T1+T2+T3</strong></div>
+  <div class="rank-bar"><span style="width:37.9%"></span></div>
+  <div class="rank-value">+19.64%</div>
+  <div class="rank-meta">Sharpe 1.56</div>
+</div>
+
+<div class="rank-row ">
+  <div class="rank-label"><span>8</span><strong>T2 TrainWindows</strong></div>
+  <div class="rank-bar"><span style="width:32.1%"></span></div>
+  <div class="rank-value">+16.60%</div>
+  <div class="rank-meta">Sharpe 1.02</div>
+</div>
+        </div>
+      </div>
+      <div class="body-grid">
+        <div class="panel">
+          <h3>What changed</h3>
+          <p class="muted">T1 pressures CEM toward policies whose winners are large enough to survive real execution costs. T2 and T3 are useful safeguards, but in this OOS run they did not improve terminal SPY performance.</p>
+        </div>
+        <div class="panel">
+          <h3>Benchmark caveat</h3>
+          <p class="muted">On QQQ, T1 is also the best variant, but it still trails QQQ buy-and-hold. The submitted result should therefore be framed as the SPY-optimized T1 win, not a universal benchmark victory.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-slide="10">
+  <div class="topline"><span class="course">9. Interpretation</span><span class="slide-no">10 / 10</span></div>
+  <div class="body-grid">
+    <div>
+      <div class="kicker">What the result establishes</div>
+      <h2>T1 passes an initial leakage-safe OOS test. The remaining bottleneck is causal mapping.</h2>
+    </div>
+    <div class="thesis">
+      <div class="panel"><h3>Validated</h3><p class="muted">A prediction-market threshold can be converted into a cost-aware equity portfolio that outperformed SPY in this 13-month OOS window.</p></div>
+      <div class="panel"><h3>Not proven yet</h3><p class="muted">The result does not prove stable long-run alpha. It needs more independent event windows and pre-registered re-evaluation.</p></div>
+      <div class="panel"><h3>Main weakness</h3><p class="muted">Correct event forecasts do not always become profitable equity trades. Asset selection, timing, and question-to-stock causality remain the hard part.</p></div>
+    </div>
+    <div class="panel dark">
+      <h3>Final message</h3>
+      <p class="muted">Polymarket supplies a high-conviction event oracle. T1 turns it into an executable strategy by making CEM optimize for daily-equity Sharpe after drawdown and friction penalties.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<nav class="nav" aria-label="Slide navigation">
+  <button type="button" id="prev" aria-label="Previous slide">&#8249;</button>
+  <span class="counter" id="counter">1 / 10</span>
+  <button type="button" id="next" aria-label="Next slide">&#8250;</button>
+</nav>
+
+<script>
+const slides = Array.from(document.querySelectorAll('.slide'));
+const counter = document.getElementById('counter');
+let current = 0;
+function showSlide(index) {
+  current = (index + slides.length) % slides.length;
+  slides.forEach((slide, i) => slide.classList.toggle('active', i === current));
+  counter.textContent = `${current + 1} / ${slides.length}`;
+}
+document.getElementById('prev').addEventListener('click', () => showSlide(current - 1));
+document.getElementById('next').addEventListener('click', () => showSlide(current + 1));
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'ArrowRight' || event.key === 'PageDown' || event.key === ' ') {
+    event.preventDefault();
+    showSlide(current + 1);
+  }
+  if (event.key === 'ArrowLeft' || event.key === 'PageUp') {
+    event.preventDefault();
+    showSlide(current - 1);
+  }
+});
+let touchStartX = null;
+document.addEventListener('touchstart', (event) => { touchStartX = event.changedTouches[0].clientX; });
+document.addEventListener('touchend', (event) => {
+  if (touchStartX === null) return;
+  const dx = touchStartX - event.changedTouches[0].clientX;
+  if (Math.abs(dx) > 48) showSlide(current + (dx > 0 ? 1 : -1));
+  touchStartX = null;
+});
+</script>
+</body>
+</html>

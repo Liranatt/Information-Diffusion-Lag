@@ -105,6 +105,39 @@ class OutputPaths:
     plot_dir: Path
 
 
+@dataclass(frozen=True)
+class DynamicPolicySchedule:
+    """Callable walk-forward policy schedule for online-refit arms."""
+
+    windows: list[dict[str, Any]]
+
+    def __call__(self, day: pd.Timestamp) -> dict:
+        day = as_utc_day(day)
+        if not self.windows:
+            return {}
+        matched = self.windows[0]["policy"]
+        for window in self.windows:
+            start = window["eval_start"]
+            end_excl = window["eval_end_exclusive"]
+            policy = window["policy"]
+            if day >= start and day < end_excl:
+                return policy
+            if day >= start:
+                matched = policy
+        return matched
+
+    def as_records(self) -> list[dict[str, Any]]:
+        return [
+            {
+                "fold": int(window["fold"]),
+                "eval_start_date": str(window["eval_start"].date()),
+                "eval_end_exclusive_date": str(window["eval_end_exclusive"].date()),
+                "policy": window["policy"],
+            }
+            for window in self.windows
+        ]
+
+
 def resolve_output_paths(run_id: str | None = None) -> OutputPaths:
     """`run_id=None` reproduces the historical, un-namespaced layout exactly."""
     if not run_id:
@@ -1818,7 +1851,7 @@ def cem_search(
 
     fold_audits: list[dict[str, Any]] = []
     oof_scores: list[float] = []
-    wf_policies = []
+    wf_policies: list[dict[str, Any]] = []
     population: list[dict[str, Any]] = []
 
     for fold in folds:
@@ -1884,7 +1917,14 @@ def cem_search(
             }
         )
         oof_scores.append(float(eval_score))
-        wf_policies.append((fold["eval_start"], fold["eval_end_exclusive"], fold_policy))
+        wf_policies.append(
+            {
+                "fold": fold_id,
+                "eval_start": fold["eval_start"],
+                "eval_end_exclusive": fold["eval_end_exclusive"],
+                "policy": fold_policy,
+            }
+        )
 
         print(
             f"    {bench_sym}|WF-F{fold_id}  "
@@ -1894,19 +1934,7 @@ def cem_search(
             flush=True,
         )
 
-    def dynamic_policy(day: pd.Timestamp) -> dict:
-        day = as_utc_day(day)
-        if not wf_policies:
-            return {}
-        matched = wf_policies[0][2]
-        for start, end_excl, pol in wf_policies:
-            if day >= start and day < end_excl:
-                return pol
-            if day >= start:
-                matched = pol
-        return matched
-
-    return dynamic_policy, float(np.mean(oof_scores)), fold_audits, population
+    return DynamicPolicySchedule(wf_policies), float(np.mean(oof_scores)), fold_audits, population
 
 
 # ── Database loading ─────────────────────────────────────────────────────────
@@ -2275,6 +2303,15 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--dd-penalty",
+        type=float,
+        default=DD_PENALTY,
+        help=(
+            "Drawdown penalty lambda in the CEM reward "
+            "Sharpe - lambda * abs(max_dd_percent)."
+        ),
+    )
+    parser.add_argument(
         "--no-allocation-log",
         action="store_true",
         help="Skip per-candidate allocation/disposition logging (faster, smaller output).",
@@ -2291,7 +2328,9 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 
 def main(argv: list[str] | None = None) -> None:
+    global DD_PENALTY
     args = _parse_args(argv)
+    DD_PENALTY = float(args.dd_penalty)
     experiments = _select_experiments(args.experiments)
     benchmarks = tuple(args.benchmarks)
     paths = resolve_output_paths(args.run_id)
@@ -2303,7 +2342,8 @@ def main(argv: list[str] | None = None) -> None:
     print(f"  CLEAN {len(experiments)}-EXPERIMENT COMPARISON x {len(benchmarks)} BENCHMARK(S)")
     print("  Label-complete CEM | Expanding walk-forward T2 | Fully net trade costs")
     print(f"  seed={args.seed}  run_id={args.run_id or '<in-place>'}  "
-          f"allocation_log={'on' if collect_allocation_log else 'off'}")
+          f"allocation_log={'on' if collect_allocation_log else 'off'}  "
+          f"dd_penalty={DD_PENALTY:g}")
     print("=" * 78)
 
     candidates_path = PROJECT / "data" / "candidates.parquet"
@@ -2492,6 +2532,12 @@ def main(argv: list[str] | None = None) -> None:
             
             # Since dynamic_policy might be callable, we get the first one for logging base ps
             logged_policy = dynamic_policy(oos_start) if callable(dynamic_policy) else dynamic_policy
+            if isinstance(dynamic_policy, DynamicPolicySchedule):
+                policy_payload: dict[str, Any] | list[dict[str, Any]] = dynamic_policy.as_records()
+                policy_scope = "online_refit_schedule"
+            else:
+                policy_payload = logged_policy
+                policy_scope = "frozen_policy"
 
             result = {
                 "experiment": label,
@@ -2500,14 +2546,17 @@ def main(argv: list[str] | None = None) -> None:
                 "train_windows": use_wf,
                 "kelly": use_kelly,
                 "allocation_mode": allocation_mode,
+                "dd_penalty": DD_PENALTY,
                 "cem_objective": round(objective, 6),
-                "cem_objective_scope": "walk_forward_oof" if use_wf else "train_fit",
+                "cem_objective_scope": "online_refit" if use_wf else "train_fit",
+                "policy_scope": policy_scope,
                 "wf_folds": len(fold_audits),
                 "train_fit_label_cutoff": str(oos_start.date()),
                 "train_fit_candidates": len(train_df),
                 "policy_base_position_size_pct": round(float(logged_policy.get("position_size_pct", 0.1)) * 100.0, 4),
                 "policy_max_concurrent": int(logged_policy.get("max_concurrent", 10)),
-                "policy_json": json.dumps(logged_policy, sort_keys=True),
+                "policy_json": json.dumps(policy_payload, sort_keys=True),
+                "policy_snapshot_json": json.dumps(logged_policy, sort_keys=True),
             }
             result.update(_stage_metrics("train", train_stats))
             result.update(_stage_metrics("test", oos_stats))

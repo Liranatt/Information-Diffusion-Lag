@@ -223,28 +223,28 @@ def _scan(
         return none
 
     # Entry rule (entry_day): scan raw points whose timestamp >= the first
-    # eligible day. Strong entry fires immediately; otherwise enter_floor must
-    # hold for more than hold_days consecutive points.
+    # eligible day. Strong entry can fire on any point; otherwise enter_floor
+    # must hold for hold_days consecutive points.
     m = pt_value.shape[0]
     e0 = _bisect_left(pt_value, first_eligible_value)
     if e0 >= m:
         return none
 
     entry_pt_index = -1
-    if pval_raw[e0] >= enter_strong:
-        entry_pt_index = e0
-    else:
-        held = 0
-        k = e0
-        while k < m:
-            if pval_raw[k] >= enter_floor:
-                held += 1
-                if held > hold_days:
-                    entry_pt_index = k
-                    break
-            else:
-                held = 0
-            k += 1
+    held = 0
+    k = e0
+    while k < m:
+        if pval_raw[k] >= enter_strong:
+            entry_pt_index = k
+            break
+        elif pval_raw[k] >= enter_floor:
+            held += 1
+            if held >= hold_days:
+                entry_pt_index = k
+                break
+        else:
+            held = 0
+        k += 1
     if entry_pt_index < 0:
         return none
     entry_ts_value = pt_value[entry_pt_index]
@@ -262,6 +262,13 @@ def _scan(
     if gi >= w_end:
         return none
     if w_end - gi < 2:  # path needs at least two bars
+        return none
+    if bar_value[gi] >= resolution_cut_value:
+        return none
+    hold_end = _bisect_left(bar_value, resolution_cut_value)
+    if hold_end > w_end:
+        hold_end = w_end
+    if hold_end - gi < 2:
         return none
     entry_price = bar_close[gi]
 
@@ -301,7 +308,7 @@ def _scan(
     # Exit scan across the holding path.
     peak = 0.0
     gj = gi
-    while gj < w_end:
+    while gj < hold_end:
         i_rel = gj - gi
         hh = bar_high[gj]
         ll = bar_low[gj]
@@ -314,28 +321,28 @@ def _scan(
         hard_floor_pct = 0
         if i_rel > 0:
             stop_dist = atr_mult * atr_pct
-            if is_earnings == 0:
-                if ret_l <= peak - stop_dist:
-                    reason = 1
-                    cand = entry_price * (1.0 + peak - stop_dist)
+
+            pv = 1.0
+            idx = _bisect_left(day_uni, bar_norm[gj])
+            if idx < day_uni.shape[0] and day_uni[idx] == bar_norm[gj]:
+                pv = pval_uni[idx]
+            if pv < theta_out:
+                reason = 3
+            elif ret_l <= peak - stop_dist:
+                reason = 1
+                cand = entry_price * (1.0 + peak - stop_dist)
+                cc = ll if ll > cand else cand
+                ret_c = cc / entry_price - 1.0
+            elif peak >= lock_activate:
+                hard_floor_pct = int(peak * 100.0)
+                hard_floor = hard_floor_pct / 100.0
+                if ret_l < hard_floor:
+                    reason = 2
+                    cand = entry_price * (1.0 + hard_floor)
                     cc = ll if ll > cand else cand
                     ret_c = cc / entry_price - 1.0
-                elif peak >= lock_activate:
-                    hard_floor_pct = int(peak * 100.0)
-                    hard_floor = hard_floor_pct / 100.0
-                    if ret_l < hard_floor:
-                        reason = 2
-                        cand = entry_price * (1.0 + hard_floor)
-                        cc = ll if ll > cand else cand
-                        ret_c = cc / entry_price - 1.0
             if reason == 0:
-                pv = 1.0
-                idx = _bisect_left(day_uni, bar_norm[gj])
-                if idx < day_uni.shape[0] and day_uni[idx] == bar_norm[gj]:
-                    pv = pval_uni[idx]
-                if pv < theta_out:
-                    reason = 3
-                elif bar_value[gj] >= resolution_cut_value:
+                if gj == hold_end - 1:
                     reason = 4
 
         if reason != 0:
@@ -368,14 +375,14 @@ def _scan(
             peak = ret_h
         gj += 1
 
-    # No exit triggered: liquidate on the last window bar (end_of_window).
-    last = w_end - 1
+    # No exit triggered: liquidate on the last eligible pre-resolution bar.
+    last = hold_end - 1
     cc = bar_close[last]
     ret_c = cc / entry_price - 1.0
     lo = 0.0
     first = 1
     k = gi
-    while k < w_end:
+    while k < hold_end:
         rl = bar_low[k] / entry_price - 1.0
         if first == 1 or rl < lo:
             lo = rl

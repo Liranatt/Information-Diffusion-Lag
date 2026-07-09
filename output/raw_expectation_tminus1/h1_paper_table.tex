@@ -1,0 +1,17 @@
+\begin{table}[H]
+\centering
+\caption{Raw T-1 expectation inference. One-sided tests use $H_1:\mu>0$.}
+\label{tab:h1inference}
+\small
+\begin{tabular}{lrrrrrrr}
+\toprule
+\textbf{Level} & $N$ & \textbf{Mean} & \textbf{95\% BCa CI} & \textbf{Median} & \textbf{Win} & \textbf{$p_{\mathrm{iid}}$} & \textbf{$p_{\mathrm{dep}}$} \\
+\midrule
+Candidate & 890 & +1.35\% & [+0.79\%, +1.94\%] & +0.27\% & +52.36\% & $<10^{-4}$ & 0.0794 \\
+Symbol-day & 763 & +0.65\% & [+0.14\%, +1.21\%] & +0.01\% & +50.07\% & 0.0085 & 0.0408 \\
+Event & 808 & +1.27\% & [+0.73\%, +1.84\%] & +0.34\% & +53.22\% & $<10^{-4}$ & 0.1070 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent $p_{\mathrm{dep}}$ is a cluster bootstrap using the most relevant dependence unit for each row: symbol-episode for candidate and symbol-day rows, and entry-month for event-level aggregates.

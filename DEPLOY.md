@@ -1,0 +1,138 @@
+# 24/7 live paper-trading deployment
+
+Runs the hourly control pipeline (`interactive_brokers.run_live --daemon`)
+unattended on a Linux server, alongside a headless IB Gateway that auto-logs-in
+and restarts nightly. Postgres runs natively on the same host.
+
+```
+┌─────────────────────────────────────────────┐
+│ Linux server                                 │
+│                                              │
+│  ┌────────────┐   4004    ┌───────────────┐  │
+│  │  trader    │──────────▶│  ib-gateway   │  │
+│  │  (daemon)  │           │  (IBC login)  │  │
+│  └─────┬──────┘           └───────────────┘  │
+│        │ host.docker.internal:5432           │
+│        ▼                                      │
+│  ┌────────────┐                               │
+│  │ Postgres   │  (native, on the host)        │
+│  └────────────┘                               │
+└─────────────────────────────────────────────┘
+```
+
+## 1. Host prerequisites
+
+- Docker Engine + Compose plugin (`docker compose version`).
+- Postgres running natively on the host, already loaded with the live tables
+  (you have 171 tracked markets in it today).
+
+## 2. Let the container reach the host Postgres
+
+The trader connects to `host.docker.internal`, which resolves to the Docker
+bridge gateway (typically `172.17.0.1`). Postgres must listen on that interface
+and allow the Docker subnet:
+
+`postgresql.conf`:
+```
+listen_addresses = 'localhost,172.17.0.1'
+```
+
+`pg_hba.conf` (add a line; adjust the subnet if your bridge differs):
+```
+host    <DB_NAME>   <DB_USER>   172.16.0.0/12    scram-sha-256
+```
+Then `sudo systemctl reload postgresql`. Confirm the bridge IP with
+`docker network inspect bridge | grep Gateway`.
+
+## 3. Secrets: the single `.env` file
+
+**One file holds every secret** the stack needs: the repo-root `.env`. Both
+containers read it — the trader via `env_file: .env` (DB creds, `IB_CLIENT_ID`,
+the `my_traders_api_key` Gemini key), and the compose file interpolates
+`${TWS_USERID}` / `${TWS_PASSWORD}` from it for the Gateway. Nothing else needs
+copying.
+
+`.env` is git-ignored, so **cloning the repo on the server does NOT bring it** —
+you must copy it there yourself. From this machine:
+
+```bash
+# 1. Add the paper Gateway login to .env (the Gemini + DB keys are already in it):
+#      TWS_USERID=<your IBKR paper username>
+#      TWS_PASSWORD=<your IBKR paper password>
+
+# 2. Copy .env to the repo root on the server, over SSH:
+scp .env <user>@<server>:/path/to/cem_clean_repo/.env
+
+# 3. On the server, lock it down (it holds live secrets):
+ssh <user>@<server> 'chmod 600 /path/to/cem_clean_repo/.env'
+```
+
+Notes:
+- `IB_HOST`, `IB_PORT`, `DB_HOST` in `.env` stay at their local values
+  (127.0.0.1 / 4002 / localhost) for running locally. The compose file
+  overrides them for the container — `python-dotenv` runs with
+  `override=False`, so the container environment wins.
+- **Discovery runs and costs money.** The Gemini key (`my_traders_api_key`) is
+  present, so the daily discovery stage (`LLM/gemini_client.py`) works and
+  will scan + classify + asset-map new Polymarket markets **every day the
+  daemon is up** — recurring paid API calls by design. Watch the spend.
+
+## 4. Build and validate BEFORE going live
+
+```bash
+# Build images and start the Gateway (leave trader down for the dry run).
+docker compose up -d --build ib-gateway
+
+# Wait until the Gateway is healthy (auto-login can take 1-2 min).
+docker compose ps
+
+# One full tick, NO orders sent. Read the output: probs should load and a NAV
+# snapshot should write. (On tick 1 discovery runs — a real Gemini call.)
+docker compose run --rm trader python -m interactive_brokers.run_live --once --dry-run
+
+# One real paper tick, during US market hours (09:30-16:00 ET):
+docker compose run --rm trader python -m interactive_brokers.run_live --once
+
+# Inspect portfolio state:
+docker compose run --rm trader python -m interactive_brokers.run_live --status
+```
+
+## 5. Go 24/7
+
+```bash
+docker compose up -d          # starts ib-gateway + trader, both restart:unless-stopped
+docker compose logs -f trader # follow the hourly ticks
+```
+
+The daemon ticks hourly forever. It survives Gateway restarts (auto-reconnect
+between ticks) and per-stage failures (each stage is isolated). `restart:
+unless-stopped` brings it back after a host reboot or crash.
+
+## 6. Keep walking forward (policy updates)
+
+The live engine always trades the **latest walk-forward fold** for
+`T1+T2+T3+T4` / `SPY`, read from
+`data/experiment_walkforward_folds_clean.csv`. To roll the policy forward,
+re-run `optimize_cem.py` on the host with fresh resolved events; it rewrites
+that CSV, and the daemon picks up the new last-fold policy on its **next tick**
+— no restart needed (the `data/` dir is bind-mounted).
+
+## 7. Paper-account checklist (one-time, in IBKR)
+
+- Fractional-share trading **enabled** (benchmark legs use fractional SPY/QQQ;
+  `LIVE_FRACTIONAL_BENCHMARK=true`).
+- US market-data subscription active (delayed is fine for paper).
+- Account is a paper account (`DU...`) — the paper guard hard-blocks anything
+  that doesn't look like one.
+
+## 8. Things to expect
+
+- **First RTH tick sweeps all idle cash into SPY** (fully-invested rotation
+  model), then rotates into event positions as signals fire.
+- **~104 IB historical-data requests/tick** (benchmark + ~51 mapped assets ×
+  hourly+daily). Near IB's pacing limit — the first minute of each tick is
+  slow; retries absorb pacing warnings.
+- Port mapping note: `ghcr.io/gnzsnz/ib-gateway` forwards the paper API to
+  socat port **4004** internally. If a future image tag changes this, update
+  `IB_PORT` in `docker-compose.yml` and the healthcheck. Confirm with
+  `docker compose logs ib-gateway`.

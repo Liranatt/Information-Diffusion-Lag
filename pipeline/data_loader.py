@@ -18,6 +18,7 @@ from database.backtesting.schema import SCHEMA
 NUM_FEATURES = [
     "feat_prob_at_trigger", "feat_prob_slope_24h", "feat_prob_volatility",
     "feat_prob_surge_since_t0", "feat_time_to_resolution_days",
+    "feat_has_pre_crossing_history",
     "feat_crossing_latency_days", "feat_pre_entry_volume_log",
     "feat_runup_since_t0", "feat_asset_2w_trend", "feat_sector_1m_trend",
     "feat_spy_2w_trend", "feat_ytd_change",
@@ -34,6 +35,8 @@ NUM_FEATURES_LEAN = [
 ]
 CAT_FEATURES_LEAN: list[str] = []
 TARGET = "asset_return"
+# Universe pre-filter: candidates only exist after the first crossing of this
+# fixed theta. CEM tunes entry after this filter; it does not calibrate theta.
 THETA_THRESHOLD = 0.55
 TRAIN_FRACTION = 0.60
 VAL_FRACTION = 0.10
@@ -88,6 +91,36 @@ def _prob_volatility(pts: list[tuple], t_theta: pd.Timestamp, window_days: int =
     if len(window) < 3:
         return None
     return float(np.std(window))
+
+
+def _prob_change_lookback(
+    pts: list[tuple],
+    t_theta: pd.Timestamp,
+    days: int = 7,
+) -> float | None:
+    """Probability change over a fixed lookback ending at t_theta."""
+    p_now = next((p for t, p in reversed(pts) if t <= t_theta), None)
+    t_prev = t_theta - pd.Timedelta(days=days)
+    p_prev = next((p for t, p in reversed(pts) if t <= t_prev), None)
+    if p_now is not None and p_prev is not None:
+        return p_now - p_prev
+    return None
+
+
+def _trading_return_lookback(
+    bars: list[tuple],
+    t: pd.Timestamp,
+    lookback_bars: int = 20,
+) -> float | None:
+    """Return over a fixed number of completed trading bars ending at t."""
+    closes = [(ts, c) for ts, c in bars if ts <= t]
+    if len(closes) <= lookback_bars:
+        return None
+    c_end = closes[-1][1]
+    c_start = closes[-(lookback_bars + 1)][1]
+    if c_end and c_start and c_start > 0:
+        return c_end / c_start - 1.0
+    return None
 
 
 async def load_prices_from_db(symbols: list[str]) -> dict[str, list[tuple]]:
@@ -182,9 +215,8 @@ def compute_features(
     p_t0 = probs[0][1] if probs else 0.5
     p_theta = next((p for t, p in probs if t >= t_theta), 0.55)
 
-    bar_t0 = next((c for t, c in reversed(prices) if t <= t0), None)
     bar_theta = next((c for t, c in reversed(prices) if t <= t_theta), None)
-    if not bar_t0 or not bar_theta:
+    if not bar_theta:
         return None
 
     # Compute asset_return: close at t_e / close at t_theta - 1
@@ -206,11 +238,12 @@ def compute_features(
         "feat_prob_at_trigger": p_theta,
         "feat_prob_slope_24h": _finite(_prob_slope_24h(probs, t_theta)) or 0.0,
         "feat_prob_volatility": _finite(_prob_volatility(probs, t_theta)) or 0.0,
-        "feat_prob_surge_since_t0": p_theta - p_t0,
+        "feat_prob_surge_since_t0": _finite(_prob_change_lookback(probs, t_theta, 7)) or 0.0,
+        "feat_has_pre_crossing_history": (p_theta - p_t0) > 0.0,
         "feat_time_to_resolution_days": (t_e - t_theta).total_seconds() / 86400,
         "feat_crossing_latency_days": (t_theta - t0).total_seconds() / 86400,
         "feat_pre_entry_volume_log": 0.0,  # volume data not always available
-        "feat_runup_since_t0": bar_theta / bar_t0 - 1.0,
+        "feat_runup_since_t0": _finite(_trading_return_lookback(prices, t_theta, 20)) or 0.0,
         "feat_asset_2w_trend": _finite(_trend(prices, t_theta, 14)) or 0.0,
         "feat_sector_1m_trend": _finite(_trend(sector_etf_prices, t_theta, 30)) or 0.0,
         "feat_spy_2w_trend": _finite(_trend(spy_prices, t_theta, 14)) or 0.0,
