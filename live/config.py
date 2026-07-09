@@ -56,9 +56,6 @@ class LiveConfig:
     # Benchmark legs use fractional shares (requires fractional-share trading
     # permission on the IB account; SPY/QQQ are fraction-eligible).
     fractional_benchmark: bool = _env_bool("LIVE_FRACTIONAL_BENCHMARK", False)
-    # Offset for IB paper trading glitches (e.g. ghost fills that inflate cash).
-    # This amount is subtracted from total equity and cash when reporting to DB.
-    paper_glitch_offset: float = _env_float("LIVE_PAPER_GLITCH_OFFSET", 0.0)
 
     # ── Control loop cadence ─────────────────────────────────────────────
     tick_seconds: int = _env_int("LIVE_TICK_SECONDS", 3600)       # hourly

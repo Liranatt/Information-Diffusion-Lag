@@ -57,6 +57,19 @@ def _f(v):
     return float(v) if v is not None else None
 
 
+def _reconciled_series(eq_series, reconciled_latest):
+    """NAV curve (chronological). The stored equity can carry IB paper ghost-fill
+    inflation; pin the most recent point to the ledger-reconciled equity so the
+    curve ends on a truthful value."""
+    series = [
+        {"ts": _iso(r["ts"]), "equity": round(float(r["equity"]), 2),
+         "passive": round(float(r["passive_equity"]), 2) if r["passive_equity"] is not None else None}
+        for r in reversed(eq_series)]
+    if series and reconciled_latest is not None:
+        series[-1]["equity"] = round(reconciled_latest, 2)
+    return series
+
+
 # ── Backtest (walk-forward folds + live policy) ──────────────────────────────
 
 def load_backtest() -> dict:
@@ -224,7 +237,22 @@ async def gather_metrics() -> dict:
     bench_shares = float(eq["benchmark_shares"]) if eq else 0.0
     bench_price = await store.latest_close(BENCH)
     spy_value = bench_shares * (bench_price or 0.0)
-    cash = float(eq["cash"]) if eq else 0.0
+
+    # Reconcile away IB paper-account ghost-fill inflation using the shared cash
+    # ledger -- the same source the trader now stores (LiveStore.reconciled_cash):
+    #   real_cash = all-cash start equity - net filled buys - commissions
+    #   equity    = real_cash + open-position market value + benchmark value
+    # `glitch` is any leftover gap vs the stored (pre-fix) equity, for display.
+    ledger_cash = await store.reconciled_cash()
+    reported_equity = _f(eq["equity"]) if eq else None
+    if ledger_cash is not None:
+        cash = ledger_cash
+        equity = cash + trades_value + spy_value
+        excess = (equity - passive) if passive is not None else None
+        glitch = (reported_equity - equity) if reported_equity is not None else None
+    else:
+        cash = float(eq["cash"]) if eq else 0.0
+        glitch = None
     total = spy_value + trades_value + cash
     closed, wins = int(perf["closed"] or 0), int(perf["wins"] or 0)
     filled = sum(1 for o in orders if o["status"] in ("Filled", "dry_run"))
@@ -241,6 +269,8 @@ async def gather_metrics() -> dict:
             "open_positions": len(positions),
             "excess": round(excess, 2) if excess is not None else None,
             "excess_pct": round(excess / passive * 100.0, 2) if excess is not None and passive else None,
+            "reported_equity": round(reported_equity, 2) if reported_equity is not None else None,
+            "glitch": round(glitch, 2) if glitch else None,
             "as_of": _iso(eq["ts"]) if eq else None,
         },
         "allocation": {
@@ -268,10 +298,7 @@ async def gather_metrics() -> dict:
             "win_rate": round(wins / closed * 100.0, 1) if closed else None,
         },
         "exec": {"filled": filled, "recent": len(orders), "failed": failed},
-        "equity_series": [
-            {"ts": _iso(r["ts"]), "equity": round(float(r["equity"]), 2),
-             "passive": round(float(r["passive_equity"]), 2) if r["passive_equity"] is not None else None}
-            for r in reversed(eq_series)],
+        "equity_series": _reconciled_series(eq_series, equity),
         "open_positions": positions,
         "recent_orders": [
             {"ts": _iso(r["ts"]), "symbol": r["symbol"], "action": r["action"],
@@ -455,6 +482,12 @@ PAGE = r"""<!doctype html>
   .alert{display:flex; gap:11px; align-items:center; background:#fff5f6; border:1px solid #fbd5dc; color:#b3213f;
     border-radius:8px; padding:13px 16px; margin-bottom:18px; font-size:13px; box-shadow:var(--shadow)}
   .alert b{color:#d81b4a}
+  .infobar{display:flex; flex-wrap:wrap; align-items:center; gap:6px 11px; background:var(--card);
+    border:1px solid var(--line2); color:var(--ink2); border-radius:8px; padding:12px 16px;
+    margin-bottom:18px; font-size:13px; box-shadow:var(--shadow)}
+  .infobar b{color:var(--ink); font-weight:700}
+  .infobar .ic{margin-right:2px}
+  .infobar .sep{color:var(--faint)}
   .meter{height:9px; border-radius:6px; background:#eef1f6; overflow:hidden}
   .meter>span{display:block; height:100%; border-radius:6px; transition:width .6s}
   .kv{display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--line); font-size:13px}
@@ -672,15 +705,21 @@ async function refresh(){
   $("#meta").innerHTML=`NAV ${dt(p.as_of)} · ${marketText(d.market)} · ${cadence(d.tick_seconds)} loop · <span id="clk">${new Date().toLocaleTimeString(LOCALE)}</span>`;
   $("#sideEq").textContent=usd0(p.equity); $("#sideSub").textContent=`${p.open_positions} positions · ${d.experiment}`;
 
-  let best = pf.best ? `<b>Best Trade:</b> ${pf.best.symbol} (+${usd0(pf.best.pnl)})` : "";
-  let worst = pf.worst ? `<b>Worst Trade:</b> ${pf.worst.symbol} (${usd0(pf.worst.pnl)})` : "";
-  let portfolio_state = `<b>Portfolio:</b> ${p.open_positions} open positions, ${nn(a.invested_pct, 0)}% invested`;
-  let trades_info = `<b>Trades:</b> ${pf.closed_trades} closed (${nn(pf.win_rate, 0)}% win rate)`;
-  
-  const alert = `<div class="alert" style="background-color: var(--card-bg); color: var(--fg); border: 1px solid var(--border);">
-    ✨ ${portfolio_state} &nbsp;&nbsp;|&nbsp;&nbsp; ${trades_info} &nbsp;&nbsp;|&nbsp;&nbsp; ${best} &nbsp;&nbsp;|&nbsp;&nbsp; ${worst}
-  </div>`;
-  $("#alerts").innerHTML=alert; $("#palerts").innerHTML=alert;
+  // Neutral, informative banner. Open P&L is summed from position-level
+  // unrealized (immune to the IB paper cash glitch), plus trade counts and the
+  // day's biggest movers among open positions.
+  const openPnl=(d.open_positions||[]).reduce((s,x)=>s+(x.unrealized||0),0);
+  const byPnl=[...(d.open_positions||[])].sort((x,y)=>(y.unrealized||0)-(x.unrealized||0));
+  const top=byPnl[0], bot=byPnl.length>1?byPnl[byPnl.length-1]:null;
+  const mover=(x,lead)=>x?`<b>${lead}:</b> ${x.symbol} <span class="${cl(x.unrealized)}">${sg(x.unrealized)}</span>${x.unrealized_pct==null?"":` (${sg(x.unrealized_pct)}%)`}`:"";
+  const bits=[
+    `<b>Open P&amp;L:</b> <span class="${cl(openPnl)}">${sg(openPnl)}</span>`,
+    `<b>Positions:</b> ${p.open_positions} open · ${pf.closed_trades} closed${pf.win_rate==null?"":` (${nn(pf.win_rate,0)}% win)`}`,
+    `<b>Realized:</b> <span class="${cl(pf.realized_pnl)}">${sg(pf.realized_pnl)}</span>`,
+    mover(top,"Top"), mover(bot,"Weakest"),
+  ].filter(Boolean);
+  const bar=`<div class="infobar"><span class="ic">📊</span>${bits.join('<span class="sep">·</span>')}</div>`;
+  $("#alerts").innerHTML=bar; $("#palerts").innerHTML=bar;
 
   $("#kpis").innerHTML=
     kpi("Equity", usd0(p.equity), d.experiment, "neu")+
@@ -688,7 +727,7 @@ async function refresh(){
     kpi("In event trades", usd0(a.trades_value), a.trades_pct+"%", "neu")+
     kpi("Excess vs passive", sg(p.excess), p.excess_pct==null?null:sg(p.excess_pct)+"%", cl(p.excess)||"neu");
 
-  donut($("#donut"),[{v:a.spy_pct,c:C.brand},{v:a.trades_pct,c:C.sky},{v:a.cash_pct,c:"#dfe4ee"}]);
+  donut($("#donut"),[{v:a.spy_pct,c:C.brand},{v:a.trades_pct,c:C.sky},{v:Math.max(0,a.cash_pct),c:"#dfe4ee"}]);
   $("#invpct").textContent=nn(a.invested_pct,0)+"%";
   const li=(c,nm,v,pc)=>`<div class="it"><span class="sw" style="background:${c}"></span><span class="nm">${nm}</span><span class="vl">${usd0(v)}</span><span class="pc">${nn(pc,1)}%</span></div>`;
   $("#alloclegend").innerHTML=li(C.brand,d.benchmark+" index",a.spy_value,a.spy_pct)+

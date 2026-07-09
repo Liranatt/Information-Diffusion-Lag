@@ -428,6 +428,30 @@ class LiveStore:
                 position_id, note, commission, reference_price,
             )
 
+    async def reconciled_cash(self) -> float | None:
+        """True cash from the fill ledger, immune to IB paper ghost-fill inflation.
+
+        IB *paper* accounts can report inflated TotalCashValue/NetLiquidation
+        after ghost/duplicate fills. Rebuild cash from what actually happened:
+
+            first (all-cash) snapshot equity  - net filled buys - commissions
+
+        Returns None before the first snapshot exists (bootstrap), so callers
+        fall back to the IB/derived figure.
+        """
+        async with self.pool.acquire() as conn:
+            first = await conn.fetchrow(
+                f"SELECT equity FROM {SCHEMA}.live_equity_snapshots ORDER BY ts LIMIT 1")
+            if not first or first["equity"] is None:
+                return None
+            fills = await conn.fetch(
+                f"""SELECT action, qty, fill_price, commission FROM {SCHEMA}.live_orders
+                    WHERE status IN ('Filled', 'dry_run') AND fill_price IS NOT NULL""")
+        net_buys = sum(float(f["qty"]) * float(f["fill_price"])
+                       * (1.0 if f["action"] == "BUY" else -1.0) for f in fills)
+        commissions = sum(float(f["commission"] or 0.0) for f in fills)
+        return float(first["equity"]) - net_buys - commissions
+
     async def snapshot_equity(self, *, equity: float, cash: float, benchmark_shares: float,
                               benchmark_price: float | None, open_positions: int,
                               passive_equity: float | None) -> None:

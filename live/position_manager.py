@@ -52,16 +52,16 @@ class PositionManager:
             price = await self.store.latest_close(pos["symbol"]) or float(pos["entry_price"])
             open_value += int(pos["qty"]) * price
 
-        if self.cfg.dry_run or net_liquidation is None:
-            equity = (cash or 0.0) + benchmark_shares * (benchmark_price or 0.0) + open_value
-        else:
-            equity = net_liquidation
-
-        # Paper trading glitch offset
-        if cash is not None:
-            cash = max(0.0, cash - self.cfg.paper_glitch_offset)
-        if equity is not None:
-            equity = equity - self.cfg.paper_glitch_offset
+        # Equity/cash from a fill ledger, not IB's reported balances. IB *paper*
+        # accounts inflate TotalCashValue/NetLiquidation via ghost/duplicate
+        # fills; the ledger (all-cash start - net filled buys - commissions) is
+        # immune, and it keeps sizing/sweeps honest instead of buying on phantom
+        # cash. NetLiquidation is still read above purely for the `valid` gate.
+        if not self.cfg.dry_run and valid:
+            ledger_cash = await self.store.reconciled_cash()
+            if ledger_cash is not None:
+                cash = ledger_cash
+        equity = (cash or 0.0) + benchmark_shares * (benchmark_price or 0.0) + open_value
 
         return {
             "cash": cash or 0.0,
