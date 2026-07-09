@@ -57,6 +57,12 @@ class PositionManager:
         else:
             equity = net_liquidation
 
+        # Paper trading glitch offset
+        if cash is not None:
+            cash = max(0.0, cash - self.cfg.paper_glitch_offset)
+        if equity is not None:
+            equity = equity - self.cfg.paper_glitch_offset
+
         return {
             "cash": cash or 0.0,
             "benchmark_shares": benchmark_shares,
