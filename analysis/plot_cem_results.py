@@ -3,14 +3,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
 import re
-import json
-import asyncio
-import sys
 
 # To run sim_opp_cost, we need to import from optimize_cem
 # But optimize_cem has if __name__ == "__main__": main()
 import optimize_cem
-from database.db_connection import connect
 
 def calc_daily_metrics(r_series):
     if len(r_series) < 2: return {"sharpe":0, "sortino":0, "pnl":0, "max_dd":0}

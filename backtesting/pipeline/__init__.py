@@ -1,1 +1,1 @@
-"""Production pipeline: Polymarket → Gemini → RF → Strategy → RL → IB."""
+"""Backtest pipeline: Polymarket scan → Gemini routing → CEM policy search → portfolio sim."""
