@@ -2,7 +2,7 @@
 set -euo pipefail
 
 APP_DIR="${APP_DIR:-/home/liranatt/cem_clean_repo}"
-DEPLOY_BRANCH="${DEPLOY_BRANCH:-cem/phase0-phase1-plumbing}"
+DEPLOY_BRANCH="${DEPLOY_BRANCH:-main}"
 LOCK_FILE="${LOCK_FILE:-/tmp/cem_clean_repo_deploy.lock}"
 
 exec 9>"$LOCK_FILE"
