@@ -17,7 +17,7 @@ cd "$APP_DIR"
   live/strategy_engine.py \
   live/utils.py
 
-docker compose up -d --build
+docker compose -f docker/docker-compose.yml up -d --build
 curl -fsS --max-time 10 "$HEALTH_URL" >/dev/null
 
 echo "deploy ok: $(date -Is)"
