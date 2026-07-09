@@ -25,20 +25,23 @@ class PositionManager:
         zero balance.
         """
         valid = True
+        net_liquidation = None
         if self.cfg.dry_run:
             cash: float | None = 0.0
             ib_positions: dict[str, float] = {}
         else:
             try:
-                cash = await self.ib_conn.account_cash()
+                summary = await self.ib_conn.account_summary()
+                cash = summary.get("TotalCashValue") if summary else None
+                net_liquidation = summary.get("NetLiquidation") if summary else None
                 ib_positions = await self.ib_conn.portfolio_positions()
             except Exception as error:  # noqa: BLE001 - IB warm-up / timeouts
                 log.warning("IB account query failed (%s) -- snapshot marked incomplete",
                             type(error).__name__)
-                cash, ib_positions, valid = None, {}, False
-            if cash is None:
+                cash, net_liquidation, ib_positions, valid = None, None, {}, False
+            if cash is None or net_liquidation is None:
                 valid = False
-                log.warning("IB returned no cash balance -- snapshot marked incomplete")
+                log.warning("IB returned no cash/NAV balance -- snapshot marked incomplete")
 
         open_db = await self.store.open_positions()
         benchmark_shares = float(ib_positions.get(self.cfg.benchmark, 0.0))
@@ -49,7 +52,11 @@ class PositionManager:
             price = await self.store.latest_close(pos["symbol"]) or float(pos["entry_price"])
             open_value += int(pos["qty"]) * price
 
-        equity = (cash or 0.0) + benchmark_shares * (benchmark_price or 0.0) + open_value
+        if self.cfg.dry_run or net_liquidation is None:
+            equity = (cash or 0.0) + benchmark_shares * (benchmark_price or 0.0) + open_value
+        else:
+            equity = net_liquidation
+
         return {
             "cash": cash or 0.0,
             "benchmark_shares": benchmark_shares,

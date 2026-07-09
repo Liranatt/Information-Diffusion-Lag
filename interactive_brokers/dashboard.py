@@ -182,16 +182,14 @@ async def gather_metrics() -> dict:
             stop_ret = peak - atr_mult * atr_pct
             stop_loss = round(entry * (1.0 + stop_ret), 2)
 
-        # Stock T0→Now: suppress misleading near-zero deltas
+        # Stock T0→Now
         stock_runup_pct_val = None
         if stock_t0 and float(stock_t0) > 0:
-            raw = (float(last) / float(stock_t0) - 1.0) * 100.0
-            stock_runup_pct_val = round(raw, 2) if abs(raw) >= 0.01 else None
+            stock_runup_pct_val = round((float(last) / float(stock_t0) - 1.0) * 100.0, 2)
 
         stock_entry_runup_pct_val = None
         if stock_t0 and float(stock_t0) > 0:
-            raw_e = (entry / float(stock_t0) - 1.0) * 100.0
-            stock_entry_runup_pct_val = round(raw_e, 2) if abs(raw_e) >= 0.01 else None
+            stock_entry_runup_pct_val = round((entry / float(stock_t0) - 1.0) * 100.0, 2)
 
         positions.append({
             "symbol": p["symbol"], "qty": int(p["qty"]),
