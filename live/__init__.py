@@ -10,5 +10,5 @@ Modules:
   order_manager     -- benchmark-rotation orders + fully-invested cash sweep
   position_manager  -- IB <-> DB reconciliation
   control_pipeline  -- the 24/7 hourly orchestrator
-  run_live          -- CLI entry point (python -m interactive_brokers.run_live)
+  run_live          -- CLI entry point (python -m live.run_live)
 """

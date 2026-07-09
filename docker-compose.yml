@@ -10,10 +10,10 @@
 # IB_PORT=4004, DB_HOST=192.168.1.159). No second gateway, no host.docker.internal,
 # no pg_hba changes -- a host-net container is network-identical to a host process.
 #
-# Build + validate:  docker compose run --rm trader python -m interactive_brokers.run_live --once --dry-run
+# Build + validate:  docker compose run --rm trader python -m live.run_live --once --dry-run
 # Go 24/7:           docker compose up -d --build
 # Logs:              docker compose logs -f trader
-# Status:            docker compose run --rm trader python -m interactive_brokers.run_live --status
+# Status:            docker compose run --rm trader python -m live.run_live --status
 
 services:
   trader:
@@ -27,7 +27,7 @@ services:
       LIVE_TRACK_API_COST: "1"    # log Gemini token usage/cost to live_api_costs
     volumes:
       - .:/app                    # live source + data/ (refit CSVs propagate) + .env
-    command: ["python", "-m", "interactive_brokers.run_live", "--daemon"]
+    command: ["python", "-m", "live.run_live", "--daemon"]
 
   # Read-only live dashboard at http://<host>:8080 (LAN). Never trades.
   # Reuses the image built by `trader` (no separate build).
@@ -43,4 +43,4 @@ services:
       DASHBOARD_PORT: "8080"
     volumes:
       - .:/app
-    command: ["python", "-m", "interactive_brokers.dashboard"]
+    command: ["python", "-m", "live.dashboard"]

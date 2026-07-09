@@ -4,7 +4,7 @@ A light, premium single-page app (default 0.0.0.0:8080). Read-only: it never
 connects to IB and never trades -- everything is served from the shared Postgres
 plus the walk-forward backtest CSV.
 
-    python -m interactive_brokers.dashboard      # or the docker compose `dashboard` service
+    python -m live.dashboard      # or the docker compose `dashboard` service
 
 Views: Overview (allocation index-vs-trades, NAV vs passive, KPIs), Portfolio
 (open positions with prob/stock runup, Kelly, real commission + slippage; orders;

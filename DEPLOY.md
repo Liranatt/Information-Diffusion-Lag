@@ -12,9 +12,9 @@
 > Deploy: clone repo → copy `.env` in → `docker compose run --rm trader … --once
 > --dry-run` → `docker compose up -d --build`.
 
-Runs the hourly control pipeline (`interactive_brokers.run_live --daemon`)
+Runs the hourly control pipeline (`live.run_live --daemon`)
 unattended on a Linux server and serves the read-only dashboard
-(`interactive_brokers.dashboard`) on port `8080`. The host already has a
+(`live.dashboard`) on port `8080`. The host already has a
 headless IB Gateway container and Postgres available on the LAN IP.
 
 ```
@@ -101,13 +101,13 @@ docker compose ps
 
 # One full tick, NO orders sent. Read the output: probs should load and a NAV
 # snapshot should write. (On tick 1 discovery runs — a real Gemini call.)
-docker compose run --rm trader python -m interactive_brokers.run_live --once --dry-run
+docker compose run --rm trader python -m live.run_live --once --dry-run
 
 # One real paper tick, during US market hours (09:30-16:00 ET):
-docker compose run --rm trader python -m interactive_brokers.run_live --once
+docker compose run --rm trader python -m live.run_live --once
 
 # Inspect portfolio state:
-docker compose run --rm trader python -m interactive_brokers.run_live --status
+docker compose run --rm trader python -m live.run_live --status
 ```
 
 ## 5. Go 24/7

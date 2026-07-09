@@ -29,10 +29,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from database.backtesting.schema import SCHEMA
 
-from interactive_brokers.config import CONFIG, LiveConfig
-from interactive_brokers.connection import IBConnection
-from interactive_brokers.data_fetcher import DataFetcher
-from interactive_brokers.database import LiveStore
+from live.config import CONFIG, LiveConfig
+from live.connection import IBConnection
+from live.data_fetcher import DataFetcher
+from live.database import LiveStore
 
 
 ACCOUNT_SUMMARY_TAGS = {

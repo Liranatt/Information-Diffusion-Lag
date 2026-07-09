@@ -25,4 +25,4 @@ RUN pip install -r requirements.txt
 # propagate without a rebuild.
 COPY . .
 
-CMD ["python", "-m", "interactive_brokers.run_live", "--daemon"]
+CMD ["python", "-m", "live.run_live", "--daemon"]

@@ -2,10 +2,10 @@
 
 Run on the private server:
 
-    python -m interactive_brokers.run_live --daemon          # 24/7 hourly loop
-    python -m interactive_brokers.run_live --once            # single tick (cron)
-    python -m interactive_brokers.run_live --once --discover # tick + force discovery
-    python -m interactive_brokers.run_live --status          # print portfolio state
+    python -m live.run_live --daemon          # 24/7 hourly loop
+    python -m live.run_live --once            # single tick (cron)
+    python -m live.run_live --once --discover # tick + force discovery
+    python -m live.run_live --status          # print portfolio state
 
 Requires: IB Gateway/TWS running in paper mode, the repo .env with DB_* and
 Gemini credentials, and at least one completed optimize_cem.py run (the live
@@ -22,8 +22,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from interactive_brokers.config import CONFIG, LiveConfig
-from interactive_brokers.control_pipeline import ControlPipeline
+from live.config import CONFIG, LiveConfig
+from live.control_pipeline import ControlPipeline
 
 
 def setup_logging() -> None:
