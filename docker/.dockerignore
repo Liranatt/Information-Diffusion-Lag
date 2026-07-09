@@ -1,0 +1,12 @@
+.git
+**/__pycache__
+*.pyc
+.venv
+venv
+# Heavy artifacts not needed at runtime (the policy CSVs in data/ ARE kept).
+*.pkl
+*.parquet
+*.png
+data/*_old*
+diagnostics
+*.log

@@ -1,59 +1,69 @@
-# Information Diffusion Lag: Trading Strategy Optimization
+# CEM - Information Diffusion Lag Strategy
 
-This repository contains the complete, self-contained codebase for optimizing and backtesting a rule-based trading strategy that exploits information diffusion lag between prediction markets (Polymarket) and traditional equity markets.
+CEM is an algorithmic trading system that exploits information diffusion lag by trading Polymarket event derivatives alongside a traditional equities benchmark (SPY/QQQ).
 
-## The Strategy Pipeline
+**All live components run fully containerized on a home server. A cron job automatically pulls the latest code from GitHub every minute, triggering an automatic deployment if changes are detected.**
 
-The pipeline is engineered to rigorously search for and validate deployable trading edges using a highly modular architecture:
+---
 
-### 1. Data Ingestion & Offline Availability
-This repository comes **fully pre-loaded with all required data**. We have queried a massive historical database to isolate the exact market candidates, equity price bars, and prediction probability trajectories needed for this experiment. 
-*   **`data/candidates.parquet`**: Contains the filtered, high-quality event candidates derived from our larger database.
-*   **`data/prices.pkl` & `data/probs.pkl`**: Pre-cached historical equity prices and Polymarket probability curves. 
+## Directory Structure
 
-Because this data is bundled directly in the `data/` folder, **you do not need a database connection to run this**. The pipeline will automatically load these local files, ensuring a seamless, plug-and-play reproduction of our experiments.
+The repository has been neatly organized into specific functional domains:
 
-### 2. Core Execution Kernel (`pipeline/sim_kernel.py`)
-At the heart of the project is a vectorized, high-performance simulation kernel. It processes the raw probability and price trajectories for every candidate event and applies our 10-dimensional trading heuristic ruleset (`pipeline/strategy.py`). This kernel handles everything from conditional entry triggers (e.g., probability floors) to dynamic trailing exits.
+* **`backtesting/`**  
+  Contains the core optimization and historical simulation engine. Use `optimize_cem.py` for policy search and `scan_historical.py` for historical data analysis. Also contains scripts for downloading historical backtest data.
 
-### 3. Cross-Entropy Method Optimization (`optimize_cem.py`)
-Because our trading logic relies on hard, non-differentiable IF/THEN constraints, we cannot use standard backpropagation to learn the best parameters. Instead, we use the **Cross-Entropy Method (CEM)**. 
-The optimizer iteratively samples policy parameter vectors, simulates the entire portfolio, and updates its sampling distribution based on the "elite" performing policies. 
+* **`live/`** *(formerly interactive_brokers/)*  
+  The live trading bot. Connects to the Interactive Brokers API to fetch the latest NAV, sweep idle cash into SPY, and maintain the live dashboard. Runs 24/7 inside a Docker container on the server.
 
-### 4. Advanced Experimental Constraints
-To ensure our results reflect true deployable edge rather than in-sample overfitting, the flagship configuration (T1) strictly enforces three constraints:
-1.  **Walk-Forward Optimization**: The policy is continuously re-trained using an expanding window, generating strictly out-of-sample (OOS) testing results.
-2.  **Dynamic Kelly Sizing**: Capital allocation dynamically scales in proportion to the strategy's empirical rolling win rate and risk-reward ratio.
-3.  **Friction-Aware Fitness**: The CEM optimizer maximizes a custom objective that actively subtracts transaction costs and slippage:
-    `Sharpe Ratio - (0.30 x Max DD) - (2.0 x Friction Failure Rate)`
+* **`analysis/`**  
+  All statistical tests, diagnostics, and plotting scripts. Run `plot_cem_results.py` to generate equity curves and bar charts comparing the strategy against benchmarks.
 
-## Setup and Usage
+* **`data_pipeline/`**  
+  Scripts for fetching, cleaning, and formatting market data and probabilities. Includes deduplication and database sync tools.
 
-### Prerequisites
+* **`llm_models/`**  
+  Consolidates all Claude and Gemini AI interactions. Responsible for parsing raw questions, world-building, and generating candidate asset tags.
 
-- Python 3.10+
+* **`testing/`**  
+  Unit tests and integration tests, including `test_ib.py`.
 
-### Installation
+---
 
-```bash
-git clone https://github.com/Liranatt/Information-Diffusion-Lag.git
-cd cem_clean_repo
-python -m venv .venv
-# Windows
-.venv\Scripts\activate
-# macOS / Linux
-source .venv/bin/activate
-pip install -r requirements.txt
+## Using Cached Data Files (.pkl & .parquet)
+
+The system relies on cached dataset snapshots to rapidly run backtests and statistical analyses without re-querying APIs.
+
+1. **`.parquet` files** are used for large, tabular datasets (like historical price feeds and order books) because they are highly compressed and load extremely fast into Pandas or Polars.
+2. **`.pkl` files** are used for serialized Python objects (like complex dictionaries or pre-compiled strategy state) that don't fit neatly into a table.
+
+To use them in your backtesting or analysis scripts:
+```python
+import pandas as pd
+
+# Load tabular price data
+prices_df = pd.read_parquet("data/historical_prices.parquet")
+
+# Load complex state or models
+import pickle
+with open("data/model_state.pkl", "rb") as f:
+    model = pickle.load(f)
 ```
 
-### Running
+---
 
-All data is pre-packaged. To run the full Cross-Entropy Method optimizer and generate trading logs:
+## Live Trading & Deployment
+
+The live system operates inside Docker containers on a home server:
+1. **Trader**: A daemon that wakes up hourly to scan markets, evaluate positions, and execute trades via Interactive Brokers.
+2. **Dashboard**: A web server exposing a dashboard on port 8080 showing live NAV, Stock T0→Now, recent orders, and the questions watchlist.
+
+### Automated Continuous Deployment
+You do not need to manually deploy code. A cron job on the server executes `scripts/deploy_if_changed.sh` every 60 seconds:
 ```bash
-python optimize_cem.py
+* * * * * cd ~/cem_clean_repo && bash scripts/deploy_if_changed.sh >> /tmp/cem_deploy.log 2>&1
 ```
-
-Once the optimization completes, you can visualize the results (equity curves, drawdown charts, portfolio allocations) by running:
+When you push code to GitHub, the server will detect it within a minute, automatically pull the changes, and restart the Docker containers. You can watch this happen live on the server via:
 ```bash
-python plot_cem_results_new.py
+tail -f /tmp/cem_deploy.log
 ```
