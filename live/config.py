@@ -52,6 +52,7 @@ class LiveConfig:
     experiment: str = os.environ.get("LIVE_EXPERIMENT", "T1+T2+T3+T4")
     fold_audit_csv: Path = REPO_ROOT / "data" / "experiment_walkforward_folds_clean.csv"
     results_csv: Path = REPO_ROOT / "data" / "experiment_results_clean.csv"
+    backtest_equity_csv: Path = REPO_ROOT / "data" / "backtest_equity_log.csv"
     use_kelly: bool = _env_bool("LIVE_USE_KELLY", True)
     # Benchmark legs use fractional shares (requires fractional-share trading
     # permission on the IB account; SPY/QQQ are fraction-eligible).

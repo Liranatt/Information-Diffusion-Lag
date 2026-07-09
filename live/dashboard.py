@@ -102,20 +102,57 @@ def load_backtest() -> dict:
             "max_dd_pct": round(float(r["eval_max_dd_pct"]), 2),
             "trades": int(r["eval_trades"]),
         } for _, r in sub.iterrows()]
-        comp = lambda key: (np.prod([1 + f[key] / 100 for f in folds]) - 1) * 100
+        res_path = CONFIG.results_csv
+        try:
+            if res_path.exists():
+                res_df = pd.read_csv(res_path)
+                res_sub = res_df[(res_df["experiment"] == CONFIG.experiment)
+                                 & (res_df["benchmark"] == CONFIG.benchmark)]
+                if not res_sub.empty:
+                    r_res = res_sub.iloc[-1]
+                    total_return_pct = float(r_res["test_return_pct"])
+                    total_benchmark_pct = float(r_res["test_benchmark_return_pct"])
+                    total_excess_pct = float(r_res["test_excess_return_pct"])
+                    worst_dd_pct = float(r_res["test_max_dd_pct"])
+                    total_trades = int(r_res["test_trades"])
+                else:
+                    raise ValueError("Not found in results")
+            else:
+                raise ValueError("No results csv")
+        except Exception:
+            comp = lambda key: (np.prod([1 + f[key] / 100 for f in folds]) - 1) * 100
+            total_return_pct = float(comp("return_pct"))
+            total_benchmark_pct = float(comp("benchmark_pct"))
+            total_excess_pct = float(comp("return_pct") - comp("benchmark_pct"))
+            worst_dd_pct = min(f["max_dd_pct"] for f in folds)
+            total_trades = sum(f["trades"] for f in folds)
+
         summary = {
             "n_folds": len(folds),
-            "total_return_pct": round(float(comp("return_pct")), 2),
-            "total_benchmark_pct": round(float(comp("benchmark_pct")), 2),
-            "total_excess_pct": round(float(comp("return_pct") - comp("benchmark_pct")), 2),
-            "worst_dd_pct": round(min(f["max_dd_pct"] for f in folds), 2),
-            "total_trades": sum(f["trades"] for f in folds),
+            "total_return_pct": round(total_return_pct, 2),
+            "total_benchmark_pct": round(total_benchmark_pct, 2),
+            "total_excess_pct": round(total_excess_pct, 2),
+            "worst_dd_pct": round(worst_dd_pct, 2),
+            "total_trades": total_trades,
             "positive_folds": sum(1 for f in folds if f["excess_pct"] > 0),
         }
         policy = json.loads(sub.iloc[-1]["eval_policy_json"])
+        equity_series = []
+        if CONFIG.backtest_equity_csv.exists():
+            try:
+                eq_df = pd.read_csv(CONFIG.backtest_equity_csv)
+                for _, row in eq_df.iterrows():
+                    equity_series.append({
+                        "ts": row["date"] + "T00:00:00Z",
+                        "equity": float(row["equity"]),
+                        "passive": float(row["benchmark_equity"])
+                    })
+            except Exception:
+                pass
+
         return {"available": True, "experiment": CONFIG.experiment,
                 "benchmark": CONFIG.benchmark, "folds": folds,
-                "summary": summary, "policy": policy}
+                "summary": summary, "policy": policy, "equity_series": equity_series}
     except Exception as error:  # noqa: BLE001
         return {"available": False, "error": str(error)}
 
@@ -650,6 +687,9 @@ PAGE = r"""<!doctype html>
         <div id="btchart"></div>
         <div class="legrow"><span><i style="border-color:var(--brand)"></i>Strategy return</span>
           <span><i style="border-color:var(--faint)"></i>Benchmark return</span></div></div>
+      <div class="card" style="margin-bottom:18px"><h3>Overall Out-of-Sample NAV curve · strategy vs passive benchmark</h3><div id="bt_equity_chart"></div>
+        <div class="legrow"><span><i style="border-color:var(--brand)"></i>Strategy equity</span>
+          <span><i style="border-color:var(--faint); border-top-style:dashed"></i>Passive benchmark</span></div></div>
       <div class="row c2b">
         <div class="card"><h3>Per-fold detail (out-of-sample)</h3><div class="tw" id="bttable"></div></div>
         <div class="card"><h3>Live policy parameters (latest fold)</h3><div class="params" id="btparams"></div></div>
@@ -914,6 +954,7 @@ async function loadBacktest(){ if(btLoaded) return; btLoaded=true;
     kpi("Excess", sg(s.total_excess_pct,1)+"%", s.positive_folds+"/"+s.n_folds+" folds +", s.total_excess_pct>=0?"up":"down")+
     kpi("Worst drawdown", nn(s.worst_dd_pct,1)+"%", s.total_trades+" trades", "neu");
   barChart($("#btchart"), d.folds);
+  if(d.equity_series) areaChart($("#bt_equity_chart"), d.equity_series);
   $("#bttable").innerHTML=table(d.folds,[
     {h:"Fold",f:r=>"F"+r.fold},{h:"Window",f:r=>`<span class="mut" style="font-size:11px">${r.start}→${r.end}</span>`},
     {h:"Return",n:1,f:r=>sg(r.return_pct,1)+"%",cl:r=>cl(r.return_pct)},
