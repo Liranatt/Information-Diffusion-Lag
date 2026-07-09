@@ -112,6 +112,12 @@ async def gather_metrics() -> dict:
                        COUNT(*) FILTER (WHERE status='closed' AND pnl > 0) AS wins,
                        COALESCE(SUM(pnl) FILTER (WHERE status='closed'), 0) AS realized_pnl
                 FROM {SCHEMA}.live_positions""")
+        best_trade = await conn.fetchrow(
+            f"SELECT symbol, pnl, pnl_pct FROM {SCHEMA}.live_positions WHERE status='closed' AND pnl IS NOT NULL ORDER BY pnl DESC LIMIT 1"
+        )
+        worst_trade = await conn.fetchrow(
+            f"SELECT symbol, pnl, pnl_pct FROM {SCHEMA}.live_positions WHERE status='closed' AND pnl IS NOT NULL ORDER BY pnl ASC LIMIT 1"
+        )
         open_pos = await conn.fetch(
             f"SELECT * FROM {SCHEMA}.live_positions WHERE status='open' ORDER BY entry_ts")
         orders = await conn.fetch(
@@ -257,6 +263,8 @@ async def gather_metrics() -> dict:
         "performance": {
             "realized_pnl": round(float(perf["realized_pnl"] or 0.0), 2),
             "closed_trades": closed, "wins": wins,
+            "best": dict(best_trade) if best_trade else None,
+            "worst": dict(worst_trade) if worst_trade else None,
             "win_rate": round(wins / closed * 100.0, 1) if closed else None,
         },
         "exec": {"filled": filled, "recent": len(orders), "failed": failed},
@@ -664,10 +672,14 @@ async function refresh(){
   $("#meta").innerHTML=`NAV ${dt(p.as_of)} · ${marketText(d.market)} · ${cadence(d.tick_seconds)} loop · <span id="clk">${new Date().toLocaleTimeString(LOCALE)}</span>`;
   $("#sideEq").textContent=usd0(p.equity); $("#sideSub").textContent=`${p.open_positions} positions · ${d.experiment}`;
 
-  const alert = x.failed.length
-    ? `<div class="alert">⚠ <b>${x.failed.length} order(s) not filled</b> recently — `+
-      x.failed.slice(0,4).map(o=>`${o.action} ${o.symbol} (${o.kind}: ${o.status})`).join(", ")+
-      (a.spy_pct<1?`. Idle cash is <b>not</b> in the ${d.benchmark} index — the sweep is failing.`:"")+`</div>` : "";
+  let best = pf.best ? `<b>Best Trade:</b> ${pf.best.symbol} (+${usd0(pf.best.pnl)})` : "";
+  let worst = pf.worst ? `<b>Worst Trade:</b> ${pf.worst.symbol} (${usd0(pf.worst.pnl)})` : "";
+  let portfolio_state = `<b>Portfolio:</b> ${p.open_positions} open positions, ${nn(a.invested_pct, 0)}% invested`;
+  let trades_info = `<b>Trades:</b> ${pf.closed_trades} closed (${nn(pf.win_rate, 0)}% win rate)`;
+  
+  const alert = `<div class="alert" style="background-color: var(--card-bg); color: var(--fg); border: 1px solid var(--border);">
+    ✨ ${portfolio_state} &nbsp;&nbsp;|&nbsp;&nbsp; ${trades_info} &nbsp;&nbsp;|&nbsp;&nbsp; ${best} &nbsp;&nbsp;|&nbsp;&nbsp; ${worst}
+  </div>`;
   $("#alerts").innerHTML=alert; $("#palerts").innerHTML=alert;
 
   $("#kpis").innerHTML=
