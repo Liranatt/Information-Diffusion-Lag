@@ -125,6 +125,12 @@ class ControlPipeline:
         # 7. NAV snapshot every tick (also overnight -- probs still move).
         await self.snapshot_equity(snapshot)
 
+        # 7b. System telemetry (DB size + disk) so space is observable.
+        try:
+            await self.store.record_system_metrics()
+        except Exception as error:  # noqa: BLE001 - telemetry must never break a tick
+            log.warning("system-metrics snapshot failed: %s", error)
+
     # ── Stages ───────────────────────────────────────────────────────────
 
     async def update_probabilities(self, markets: list[dict]) -> None:

@@ -13,3 +13,5 @@ numba>=0.60
 # 9.81). Nothing in this repo imports it -- all IB access goes through ib_async
 # -- so it is intentionally omitted here to keep `pip install` self-contained.
 ib_async>=1.0
+fastapi>=0.110
+uvicorn>=0.29

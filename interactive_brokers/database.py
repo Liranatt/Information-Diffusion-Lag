@@ -96,6 +96,30 @@ CREATE TABLE IF NOT EXISTS {SCHEMA}.live_equity_snapshots (
     passive_equity      DOUBLE PRECISION
 );
 
+-- Space/disk telemetry so DB growth is observable, not just pruned blindly.
+CREATE TABLE IF NOT EXISTS {SCHEMA}.live_system_metrics (
+    ts                  TIMESTAMPTZ PRIMARY KEY,
+    db_size_bytes       BIGINT,
+    disk_total_bytes    BIGINT,
+    disk_used_bytes     BIGINT,
+    disk_free_bytes     BIGINT
+);
+
+-- LLM (Gemini) spend accounting: one row per discovery run's client.
+CREATE TABLE IF NOT EXISTS {SCHEMA}.live_api_costs (
+    id                  BIGSERIAL PRIMARY KEY,
+    ts                  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    provider            TEXT NOT NULL DEFAULT 'gemini',
+    model               TEXT,
+    calls               INTEGER NOT NULL DEFAULT 0,
+    prompt_tokens       BIGINT NOT NULL DEFAULT 0,
+    completion_tokens   BIGINT NOT NULL DEFAULT 0,
+    total_tokens        BIGINT NOT NULL DEFAULT 0,
+    est_cost_usd        DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+    note                TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_live_api_costs_ts ON {SCHEMA}.live_api_costs(ts);
+
 -- Benchmark legs may be fractional (SPY/QQQ are fraction-eligible at IB).
 ALTER TABLE {SCHEMA}.live_equity_snapshots
     ALTER COLUMN benchmark_shares TYPE DOUBLE PRECISION;
@@ -382,6 +406,39 @@ class LiveStore:
                 prob_cutoff,
             )
         log.info("prune: %s hourly bars, %s prob points", deleted_bars, deleted_probs)
+
+    # ── System telemetry (DB size + disk) ────────────────────────────────
+
+    async def record_system_metrics(self, *, disk_path: str = "/app") -> dict:
+        """Snapshot DB size + disk usage of the host partition backing disk_path.
+
+        disk_path defaults to /app, which is the bind-mounted repo -- so the
+        free/total figures reflect the host filesystem, not the container's.
+        """
+        import shutil
+        usage = shutil.disk_usage(disk_path)
+        ts = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
+        async with self.pool.acquire() as conn:
+            db_size = await conn.fetchval("SELECT pg_database_size(current_database())")
+            await conn.execute(
+                f"""INSERT INTO {SCHEMA}.live_system_metrics
+                    (ts, db_size_bytes, disk_total_bytes, disk_used_bytes, disk_free_bytes)
+                    VALUES ($1,$2,$3,$4,$5)
+                    ON CONFLICT (ts) DO UPDATE
+                    SET db_size_bytes=EXCLUDED.db_size_bytes,
+                        disk_total_bytes=EXCLUDED.disk_total_bytes,
+                        disk_used_bytes=EXCLUDED.disk_used_bytes,
+                        disk_free_bytes=EXCLUDED.disk_free_bytes""",
+                ts, int(db_size), int(usage.total), int(usage.used), int(usage.free),
+            )
+        metrics = {
+            "db_size_bytes": int(db_size),
+            "disk_total_bytes": int(usage.total),
+            "disk_free_bytes": int(usage.free),
+        }
+        log.info("system: db=%.1fGB disk_free=%.1fGB",
+                 metrics["db_size_bytes"] / 1e9, metrics["disk_free_bytes"] / 1e9)
+        return metrics
 
 
 def _dt(value: Any) -> datetime:

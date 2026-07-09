@@ -23,6 +23,24 @@ services:
     network_mode: host            # share host netns: the .env LAN IPs just work
     env_file:
       - .env                      # DB creds, IB_HOST/PORT (4004), Gemini key, etc.
+    environment:
+      LIVE_TRACK_API_COST: "1"    # log Gemini token usage/cost to live_api_costs
     volumes:
       - .:/app                    # live source + data/ (refit CSVs propagate) + .env
     command: ["python", "-m", "interactive_brokers.run_live", "--daemon"]
+
+  # Read-only live dashboard at http://<host>:8080 (LAN). Never trades.
+  # Reuses the image built by `trader` (no separate build).
+  dashboard:
+    image: cem-trader:latest
+    restart: unless-stopped
+    depends_on:
+      - trader
+    network_mode: host            # binds 0.0.0.0:8080, reaches Postgres on the host
+    env_file:
+      - .env
+    environment:
+      DASHBOARD_PORT: "8080"
+    volumes:
+      - .:/app
+    command: ["python", "-m", "interactive_brokers.dashboard"]

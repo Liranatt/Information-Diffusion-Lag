@@ -57,9 +57,60 @@ class GeminiClient:
             base_url="https://generativelanguage.googleapis.com/v1beta",
             timeout=httpx.Timeout(300),
         )
+        # Token/cost accounting. Prices are USD per 1M tokens and are ESTIMATES
+        # (override via env for your actual Gemini rate card). When
+        # LIVE_TRACK_API_COST is set, close() writes one summary row to
+        # {SCHEMA}.live_api_costs so live spend is observable on the dashboard.
+        self.usage = {"calls": 0, "prompt_tokens": 0,
+                      "completion_tokens": 0, "total_tokens": 0}
+        self._track_cost = os.environ.get("LIVE_TRACK_API_COST", "").strip().lower() \
+            in {"1", "true", "yes", "on"}
+        self._price_in_per_m = float(os.environ.get("GEMINI_PRICE_INPUT_PER_M", "0.075"))
+        self._price_out_per_m = float(os.environ.get("GEMINI_PRICE_OUTPUT_PER_M", "0.30"))
+
+    def _accumulate_usage(self, usage_meta: dict[str, Any] | None) -> None:
+        if not usage_meta:
+            return
+        prompt = int(usage_meta.get("promptTokenCount") or 0)
+        # candidatesTokenCount excludes "thoughts"; include thoughts as output.
+        completion = int(usage_meta.get("candidatesTokenCount") or 0) \
+            + int(usage_meta.get("thoughtsTokenCount") or 0)
+        total = int(usage_meta.get("totalTokenCount") or (prompt + completion))
+        self.usage["calls"] += 1
+        self.usage["prompt_tokens"] += prompt
+        self.usage["completion_tokens"] += completion
+        self.usage["total_tokens"] += total
+
+    def estimated_cost_usd(self) -> float:
+        return (self.usage["prompt_tokens"] / 1e6 * self._price_in_per_m
+                + self.usage["completion_tokens"] / 1e6 * self._price_out_per_m)
 
     async def close(self) -> None:
         await self.client.aclose()
+        await self._flush_cost()
+
+    async def _flush_cost(self, note: str | None = None) -> None:
+        """Persist this client's accumulated Gemini usage/cost (opt-in)."""
+        if not self._track_cost or self.usage["calls"] == 0:
+            return
+        try:
+            from database.backtesting.schema import SCHEMA
+            from database.db_connection import connect
+            conn = await connect()
+            try:
+                await conn.execute(
+                    f"""INSERT INTO {SCHEMA}.live_api_costs
+                        (provider, model, calls, prompt_tokens, completion_tokens,
+                         total_tokens, est_cost_usd, note)
+                        VALUES ('gemini',$1,$2,$3,$4,$5,$6,$7)""",
+                    self.model_name, self.usage["calls"], self.usage["prompt_tokens"],
+                    self.usage["completion_tokens"], self.usage["total_tokens"],
+                    self.estimated_cost_usd(), note,
+                )
+            finally:
+                await conn.close()
+        except Exception:  # noqa: BLE001 - cost logging must never break a run
+            pass
 
     def _request_body(
         self,
@@ -204,6 +255,7 @@ class GeminiClient:
                     raise error
 
                 body_json = response.json()
+                self._accumulate_usage(body_json.get("usageMetadata"))
                 try:
                     raw_output = body_json["candidates"][0]["content"]["parts"][0][
                         "text"
