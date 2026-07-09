@@ -127,6 +127,12 @@ ALTER TABLE {SCHEMA}.live_positions
     ALTER COLUMN benchmark_sell_qty TYPE DOUBLE PRECISION;
 ALTER TABLE {SCHEMA}.live_orders
     ALTER COLUMN qty TYPE DOUBLE PRECISION;
+
+-- Real execution economics captured from IB fills (not the modeled formula):
+-- commission = actual CommissionReport sum; reference_price = the mark we
+-- decided at, so slippage = fill_price - reference_price.
+ALTER TABLE {SCHEMA}.live_orders ADD COLUMN IF NOT EXISTS commission DOUBLE PRECISION;
+ALTER TABLE {SCHEMA}.live_orders ADD COLUMN IF NOT EXISTS reference_price DOUBLE PRECISION;
 """
 
 
@@ -355,13 +361,17 @@ class LiveStore:
 
     async def record_order(self, *, ib_order_id: int | None, symbol: str, action: str,
                            qty: float, kind: str, fill_price: float | None, status: str,
-                           position_id: int | None = None, note: str = "") -> None:
+                           position_id: int | None = None, note: str = "",
+                           commission: float | None = None,
+                           reference_price: float | None = None) -> None:
         async with self.pool.acquire() as conn:
             await conn.execute(
                 f"""INSERT INTO {SCHEMA}.live_orders
-                    (ib_order_id, symbol, action, qty, kind, fill_price, status, position_id, note)
-                    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)""",
-                ib_order_id, symbol, action, qty, kind, fill_price, status, position_id, note,
+                    (ib_order_id, symbol, action, qty, kind, fill_price, status,
+                     position_id, note, commission, reference_price)
+                    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)""",
+                ib_order_id, symbol, action, qty, kind, fill_price, status,
+                position_id, note, commission, reference_price,
             )
 
     async def snapshot_equity(self, *, equity: float, cash: float, benchmark_shares: float,

@@ -47,8 +47,14 @@ class OrderManager:
         return float(affordable_buy_qty(cash, price))
 
     async def _execute(self, symbol: str, action: str, qty: float, *, kind: str,
-                       position_id: int | None = None, note: str = "") -> float | None:
-        """Place a market order and wait for the fill. Returns avg fill price."""
+                       position_id: int | None = None, note: str = "",
+                       reference_price: float | None = None) -> float | None:
+        """Place a market order and wait for the fill. Returns avg fill price.
+
+        reference_price is the mark we decided at; recorded so the real slippage
+        (fill_price - reference_price) is observable per order. Commission is the
+        actual IB CommissionReport sum -- no modeled formula.
+        """
         if qty <= 0:
             return None
         if self.cfg.dry_run:
@@ -57,6 +63,7 @@ class OrderManager:
             await self.store.record_order(
                 ib_order_id=None, symbol=symbol, action=action, qty=qty, kind=kind,
                 fill_price=price, status="dry_run", position_id=position_id, note=note,
+                reference_price=reference_price,
             )
             return price
 
@@ -66,6 +73,7 @@ class OrderManager:
             await self.store.record_order(
                 ib_order_id=None, symbol=symbol, action=action, qty=qty, kind=kind,
                 fill_price=None, status="unqualified", position_id=position_id, note=note,
+                reference_price=reference_price,
             )
             return None
 
@@ -76,10 +84,12 @@ class OrderManager:
 
         status = trade.orderStatus.status
         fill_price = float(trade.orderStatus.avgFillPrice or 0.0) or None
+        commission = self._fill_commission(trade)
         await self.store.record_order(
             ib_order_id=trade.order.orderId, symbol=symbol, action=action, qty=qty,
             kind=kind, fill_price=fill_price, status=status,
             position_id=position_id, note=note,
+            commission=commission, reference_price=reference_price,
         )
         if status not in {"Filled"}:
             log.warning("order not filled: %s %d %s -> %s", action, qty, symbol, status)
@@ -87,6 +97,19 @@ class OrderManager:
                 ib.cancelOrder(trade.order)
             return None
         return fill_price
+
+    @staticmethod
+    def _fill_commission(trade) -> float | None:
+        """Actual commission reported by IB across this order's fills, if any."""
+        total = 0.0
+        seen = False
+        for fill in getattr(trade, "fills", []) or []:
+            report = getattr(fill, "commissionReport", None)
+            commission = getattr(report, "commission", None) if report else None
+            if commission:
+                total += float(commission)
+                seen = True
+        return total if seen else None
 
     # ── Rotation legs ────────────────────────────────────────────────────
 
@@ -119,6 +142,7 @@ class OrderManager:
             fill = await self._execute(
                 self.cfg.benchmark, "SELL", benchmark_sell_qty,
                 kind="rotation_fund", note=f"fund {signal.symbol}",
+                reference_price=benchmark_price,
             )
             if fill is None:
                 return None
@@ -129,15 +153,18 @@ class OrderManager:
             # Undo: roll the funding back into the benchmark.
             if benchmark_sell_qty > 0:
                 await self._execute(self.cfg.benchmark, "BUY", benchmark_sell_qty,
-                                    kind="rotation_undo", note=f"undo {signal.symbol}")
+                                    kind="rotation_undo", note=f"undo {signal.symbol}",
+                                    reference_price=benchmark_price)
             return None
 
         fill_price = await self._execute(signal.symbol, "BUY", asset_qty, kind="entry",
-                                         note=signal.question[:100])
+                                         note=signal.question[:100],
+                                         reference_price=entry_ref_price)
         if fill_price is None:
             if benchmark_sell_qty > 0:
                 await self._execute(self.cfg.benchmark, "BUY", benchmark_sell_qty,
-                                    kind="rotation_undo", note=f"undo {signal.symbol}")
+                                    kind="rotation_undo", note=f"undo {signal.symbol}",
+                                    reference_price=benchmark_price)
             return None
 
         entry_costs = (
@@ -168,8 +195,10 @@ class OrderManager:
                             benchmark_price: float | None) -> bool:
         """Sell the asset, rebuy the benchmark with the proceeds."""
         qty = int(pos["qty"])
+        exit_ref = await self.store.latest_close(pos["symbol"])
         fill_price = await self._execute(pos["symbol"], "SELL", qty, kind="exit",
-                                         position_id=pos["position_id"], note=reason)
+                                         position_id=pos["position_id"], note=reason,
+                                         reference_price=exit_ref)
         if fill_price is None:
             return False
 
@@ -184,6 +213,7 @@ class OrderManager:
                 rebuy_fill = await self._execute(
                     self.cfg.benchmark, "BUY", rebuy_qty, kind="rotation_rebuy",
                     position_id=pos["position_id"], note=f"rebuy after {pos['symbol']}",
+                    reference_price=benchmark_price,
                 )
                 if rebuy_fill is not None:
                     rebuy_cost = ib_cost(rebuy_qty, rebuy_fill, False)
@@ -217,5 +247,6 @@ class OrderManager:
         if qty <= 0:
             return 0.0
         fill = await self._execute(self.cfg.benchmark, "BUY", qty, kind="cash_sweep",
-                                   note="fully-invested sweep")
+                                   note="fully-invested sweep",
+                                   reference_price=benchmark_price)
         return qty if fill is not None else 0.0
