@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import json
 import os
+import subprocess
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 
@@ -27,10 +28,18 @@ from database.backtesting.schema import SCHEMA
 from .config import CONFIG
 from .database import LiveStore
 from .policy import load_live_policy
-from .utils import market_session_status
+from .utils import market_session_status, benchmark_sell_qty_for_cash_deficit
 
 _STATE: dict = {}
 BENCH = CONFIG.benchmark
+_BOOT_TIME = datetime.now(timezone.utc)
+try:
+    _GIT_SHA = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], stderr=subprocess.DEVNULL, text=True).strip()
+    _GIT_BRANCH = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"], stderr=subprocess.DEVNULL, text=True).strip()
+except Exception:
+    _GIT_SHA = "unknown"
+    _GIT_BRANCH = "unknown"
+
 
 
 @asynccontextmanager
@@ -247,6 +256,42 @@ async def gather_metrics() -> dict:
                "status": o["status"], "ts": _iso(o["ts"])}
               for o in orders if o["status"] not in ("Filled", "dry_run")]
 
+    deficit_to_cover = -cash if cash < 0 else 0.0
+    spy_shares_to_sell = 0.0
+    margin_status = "OK"
+    if deficit_to_cover > 0:
+        if bench_shares > 0 and bench_price:
+            spy_shares_to_sell = benchmark_sell_qty_for_cash_deficit(
+                cash=cash, benchmark_price=bench_price, benchmark_shares=bench_shares,
+                fractional=CONFIG.fractional_benchmark, min_notional=CONFIG.min_order_notional,
+                buffer_pct=CONFIG.execution_buffer_pct,
+            )
+            margin_status = "Needs SPY rebalance"
+        else:
+            margin_status = "No SPY inventory"
+
+    max_pos_notional = max((p["qty"] * p["last"] for p in positions), default=0.0)
+    max_pos_pct = round(max_pos_notional / total * 100.0, 1) if total else 0.0
+    reconciled_series_data = _reconciled_series(eq_series, equity)
+    equity_curve = [r["equity"] for r in reconciled_series_data if r["equity"] is not None]
+    peak = max(equity_curve, default=total) if equity_curve else total
+    dd_pct = round((total / peak - 1.0) * 100.0, 2) if peak > 0 and total < peak else 0.0
+    
+    open_pos_sorted = sorted(positions, key=lambda x: x["unrealized"] or 0)
+    best_open = open_pos_sorted[-1] if open_pos_sorted and (open_pos_sorted[-1]["unrealized"] or 0) > 0 else None
+    worst_open = open_pos_sorted[0] if open_pos_sorted and (open_pos_sorted[0]["unrealized"] or 0) < 0 else None
+
+    active_return_pct = round(excess / passive * 100.0, 2) if excess is not None and passive else None
+    open_pnl = sum((x["unrealized"] or 0) for x in positions)
+    open_contrib = round(open_pnl / total * 100.0, 2) if total else 0.0
+    realized_contrib = round(float(perf["realized_pnl"] or 0.0) / total * 100.0, 2) if total else 0.0
+    cash_drag = round(active_return_pct - (open_contrib + realized_contrib), 2) if active_return_pct is not None else 0.0
+
+    now_ts = datetime.now(timezone.utc)
+    trader_uptime = (now_ts - eq["ts"]).total_seconds() if eq and eq.get("ts") else None
+    dash_uptime = (now_ts - _BOOT_TIME).total_seconds()
+
+
     return {
         "generated_at": _iso(datetime.now(timezone.utc)), "benchmark": BENCH,
         "experiment": CONFIG.experiment, "tick_seconds": CONFIG.tick_seconds,
@@ -276,6 +321,28 @@ async def gather_metrics() -> dict:
             "execution_buffer_pct": round(float(CONFIG.execution_buffer_pct) * 100.0, 2),
             "kelly_enabled": bool(CONFIG.use_kelly),
             "fractional_benchmark": bool(CONFIG.fractional_benchmark),
+            "deficit_to_cover": round(deficit_to_cover, 2),
+            "spy_shares_to_sell": round(spy_shares_to_sell, 4),
+            "margin_status": margin_status,
+        },
+        "risk": {
+            "max_pos_pct": max_pos_pct,
+            "dd_pct": dd_pct,
+            "best_open": best_open,
+            "worst_open": worst_open,
+        },
+        "attribution": {
+            "active_return_pct": active_return_pct,
+            "open_contrib_pct": open_contrib,
+            "realized_contrib_pct": realized_contrib,
+            "cash_drag_pct": cash_drag,
+        },
+        "deployment": {
+            "git_sha": _GIT_SHA,
+            "git_branch": _GIT_BRANCH,
+            "trader_uptime": trader_uptime,
+            "dash_uptime": dash_uptime,
+            "dash_health": "OK",
         },
         "performance": {
             "realized_pnl": round(float(perf["realized_pnl"] or 0.0), 2),
@@ -523,7 +590,14 @@ PAGE = r"""<!doctype html>
       <div class="eq" id="sideEq">—</div>
       <div class="sub" id="sideSub">equity</div>
     </div>
-    <div class="ver" id="ver">CEM · IBKR paper</div>
+    <div class="ver" id="ver" style="padding: 10px; background: #f8f9fc; border-radius: 8px; margin-top: 10px; text-align: left; line-height: 1.6;">
+      <div style="font-weight:700; color:var(--ink)">Deployment Status</div>
+      <div id="dep_sha">SHA: —</div>
+      <div id="dep_branch">Branch: —</div>
+      <div id="dep_dash">Dash: —</div>
+      <div id="dep_trader">Trader: —</div>
+      <div id="dep_health" style="color:var(--up); font-weight:700;">OK</div>
+    </div>
   </aside>
 
   <main class="main">
@@ -539,6 +613,8 @@ PAGE = r"""<!doctype html>
     <section class="view on" id="overview">
       <div id="alerts"></div>
       <div class="row c4" id="kpis"></div>
+      <h3 style="font-size:12px; font-weight:700; color:var(--mut); text-transform:uppercase; letter-spacing:.06em; margin: 18px 0 10px;">Safety & Margin</h3>
+      <div class="row c4" id="safety"></div>
       <div class="row c2">
         <div class="card"><h3>NAV · strategy vs passive benchmark</h3><div id="chart"></div>
           <div class="legrow"><span><i style="border-color:var(--brand)"></i>Strategy equity</span>
@@ -547,6 +623,10 @@ PAGE = r"""<!doctype html>
           <div class="donut"><div id="donut"></div><div class="ctr"><b id="invpct">—</b><span>invested</span></div></div>
           <div class="leg" id="alloclegend"></div></div></div>
       </div>
+      <h3 style="font-size:12px; font-weight:700; color:var(--mut); text-transform:uppercase; letter-spacing:.06em; margin: 18px 0 10px;">Risk & Concentration</h3>
+      <div class="row c4" id="risk"></div>
+      <h3 style="font-size:12px; font-weight:700; color:var(--mut); text-transform:uppercase; letter-spacing:.06em; margin: 18px 0 10px;">Approximate Attribution</h3>
+      <div class="row c4" id="attribution"></div>
       <div class="row c4" id="ministats"></div>
     </section>
 
@@ -579,9 +659,8 @@ PAGE = r"""<!doctype html>
     <!-- LEARN -->
     <section class="view learn" id="learn">
       <div class="row c2b">
-        <div class="card"><h3>What is this?</h3>
-          <p>A rule-based strategy that exploits an <span class="term">information-diffusion lag</span>: when a Polymarket prediction market moves sharply on a catalyst (e.g. an earnings beat), the mapped stock often reacts more slowly. We enter the stock on a high, sustained probability and exit on an ATR trailing stop, a profit-lock, probability invalidation, or the market's resolution.</p>
-          <p>It runs <span class="term">hourly</span> against an IBKR paper account, always trading the latest walk-forward policy. Capital is capped to cash plus liquidatable benchmark inventory, and idle cash rotates back into the benchmark index so there is no cash drag.</p></div>
+        <div class="card"><h3>Strategy execution</h3>
+          <p>Runs <span class="term">hourly</span> against an IBKR paper account, always trading the latest walk-forward policy. Capital is capped to cash plus liquidatable benchmark inventory, and idle cash rotates back into the benchmark index.</p></div>
         <div class="card"><h3>CEM · Cross-Entropy Method</h3>
           <p>The rules use hard IF/THEN thresholds, so they aren't differentiable — no gradient descent. <span class="term">CEM</span> instead samples many random policy vectors, simulates the whole portfolio for each, keeps the top "elite" performers, and re-fits its sampling distribution toward them. Repeat until it converges on a strong parameter set.</p>
           <p>The objective is friction-aware: <span class="formula">S = Sharpe - 0.30 &times; MaxDD - 2.0 &times; FFR</span></p></div>
@@ -711,6 +790,38 @@ async function refresh(){
     kpi(`In ${d.benchmark} index`, usd0(a.spy_value), a.spy_pct+"%", a.spy_value<1?"down":"neu")+
     kpi("In event trades", usd0(a.trades_value), a.trades_pct+"%", "neu")+
     kpi("Excess vs passive", sg(p.excess), p.excess_pct==null?null:sg(p.excess_pct)+"%", cl(p.excess)||"neu");
+
+  const sft = d.safety;
+  const sft_color = sft.margin_status==="OK" ? "up" : sft.margin_status.includes("No SPY") ? "down" : "warn";
+  $("#safety").innerHTML=
+    kpi("Reconciled Cash", usd0(a.cash), null)+
+    kpi("Deficit to Cover", usd0(sft.deficit_to_cover), sft.margin_status, sft_color)+
+    kpi("Invested", nn(a.invested_pct, 1)+"%", null)+
+    kpi("Est SPY to Sell", nn(sft.spy_shares_to_sell, 2), null);
+
+  const r = d.risk;
+  const bestMover = r.best_open ? `${r.best_open.symbol} ${sg(r.best_open.unrealized_pct, 1)}%` : "—";
+  const worstMover = r.worst_open ? `${r.worst_open.symbol} ${sg(r.worst_open.unrealized_pct, 1)}%` : "—";
+  $("#risk").innerHTML=
+    kpi("Max Pos %", nn(r.max_pos_pct, 1)+"%", null)+
+    kpi("Drawdown", nn(r.dd_pct, 2)+"%", cl(-r.dd_pct)||"neu")+
+    kpi("Best Open", bestMover, null)+
+    kpi("Worst Open", worstMover, null);
+
+  const attr = d.attribution;
+  $("#attribution").innerHTML=
+    kpi("Active Return", sg(attr.active_return_pct, 1)+"%", null)+
+    kpi("Open Contrib", sg(attr.open_contrib_pct, 1)+"%", null)+
+    kpi("Realized Contrib", sg(attr.realized_contrib_pct, 1)+"%", null)+
+    kpi("Cash Drag / Res", sg(attr.cash_drag_pct, 1)+"%", null);
+
+  const dep = d.deployment;
+  $("#dep_sha").innerHTML = `SHA: <b>${dep.git_sha}</b>`;
+  $("#dep_branch").innerHTML = `Branch: <b>${dep.git_branch}</b>`;
+  $("#dep_dash").innerHTML = `Dash uptime: ${cadence(dep.dash_uptime)}`;
+  $("#dep_trader").innerHTML = `Trader heartbeat: ${cadence(dep.trader_uptime)}`;
+  $("#dep_health").innerHTML = dep.dash_health;
+
 
   donut($("#donut"),[{v:a.spy_pct,c:C.brand},{v:a.trades_pct,c:C.sky},{v:Math.max(0,a.cash_pct),c:"#dfe4ee"}]);
   $("#invpct").textContent=nn(a.invested_pct,0)+"%";
