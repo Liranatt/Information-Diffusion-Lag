@@ -93,6 +93,18 @@ class IBConnection:
         self._contracts[symbol] = qualified[0]
         return qualified[0]
 
+    async def cancel_all_open_orders(self) -> None:
+        """Fetch all open orders from IB and cancel them if any are left over."""
+        ib = await self.ensure_connected()
+        open_orders = ib.reqAllOpenOrders()
+        if not open_orders:
+            return
+        log.warning("Found %d leftover open orders in IB! Cancelling them now...", len(open_orders))
+        for order in open_orders:
+            ib.cancelOrder(order)
+        # Wait a moment for cancellations to process
+        await asyncio.sleep(2.0)
+
     async def account_summary(self) -> dict[str, float] | None:
         """USD TotalCashValue and NetLiquidation, or None if unavailable.
 

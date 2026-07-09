@@ -70,6 +70,13 @@ class ControlPipeline:
 
         policy = load_live_policy(self.cfg)
         engine = StrategyEngine(policy)
+        
+        # 0. Cancel any leftover ghost limit orders from previous ticks/crashes
+        try:
+            await self.ib_conn.cancel_all_open_orders()
+        except Exception as e:
+            log.warning("failed to cancel open orders: %s", e)
+
         orders = OrderManager(self.cfg, self.ib_conn, self.store)
         positions = PositionManager(self.cfg, self.ib_conn, self.store)
         fetcher = DataFetcher(self.ib_conn, self.store)
