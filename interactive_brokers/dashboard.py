@@ -26,6 +26,7 @@ from database.backtesting.schema import SCHEMA
 
 from .config import CONFIG
 from .database import LiveStore
+from .policy import load_live_policy
 from .utils import market_session_status
 
 _STATE: dict = {}
@@ -126,8 +127,9 @@ async def gather_metrics() -> dict:
                        COUNT(*) FILTER (WHERE t0_prob IS NOT NULL) AS with_t0
                 FROM {SCHEMA}.live_tracked_markets WHERE status='tracking'""")
         upcoming = await conn.fetch(
-            f"""SELECT end_at, question FROM {SCHEMA}.live_tracked_markets
-                WHERE status='tracking' ORDER BY end_at LIMIT 14""")
+            f"""SELECT market_id, end_at, question, t0_prob, assets, is_earnings
+                FROM {SCHEMA}.live_tracked_markets
+                WHERE status='tracking' ORDER BY end_at LIMIT 30""")
         sys_latest = await conn.fetchrow(
             f"SELECT * FROM {SCHEMA}.live_system_metrics ORDER BY ts DESC LIMIT 1")
         cost = await conn.fetchrow(
@@ -151,6 +153,13 @@ async def gather_metrics() -> dict:
     passive = _f(eq["passive_equity"]) if eq and eq["passive_equity"] is not None else None
     excess = (equity - passive) if (equity is not None and passive is not None) else None
 
+    # Load policy for stop-loss computation
+    try:
+        policy = load_live_policy(CONFIG)
+        atr_mult = float(policy.get("atr_mult", 0))
+    except Exception:  # noqa: BLE001
+        policy, atr_mult = {}, 0.0
+
     positions, trades_value = [], 0.0
     for p in open_pos:
         last = await store.latest_close(p["symbol"]) or float(p["entry_price"])
@@ -164,6 +173,26 @@ async def gather_metrics() -> dict:
         ref = _f(eo["reference_price"]) if eo else None
         efill = _f(eo["fill_price"]) if eo else entry
         slip_bps = ((efill / ref - 1.0) * 1e4) if (ref and efill) else None
+
+        # Stop-loss: ATR trailing for non-earnings, theta-only for earnings
+        stop_loss = None
+        if not p["is_earnings"] and atr_mult and p["atr_pct"]:
+            atr_pct = float(p["atr_pct"])
+            peak = float(p["peak_ret"] or 0.0)
+            stop_ret = peak - atr_mult * atr_pct
+            stop_loss = round(entry * (1.0 + stop_ret), 2)
+
+        # Stock T0→Now: suppress misleading near-zero deltas
+        stock_runup_pct_val = None
+        if stock_t0 and float(stock_t0) > 0:
+            raw = (float(last) / float(stock_t0) - 1.0) * 100.0
+            stock_runup_pct_val = round(raw, 2) if abs(raw) >= 0.01 else None
+
+        stock_entry_runup_pct_val = None
+        if stock_t0 and float(stock_t0) > 0:
+            raw_e = (entry / float(stock_t0) - 1.0) * 100.0
+            stock_entry_runup_pct_val = round(raw_e, 2) if abs(raw_e) >= 0.01 else None
+
         positions.append({
             "symbol": p["symbol"], "qty": int(p["qty"]),
             "entry_price": round(entry, 2), "last": round(float(last), 2),
@@ -177,14 +206,13 @@ async def gather_metrics() -> dict:
             "prob_runup_pp": round((float(prob_now) - t0_prob) * 100.0, 1)
                 if (prob_now is not None and t0_prob is not None) else None,
             "stock_t0": round(float(stock_t0), 2) if stock_t0 else None,
-            "stock_entry_runup_pct": round((entry / float(stock_t0) - 1.0) * 100.0, 2)
-                if (stock_t0 and float(stock_t0) > 0) else None,
-            "stock_runup_pct": round((float(last) / float(stock_t0) - 1.0) * 100.0, 2)
-                if (stock_t0 and float(stock_t0) > 0) else None,
+            "stock_entry_runup_pct": stock_entry_runup_pct_val,
+            "stock_runup_pct": stock_runup_pct_val,
             "kelly_pct": round(float(p["position_size_pct"]) * 100.0, 1)
                 if p["position_size_pct"] is not None else None,
             "commission": round(_f(eo["commission"]), 2) if eo and eo["commission"] is not None else None,
             "slip_bps": round(slip_bps, 1) if slip_bps is not None else None,
+            "stop_loss": stop_loss,
             "is_earnings": bool(p["is_earnings"]),
             "question": p["question"][:80], "entry_ts": _iso(p["entry_ts"]),
         })
@@ -252,9 +280,7 @@ async def gather_metrics() -> dict:
              "pnl": round(float(r["pnl"]), 2) if r["pnl"] is not None else None,
              "pnl_pct": round(float(r["pnl_pct"]), 2) if r["pnl_pct"] is not None else None,
              "exit_reason": r["exit_reason"], "exit_ts": _iso(r["exit_ts"])} for r in trades],
-        "markets": {
-            "tracked": int(markets["tracked"] or 0), "with_t0": int(markets["with_t0"] or 0),
-            "upcoming": [{"end_at": _iso(r["end_at"]), "question": r["question"][:90]} for r in upcoming]},
+        "markets": await _build_markets_payload(store, markets, upcoming),
         "system": {
             "db_size_bytes": int(sys_latest["db_size_bytes"]) if sys_latest and sys_latest["db_size_bytes"] else None,
             "disk_free_bytes": int(sys_latest["disk_free_bytes"]) if sys_latest and sys_latest["disk_free_bytes"] else None,
@@ -264,6 +290,41 @@ async def gather_metrics() -> dict:
             "today_usd": round(float(cost["today"] or 0.0), 4),
             "total_usd": round(float(cost["total"] or 0.0), 4),
             "today_calls": int(cost["today_calls"] or 0), "total_calls": int(cost["calls"] or 0)},
+    }
+
+
+async def _build_markets_payload(store: LiveStore, markets, upcoming) -> dict:
+    """Enrich the upcoming watchlist with prob, assets, relevance, pecking order."""
+    enriched = []
+    for r in upcoming:
+        t0 = _f(r["t0_prob"])
+        prob_now = await store.latest_prob(r["market_id"])
+        raw_assets = json.loads(r["assets"]) if isinstance(r["assets"], str) else (r["assets"] or [])
+        asset_list = [{"symbol": a.get("symbol", "?"),
+                       "relevance": round(float(a.get("connection_strength", 0)), 2)}
+                      for a in raw_assets]
+        max_rel = max((a["relevance"] for a in asset_list), default=None)
+        prob_delta = round((float(prob_now) - float(t0)) * 100.0, 1) if (prob_now is not None and t0 is not None) else None
+        enriched.append({
+            "end_at": _iso(r["end_at"]),
+            "question": r["question"][:100],
+            "t0_prob": round(t0, 3) if t0 is not None else None,
+            "prob_now": round(float(prob_now), 3) if prob_now is not None else None,
+            "prob_delta": prob_delta,
+            "assets": asset_list,
+            "relevance": max_rel,
+            "is_earnings": bool(r["is_earnings"]),
+        })
+    # Pecking order: rank by prob_delta descending (T4 natural priority)
+    ranked = sorted(enriched, key=lambda x: x["prob_delta"] if x["prob_delta"] is not None else -999, reverse=True)
+    for i, item in enumerate(ranked):
+        item["pecking"] = i + 1
+    # Restore resolution-date order for display
+    enriched.sort(key=lambda x: x["end_at"] or "")
+    return {
+        "tracked": int(markets["tracked"] or 0),
+        "with_t0": int(markets["with_t0"] or 0),
+        "upcoming": enriched,
     }
 
 
@@ -291,6 +352,9 @@ PAGE = r"""<!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CEM · Live Paper Trading</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#eef1f6; --card:#ffffff; --ink:#0f1729; --ink2:#334155; --mut:#7b8698; --faint:#aab4c4;
@@ -299,7 +363,7 @@ PAGE = r"""<!doctype html>
     --up:#10b981; --down:#f43f5e; --amber:#f59e0b; --sky:#38bdf8;
     --shadow:0 1px 2px rgba(16,24,40,.05), 0 10px 30px -12px rgba(16,24,40,.14);
     --font:"Inter","Segoe UI Variable","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    --num:"Roboto Mono","IBM Plex Mono","SF Mono",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace;
+    --num:"JetBrains Mono","Roboto Mono","IBM Plex Mono","SF Mono",ui-monospace,Menlo,Consolas,monospace;
     --math:"Cambria Math","STIX Two Math","Times New Roman",serif;
   }
   *{box-sizing:border-box}
@@ -650,6 +714,8 @@ async function refresh(){
   $("#positions").innerHTML=table(d.open_positions,[
     {h:"Sym",f:r=>r.symbol+(r.is_earnings?' <span class="tag er">ER</span>':'')},
     {h:"Qty",n:1,f:r=>r.qty},{h:"Entry",n:1,f:r=>nn(r.entry_price)},{h:"Last",n:1,f:r=>nn(r.last)},
+    {h:"Stop",n:1,f:r=>r.is_earnings?'<span class="tag" title="Earnings: theta-only exit">θ</span>':(r.stop_loss==null?"—":nn(r.stop_loss)),
+      cl:r=>!r.is_earnings&&r.stop_loss!=null&&r.last<=r.stop_loss*1.02?"down":""},
     {h:"Unreal $",n:1,f:r=>sg(r.unrealized),cl:r=>cl(r.unrealized)},
     {h:"Unreal %",n:1,f:r=>r.unrealized_pct==null?"—":sg(r.unrealized_pct)+"%",cl:r=>cl(r.unrealized_pct)},
     {h:"Prob now",n:1,f:r=>r.prob_now==null?"—":nn(r.prob_now,3)},
@@ -669,15 +735,28 @@ async function refresh(){
     {h:"Slip",n:1,f:r=>r.slip_bps==null?"—":sg(r.slip_bps,1)+"bp",cl:r=>r.slip_bps==null?"":(r.slip_bps>0?"down":"up")},
     {h:"Status",f:r=>{const ok=r.status==="Filled"||r.status==="dry_run",bad=["Cancelled","unqualified","ApiCancelled","Inactive","dry_run_limit_miss","dry_run_no_price"].includes(r.status);
       return `<span class="tag ${ok?"ok":bad?"bad":"warn"}">${r.status}</span>`;}}])+
-    (d.recent_orders.length>10?`<div class="toolbar"><button class="miniBtn" id="ordersToggle">${showAllOrders?"Show last 10":"Show all "+d.recent_orders.length}</button></div>`:"");
+    (d.recent_orders.length>10?`<div class="toolbar"><button class="miniBtn" id="ordersToggle">${showAllOrders?"Show last 10":"Show all "+d.recent_orders.length}</button></div>`:"")
   const toggle=$("#ordersToggle"); if(toggle) toggle.onclick=()=>{showAllOrders=!showAllOrders; refresh();};
   $("#trades").innerHTML=table(d.recent_trades,[
     {h:"Sym",f:r=>r.symbol},{h:"PnL",n:1,f:r=>sg(r.pnl),cl:r=>cl(r.pnl)},
     {h:"%",n:1,f:r=>r.pnl_pct==null?"—":sg(r.pnl_pct)+"%",cl:r=>cl(r.pnl_pct)},
     {h:"Reason",f:r=>r.exit_reason||"—",cl:()=>"q"},{h:"When",n:1,f:r=>dt(r.exit_ts)}]);
+  // Enriched question watchlist with prob, assets, relevance, pecking order
+  const probChip=(v)=>{if(v==null) return '—'; const c=v>=0.7?C.up:v>=0.4?C.amber:C.down;
+    return `<span style="color:${c};font-weight:700">${nn(v,2)}</span>`;};
+  const assetTags=(a)=>!a||!a.length?'<span class="mut">—</span>':a.map(x=>`<span class="tag">${x.symbol}</span>`).join(' ');
+  const relChip=(v)=>{if(v==null) return '—'; const c=v>=0.8?'ok':v>=0.6?'warn':'bad';
+    return `<span class="tag ${c}">${nn(v,2)}</span>`;};
   $("#upcoming").innerHTML=table(d.markets.upcoming,[
-    {h:"Resolves",n:1,f:r=>dday(r.end_at)},{h:"Market question",f:r=>r.question,cl:()=>"q"}])+
-    `<div class="mut" style="margin-top:10px;font-size:11.5px">${d.markets.tracked} markets tracked · ${d.markets.with_t0} with T0 baseline</div>`;
+    {h:"#",n:1,f:r=>`<span style="font-weight:800;color:var(--brand)">${r.pecking}</span>`},
+    {h:"Resolves",n:1,f:r=>dday(r.end_at)},
+    {h:"Market question",f:r=>r.question+(r.is_earnings?' <span class="tag er">ER</span>':''),cl:()=>"q"},
+    {h:"Relevance",n:1,f:r=>relChip(r.relevance)},
+    {h:"Prob T0",n:1,f:r=>probChip(r.t0_prob)},
+    {h:"Prob Now",n:1,f:r=>probChip(r.prob_now)},
+    {h:"Δ prob",n:1,f:r=>r.prob_delta==null?"—":sg(r.prob_delta,1)+"pp",cl:r=>cl(r.prob_delta)},
+    {h:"Mapped assets",f:r=>assetTags(r.assets)}])+
+    `<div class="mut" style="margin-top:10px;font-size:11.5px">${d.markets.tracked} markets tracked · ${d.markets.with_t0} with T0 baseline · ranked by Δprob (T4 pecking order)</div>`;
 }
 
 let btLoaded=false;
