@@ -39,6 +39,10 @@ class LiveConfig:
     ib_port: int = _env_int("IB_PORT", 4002)
     ib_client_id: int = _env_int("IB_CLIENT_ID", 17)
     account: str = os.environ.get("IB_ACCOUNT", "")  # empty = default account
+    # Market-data type for the session: 1=live, 2=frozen, 3=delayed,
+    # 4=delayed-frozen. Paper accounts without a live data subscription need
+    # delayed (3) or requests silently return nothing.
+    ib_market_data_type: int = _env_int("IB_MARKET_DATA_TYPE", 3)
 
     # ── Strategy ─────────────────────────────────────────────────────────
     benchmark: str = os.environ.get("LIVE_BENCHMARK", "SPY")

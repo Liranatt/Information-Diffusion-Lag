@@ -37,6 +37,13 @@ class IBConnection:
             clientId=self.cfg.ib_client_id, timeout=20,
         )
         await self._assert_paper_account()
+        # Ask for delayed data so paper accounts without a live market-data
+        # subscription still get prices/bars instead of silent empties.
+        try:
+            self.ib.reqMarketDataType(self.cfg.ib_market_data_type)
+        except Exception as error:  # noqa: BLE001 - non-fatal preference
+            log.warning("reqMarketDataType(%s) failed: %s",
+                        self.cfg.ib_market_data_type, error)
         return self.ib
 
     async def _assert_paper_account(self) -> None:
