@@ -53,8 +53,9 @@ async def run_status(cfg: LiveConfig) -> None:
             print(f"  {str(m['end_at'])[:10]}  {m['question'][:70]}")
         print(f"open positions: {len(positions)}")
         for p in positions:
+            entry_ts = p["entry_ts"].astimezone().strftime("%Y-%m-%d %H:%M")
             print(f"  {p['symbol']:>6} x{p['qty']}  entry {p['entry_price']:.2f} "
-                  f"({str(p['entry_ts'])[:10]})  {p['question'][:50]}")
+                  f"({entry_ts})  {p['question'][:50]}")
         if trades:
             pnl = sum(float(t["pnl"] or 0) for t in trades)
             wins = sum(1 for t in trades if float(t["pnl"] or 0) > 0)

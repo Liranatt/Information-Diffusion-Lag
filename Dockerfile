@@ -1,6 +1,6 @@
 # Trading daemon image for the live paper-trading control pipeline.
-# Runs `python -m interactive_brokers.run_live --daemon` against a companion
-# IB Gateway container and a Postgres reachable on the Docker host.
+# Runs the trader daemon or read-only dashboard against the already-running
+# paper IB Gateway and Postgres on liranserver.
 FROM python:3.12-slim
 
 ENV PYTHONUNBUFFERED=1 \

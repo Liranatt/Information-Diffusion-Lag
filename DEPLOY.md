@@ -3,17 +3,19 @@
 > **Actual deployment (liranserver, 192.168.1.159).** This server already runs
 > the shared infra — an `ib-gateway` container (paper API on `0.0.0.0:4004`,
 > `restart=always`) and Postgres (`my_traders_db`) on `5432`. So we deploy
-> **only the trader daemon**, as a host-networked container that reuses the
-> existing gateway + Postgres via the `.env` values (`IB_PORT=4004`,
-> `DB_HOST=192.168.1.159`). `docker-compose.yml` reflects this. The generic
-> two-service instructions below are kept as reference for a from-scratch box.
+> **only the trader daemon plus read-only dashboard**, as host-networked
+> containers that reuse the existing gateway + Postgres via the `.env` values
+> (`IB_PORT=4004`, `DB_HOST=192.168.1.159`). `docker-compose.yml` reflects this.
+> The generic two-service instructions below are kept as reference for a
+> from-scratch box.
 >
 > Deploy: clone repo → copy `.env` in → `docker compose run --rm trader … --once
 > --dry-run` → `docker compose up -d --build`.
 
 Runs the hourly control pipeline (`interactive_brokers.run_live --daemon`)
-unattended on a Linux server, alongside a headless IB Gateway that auto-logs-in
-and restarts nightly. Postgres runs natively on the same host.
+unattended on a Linux server and serves the read-only dashboard
+(`interactive_brokers.dashboard`) on port `8080`. The host already has a
+headless IB Gateway container and Postgres available on the LAN IP.
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -21,13 +23,13 @@ and restarts nightly. Postgres runs natively on the same host.
 │                                              │
 │  ┌────────────┐   4004    ┌───────────────┐  │
 │  │  trader    │──────────▶│  ib-gateway   │  │
-│  │  (daemon)  │           │  (IBC login)  │  │
+│  │  (daemon)  │           │  (paper API)  │  │
 │  └─────┬──────┘           └───────────────┘  │
-│        │ host.docker.internal:5432           │
-│        ▼                                      │
-│  ┌────────────┐                               │
-│  │ Postgres   │  (native, on the host)        │
-│  └────────────┘                               │
+│        │ 5432                                 │
+│  ┌─────▼──────┐    8080    ┌──────────────┐  │
+│  │ Postgres   │◀───────────│  dashboard   │  │
+│  │            │            │  (read-only)  │  │
+│  └────────────┘            └──────────────┘  │
 └─────────────────────────────────────────────┘
 ```
 
@@ -111,13 +113,35 @@ docker compose run --rm trader python -m interactive_brokers.run_live --status
 ## 5. Go 24/7
 
 ```bash
-docker compose up -d          # starts ib-gateway + trader, both restart:unless-stopped
-docker compose logs -f trader # follow the hourly ticks
+docker compose up -d --build      # starts trader + dashboard
+docker compose logs -f trader     # follow the hourly ticks
+docker compose logs -f dashboard  # dashboard server logs
 ```
 
-The daemon ticks hourly forever. It survives Gateway restarts (auto-reconnect
-between ticks) and per-stage failures (each stage is isolated). `restart:
-unless-stopped` brings it back after a host reboot or crash.
+The daemon ticks hourly forever. The dashboard is read-only at
+`http://192.168.1.159:8080/`. Both services survive host reboots/crashes via
+`restart: unless-stopped`, and the daemon tolerates Gateway reconnects between
+ticks.
+
+## 5b. Push-based redeploy
+
+The server repo includes two deployment helpers:
+
+```bash
+bash scripts/deploy.sh             # compile, rebuild, restart, health-check
+bash scripts/deploy_if_changed.sh  # fetch branch, deploy only if SHA changed
+```
+
+Recommended user crontab on `liranserver`:
+
+```cron
+* * * * * APP_DIR=/home/liranatt/cem_clean_repo DEPLOY_BRANCH=cem/phase0-phase1-plumbing /bin/bash /home/liranatt/cem_clean_repo/scripts/deploy_if_changed.sh >> /home/liranatt/cem_clean_repo/data/deploy.log 2>&1
+```
+
+The deploy wrapper uses `git reset --hard origin/<branch>` by design; keep
+server-only secrets in `.env` and out of Git. The live discovery cadence is
+persisted in Postgres (`live_runtime_state`), so a container restart after a
+push does not automatically run paid discovery again.
 
 ## 6. Keep walking forward (policy updates)
 

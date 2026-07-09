@@ -22,6 +22,7 @@ Once per discovery interval (daily by default):
 from __future__ import annotations
 
 import logging
+import asyncio
 from datetime import datetime, timedelta, timezone
 
 import httpx
@@ -36,7 +37,7 @@ from .order_manager import OrderManager
 from .policy import kelly_size, load_live_policy
 from .position_manager import PositionManager
 from .strategy_engine import StrategyEngine
-from .utils import is_market_hours, retry_async
+from .utils import is_market_hours, retry_async, seconds_to_market_close
 
 log = logging.getLogger("live.control")
 
@@ -73,14 +74,24 @@ class ControlPipeline:
         positions = PositionManager(self.cfg, self.ib_conn, self.store)
         fetcher = DataFetcher(self.ib_conn, self.store)
 
-        # 8-9. Discovery + prune on their own cadence (before trading so new
-        # markets are tracked the same hour they appear).
-        if force_discovery or self._tick_count % self.cfg.discovery_every_ticks == 1:
+        discovery_interval = timedelta(
+            seconds=self.cfg.tick_seconds * self.cfg.discovery_every_ticks
+        )
+        prune_interval = timedelta(seconds=self.cfg.tick_seconds * self.cfg.prune_every_ticks)
+
+        # 8-9. Discovery + prune on persistent cadence. This is deliberately
+        # stored in Postgres so deploy/restart does not trigger paid discovery.
+        if force_discovery or await self.store.should_run_runtime_event(
+            "discovery", discovery_interval, now,
+        ):
             try:
-                await self.discover_new_markets()
+                tracked = await self.discover_new_markets()
+                await self.store.mark_runtime_event(
+                    "discovery", now, {"force": force_discovery, "tracked": tracked}
+                )
             except Exception as error:  # noqa: BLE001 - stage isolation
                 log.exception("discovery failed: %s", error)
-        if self._tick_count % self.cfg.prune_every_ticks == 0:
+        if await self.store.should_run_runtime_event("prune", prune_interval, now):
             try:
                 symbols = await self.store.tracked_symbols(self.cfg.benchmark)
                 await self.store.prune_stale(
@@ -88,12 +99,19 @@ class ControlPipeline:
                     bar_retention_days=self.cfg.bar_retention_days,
                     prob_retention_days=self.cfg.prob_retention_days,
                 )
+                await self.store.mark_runtime_event("prune", now, {"symbols": len(symbols)})
             except Exception as error:  # noqa: BLE001
                 log.exception("prune failed: %s", error)
 
         # 1. Probabilities for tracked markets (Polymarket trades 24/7).
         markets = await self.store.active_markets()
         await self.update_probabilities(markets)
+        try:
+            repaired = await self.store.repair_t0_prob_baselines()
+            if repaired:
+                log.info("repaired %d missing T0 probability baselines", repaired)
+        except Exception as error:  # noqa: BLE001
+            log.warning("T0 probability repair failed: %s", error)
 
         # 2. Resolutions.
         await self.mark_resolutions(markets, now)
@@ -131,6 +149,10 @@ class ControlPipeline:
                     )
                     if swept:
                         snapshot = await positions.snapshot()
+                if snapshot["valid"]:
+                    snapshot = await self.final_hour_cash_sweep(
+                        orders, positions, snapshot,
+                    )
 
             # 7. NAV snapshot (also overnight -- probs still move), but only with
             # a real balance so the curve is never polluted by zero rows.
@@ -230,9 +252,16 @@ class ControlPipeline:
             log.warning("no benchmark price -- skipping entries this tick")
             return
 
+        # Hard no-overspend guard: we only ever deploy capital we can fund from
+        # cash + liquidatable benchmark. Never buy on margin/borrowed money.
+        investable = max(0.0, cash) + max(0.0, benchmark_shares) * benchmark_price
+
         for signal in signals[:slots]:
-            equity = snapshot["equity"]
-            desired = equity * position_size
+            if investable < self.cfg.min_order_notional:
+                log.info("entries stopped: investable %.2f < min order %.2f",
+                         investable, self.cfg.min_order_notional)
+                break
+            desired = min(snapshot["equity"] * position_size, investable)
             position = await orders.enter_position(
                 signal,
                 desired_allocation=desired,
@@ -244,7 +273,47 @@ class ControlPipeline:
             if position:
                 open_symbols.add(signal.symbol)
                 cash = max(0.0, cash - desired)
-                benchmark_shares -= int(position.get("benchmark_sell_qty", 0))
+                benchmark_shares = max(0.0, benchmark_shares - position.get("benchmark_sell_qty", 0))
+                investable = max(0.0, investable - desired)
+
+    async def final_hour_cash_sweep(self, orders: OrderManager, positions: PositionManager,
+                                    snapshot: dict) -> dict:
+        """Last-hour sweep loop: keep trying to convert idle cash into benchmark."""
+        seconds_left = seconds_to_market_close()
+        start_seconds = self.cfg.close_sweep_start_minutes * 60
+        if seconds_left is None or seconds_left > start_seconds:
+            return snapshot
+
+        while True:
+            cash = float(snapshot.get("cash") or 0.0)
+            benchmark_price = snapshot.get("benchmark_price")
+            seconds_left = seconds_to_market_close()
+            if (
+                seconds_left is None
+                or cash < self.cfg.min_order_notional
+                or not benchmark_price
+            ):
+                return snapshot
+
+            log.info(
+                "final-hour cash sweep: cash=%.2f seconds_to_close=%.0f",
+                cash, seconds_left,
+            )
+            swept = await orders.sweep_idle_cash(
+                cash=cash,
+                benchmark_price=benchmark_price,
+                kind="cash_sweep_close",
+                note="final-hour no-overnight-cash sweep",
+                buffer_pct=self.cfg.close_sweep_buffer_pct,
+            )
+            snapshot = await positions.snapshot()
+            if swept or float(snapshot.get("cash") or 0.0) < self.cfg.min_order_notional:
+                return snapshot
+
+            sleep_for = min(float(self.cfg.close_sweep_retry_seconds), max(seconds_left, 0.0))
+            if sleep_for <= 0:
+                return snapshot
+            await asyncio.sleep(sleep_for)
 
     async def snapshot_equity(self, snapshot: dict) -> None:
         assert self.store is not None

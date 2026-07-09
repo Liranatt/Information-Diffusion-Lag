@@ -58,6 +58,28 @@ def is_market_hours(now: datetime | None = None) -> bool:
     return time(9, 30) <= now.time() <= time(16, 0)
 
 
+def seconds_to_market_close(now: datetime | None = None) -> float | None:
+    """Seconds until the regular NYSE close, or None when the market is closed."""
+    local = (now or datetime.now(timezone.utc)).astimezone(NY)
+    if not is_market_hours(local):
+        return None
+    close_at = datetime.combine(local.date(), time(16, 0), tzinfo=NY)
+    return max(0.0, (close_at - local).total_seconds())
+
+
+def market_session_status(now: datetime | None = None) -> dict:
+    """Small dashboard-friendly market status snapshot in English."""
+    local = (now or datetime.now(timezone.utc)).astimezone(NY)
+    seconds_left = seconds_to_market_close(local)
+    is_open = seconds_left is not None
+    return {
+        "is_open": is_open,
+        "label": "Market open" if is_open else "Market closed",
+        "ny_time": local.isoformat(),
+        "seconds_to_close": round(seconds_left) if seconds_left is not None else None,
+    }
+
+
 async def retry_async(coro_factory, *, attempts: int = 3, base_delay: float = 2.0, label: str = ""):
     """Run an async factory with exponential backoff. Raises the last error."""
     last_error: Exception | None = None

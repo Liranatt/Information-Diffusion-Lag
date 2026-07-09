@@ -120,6 +120,15 @@ CREATE TABLE IF NOT EXISTS {SCHEMA}.live_api_costs (
 );
 CREATE INDEX IF NOT EXISTS idx_live_api_costs_ts ON {SCHEMA}.live_api_costs(ts);
 
+-- Restart-safe cadence markers. Without this, every container restart resets
+-- in-memory tick_count and can trigger paid discovery again.
+CREATE TABLE IF NOT EXISTS {SCHEMA}.live_runtime_state (
+    key                 TEXT PRIMARY KEY,
+    ts                  TIMESTAMPTZ,
+    value               JSONB NOT NULL DEFAULT '{{}}'::JSONB,
+    updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 -- Benchmark legs may be fractional (SPY/QQQ are fraction-eligible at IB).
 ALTER TABLE {SCHEMA}.live_equity_snapshots
     ALTER COLUMN benchmark_shares TYPE DOUBLE PRECISION;
@@ -201,6 +210,34 @@ class LiveStore:
                 f"UPDATE {SCHEMA}.live_tracked_markets SET t0_prob=$2, updated_at=NOW() "
                 f"WHERE market_id=$1 AND t0_prob IS NULL", market_id, prob,
             )
+
+    async def repair_t0_prob_baselines(self) -> int:
+        """Fill missing market T0 probabilities from the nearest stored hourly point.
+
+        Preference is first point at/after discovery; if there is no such point,
+        fall back to the nearest earlier point. This repairs old tracked markets
+        created before T0 capture was reliable.
+        """
+        async with self.pool.acquire() as conn:
+            result = await conn.execute(
+                f"""WITH picked AS (
+                        SELECT DISTINCT ON (m.market_id)
+                               m.market_id, p.probability
+                        FROM {SCHEMA}.live_tracked_markets m
+                        JOIN {SCHEMA}.historical_probability_points p
+                          ON p.market_id = m.market_id
+                        WHERE m.t0_prob IS NULL
+                          AND m.status = 'tracking'
+                        ORDER BY m.market_id,
+                                 CASE WHEN p.hour_ts >= m.discovered_at THEN 0 ELSE 1 END,
+                                 ABS(EXTRACT(EPOCH FROM (p.hour_ts - m.discovered_at)))
+                    )
+                    UPDATE {SCHEMA}.live_tracked_markets m
+                    SET t0_prob = picked.probability, updated_at = NOW()
+                    FROM picked
+                    WHERE picked.market_id = m.market_id"""
+            )
+        return _rowcount(result)
 
     async def tracked_symbols(self, benchmark: str) -> list[str]:
         """Every symbol we need data for: benchmark + open-position symbols +
@@ -306,6 +343,23 @@ class LiveStore:
             )
         return float(row["close"]) if row else None
 
+    async def close_near(self, symbol: str, ts: datetime) -> float | None:
+        """Baseline close near ts. Prefer no-lookahead (<= ts), then fallback after ts.
+
+        The fallback is used only when old live rows do not have a pre-discovery
+        bar yet; it keeps T0 diagnostics from silently becoming blank/zero.
+        """
+        before = await self.close_at(symbol, ts)
+        if before is not None:
+            return before
+        async with self.pool.acquire() as conn:
+            row = await conn.fetchrow(
+                f"""SELECT close FROM {SCHEMA}.historical_price_bars
+                    WHERE symbol=$1 AND ts > $2 ORDER BY ts LIMIT 1""",
+                symbol, ts,
+            )
+        return float(row["close"]) if row else None
+
     # ── Positions / orders / equity ──────────────────────────────────────
 
     async def open_positions(self) -> list[dict]:
@@ -394,6 +448,33 @@ class LiveStore:
                 open_positions, passive_equity,
             )
 
+    # ── Runtime cadence state ───────────────────────────────────────────
+
+    async def runtime_ts(self, key: str) -> datetime | None:
+        async with self.pool.acquire() as conn:
+            ts = await conn.fetchval(
+                f"SELECT ts FROM {SCHEMA}.live_runtime_state WHERE key=$1", key,
+            )
+        return ts
+
+    async def should_run_runtime_event(self, key: str, interval: timedelta,
+                                       now: datetime | None = None) -> bool:
+        now = now or datetime.now(timezone.utc)
+        last = await self.runtime_ts(key)
+        return last is None or (now - last) >= interval
+
+    async def mark_runtime_event(self, key: str, ts: datetime | None = None,
+                                 value: dict | None = None) -> None:
+        ts = ts or datetime.now(timezone.utc)
+        async with self.pool.acquire() as conn:
+            await conn.execute(
+                f"""INSERT INTO {SCHEMA}.live_runtime_state (key, ts, value, updated_at)
+                    VALUES ($1,$2,$3::jsonb,NOW())
+                    ON CONFLICT (key) DO UPDATE
+                    SET ts=EXCLUDED.ts, value=EXCLUDED.value, updated_at=NOW()""",
+                key, ts, json.dumps(value or {}),
+            )
+
     # ── Retention (we are low on space) ──────────────────────────────────
 
     async def prune_stale(self, *, tracked_symbols: list[str],
@@ -455,3 +536,10 @@ def _dt(value: Any) -> datetime:
     if isinstance(value, datetime):
         return value if value.tzinfo else value.replace(tzinfo=timezone.utc)
     return datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+
+
+def _rowcount(command_tag: str) -> int:
+    try:
+        return int(command_tag.split()[-1])
+    except (ValueError, IndexError):
+        return 0

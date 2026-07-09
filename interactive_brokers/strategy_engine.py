@@ -124,7 +124,7 @@ class StrategyEngine:
                 if len(bars) < 2:
                     continue
 
-                t0_close = await store.close_at(symbol, market["discovered_at"])
+                t0_close = await store.close_near(symbol, market["discovered_at"])
                 last_close = float(bars[-1]["close"])
                 if t0_close and t0_close > 0:
                     runup = last_close / t0_close - 1.0

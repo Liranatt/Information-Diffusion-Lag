@@ -61,6 +61,10 @@ class LiveConfig:
     tick_seconds: int = _env_int("LIVE_TICK_SECONDS", 3600)       # hourly
     discovery_every_ticks: int = _env_int("LIVE_DISCOVERY_TICKS", 24)  # daily
     prune_every_ticks: int = _env_int("LIVE_PRUNE_TICKS", 24)
+    # In the final hour before the equity close, keep trying to sweep free cash
+    # into the benchmark so the account does not carry idle cash overnight.
+    close_sweep_start_minutes: int = _env_int("LIVE_CLOSE_SWEEP_START_MINUTES", 60)
+    close_sweep_retry_seconds: int = _env_int("LIVE_CLOSE_SWEEP_RETRY_SECONDS", 60)
 
     # ── Data & space management ──────────────────────────────────────────
     # Hourly bars are stored only for symbols we track (open positions +
@@ -77,6 +81,11 @@ class LiveConfig:
     ib_request_timeout_seconds: int = _env_int("LIVE_IB_REQUEST_TIMEOUT", 45)
     order_timeout_seconds: int = _env_int("LIVE_ORDER_TIMEOUT", 120)
     min_order_notional: float = _env_float("LIVE_MIN_ORDER_NOTIONAL", 200.0)
+    # Buy orders are sent as capped limit orders at reference * (1 + buffer).
+    # Sizing also uses this capped price, so a fill cannot consume more capital
+    # than the cash + benchmark inventory explicitly allocated to that trade.
+    execution_buffer_pct: float = _env_float("LIVE_EXECUTION_BUFFER_PCT", 0.01)
+    close_sweep_buffer_pct: float = _env_float("LIVE_CLOSE_SWEEP_BUFFER_PCT", 0.03)
 
     # Markets we track must resolve within this window (mirrors scanner).
     min_resolution_days: int = 5

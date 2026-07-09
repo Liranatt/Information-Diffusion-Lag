@@ -9,8 +9,9 @@ Mirrors the backtest's benchmark-rotation model with the fully-invested rule:
 So capital is always either in an event position or in the index -- the cash
 drag identified in the backtest cannot occur.
 
-Orders are plain MKT (we are swing trading on hourly signals; queue priority
-is irrelevant, and paper fills on MKT are immediate). Every order is recorded
+Sells are market orders. Buys are capped limit orders when they are constrained
+by an affordability budget, so the paper account never intentionally buys more
+than cash + liquidatable benchmark inventory can fund. Every order is recorded
 in live_orders with its fill.
 """
 from __future__ import annotations
@@ -20,8 +21,9 @@ import logging
 from datetime import datetime, timezone
 
 try:
-    from ib_async import MarketOrder
+    from ib_async import LimitOrder, MarketOrder
 except ImportError:  # pragma: no cover
+    from ib_insync import LimitOrder  # type: ignore[no-redef]
     from ib_insync import MarketOrder  # type: ignore[no-redef]
 
 from .config import LiveConfig
@@ -46,20 +48,48 @@ class OrderManager:
             return affordable_buy_qty_frac(cash, price)
         return float(affordable_buy_qty(cash, price))
 
+    def _buy_limit(self, reference_price: float, buffer_pct: float | None = None) -> float:
+        """Maximum buy price used for affordability sizing and limit orders."""
+        buffer = self.cfg.execution_buffer_pct if buffer_pct is None else buffer_pct
+        return round(reference_price * (1.0 + buffer), 2)
+
     async def _execute(self, symbol: str, action: str, qty: float, *, kind: str,
                        position_id: int | None = None, note: str = "",
-                       reference_price: float | None = None) -> float | None:
+                       reference_price: float | None = None,
+                       limit_price: float | None = None) -> float | None:
         """Place a market order and wait for the fill. Returns avg fill price.
 
         reference_price is the mark we decided at; recorded so the real slippage
         (fill_price - reference_price) is observable per order. Commission is the
-        actual IB CommissionReport sum -- no modeled formula.
+        actual IB CommissionReport sum -- no modeled formula. Buy orders may pass
+        limit_price when the caller needs a hard affordability cap.
         """
         if qty <= 0:
             return None
         if self.cfg.dry_run:
             price = await self.store.latest_close(symbol)
-            log.info("[dry-run] %s %d %s @~%s (%s)", action, qty, symbol, price, kind)
+            if price is None:
+                await self.store.record_order(
+                    ib_order_id=None, symbol=symbol, action=action, qty=qty, kind=kind,
+                    fill_price=None, status="dry_run_no_price",
+                    position_id=position_id, note=note,
+                    reference_price=reference_price,
+                )
+                return None
+            if (
+                limit_price is not None and action.upper() == "BUY"
+                and price > limit_price
+            ):
+                log.info("[dry-run] %s %s %s missed limit %.2f < mark %.2f (%s)",
+                         action, qty, symbol, limit_price, price, kind)
+                await self.store.record_order(
+                    ib_order_id=None, symbol=symbol, action=action, qty=qty, kind=kind,
+                    fill_price=None, status="dry_run_limit_miss",
+                    position_id=position_id, note=note,
+                    reference_price=reference_price,
+                )
+                return None
+            log.info("[dry-run] %s %s %s @~%s (%s)", action, qty, symbol, price, kind)
             await self.store.record_order(
                 ib_order_id=None, symbol=symbol, action=action, qty=qty, kind=kind,
                 fill_price=price, status="dry_run", position_id=position_id, note=note,
@@ -77,7 +107,8 @@ class OrderManager:
             )
             return None
 
-        trade = ib.placeOrder(contract, MarketOrder(action, qty))
+        order = LimitOrder(action, qty, limit_price) if limit_price else MarketOrder(action, qty)
+        trade = ib.placeOrder(contract, order)
         deadline = asyncio.get_event_loop().time() + self.cfg.order_timeout_seconds
         while not trade.isDone() and asyncio.get_event_loop().time() < deadline:
             await asyncio.sleep(1.0)
@@ -92,7 +123,7 @@ class OrderManager:
             commission=commission, reference_price=reference_price,
         )
         if status not in {"Filled"}:
-            log.warning("order not filled: %s %d %s -> %s", action, qty, symbol, status)
+            log.warning("order not filled: %s %s %s -> %s", action, qty, symbol, status)
             if not trade.isDone():
                 ib.cancelOrder(trade.order)
             return None
@@ -115,12 +146,14 @@ class OrderManager:
 
     async def enter_position(self, signal, *, desired_allocation: float,
                              benchmark_price: float, cash: float,
-                             benchmark_shares: int, position_size_pct: float) -> dict | None:
+                             benchmark_shares: float, position_size_pct: float) -> dict | None:
         """Benchmark rotation entry. Returns the stored position dict or None."""
         entry_ref_price = await self.store.latest_close(signal.symbol)
         if entry_ref_price is None or entry_ref_price <= 0:
             return None
-        if desired_allocation < max(entry_ref_price, self.cfg.min_order_notional):
+        entry_limit_price = self._buy_limit(entry_ref_price)
+        benchmark_buy_limit = self._buy_limit(benchmark_price)
+        if desired_allocation < max(entry_limit_price, self.cfg.min_order_notional):
             return None
 
         # Fund from idle cash first, then benchmark inventory (backtest parity).
@@ -138,37 +171,55 @@ class OrderManager:
             return None
 
         funding = cash_contribution
+        benchmark_sell_fill = None
+        benchmark_sell_proceeds = 0.0
         if benchmark_sell_qty > 0:
-            fill = await self._execute(
+            benchmark_sell_fill = await self._execute(
                 self.cfg.benchmark, "SELL", benchmark_sell_qty,
                 kind="rotation_fund", note=f"fund {signal.symbol}",
                 reference_price=benchmark_price,
             )
-            if fill is None:
+            if benchmark_sell_fill is None:
                 return None
-            funding += benchmark_sell_qty * fill - ib_cost(benchmark_sell_qty, fill, True)
+            benchmark_sell_proceeds = (
+                benchmark_sell_qty * benchmark_sell_fill
+                - ib_cost(benchmark_sell_qty, benchmark_sell_fill, True)
+            )
+            funding += benchmark_sell_proceeds
 
-        asset_qty = affordable_buy_qty(funding, entry_ref_price)
+        # Size against the capped limit price, not the last mark. If the market
+        # runs through the cap, the order simply will not fill.
+        asset_qty = affordable_buy_qty(funding, entry_limit_price)
         if asset_qty < 1:
             # Undo: roll the funding back into the benchmark.
             if benchmark_sell_qty > 0:
-                await self._execute(self.cfg.benchmark, "BUY", benchmark_sell_qty,
-                                    kind="rotation_undo", note=f"undo {signal.symbol}",
-                                    reference_price=benchmark_price)
+                undo_cash = max(0.0, benchmark_sell_proceeds)
+                undo_qty = self._bench_qty(undo_cash, benchmark_buy_limit)
+                await self._execute(
+                    self.cfg.benchmark, "BUY", undo_qty,
+                    kind="rotation_undo", note=f"undo {signal.symbol}",
+                    reference_price=benchmark_price, limit_price=benchmark_buy_limit,
+                )
             return None
 
         fill_price = await self._execute(signal.symbol, "BUY", asset_qty, kind="entry",
                                          note=signal.question[:100],
-                                         reference_price=entry_ref_price)
+                                         reference_price=entry_ref_price,
+                                         limit_price=entry_limit_price)
         if fill_price is None:
             if benchmark_sell_qty > 0:
-                await self._execute(self.cfg.benchmark, "BUY", benchmark_sell_qty,
-                                    kind="rotation_undo", note=f"undo {signal.symbol}",
-                                    reference_price=benchmark_price)
+                undo_cash = max(0.0, benchmark_sell_proceeds)
+                undo_qty = self._bench_qty(undo_cash, benchmark_buy_limit)
+                await self._execute(
+                    self.cfg.benchmark, "BUY", undo_qty,
+                    kind="rotation_undo", note=f"undo {signal.symbol}",
+                    reference_price=benchmark_price, limit_price=benchmark_buy_limit,
+                )
             return None
 
         entry_costs = (
-            (ib_cost(benchmark_sell_qty, benchmark_price, True) if benchmark_sell_qty else 0.0)
+            (ib_cost(benchmark_sell_qty, benchmark_sell_fill or benchmark_price, True)
+             if benchmark_sell_qty else 0.0)
             + ib_cost(asset_qty, fill_price, False)
         )
         position = {
@@ -208,12 +259,13 @@ class OrderManager:
         rebuy_qty = 0.0
         rebuy_cost = 0.0
         if benchmark_price and benchmark_price > 0:
-            rebuy_qty = self._bench_qty(proceeds, benchmark_price)
+            benchmark_buy_limit = self._buy_limit(benchmark_price)
+            rebuy_qty = self._bench_qty(proceeds, benchmark_buy_limit)
             if rebuy_qty > 0:
                 rebuy_fill = await self._execute(
                     self.cfg.benchmark, "BUY", rebuy_qty, kind="rotation_rebuy",
                     position_id=pos["position_id"], note=f"rebuy after {pos['symbol']}",
-                    reference_price=benchmark_price,
+                    reference_price=benchmark_price, limit_price=benchmark_buy_limit,
                 )
                 if rebuy_fill is not None:
                     rebuy_cost = ib_cost(rebuy_qty, rebuy_fill, False)
@@ -236,17 +288,21 @@ class OrderManager:
                  reason, net_pnl)
         return True
 
-    async def sweep_idle_cash(self, *, cash: float, benchmark_price: float | None) -> float:
+    async def sweep_idle_cash(self, *, cash: float, benchmark_price: float | None,
+                              kind: str = "cash_sweep", note: str = "fully-invested sweep",
+                              buffer_pct: float | None = None) -> float:
         """Fully-invested rule: idle cash -> benchmark shares."""
         if not benchmark_price or benchmark_price <= 0:
             return 0.0
         # Sub-threshold sweeps churn the $0.35 minimum commission for nothing.
         if cash < self.cfg.min_order_notional:
             return 0.0
-        qty = self._bench_qty(cash, benchmark_price)
+        benchmark_buy_limit = self._buy_limit(benchmark_price, buffer_pct)
+        qty = self._bench_qty(cash, benchmark_buy_limit)
         if qty <= 0:
             return 0.0
-        fill = await self._execute(self.cfg.benchmark, "BUY", qty, kind="cash_sweep",
-                                   note="fully-invested sweep",
-                                   reference_price=benchmark_price)
+        fill = await self._execute(self.cfg.benchmark, "BUY", qty, kind=kind,
+                                   note=note,
+                                   reference_price=benchmark_price,
+                                   limit_price=benchmark_buy_limit)
         return qty if fill is not None else 0.0
