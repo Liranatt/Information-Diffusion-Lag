@@ -126,6 +126,13 @@ class OrderManager:
             log.warning("order not filled: %s %s %s -> %s", action, qty, symbol, status)
             if not trade.isDone():
                 ib.cancelOrder(trade.order)
+                cancel_deadline = asyncio.get_event_loop().time() + 5.0
+                while not trade.isDone() and asyncio.get_event_loop().time() < cancel_deadline:
+                    await asyncio.sleep(0.5)
+                # Check status one last time after waiting
+                if trade.orderStatus.status == "Filled":
+                    log.warning("order %s %s %s filled right before cancellation!", action, qty, symbol)
+                    return float(trade.orderStatus.avgFillPrice or 0.0) or None
             return None
         return fill_price
 
