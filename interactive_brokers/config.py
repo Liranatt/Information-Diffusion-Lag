@@ -55,7 +55,7 @@ class LiveConfig:
     use_kelly: bool = _env_bool("LIVE_USE_KELLY", True)
     # Benchmark legs use fractional shares (requires fractional-share trading
     # permission on the IB account; SPY/QQQ are fraction-eligible).
-    fractional_benchmark: bool = _env_bool("LIVE_FRACTIONAL_BENCHMARK", True)
+    fractional_benchmark: bool = _env_bool("LIVE_FRACTIONAL_BENCHMARK", False)
 
     # ── Control loop cadence ─────────────────────────────────────────────
     tick_seconds: int = _env_int("LIVE_TICK_SECONDS", 3600)       # hourly
