@@ -108,22 +108,34 @@ class ControlPipeline:
                 log.exception("bar refresh failed: %s", error)
 
         snapshot = await positions.snapshot()
-        await positions.report_drift(snapshot)
 
-        # 4-6. Trade only when the equity market can fill us.
-        if market_open:
-            await self.run_exits(engine, orders, snapshot)
-            snapshot = await positions.snapshot()
-            await self.run_entries(engine, orders, snapshot, markets, policy)
-            snapshot = await positions.snapshot()
-            swept = await orders.sweep_idle_cash(
-                cash=snapshot["cash"], benchmark_price=snapshot["benchmark_price"],
-            )
-            if swept:
+        # Never trade or record NAV on a phantom balance: if IB could not return
+        # the account state (farm reconnecting / timeout), skip this tick's
+        # trading and NAV snapshot entirely and try again next tick.
+        if not snapshot["valid"]:
+            log.warning("IB balance unavailable -- skipping trading + NAV snapshot this "
+                        "tick (gateway/account farm warming up)")
+        else:
+            await positions.report_drift(snapshot)
+
+            # 4-6. Trade only when the equity market can fill us.
+            if market_open:
+                await self.run_exits(engine, orders, snapshot)
                 snapshot = await positions.snapshot()
+                if snapshot["valid"]:
+                    await self.run_entries(engine, orders, snapshot, markets, policy)
+                    snapshot = await positions.snapshot()
+                if snapshot["valid"]:
+                    swept = await orders.sweep_idle_cash(
+                        cash=snapshot["cash"], benchmark_price=snapshot["benchmark_price"],
+                    )
+                    if swept:
+                        snapshot = await positions.snapshot()
 
-        # 7. NAV snapshot every tick (also overnight -- probs still move).
-        await self.snapshot_equity(snapshot)
+            # 7. NAV snapshot (also overnight -- probs still move), but only with
+            # a real balance so the curve is never polluted by zero rows.
+            if snapshot["valid"]:
+                await self.snapshot_equity(snapshot)
 
         # 7b. System telemetry (DB size + disk) so space is observable.
         try:

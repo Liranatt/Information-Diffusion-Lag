@@ -17,13 +17,30 @@ class PositionManager:
         self.store = store
 
     async def snapshot(self) -> dict:
-        """Current portfolio state used by the control loop for sizing/sweeps."""
-        cash = await self.ib_conn.account_cash() if not self.cfg.dry_run else 0.0
-        ib_positions = (
-            await self.ib_conn.portfolio_positions() if not self.cfg.dry_run else {}
-        )
-        open_db = await self.store.open_positions()
+        """Current portfolio state used by the control loop for sizing/sweeps.
 
+        `valid` is False when the live IB balance could not be read (account
+        farm reconnecting, request timeout). The control loop must then skip
+        trading and skip writing a NAV snapshot rather than act on a phantom
+        zero balance.
+        """
+        valid = True
+        if self.cfg.dry_run:
+            cash: float | None = 0.0
+            ib_positions: dict[str, float] = {}
+        else:
+            try:
+                cash = await self.ib_conn.account_cash()
+                ib_positions = await self.ib_conn.portfolio_positions()
+            except Exception as error:  # noqa: BLE001 - IB warm-up / timeouts
+                log.warning("IB account query failed (%s) -- snapshot marked incomplete",
+                            type(error).__name__)
+                cash, ib_positions, valid = None, {}, False
+            if cash is None:
+                valid = False
+                log.warning("IB returned no cash balance -- snapshot marked incomplete")
+
+        open_db = await self.store.open_positions()
         benchmark_shares = float(ib_positions.get(self.cfg.benchmark, 0.0))
         benchmark_price = await self.store.latest_close(self.cfg.benchmark)
 
@@ -32,15 +49,16 @@ class PositionManager:
             price = await self.store.latest_close(pos["symbol"]) or float(pos["entry_price"])
             open_value += int(pos["qty"]) * price
 
-        equity = cash + benchmark_shares * (benchmark_price or 0.0) + open_value
+        equity = (cash or 0.0) + benchmark_shares * (benchmark_price or 0.0) + open_value
         return {
-            "cash": cash,
+            "cash": cash or 0.0,
             "benchmark_shares": benchmark_shares,
             "benchmark_price": benchmark_price,
             "open_positions": open_db,
             "open_value": open_value,
             "equity": equity,
             "ib_positions": ib_positions,
+            "valid": valid,
         }
 
     async def report_drift(self, snapshot: dict) -> list[str]:

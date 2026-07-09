@@ -86,7 +86,13 @@ class IBConnection:
         self._contracts[symbol] = qualified[0]
         return qualified[0]
 
-    async def account_cash(self) -> float:
+    async def account_cash(self) -> float | None:
+        """USD TotalCashValue, or None if IB returned no cash row.
+
+        None (not 0.0) signals "balance unavailable" -- e.g. the account farm
+        is mid-reconnect and the summary came back empty. Callers must NOT treat
+        that as a real zero balance and must not size/trade on it.
+        """
         ib = await self.ensure_connected()
         rows = await asyncio.wait_for(
             ib.accountSummaryAsync(self.cfg.account or ""),
@@ -95,7 +101,7 @@ class IBConnection:
         for row in rows:
             if row.tag == "TotalCashValue" and row.currency == "USD":
                 return float(row.value)
-        return 0.0
+        return None
 
     async def portfolio_positions(self) -> dict[str, float]:
         """Current IB paper account positions as {symbol: signed qty}.
