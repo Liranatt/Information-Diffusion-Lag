@@ -10,7 +10,7 @@ flock -n 9 || exit 0
 
 cd "$APP_DIR"
 
-git fetch origin "$DEPLOY_BRANCH"
+git fetch origin "refs/heads/$DEPLOY_BRANCH:refs/remotes/origin/$DEPLOY_BRANCH"
 LOCAL_SHA="$(git rev-parse HEAD)"
 REMOTE_SHA="$(git rev-parse "origin/$DEPLOY_BRANCH")"
 

@@ -135,7 +135,7 @@ bash scripts/deploy_if_changed.sh  # fetch branch, deploy only if SHA changed
 Recommended user crontab on `liranserver`:
 
 ```cron
-* * * * * APP_DIR=/home/liranatt/cem_clean_repo DEPLOY_BRANCH=cem/phase0-phase1-plumbing /bin/bash /home/liranatt/cem_clean_repo/scripts/deploy_if_changed.sh >> /home/liranatt/cem_clean_repo/data/deploy.log 2>&1
+* * * * * APP_DIR=/home/liranatt/cem_clean_repo DEPLOY_BRANCH=main /bin/bash /home/liranatt/cem_clean_repo/scripts/deploy_if_changed.sh >> /tmp/cem_deploy.log 2>&1
 ```
 
 The deploy wrapper uses `git reset --hard origin/<branch>` by design; keep

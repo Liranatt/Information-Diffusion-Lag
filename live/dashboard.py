@@ -7,9 +7,9 @@ plus the walk-forward backtest CSV.
     python -m live.dashboard      # or the docker compose `dashboard` service
 
 Views: Overview (allocation index-vs-trades, NAV vs passive, KPIs), Portfolio
-(open positions with prob/stock runup, Kelly, real commission + slippage; orders;
-trades; market watchlist), Strategy & Backtest (walk-forward OOS folds + the live
-policy), and Learn (CEM / T1-T4 / Kelly / walk-forward explained).
+(open positions with prob/stock runup and Kelly; orders; trades; market watchlist),
+Strategy & Backtest (walk-forward OOS folds + the live policy), and Learn
+(CEM / T1-T4 / Kelly / walk-forward explained).
 """
 from __future__ import annotations
 
@@ -157,16 +157,10 @@ async def gather_metrics() -> dict:
                        COALESCE(SUM(calls) FILTER (WHERE ts>=date_trunc('day',now())),0) AS today_calls
                 FROM {SCHEMA}.live_api_costs""")
         pos_market_ids = [p["market_id"] for p in open_pos]
-        pos_ids = [p["position_id"] for p in open_pos]
         mkt_rows = await conn.fetch(
             f"""SELECT market_id, t0_prob, discovered_at FROM {SCHEMA}.live_tracked_markets
                 WHERE market_id = ANY($1::text[])""", pos_market_ids) if pos_market_ids else []
-        entry_orders = await conn.fetch(
-            f"""SELECT DISTINCT ON (position_id) position_id, fill_price, reference_price, commission
-                FROM {SCHEMA}.live_orders WHERE position_id = ANY($1::bigint[]) AND kind='entry'
-                ORDER BY position_id, ts""", pos_ids) if pos_ids else []
     mkt_map = {r["market_id"]: r for r in mkt_rows}
-    entry_map = {r["position_id"]: r for r in entry_orders}
 
     equity = _f(eq["equity"]) if eq else None
     passive = _f(eq["passive_equity"]) if eq and eq["passive_equity"] is not None else None
@@ -188,11 +182,6 @@ async def gather_metrics() -> dict:
         t0_prob = _f(mk["t0_prob"]) if mk else None
         prob_now = await store.latest_prob(p["market_id"])
         stock_t0 = await store.close_near(p["symbol"], mk["discovered_at"]) if mk and mk["discovered_at"] else None
-        eo = entry_map.get(p["position_id"])
-        ref = _f(eo["reference_price"]) if eo else None
-        efill = _f(eo["fill_price"]) if eo else entry
-        slip_bps = ((efill / ref - 1.0) * 1e4) if (ref and efill) else None
-
         # Stop-loss: ATR trailing for non-earnings, theta-only for earnings
         stop_loss = None
         if not p["is_earnings"] and atr_mult and p["atr_pct"]:
@@ -227,8 +216,6 @@ async def gather_metrics() -> dict:
             "stock_runup_pct": stock_runup_pct_val,
             "kelly_pct": round(float(p["position_size_pct"]) * 100.0, 1)
                 if p["position_size_pct"] is not None else None,
-            "commission": round(_f(eo["commission"]), 2) if eo and eo["commission"] is not None else None,
-            "slip_bps": round(slip_bps, 1) if slip_bps is not None else None,
             "stop_loss": stop_loss,
             "is_earnings": bool(p["is_earnings"]),
             "question": p["question"][:80], "entry_ts": _iso(p["entry_ts"]),
@@ -409,9 +396,7 @@ PAGE = r"""<!doctype html>
   /* Sidebar */
   .side{width:236px; flex-shrink:0; background:var(--card); border-right:1px solid var(--line2);
     padding:20px 16px; display:flex; flex-direction:column; gap:6px; position:sticky; top:0; height:100vh}
-  .logo{display:flex; align-items:center; gap:11px; padding:6px 8px 18px; font-weight:800; font-size:17px; letter-spacing:-.02em}
-  .logo .mk{width:30px; height:30px; border-radius:9px; background:linear-gradient(135deg,var(--brand),var(--brand2));
-    display:grid; place-items:center; color:#fff; font-size:15px; box-shadow:0 6px 16px -4px rgba(109,94,252,.5)}
+  .logo{display:flex; align-items:center; padding:6px 8px 18px; font-weight:800; font-size:20px; letter-spacing:0}
   .logo small{display:block; font-weight:500; font-size:10.5px; color:var(--mut); letter-spacing:.05em}
   .nav{display:flex; flex-direction:column; gap:3px; margin-top:6px}
   .nav button{display:flex; align-items:center; gap:11px; width:100%; text-align:left; border:0; cursor:pointer;
@@ -525,7 +510,7 @@ PAGE = r"""<!doctype html>
 <body>
 <div class="app">
   <aside class="side">
-    <div class="logo"><span class="mk">◆</span><div>CEM<small>paper trading</small></div></div>
+    <div class="logo"><div>CEM<small>paper trading</small></div></div>
     <nav class="nav" id="nav">
       <button data-v="overview" class="on"><span class="ic">◧</span>Overview</button>
       <button data-v="portfolio"><span class="ic">▤</span>Portfolio</button>
@@ -568,7 +553,7 @@ PAGE = r"""<!doctype html>
     <!-- PORTFOLIO -->
     <section class="view" id="portfolio">
       <div id="palerts"></div>
-      <div class="card" style="margin-bottom:18px"><h3>Open positions · runup, Kelly, real cost &amp; slippage</h3>
+      <div class="card" style="margin-bottom:18px"><h3>Open positions · runup, Kelly &amp; stops</h3>
         <div class="hint">T0 is the first tracked baseline. T epsilon is the entry decision. The T0 to entry columns show how far probability and stock price moved before the trade fired, which is the gate that catches late or over-extended entries.</div>
         <div class="tw" id="positions"></div></div>
       <div class="row c2b">
@@ -772,8 +757,6 @@ async function refresh(){
     {h:"Stock T0→Entry",n:1,f:r=>r.stock_entry_runup_pct==null?"—":sg(r.stock_entry_runup_pct,2)+"%",cl:r=>cl(r.stock_entry_runup_pct)},
     {h:"Stock T0→Now",n:1,f:r=>r.stock_runup_pct==null?"—":sg(r.stock_runup_pct,2)+"%",cl:r=>cl(r.stock_runup_pct)},
     {h:"Kelly",n:1,f:r=>r.kelly_pct==null?"—":`<span class="tag brand">${nn(r.kelly_pct,1)}%</span>`},
-    {h:"Comm",n:1,f:r=>r.commission==null?"—":usd(r.commission)},
-    {h:"Slip",n:1,f:r=>r.slip_bps==null?"—":sg(r.slip_bps,1)+"bp",cl:r=>r.slip_bps==null?"":(r.slip_bps>0?"down":"up")},
     {h:"Opened",n:1,f:r=>dt(r.entry_ts)},
     {h:"Question",f:r=>r.question,cl:()=>"q"}]);
   const orderRows=showAllOrders?d.recent_orders:d.recent_orders.slice(0,10);

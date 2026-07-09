@@ -29,7 +29,12 @@ except ImportError:  # pragma: no cover
 from .config import LiveConfig
 from .connection import IBConnection
 from .database import LiveStore
-from .utils import affordable_buy_qty, affordable_buy_qty_frac, ib_cost
+from .utils import (
+    affordable_buy_qty,
+    affordable_buy_qty_frac,
+    benchmark_sell_qty_for_cash_deficit,
+    ib_cost,
+)
 
 log = logging.getLogger("live.orders")
 
@@ -151,10 +156,56 @@ class OrderManager:
 
     # ── Rotation legs ────────────────────────────────────────────────────
 
+    async def restore_no_margin_from_benchmark(
+        self,
+        *,
+        cash: float,
+        benchmark_price: float | None,
+        benchmark_shares: float,
+        reason: str,
+    ) -> bool:
+        """Sell benchmark shares when ledger cash is negative."""
+        if cash >= 0:
+            return True
+        qty = benchmark_sell_qty_for_cash_deficit(
+            cash,
+            benchmark_price,
+            benchmark_shares,
+            fractional=self.cfg.fractional_benchmark,
+            min_notional=self.cfg.min_order_notional,
+            buffer_pct=self.cfg.execution_buffer_pct,
+        )
+        if qty <= 0:
+            log.error(
+                "cash %.2f is negative but no %s inventory is available to sell",
+                cash, self.cfg.benchmark,
+            )
+            return False
+
+        log.warning(
+            "negative ledger cash %.2f before %s -- selling %.4g %s to restore no-margin",
+            cash, reason, qty, self.cfg.benchmark,
+        )
+        fill = await self._execute(
+            self.cfg.benchmark,
+            "SELL",
+            qty,
+            kind="margin_rebalance",
+            note=f"{reason}: cover negative reconciled cash",
+            reference_price=benchmark_price,
+        )
+        return fill is not None
+
     async def enter_position(self, signal, *, desired_allocation: float,
                              benchmark_price: float, cash: float,
                              benchmark_shares: float, position_size_pct: float) -> dict | None:
         """Benchmark rotation entry. Returns the stored position dict or None."""
+        if cash < 0:
+            log.error(
+                "refusing entry for %s while reconciled cash is negative (%.2f)",
+                signal.symbol, cash,
+            )
+            return None
         entry_ref_price = await self.store.latest_close(signal.symbol)
         if entry_ref_price is None or entry_ref_price <= 0:
             return None
@@ -250,7 +301,8 @@ class OrderManager:
         return position
 
     async def exit_position(self, pos: dict, reason: str,
-                            benchmark_price: float | None) -> bool:
+                            benchmark_price: float | None, *,
+                            cash: float = 0.0) -> bool:
         """Sell the asset, rebuy the benchmark with the proceeds."""
         qty = int(pos["qty"])
         exit_ref = await self.store.latest_close(pos["symbol"])
@@ -262,12 +314,20 @@ class OrderManager:
 
         sell_cost = ib_cost(qty, fill_price, True)
         proceeds = qty * fill_price - sell_cost
+        rebuy_budget = proceeds
+        if cash < 0:
+            rebuy_budget = max(0.0, proceeds + cash)
+            if rebuy_budget < proceeds:
+                log.warning(
+                    "exit %s proceeds first cover cash deficit %.2f; benchmark rebuy budget %.2f",
+                    pos["symbol"], -cash, rebuy_budget,
+                )
 
         rebuy_qty = 0.0
         rebuy_cost = 0.0
         if benchmark_price and benchmark_price > 0:
             benchmark_buy_limit = self._buy_limit(benchmark_price)
-            rebuy_qty = self._bench_qty(proceeds, benchmark_buy_limit)
+            rebuy_qty = self._bench_qty(rebuy_budget, benchmark_buy_limit)
             if rebuy_qty > 0:
                 rebuy_fill = await self._execute(
                     self.cfg.benchmark, "BUY", rebuy_qty, kind="rotation_rebuy",

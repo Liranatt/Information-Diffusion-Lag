@@ -145,17 +145,32 @@ class ControlPipeline:
 
             # 4-6. Trade only when the equity market can fill us.
             if market_open:
+                snapshot = await self.enforce_no_margin(
+                    orders, positions, snapshot, reason="pre-exit",
+                )
                 await self.run_exits(engine, orders, snapshot)
                 snapshot = await positions.snapshot()
                 if snapshot["valid"]:
+                    snapshot = await self.enforce_no_margin(
+                        orders, positions, snapshot, reason="pre-entry",
+                    )
+                if snapshot["valid"]:
                     await self.run_entries(engine, orders, snapshot, markets, policy)
                     snapshot = await positions.snapshot()
+                if snapshot["valid"]:
+                    snapshot = await self.enforce_no_margin(
+                        orders, positions, snapshot, reason="pre-sweep",
+                    )
                 if snapshot["valid"]:
                     swept = await orders.sweep_idle_cash(
                         cash=snapshot["cash"], benchmark_price=snapshot["benchmark_price"],
                     )
                     if swept:
                         snapshot = await positions.snapshot()
+                        if snapshot["valid"]:
+                            snapshot = await self.enforce_no_margin(
+                                orders, positions, snapshot, reason="post-sweep",
+                            )
                 if snapshot["valid"]:
                     snapshot = await self.final_hour_cash_sweep(
                         orders, positions, snapshot,
@@ -227,7 +242,10 @@ class ControlPipeline:
         by_id = {p["position_id"]: p for p in open_positions}
         for signal in exits:
             pos = by_id[signal.position_id]
-            await orders.exit_position(pos, signal.reason, snapshot["benchmark_price"])
+            await orders.exit_position(
+                pos, signal.reason, snapshot["benchmark_price"],
+                cash=float(snapshot.get("cash") or 0.0),
+            )
 
     async def run_entries(self, engine: StrategyEngine, orders: OrderManager,
                           snapshot: dict, markets: list[dict], policy: dict) -> None:
@@ -258,6 +276,13 @@ class ControlPipeline:
         if not benchmark_price:
             log.warning("no benchmark price -- skipping entries this tick")
             return
+        if cash < 0:
+            log.error(
+                "negative reconciled cash %.2f remains after margin rebalance -- "
+                "skipping entries",
+                cash,
+            )
+            return
 
         # Hard no-overspend guard: we only ever deploy capital we can fund from
         # cash + liquidatable benchmark. Never buy on margin/borrowed money.
@@ -283,6 +308,30 @@ class ControlPipeline:
                 benchmark_shares = max(0.0, benchmark_shares - position.get("benchmark_sell_qty", 0))
                 investable = max(0.0, investable - desired)
 
+    async def enforce_no_margin(self, orders: OrderManager, positions: PositionManager,
+                                snapshot: dict, *, reason: str) -> dict:
+        """Bring negative ledger cash back to zero by selling benchmark inventory."""
+        cash = float(snapshot.get("cash") or 0.0)
+        if cash >= 0:
+            return snapshot
+
+        restored = await orders.restore_no_margin_from_benchmark(
+            cash=cash,
+            benchmark_price=snapshot.get("benchmark_price"),
+            benchmark_shares=float(snapshot.get("benchmark_shares") or 0.0),
+            reason=reason,
+        )
+        if restored:
+            snapshot = await positions.snapshot()
+
+        if snapshot.get("valid") and float(snapshot.get("cash") or 0.0) < 0:
+            log.error(
+                "reconciled cash remains negative after %s rebalance: %.2f; "
+                "new buys are disabled until cash is non-negative",
+                reason, float(snapshot.get("cash") or 0.0),
+            )
+        return snapshot
+
     async def final_hour_cash_sweep(self, orders: OrderManager, positions: PositionManager,
                                     snapshot: dict) -> dict:
         """Last-hour sweep loop: keep trying to convert idle cash into benchmark."""
@@ -295,6 +344,11 @@ class ControlPipeline:
             cash = float(snapshot.get("cash") or 0.0)
             benchmark_price = snapshot.get("benchmark_price")
             seconds_left = seconds_to_market_close()
+            if cash < 0:
+                snapshot = await self.enforce_no_margin(
+                    orders, positions, snapshot, reason="final-hour",
+                )
+                cash = float(snapshot.get("cash") or 0.0)
             if (
                 seconds_left is None
                 or cash < self.cfg.min_order_notional
