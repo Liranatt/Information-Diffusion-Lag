@@ -1,66 +1,28 @@
-# 24/7 live paper-trading stack.
+# 24/7 trader daemon for live paper trading on liranserver (192.168.1.159).
 #
-#   ib-gateway : headless IB Gateway (paper) with IBC auto-login + daily restart
-#   trader     : the hourly control-pipeline daemon (interactive_brokers.run_live)
+# This host ALREADY runs the shared infrastructure:
+#   * ib-gateway container -> paper API published on 0.0.0.0:4004 (restart=always,
+#     TRADING_MODE=paper, READ_ONLY_API=no). Managed outside this compose file.
+#   * Postgres (my_traders_db) on 192.168.1.159:5432, holding the live tables.
 #
-# Postgres is NOT in this stack -- it runs natively on the Docker host and is
-# reached via host.docker.internal (see extra_hosts). See DEPLOY.md for the
-# host Postgres and .env setup.
+# So this stack is JUST the trader daemon, on host networking, reusing the .env
+# values that already work from a host process (IB_HOST=192.168.1.159,
+# IB_PORT=4004, DB_HOST=192.168.1.159). No second gateway, no host.docker.internal,
+# no pg_hba changes -- a host-net container is network-identical to a host process.
 #
-# Bring up:   docker compose up -d --build
-# Dry run:    docker compose run --rm trader python -m interactive_brokers.run_live --once --dry-run
-# Logs:       docker compose logs -f trader
-# Status:     docker compose run --rm trader python -m interactive_brokers.run_live --status
+# Build + validate:  docker compose run --rm trader python -m interactive_brokers.run_live --once --dry-run
+# Go 24/7:           docker compose up -d --build
+# Logs:              docker compose logs -f trader
+# Status:            docker compose run --rm trader python -m interactive_brokers.run_live --status
 
 services:
-  ib-gateway:
-    image: ghcr.io/gnzsnz/ib-gateway:stable
-    restart: unless-stopped
-    environment:
-      # Paper credentials -- keep these in .env, never commit them.
-      TWS_USERID: ${TWS_USERID}
-      TWS_PASSWORD: ${TWS_PASSWORD}
-      TRADING_MODE: paper
-      READ_ONLY_API: "no"            # the daemon must be able to place orders
-      BYPASS_WARNING: "yes"
-      AUTO_RESTART_TIME: "11:59 PM"  # nightly restart to refresh the session
-      TWOFA_TIMEOUT_ACTION: restart
-      RELOGIN_AFTER_2FA_TIMEOUT: "yes"
-      TIME_ZONE: America/New_York
-      # Uncomment to inspect the Gateway GUI over VNC while debugging:
-      # VNC_SERVER_PASSWORD: ${VNC_SERVER_PASSWORD}
-    ports:
-      # Published to localhost only; the trader reaches the API over the
-      # internal network, not through these. 4004 = socat-forwarded paper API.
-      - "127.0.0.1:4002:4004"
-      # - "127.0.0.1:5900:5900"   # VNC, if you set VNC_SERVER_PASSWORD above
-    healthcheck:
-      test: ["CMD-SHELL", "nc -z 127.0.0.1 4004 || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 10
-      start_period: 120s
-
   trader:
     build: .
+    image: cem-trader:latest
     restart: unless-stopped
-    depends_on:
-      ib-gateway:
-        condition: service_healthy
-    environment:
-      # These override the repo .env values, which point at localhost for
-      # local runs. python-dotenv (override=False) keeps whatever is already
-      # in the container environment, so these win.
-      IB_HOST: ib-gateway
-      IB_PORT: "4004"
-      DB_HOST: host.docker.internal   # native Postgres on the Docker host
-      LIVE_REQUIRE_PAPER_ACCOUNT: "true"
-      TZ: America/New_York
+    network_mode: host            # share host netns: the .env LAN IPs just work
     env_file:
-      - .env                          # DB creds, IB_CLIENT_ID, Gemini key, etc.
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - .env                      # DB creds, IB_HOST/PORT (4004), Gemini key, etc.
     volumes:
-      # Live source + data/ so refit CSVs, .env, and git pulls propagate
-      # without a rebuild. The daemon writes its log to data/live_pipeline.log.
-      - .:/app
+      - .:/app                    # live source + data/ (refit CSVs propagate) + .env
+    command: ["python", "-m", "interactive_brokers.run_live", "--daemon"]

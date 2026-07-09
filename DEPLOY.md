@@ -1,5 +1,16 @@
 # 24/7 live paper-trading deployment
 
+> **Actual deployment (liranserver, 192.168.1.159).** This server already runs
+> the shared infra — an `ib-gateway` container (paper API on `0.0.0.0:4004`,
+> `restart=always`) and Postgres (`my_traders_db`) on `5432`. So we deploy
+> **only the trader daemon**, as a host-networked container that reuses the
+> existing gateway + Postgres via the `.env` values (`IB_PORT=4004`,
+> `DB_HOST=192.168.1.159`). `docker-compose.yml` reflects this. The generic
+> two-service instructions below are kept as reference for a from-scratch box.
+>
+> Deploy: clone repo → copy `.env` in → `docker compose run --rm trader … --once
+> --dry-run` → `docker compose up -d --build`.
+
 Runs the hourly control pipeline (`interactive_brokers.run_live --daemon`)
 unattended on a Linux server, alongside a headless IB Gateway that auto-logs-in
 and restarts nightly. Postgres runs natively on the same host.
