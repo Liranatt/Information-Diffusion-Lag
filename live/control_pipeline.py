@@ -194,7 +194,7 @@ class ControlPipeline:
         if not markets:
             return
         now = datetime.now(timezone.utc)
-        start_ts = int((now - timedelta(hours=6)).timestamp())
+        start_ts = int((now - timedelta(hours=25)).timestamp())
         async with httpx.AsyncClient(timeout=httpx.Timeout(30)) as client:
             for market in markets:
                 try:

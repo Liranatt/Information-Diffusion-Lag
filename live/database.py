@@ -269,7 +269,9 @@ class LiveStore:
                 f"""INSERT INTO {SCHEMA}.historical_probability_points
                     (market_id, yes_token_id, hour_ts, source_ts, available_at, probability)
                     VALUES ($1,$2,$3,$4,$5,$6)
-                    ON CONFLICT (market_id, hour_ts) DO NOTHING""",
+                    ON CONFLICT (market_id, hour_ts) DO UPDATE
+                    SET probability   = EXCLUDED.probability,
+                        available_at  = EXCLUDED.available_at""",
                 [(market_id, yes_token_id, ts, ts, now, p) for ts, p in points],
             )
         return len(points)
