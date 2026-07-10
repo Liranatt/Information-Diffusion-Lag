@@ -7,8 +7,8 @@ let expandedPositions = new Set();
 let backtestLoaded = false;
 
 const C = {
-  brand:"#4f46e5", brand2:"#2563eb", up:"#047857", down:"#be123c",
-  sky:"#0284c7", warn:"#b45309", faint:"#667085", grid:"#e2e8f0"
+  brand:"#B07D2A", brand2:"#8A5E10", up:"#1A6B45", down:"#A8192E",
+  sky:"#1566A0", warn:"#96620A", faint:"#9A8B72", grid:"#E3D9C4"
 };
 
 function esc(v){
@@ -221,7 +221,7 @@ function donut(el,segs){
   const size=148,st=18,r=(size-st)/2,c=2*Math.PI*r,cx=size/2; let off=0;
   const tot=segs.reduce((a,s)=>a+Math.max(0,s.v),0)||1;
   const arcs=segs.map(s=>{const f=Math.max(0,s.v)/tot; const out=`<circle cx="${cx}" cy="${cx}" r="${r}" fill="none" stroke="${s.c}" stroke-width="${st}" stroke-dasharray="${(f*c).toFixed(1)} ${c.toFixed(1)}" stroke-dashoffset="${(-off*c).toFixed(1)}" transform="rotate(-90 ${cx} ${cx})"/>`; off+=f; return out;}).join("");
-  el.innerHTML = `<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" role="img" aria-label="Capital allocation donut"><circle cx="${cx}" cy="${cx}" r="${r}" fill="none" stroke="#e2e8f0" stroke-width="${st}"/>${arcs}</svg>`;
+  el.innerHTML = `<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" role="img" aria-label="Capital allocation donut"><circle cx="${cx}" cy="${cx}" r="${r}" fill="none" stroke="${C.grid}" stroke-width="${st}"/>${arcs}</svg>`;
 }
 function barChart(el, folds){
   if(!folds || !folds.length){ el.innerHTML = `<div class="empty">No backtest folds found.</div>`; return; }
@@ -230,9 +230,9 @@ function barChart(el, folds){
   const Y=v=>H-pb-(v-lo)/sp*(H-pt-pb), y0=Y(0);
   const grid=[0,.5,1].map(f=>{const v=hi-f*(hi-lo),y=Y(v);return `<line x1="${pl}" y1="${y}" x2="${W-pr}" y2="${y}" stroke="${C.grid}"/><text x="${pl-6}" y="${y+4}" fill="${C.faint}" font-size="10.5" text-anchor="end" font-family="var(--num)">${v.toFixed(0)}%</text>`;}).join("");
   const bars=folds.map((f,i)=>{const bx=pl+i*gw,bw=gw*.28,gap=gw*.12;
-    return `<rect x="${bx+gw/2-bw-gap/2}" y="${Math.min(Y(f.return_pct),y0)}" width="${bw}" height="${Math.abs(Y(f.return_pct)-y0)}" rx="3" fill="${C.brand}"/><rect x="${bx+gw/2+gap/2}" y="${Math.min(Y(f.benchmark_pct),y0)}" width="${bw}" height="${Math.abs(Y(f.benchmark_pct)-y0)}" rx="3" fill="#94a3b8"/><text x="${bx+gw/2}" y="${H-25}" fill="${C.faint}" font-size="10.5" text-anchor="middle" font-family="var(--num)">F${f.fold}</text><text x="${bx+gw/2}" y="${H-10}" fill="${f.excess_pct>=0?C.up:C.down}" font-size="10.5" text-anchor="middle" font-family="var(--num)">${sg(f.excess_pct,1)}</text>`;
+    return `<rect x="${bx+gw/2-bw-gap/2}" y="${Math.min(Y(f.return_pct),y0)}" width="${bw}" height="${Math.abs(Y(f.return_pct)-y0)}" rx="3" fill="${C.brand}"/><rect x="${bx+gw/2+gap/2}" y="${Math.min(Y(f.benchmark_pct),y0)}" width="${bw}" height="${Math.abs(Y(f.benchmark_pct)-y0)}" rx="3" fill="${C.faint}"/><text x="${bx+gw/2}" y="${H-25}" fill="${C.faint}" font-size="10.5" text-anchor="middle" font-family="var(--num)">F${f.fold}</text><text x="${bx+gw/2}" y="${H-10}" fill="${f.excess_pct>=0?C.up:C.down}" font-size="10.5" text-anchor="middle" font-family="var(--num)">${sg(f.excess_pct,1)}</text>`;
   }).join("");
-  el.innerHTML = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Backtest fold returns">${grid}<line x1="${pl}" y1="${y0}" x2="${W-pr}" y2="${y0}" stroke="#94a3b8"/>${bars}</svg>`;
+  el.innerHTML = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Backtest fold returns">${grid}<line x1="${pl}" y1="${y0}" x2="${W-pr}" y2="${y0}" stroke="${C.faint}"/>${bars}</svg>`;
 }
 function table(rows, cols, extra){
   if(!rows || !rows.length) return `<div class="empty">Nothing yet.</div>`;
@@ -251,6 +251,96 @@ function riskTag(p){
   const map = {near_stop:["bad","Near stop"],near_theta:["bad","Theta"],near_resolution:["warn","Resolution"],aging:["warn","Aging"],normal:["ok","Normal"]};
   const m = map[p.exit_risk] || map.normal;
   return `<span class="tag ${m[0]}">${m[1]}</span>`;
+}
+
+// ── Per-position stock × probability chart (since T0) ────────────────────
+const positionHistoryCache = {}; // { posId: {data, expires} }
+
+function positionHistoryChart(el, data) {
+  const stock = (data.stock || []).filter(p => p.close != null);
+  const prob  = (data.prob  || []).filter(p => p.p    != null);
+  if (stock.length < 2 && prob.length < 2) {
+    el.innerHTML = '<div class="empty">Not enough history yet.</div>';
+    return;
+  }
+  const W=1000,H=200,pl=56,pr=56,pt=14,pb=28;
+
+  // Shared time axis
+  const allTs = [
+    ...stock.map(p => new Date(p.ts).getTime()),
+    ...prob.map(p  => new Date(p.ts).getTime()),
+  ];
+  const tMin = Math.min(...allTs), tMax = Math.max(...allTs);
+  const tSp  = tMax - tMin || 1;
+  const TX   = t  => pl + (new Date(t).getTime() - tMin) / tSp * (W - pl - pr);
+
+  // Stock Y (left)
+  const sVals = stock.map(p => p.close);
+  const sLo = Math.min(...sVals), sHi = Math.max(...sVals);
+  const sSp = (sHi - sLo) || Math.max(1, sLo * 0.01);
+  const SY  = v => H - pb - (v - sLo) / sSp * (H - pt - pb);
+
+  // Prob Y (right, 0–1 always)
+  const PY = v => H - pb - v * (H - pt - pb);
+
+  // Grid on prob axis
+  const grid = [0, 0.25, 0.5, 0.75, 1.0].map(f => {
+    const y = PY(f).toFixed(1);
+    return `<line x1="${pl}" y1="${y}" x2="${W-pr}" y2="${y}" stroke="${C.grid}" stroke-dasharray="3 3"/>` +
+           `<text x="${W-pr+6}" y="${+y+4}" fill="${C.faint}" font-size="9.5" font-family="var(--num)">${(f*100).toFixed(0)}%</text>`;
+  }).join("");
+
+  // Stock left-axis labels
+  const sGrid = [sLo, (sLo+sHi)/2, sHi].map(v => {
+    const y = SY(v).toFixed(1);
+    return `<text x="${pl-6}" y="${+y+4}" fill="${C.brand}" font-size="9.5" text-anchor="end" font-family="var(--num)">${v.toFixed(0)}</text>`;
+  }).join("");
+
+  // Entry marker
+  const entryX  = data.entry_ts ? TX(data.entry_ts) : null;
+  const entryMark = entryX
+    ? `<line x1="${entryX.toFixed(1)}" y1="${pt}" x2="${entryX.toFixed(1)}" y2="${H-pb}" stroke="${C.warn}" stroke-width="1.2" stroke-dasharray="4 3"/>` +
+      `<text x="${entryX.toFixed(1)}" y="${pt-2}" fill="${C.warn}" font-size="8.5" text-anchor="middle" font-family="var(--num)">entry</text>`
+    : "";
+
+  const sPts   = stock.map(p => [TX(p.ts), SY(p.close)]);
+  const probPts = prob.map(p => [TX(p.ts), PY(p.p)]);
+
+  const t0Lbl  = `<text x="${pl}" y="${H-8}" fill="${C.faint}" font-size="9.5" font-family="var(--num)">T0 ${dday(data.t0_ts)}</text>`;
+  const nowLbl = `<text x="${W-pr}" y="${H-8}" fill="${C.faint}" font-size="9.5" text-anchor="end" font-family="var(--num)">${dday(new Date().toISOString())}</text>`;
+
+  el.innerHTML = `<svg class="chart" viewBox="0 0 ${W} ${H}" style="height:180px" role="img" aria-label="${esc(data.symbol)} price and probability since T0">
+    ${grid}${sGrid}${entryMark}
+    ${sPts.length >= 2   ? `<path d="${smooth(sPts)}"   fill="none" stroke="${C.brand}" stroke-width="2.2" stroke-linecap="round"/>` : ""}
+    ${probPts.length >= 2 ? `<path d="${smooth(probPts)}" fill="none" stroke="${C.up}"    stroke-width="1.8" stroke-dasharray="6 3" stroke-linecap="round"/>` : ""}
+    ${t0Lbl}${nowLbl}
+  </svg>
+  <div class="legrow" style="margin-top:6px">
+    <span><i style="border-color:${C.brand}"></i>${esc(data.symbol)} close price</span>
+    <span><i style="border-color:${C.up};border-top-style:dashed"></i>Polymarket probability</span>
+  </div>`;
+}
+
+async function loadPositionHistory(posId) {
+  const el = document.getElementById(`pos-history-${posId}`);
+  if (!el) return;
+  const now = Date.now();
+  const cached = positionHistoryCache[posId];
+  if (!cached || cached.expires < now) {
+    if (!cached) el.innerHTML = '<div class="empty" style="font-size:12px">Loading history…</div>';
+    try {
+      const r = await fetch(`/api/position/${posId}/history`, {cache:"no-store"});
+      positionHistoryCache[posId] = {data: await r.json(), expires: now + 300_000};
+    } catch(e) {
+      if (!cached) el.innerHTML = '<div class="empty">History unavailable.</div>';
+      return;
+    }
+  }
+  positionHistoryChart(el, positionHistoryCache[posId].data);
+}
+
+function loadAllPositionHistories() {
+  expandedPositions.forEach(id => loadPositionHistory(id));
 }
 
 async function refresh(){
@@ -307,6 +397,7 @@ async function refresh(){
   renderOrdersTrades(d);
   renderWatchlist(d);
   renderDiagnostics(d, openPnl);
+  loadAllPositionHistories(); // async, fire-and-forget — charts load after DOM is ready
 }
 
 function renderPositions(rows){
@@ -335,7 +426,9 @@ function positionDetail(r){
     <div class="detailBlock"><div class="k">Probability path</div><div class="v">T0 ${nn(r.t0_prob,3)} | Entry ${nn(r.entry_prob,3)} | Now ${nn(r.prob_now,3)} | d ${r.prob_runup_pp==null ? "-" : sg(r.prob_runup_pp,1)+"pp"}</div></div>
     <div class="detailBlock"><div class="k">Stock path</div><div class="v">T0 ${usd(r.stock_t0)} | T0->entry ${r.stock_entry_runup_pct==null ? "-" : pct(r.stock_entry_runup_pct,2)} | T0->now ${r.stock_runup_pct==null ? "-" : pct(r.stock_runup_pct,2)}</div></div>
     <div class="detailBlock"><div class="k">Exit pressure</div><div class="v">Stop dist ${r.stop_distance_pct==null ? "-" : pct(r.stop_distance_pct,2)} | Theta dist ${r.theta_distance_pp==null ? "-" : sg(r.theta_distance_pp,1)+"pp"} | Resolves ${dt(r.resolution_ts)}</div></div>
-  </div></td></tr>`;
+  </div>
+  <div id="pos-history-${r.position_id}" class="chartWrap" style="margin-top:12px;min-height:52px"></div>
+  </td></tr>`;
 }
 function renderOrdersTrades(d){
   const orderRows = showAllOrders ? d.recent_orders : d.recent_orders.slice(0,10);

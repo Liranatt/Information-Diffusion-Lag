@@ -18,6 +18,7 @@ import asyncio
 import logging
 import os
 import sys
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -79,15 +80,30 @@ async def run_daemon(cfg: LiveConfig) -> None:
     await pipeline.start()
     log = logging.getLogger("live")
     try:
+        # Align to :30 past each UTC hour so the first tick fires at
+        # 9:30 ET / 16:30 IST (US market open) rather than an arbitrary time.
+        now = datetime.now(timezone.utc)
+        next_half = now.replace(minute=30, second=0, microsecond=0)
+        if (next_half - now).total_seconds() < 60:
+            next_half += timedelta(hours=1)
+        initial_sleep = (next_half - now).total_seconds()
+        if initial_sleep > 60:
+            log.info("aligning to :30 mark, sleeping %.0fs until %s",
+                     initial_sleep, next_half.isoformat(timespec="seconds"))
+            await asyncio.sleep(initial_sleep)
+
         while True:
-            started = asyncio.get_event_loop().time()
             try:
                 await pipeline.tick()
             except Exception as error:  # noqa: BLE001 - the loop must survive
                 log.exception("tick failed: %s", error)
-            elapsed = asyncio.get_event_loop().time() - started
-            sleep_for = max(60.0, cfg.tick_seconds - elapsed)
-            log.info("sleeping %.0fs until next tick", sleep_for)
+            now = datetime.now(timezone.utc)
+            next_half = now.replace(minute=30, second=0, microsecond=0)
+            if (next_half - now).total_seconds() < 60:
+                next_half += timedelta(hours=1)
+            sleep_for = max(60.0, (next_half - now).total_seconds())
+            log.info("sleeping %.0fs until next tick at %s",
+                     sleep_for, next_half.isoformat(timespec="seconds"))
             await asyncio.sleep(sleep_for)
     finally:
         await pipeline.stop()

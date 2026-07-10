@@ -690,6 +690,45 @@ async def _build_markets_payload(store: LiveStore, markets, upcoming) -> dict:
     }
 
 
+@app.get("/api/position/{position_id}/history")
+async def api_position_history(position_id: int) -> JSONResponse:
+    """Stock close prices + Polymarket probability since T0 for one open position."""
+    store: LiveStore = _STATE["store"]
+    async with store.pool.acquire() as conn:
+        pos = await conn.fetchrow(
+            f"SELECT * FROM {SCHEMA}.live_positions WHERE position_id=$1 AND status='open'",
+            position_id,
+        )
+        if not pos:
+            return JSONResponse({"error": "position not found"}, status_code=404)
+        mkt = await conn.fetchrow(
+            f"SELECT * FROM {SCHEMA}.live_tracked_markets WHERE market_id=$1",
+            pos["market_id"],
+        )
+        t0_ts = mkt["discovered_at"] if mkt else pos["entry_ts"]
+        stock_rows = await conn.fetch(
+            f"""SELECT ts, close FROM {SCHEMA}.historical_price_bars
+                WHERE symbol=$1 AND resolution='1h' AND ts >= $2 ORDER BY ts""",
+            pos["symbol"], t0_ts,
+        )
+        prob_rows = await conn.fetch(
+            f"""SELECT hour_ts, probability FROM {SCHEMA}.historical_probability_points
+                WHERE market_id=$1 AND hour_ts >= $2 ORDER BY hour_ts""",
+            pos["market_id"], t0_ts,
+        )
+    return JSONResponse({
+        "position_id": position_id,
+        "symbol": pos["symbol"],
+        "question": pos["question"][:100],
+        "t0_ts": _iso(t0_ts),
+        "entry_ts": _iso(pos["entry_ts"]),
+        "entry_price": round(float(pos["entry_price"]), 2),
+        "entry_prob": round(float(pos["entry_prob"]), 3) if pos["entry_prob"] is not None else None,
+        "stock": [{"ts": _iso(r["ts"]), "close": round(float(r["close"]), 2)} for r in stock_rows],
+        "prob":  [{"ts": _iso(r["hour_ts"]), "p": round(float(r["probability"]), 3)} for r in prob_rows],
+    })
+
+
 @app.get("/api/metrics")
 async def api_metrics() -> JSONResponse:
     return JSONResponse(await gather_metrics())
