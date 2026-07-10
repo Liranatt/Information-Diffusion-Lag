@@ -165,15 +165,24 @@ def load_backtest() -> dict:
             "positive_folds": sum(1 for f in folds if f["excess_pct"] > 0),
         }
         policy = json.loads(sub.iloc[-1]["eval_policy_json"])
+        # Out-of-sample equity curve for THIS experiment/benchmark, from the
+        # latest optimize_cem run: experiment_equity_logs_clean/<bench>_<slug>_test.csv
+        # (e.g. spy_t1_t2_t3_t4_test.csv). Falls back to the legacy single-file
+        # log only if the per-experiment file is missing.
+        slug = CONFIG.experiment.lower().replace("+", "_").replace(" ", "_")
+        eq_path = (CONFIG.results_csv.parent / "experiment_equity_logs_clean"
+                   / f"{CONFIG.benchmark.lower()}_{slug}_test.csv")
+        if not eq_path.exists():
+            eq_path = CONFIG.backtest_equity_csv
         equity_series = []
-        if CONFIG.backtest_equity_csv.exists():
+        if eq_path.exists():
             try:
-                eq_df = pd.read_csv(CONFIG.backtest_equity_csv)
+                eq_df = pd.read_csv(eq_path)
                 for _, row in eq_df.iterrows():
                     equity_series.append({
-                        "ts": row["date"] + "T00:00:00Z",
+                        "ts": str(row["date"])[:10] + "T00:00:00Z",
                         "equity": float(row["equity"]),
-                        "passive": float(row["benchmark_equity"])
+                        "passive": float(row["benchmark_equity"]),
                     })
             except Exception:
                 pass
