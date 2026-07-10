@@ -13,15 +13,17 @@ Strategy & Backtest (walk-forward OOS folds + the live policy), and Learn
 """
 from __future__ import annotations
 
+import base64
 import json
 import os
+import secrets
 import subprocess
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 
 import uvicorn
-from fastapi import FastAPI
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse, JSONResponse, Response
 
 from database.backtesting.schema import SCHEMA
 
@@ -52,6 +54,32 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan, title="CEM live paper-trading dashboard")
+
+# HTTP Basic Auth. The dashboard exposes a live view of a real (paper) broker
+# account, so gate it behind a shared password from the environment. Set
+# DASHBOARD_PASSWORD (and optionally DASHBOARD_USER, default "admin") in .env;
+# if unset, the dashboard stays open (local dev). /healthz is always open so the
+# deploy healthcheck keeps working.
+_DASH_USER = os.environ.get("DASHBOARD_USER", "admin")
+_DASH_PW = os.environ.get("DASHBOARD_PASSWORD", "")
+
+
+@app.middleware("http")
+async def _basic_auth(request: Request, call_next):
+    if _DASH_PW and request.url.path != "/healthz":
+        ok = False
+        header = request.headers.get("authorization", "")
+        if header.startswith("Basic "):
+            try:
+                user, _, pw = base64.b64decode(header[6:]).decode("utf-8").partition(":")
+                ok = (secrets.compare_digest(user, _DASH_USER)
+                      and secrets.compare_digest(pw, _DASH_PW))
+            except Exception:  # noqa: BLE001 - malformed header -> treat as unauthorized
+                ok = False
+        if not ok:
+            return Response(status_code=401,
+                            headers={"WWW-Authenticate": 'Basic realm="CEM dashboard"'})
+    return await call_next(request)
 
 
 def _iso(ts):
