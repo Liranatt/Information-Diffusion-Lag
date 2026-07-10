@@ -76,7 +76,7 @@ from pipeline.strategy import (
 from pipeline.trade_forensics import combine_forensic_csvs, write_trade_forensics
 
 
-PROJECT = Path(__file__).resolve().parent
+PROJECT = Path(__file__).resolve().parent.parent
 REL_COL = "feat_connection_strength"
 
 RESULTS_CSV = PROJECT / "data" / "experiment_results_clean.csv"
