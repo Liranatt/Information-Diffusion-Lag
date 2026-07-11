@@ -1,0 +1,417 @@
+"""Cheap keyword/regex pre-filter — the first, free stage of ingestion.
+
+`regex_prefilter` scores a market question's US-equity relevance and sentiment
+without any API call, so obviously-irrelevant markets (podcasts, word-counts,
+app rankings) are culled before the paid Gemini stages. Markets clearing the
+relevance floor with positive sentiment go on to the Gemini catalyst/relevance
+gate and asset mapping.
+
+This is a pure `re` cascade — there is no LLM here. It was formerly the
+misleadingly named `run_claude_pipeline.evaluate_pass1` (no Claude/Anthropic API
+was ever involved).
+"""
+from __future__ import annotations
+
+import re
+from dataclasses import dataclass
+
+# ── Ticker extraction ────────────────────────────────────────────────────────
+# Matches "(TICKER)" in questions like "Will Apple (AAPL) close above $300?"
+# Excludes price-direction markers (HIGH, LOW) and commodity abbreviations (WTI, NG)
+_NOT_TICKERS = {"HIGH", "LOW", "WTI", "NG", "CL"}
+TICKER_RE = re.compile(r"\(([A-Z]{1,6})\)")
+
+
+def _extract_ticker(question: str) -> str | None:
+    for m in TICKER_RE.finditer(question):
+        candidate = m.group(1)
+        if candidate not in _NOT_TICKERS:
+            return candidate
+    return None
+
+
+# Matches "S&P 500 (SPY)" or "S&P 500 (SPX)"
+SP500_RE = re.compile(r"S&P\s*500|SPY|SPX", re.IGNORECASE)
+
+# Price direction indicators
+POSITIVE_PRICE_RE = re.compile(
+    r"\b(HIGH|above|reach|hit\s+\(HIGH\)|finish\s+.+\s+above|close\s+above|closes\s+above)\b",
+    re.IGNORECASE,
+)
+NEGATIVE_PRICE_RE = re.compile(
+    r"\b(LOW|dip\s+to|hit\s+\(LOW\)|below|crash|plunge|tumble|fall\s+below|drop)\b",
+    re.IGNORECASE,
+)
+
+# Crypto keywords
+CRYPTO_RE = re.compile(
+    r"\b(Bitcoin|Ethereum|XRP|Solana|Dogecoin|Cardano|BTC|ETH|Hyperliquid|Litecoin|"
+    r"Polkadot|Chainlink|Avalanche|BNB|Toncoin|Sui\b|Pepe\b|Shiba)",
+    re.IGNORECASE,
+)
+
+# Commodity keywords and their ETF mappings
+COMMODITY_MAP = {
+    "gold": ("GLD", "Gold ETF"),
+    "xauusd": ("GLD", "Gold ETF"),
+    "silver": ("SLV", "Silver ETF"),
+    "xagusd": ("SLV", "Silver ETF"),
+    "crude oil": ("USO", "US Oil Fund"),
+    "wti": ("USO", "US Oil Fund"),
+    "oil": ("USO", "US Oil Fund"),
+    "natural gas": ("UNG", "US Natural Gas Fund"),
+    "ng": ("UNG", "US Natural Gas Fund"),
+    "copper": ("CPER", "Copper ETF"),
+}
+
+COMMODITY_RE = re.compile(
+    r"\b(" + "|".join(re.escape(k) for k in COMMODITY_MAP) + r")\b",
+    re.IGNORECASE,
+)
+
+# Earnings / company-specific keywords
+EARNINGS_POS_RE = re.compile(
+    r"\b(beat|exceed|above|surpass|top|growth|revenue\s+above|EPS\s+above|"
+    r"sales\s+above|outperform|upgrade|approve|approval|launch|IPO)\b",
+    re.IGNORECASE,
+)
+EARNINGS_NEG_RE = re.compile(
+    r"\b(miss|below|less\s+than|under|decline|bankruptcy|bankrupt|layoff|recall|"
+    r"downgrade|reject|fail|lose|loss|default|deficit|shortfall)\b",
+    re.IGNORECASE,
+)
+
+# Macro economic data keywords
+MACRO_RE = re.compile(
+    r"\b(GDP|CPI|PPI|payroll|nonfarm|unemployment|jobless|JOLTS|"
+    r"consumer\s+sentiment|UMich|PMI|ISM|retail\s+sales|"
+    r"durable\s+goods|housing\s+starts|building\s+permits|"
+    r"industrial\s+production|trade\s+balance|"
+    r"Fed\s+funds?\s+rate|interest\s+rate|FOMC|"
+    r"Bank\s+of\s+Canada|ECB|BOJ|BOE)\b",
+    re.IGNORECASE,
+)
+
+# Podcast / word-count / celebrity (irrelevant noise)
+NOISE_RE = re.compile(
+    r"\b(said\s+during|podcast|episode|times\s+during\s+earnings\s+call|"
+    r"be\s+said|say\s+.+during|App\s+[A-Z]\s+be\s+#|"
+    r"#\d+\s+(Free|Paid)\s+App|App\s+Store|"
+    r"Polymarket\s+mindshare|net\s+worth\s+be\s+between|"
+    r"Shadowrocket|CapCut|Lemonade\s+Stand\s+Podcast|"
+    r"All-In\s+Podcast|Glow\b|Football\b|warships|"
+    r"SpaceX\s+have\s+exactly\s+\d+\s+launches)\b",
+    re.IGNORECASE,
+)
+
+# Geopolitics
+GEO_POSITIVE_RE = re.compile(
+    r"\b(peace|ceasefire|agreement|treaty|normalize|lifted|withdraw|"
+    r"returns\s+to\s+normal|sign|memorandum|handshake|speak\s+to|"
+    r"diplomatic|talks|negotiate)\b",
+    re.IGNORECASE,
+)
+GEO_NEGATIVE_RE = re.compile(
+    r"\b(capture|invade|attack|bomb|strike|sanction|blockade|"
+    r"escalat|conflict|war|missile|nuclear|collapse|coup|crisis)\b",
+    re.IGNORECASE,
+)
+
+# AI model ranking questions
+AI_MODEL_RE = re.compile(
+    r"\b(best\s+AI\s+model|top\s+AI\s+model|#\d+\s+AI\s+model|"
+    r"best\s+Coding\s+AI|best\s+Math\s+AI|best\s+AI\s+Agent|"
+    r"second.best|third.best|largest\s+company.*market\s+cap)\b",
+    re.IGNORECASE,
+)
+
+# Earnings call word-count (say X during earnings call)
+EARNINGS_CALL_WORD_RE = re.compile(
+    r'say\s+"?\w+"?\s+(during|in)\s+earnings\s+call',
+    re.IGNORECASE,
+)
+
+# IPO questions
+IPO_RE = re.compile(r"\bIPO\b", re.IGNORECASE)
+
+# Price bracket questions ("close at $X-$Y")
+PRICE_BRACKET_RE = re.compile(
+    r"close\s+at\s+\$[\d,.]+\s*-\s*\$[\d,.]+",
+    re.IGNORECASE,
+)
+
+# Country ETF pattern
+COUNTRY_ETF_RE = re.compile(r"\b([A-Z]+)\s+ETF\s+\(([A-Z]{2,5})\)")
+
+# Known company → ticker mappings for questions that don't include ticker
+COMPANY_TICKER_MAP = {
+    "apple": "AAPL",
+    "google": "GOOGL",
+    "alphabet": "GOOGL",
+    "microsoft": "MSFT",
+    "amazon": "AMZN",
+    "meta": "META",
+    "nvidia": "NVDA",
+    "tesla": "TSLA",
+    "netflix": "NFLX",
+    "alibaba": "BABA",
+    "jpmorgan": "JPM",
+    "jpmorgan chase": "JPM",
+    "salesforce": "CRM",
+    "oracle": "ORCL",
+    "coinbase": "COIN",
+    "palantir": "PLTR",
+    "gamestop": "GME",
+    "airbnb": "ABNB",
+    "opendoor": "OPEN",
+    "micron": "MU",
+    "rocket lab": "RKLB",
+    "uber": "UBER",
+    "openai": None,  # private
+    "anthropic": None,  # private
+    "deepseek": None,  # private
+    "spacex": None,  # private
+    "bytedance": None,  # private
+    "ubisoft": "UBSFY",
+    "darden restaurants": "DRI",
+    "darden": "DRI",
+    "dick's sporting goods": "DKS",
+    "innio": None,  # pre-IPO
+    "waymo": "GOOGL",
+}
+
+# Strait of Hormuz / Iran-related
+HORMUZ_RE = re.compile(r"\b(Strait\s+of\s+Hormuz|Hormuz|Iran|Iranian)\b", re.IGNORECASE)
+
+# Home value / real estate
+REAL_ESTATE_RE = re.compile(r"\b(median\s+home\s+value|housing|home\s+price)\b", re.IGNORECASE)
+
+# Fed / monetary policy
+FED_RE = re.compile(r"\b(Fed\s+cut|rate\s+cut|FOMC|Federal\s+Reserve|easing|tightening)\b", re.IGNORECASE)
+
+# Trump geopolitics
+TRUMP_DIPLO_RE = re.compile(r"\bTrump\s+(speak|shake|meet|call|agree)\b", re.IGNORECASE)
+
+# Treasury / blockchain
+TREASURY_RE = re.compile(r"\b(Treasury|T-bill|blockchain|stablecoin)\b", re.IGNORECASE)
+
+# "deliver less than" / vehicle deliveries
+DELIVERIES_RE = re.compile(r"\bdeliver\s+(less|fewer|more|above|below)\b", re.IGNORECASE)
+
+
+@dataclass
+class Pass1Result:
+    market_id: str
+    question_relevance: float
+    positive_sentiment: bool
+    reason: str
+
+
+def regex_prefilter(m: dict) -> Pass1Result:
+    """Score relevance and sentiment for a single market question (no API)."""
+    q = m["question"]
+    tags = m.get("tags", [])
+    q_lower = q.lower()
+
+    # ── Noise filter ──
+    if NOISE_RE.search(q):
+        return Pass1Result(m["market_id"], 0.02, True, "No mechanical US-equity channel: noise/entertainment category.")
+
+    # ── Earnings call word-count ──
+    if EARNINGS_CALL_WORD_RE.search(q):
+        ticker = _extract_ticker(q)
+        company = ticker if ticker else "company"
+        return Pass1Result(m["market_id"], 0.05, True, f"Word count during {company} earnings call has no direct equity channel.")
+
+    # ── Crypto ──
+    if CRYPTO_RE.search(q) and not _extract_ticker(q):
+        is_positive = bool(POSITIVE_PRICE_RE.search(q)) and not bool(NEGATIVE_PRICE_RE.search(q))
+        if NEGATIVE_PRICE_RE.search(q) and not POSITIVE_PRICE_RE.search(q):
+            is_positive = False
+        elif "dip" in q_lower:
+            is_positive = False
+        else:
+            is_positive = True
+        return Pass1Result(
+            m["market_id"], 0.12, is_positive,
+            "Crypto price target; minimal direct US-equity channel (indirect via COIN/MSTR)."
+        )
+
+    # ── S&P 500 / SPY / SPX ──
+    if SP500_RE.search(q):
+        is_positive = bool(POSITIVE_PRICE_RE.search(q))
+        if NEGATIVE_PRICE_RE.search(q) and not is_positive:
+            is_positive = False
+        return Pass1Result(
+            m["market_id"], 0.80, is_positive,
+            "S&P 500 price target directly reprices the broad US equity market."
+        )
+
+    # ── Country ETF ──
+    country_match = COUNTRY_ETF_RE.search(q)
+    if country_match:
+        is_positive = bool(POSITIVE_PRICE_RE.search(q))
+        if NEGATIVE_PRICE_RE.search(q) and not is_positive:
+            is_positive = False
+        return Pass1Result(
+            m["market_id"], 0.55, is_positive,
+            f"Country ETF ({country_match.group(2)}) price target; indirect US-equity channel through cross-border flows."
+        )
+
+    # ── Individual stock price target ──
+    ticker = _extract_ticker(q)
+    if ticker and not EARNINGS_CALL_WORD_RE.search(q):
+
+        # Determine sentiment from price direction
+        has_high = "(HIGH)" in q or POSITIVE_PRICE_RE.search(q)
+        has_low = "(LOW)" in q or NEGATIVE_PRICE_RE.search(q)
+
+        if PRICE_BRACKET_RE.search(q):
+            is_positive = True
+            reason = f"Stock price bracket for {ticker}; neutral direction, treated as positive (price stability)."
+        elif has_low and not has_high:
+            is_positive = False
+            reason = f"Stock price decline target for {ticker}; negative-sentiment event."
+        else:
+            is_positive = True
+            reason = f"Stock price upside target for {ticker}; directly reprices this US-listed equity."
+
+        # Earnings-specific questions with ticker
+        if any(kw in q_lower for kw in ("earnings", "revenue", "eps", "sales", "growth", "deliver")):
+            if EARNINGS_NEG_RE.search(q):
+                is_positive = False
+                reason = f"Negative earnings outcome for {ticker}; adverse event for the stock."
+            else:
+                is_positive = True
+                reason = f"Positive earnings/fundamental metric for {ticker}; directly reprices the stock."
+            return Pass1Result(m["market_id"], 0.92, is_positive, reason)
+
+        return Pass1Result(m["market_id"], 0.85, is_positive, reason)
+
+    # ── Commodities ──
+    commodity_match = COMMODITY_RE.search(q)
+    if commodity_match:
+        commodity = commodity_match.group(1).lower()
+        is_positive = bool(POSITIVE_PRICE_RE.search(q))
+        if NEGATIVE_PRICE_RE.search(q) and not is_positive:
+            is_positive = False
+        return Pass1Result(
+            m["market_id"], 0.68, is_positive,
+            f"Commodity ({commodity}) price target; reprices US commodity equities and related ETFs."
+        )
+
+    # ── Strait of Hormuz / Iran ──
+    if HORMUZ_RE.search(q):
+        is_positive = bool(GEO_POSITIVE_RE.search(q))
+        if GEO_NEGATIVE_RE.search(q):
+            is_positive = False
+        if "returns to normal" in q_lower or "lifted" in q_lower or "withdraw" in q_lower:
+            is_positive = True
+        return Pass1Result(
+            m["market_id"], 0.62, is_positive,
+            "Strait of Hormuz / Iran event; reprices oil, defense, and shipping equities."
+        )
+
+    # ── Macro data ──
+    if MACRO_RE.search(q):
+        is_positive = True
+        if any(kw in q_lower for kw in ("below", "decline", "negative", "under", "less than")):
+            is_positive = False
+        if "cut" in q_lower and "fed" in q_lower:
+            is_positive = True  # rate cuts are positive/accommodative
+        if "no change" in q_lower:
+            is_positive = True  # status quo = positive/stable
+        return Pass1Result(
+            m["market_id"], 0.40, is_positive,
+            "Macro economic data print; moderate mechanical channel to US equities via rates/sentiment."
+        )
+
+    # ── AI model rankings ──
+    if AI_MODEL_RE.search(q):
+        company_lower = None
+        for company, ticker in COMPANY_TICKER_MAP.items():
+            if company in q_lower:
+                company_lower = company
+                break
+        is_positive = True
+        return Pass1Result(
+            m["market_id"], 0.30, is_positive,
+            f"AI model ranking for {company_lower or 'company'}; indirect equity channel through competitive positioning."
+        )
+
+    # ── IPO questions ──
+    if IPO_RE.search(q):
+        is_positive = True
+        if "not IPO" in q:
+            is_positive = False
+        return Pass1Result(
+            m["market_id"], 0.50, is_positive,
+            "IPO event; moderate equity channel for the company and sector."
+        )
+
+    # ── Vehicle deliveries ──
+    if DELIVERIES_RE.search(q):
+        is_positive = "more" in q_lower or "above" in q_lower
+        if "less" in q_lower or "fewer" in q_lower or "below" in q_lower:
+            is_positive = False
+        return Pass1Result(
+            m["market_id"], 0.88, is_positive,
+            "Vehicle delivery target; directly reprices the manufacturer."
+        )
+
+    # ── Trump diplomacy ──
+    if TRUMP_DIPLO_RE.search(q):
+        is_positive = True
+        return Pass1Result(
+            m["market_id"], 0.35, is_positive,
+            "Diplomatic engagement; positive geopolitical development with modest equity channel."
+        )
+
+    # ── Real estate ──
+    if REAL_ESTATE_RE.search(q):
+        is_positive = True
+        if "less than" in q_lower or "below" in q_lower or "decline" in q_lower:
+            is_positive = False
+        return Pass1Result(
+            m["market_id"], 0.30, is_positive,
+            "Real estate price metric; indirect US-equity channel via REITs and homebuilders."
+        )
+
+    # ── Geopolitics (general) ──
+    geo_tags = {"geopolitics", "iran", "us-x-iran", "strait-of-hormuz"}
+    if geo_tags.intersection(set(tags)):
+        is_positive = bool(GEO_POSITIVE_RE.search(q))
+        if GEO_NEGATIVE_RE.search(q):
+            is_positive = False
+        if not GEO_POSITIVE_RE.search(q) and not GEO_NEGATIVE_RE.search(q):
+            is_positive = True  # default: diplomatic questions tend to be about positive outcomes
+        return Pass1Result(
+            m["market_id"], 0.45, is_positive,
+            "Geopolitical event; moderate US-equity channel through risk sentiment and commodities."
+        )
+
+    # ── Company-name questions without ticker (e.g. "Will Google have the best AI model?") ──
+    for company, ticker in COMPANY_TICKER_MAP.items():
+        if company in q_lower and ticker is not None:
+            is_positive = True
+            if EARNINGS_NEG_RE.search(q):
+                is_positive = False
+            return Pass1Result(
+                m["market_id"], 0.40, is_positive,
+                f"Company event for {company}; moderate equity channel through {ticker}."
+            )
+
+    # ── Private company events (OpenAI, Anthropic, SpaceX, etc.) ──
+    for company, ticker in COMPANY_TICKER_MAP.items():
+        if company in q_lower and ticker is None:
+            return Pass1Result(
+                m["market_id"], 0.20, True,
+                f"Private company ({company}) event; no directly tradable US-listed equity."
+            )
+
+    # ── Fallback: tag-filtered but unrecognized pattern ──
+    is_positive = not bool(NEGATIVE_PRICE_RE.search(q))
+    return Pass1Result(
+        m["market_id"], 0.25, is_positive,
+        "Unrecognized pattern; has allowed tag but unclear mechanical US-equity channel."
+    )
