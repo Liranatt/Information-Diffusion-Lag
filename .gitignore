@@ -45,6 +45,10 @@ main_backtesting/
 !data/experiment_walkforward_folds_clean.csv
 !data/experiment_results_clean.csv
 !data/backtest_equity_log.csv
+!data/experiment_trade_logs_clean/
+!data/experiment_trade_logs_clean/*.csv
+!data/experiment_equity_logs_clean/
+!data/experiment_equity_logs_clean/*.csv
 
 # ── Namespaced run outputs (optimize_cem.py --run-id) ────────────
 runs/

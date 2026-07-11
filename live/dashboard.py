@@ -494,11 +494,14 @@ async def gather_metrics() -> dict:
     if sys_latest and sys_latest["disk_total_bytes"] and sys_latest["disk_free_bytes"]:
         disk_used_pct = round((1.0 - int(sys_latest["disk_free_bytes"]) / int(sys_latest["disk_total_bytes"])) * 100.0, 1)
     critical_alerts, warning_alerts, info_alerts = [], [], []
+    market_info = market_session_status()
+    is_market_open = market_info.get("is_open", False)
+
     if trader_uptime is None:
         critical_alerts.append({"title": "Trader heartbeat missing", "detail": "No equity snapshot is available yet."})
-    elif trader_uptime > CONFIG.tick_seconds * 2.5:
+    elif is_market_open and trader_uptime > CONFIG.tick_seconds * 2.5:
         critical_alerts.append({"title": "Trader heartbeat stale", "detail": f"Last NAV snapshot was {round(trader_uptime / 60)} minutes ago."})
-    elif trader_uptime > CONFIG.tick_seconds * 1.5:
+    elif is_market_open and trader_uptime > CONFIG.tick_seconds * 1.5:
         warning_alerts.append({"title": "Trader heartbeat delayed", "detail": f"Last NAV snapshot was {round(trader_uptime / 60)} minutes ago."})
     if deficit_to_cover > 0:
         level = critical_alerts if margin_status == "No SPY inventory" else warning_alerts
@@ -535,7 +538,7 @@ async def gather_metrics() -> dict:
         "live_stats": live_stats,
         "generated_at": _iso(datetime.now(timezone.utc)), "benchmark": BENCH,
         "experiment": CONFIG.experiment, "tick_seconds": CONFIG.tick_seconds,
-        "market": market_session_status(),
+        "market": market_info,
         "portfolio": {
             "equity": round(equity, 2) if equity is not None else None,
             "open_positions": len(positions),
