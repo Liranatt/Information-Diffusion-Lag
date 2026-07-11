@@ -30,6 +30,7 @@ import pandas as pd
 from database.db_connection import connect
 from database.backtesting.schema import SCHEMA
 from backtesting.pipeline.data_loader import build_dataset_from_db
+from ingest.scanner import MIN_RESOLUTION_DAYS, MAX_RESOLUTION_DAYS
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "data"
@@ -84,6 +85,17 @@ async def rebuild() -> pd.DataFrame:
     df = await build_dataset_from_db(relevance_floor=RELEVANCE_FLOOR, output_path=None)
     if df.empty:
         raise RuntimeError("build_dataset_from_db returned no candidates; nothing to write.")
+
+    # Trade-horizon filter: keep only candidates whose time from the theta
+    # crossing to resolution falls in the tradable 5-60 day window (identical to
+    # live discovery, ingest.scanner). Without it the backtest universe would be
+    # broader than what the live trader can ever discover.
+    res_days = (pd.to_datetime(df["t_e"], utc=True)
+                - pd.to_datetime(df["t_theta"], utc=True)).dt.total_seconds() / 86400.0
+    before = len(df)
+    df = df[(res_days >= MIN_RESOLUTION_DAYS) & (res_days <= MAX_RESOLUTION_DAYS)].copy()
+    print(f"[artifacts] resolution-window filter "
+          f"{MIN_RESOLUTION_DAYS}-{MAX_RESOLUTION_DAYS}d: {before} -> {len(df)}")
 
     df["split"] = np.where(
         pd.to_datetime(df["t_theta"], utc=True) < OOS_START, "train", "test"
