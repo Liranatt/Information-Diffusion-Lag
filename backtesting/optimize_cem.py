@@ -60,20 +60,15 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-from database.db_connection import connect
-from database.backtesting.schema import SCHEMA
-from pipeline.strategy import (
-    DEFAULT_POLICY,
+from core.policy import DEFAULT_POLICY
+from core.kernel import (
     clear_kernel_caches,
     simulate_one,
     entry_day,
-    resolve_polarity,
-    effective_prob_path,
 )
-from pipeline.trade_forensics import combine_forensic_csvs, write_trade_forensics
+from backtesting.pipeline.trade_forensics import combine_forensic_csvs, write_trade_forensics
 
 
 PROJECT = Path(__file__).resolve().parent.parent
@@ -490,13 +485,9 @@ def _diagnose_candidate_rejection(
         "_candidate_order": candidate_order,
     }
 
-    # Mirror simulate_one exactly: a bearish-YES question is re-polarized, not
-    # dropped. Diverging here would make the disposition log lie about why a
-    # candidate was rejected.
+    # Mirror simulate_one exactly (long-only on raw P(YES)). Diverging here would
+    # make the disposition log lie about why a candidate was rejected.
     question = str(row.get("question", ""))
-    polarity, polarity_source = resolve_polarity(question, sym)
-    diag["polarity"] = polarity
-    diag["polarity_source"] = polarity_source
 
     closes = prices.get(sym, [])
     win = [(t, h, l, c) for t, h, l, c in closes if t_theta - pd.Timedelta(days=30) <= t <= t_e]
@@ -504,7 +495,7 @@ def _diagnose_candidate_rejection(
         diag["disposition"] = "insufficient_price_window"
         return diag
 
-    mkt_probs = effective_prob_path(probs.get(mkt, []), polarity)
+    mkt_probs = probs.get(mkt, [])
     if not mkt_probs:
         diag["disposition"] = "no_probability_data"
         return diag
@@ -517,8 +508,6 @@ def _diagnose_candidate_rejection(
     diag["entry_prob"] = round(ent[1], 3)
 
     p_surge = row.get("feat_prob_surge_since_t0")
-    if p_surge is not None and polarity == -1:
-        p_surge = -p_surge
     if p_surge is not None and p_surge > policy.get("max_prob_surge", 999.0):
         diag["disposition"] = "prob_surge_exceeded"
         return diag
@@ -1940,70 +1929,30 @@ def cem_search(
 # ── Database loading ─────────────────────────────────────────────────────────
 
 async def load_paths(df: pd.DataFrame) -> tuple[dict, dict]:
+    """Load price/probability paths from the prebuilt pkl artifacts ONLY.
+
+    The backtest is deliberately decoupled from Postgres: it reads exactly the
+    three committed artifacts (candidates.parquet + prices.pkl + probs.pkl) and
+    nothing else. The nightly `python -m ingest --rebuild` job regenerates them
+    from the DB and pushes them. If they are missing we fail loudly rather than
+    silently reaching for a live database that may have drifted.
+    """
     import pickle
     from pathlib import Path
     data_dir = Path("data")
     prices_path = data_dir / "prices.pkl"
     probs_path = data_dir / "probs.pkl"
-    if prices_path.exists() and probs_path.exists():
-        print("  [Data] Loading cached prices and probabilities from data/*.pkl", flush=True)
-        with open(prices_path, "rb") as f:
-            prices = pickle.load(f)
-        with open(probs_path, "rb") as f:
-            probs = pickle.load(f)
-        return prices, probs
-
-    conn = await connect()
-    try:
-        symbols = sorted(set(df["symbol"].astype(str).unique()) | {"SPY", "QQQ"})
-        markets = sorted(df["market_id"].astype(str).unique())
-
-        bars = await conn.fetch(
-            f"""
-            SELECT symbol, ts, high, low, close
-            FROM {SCHEMA}.historical_price_bars
-            WHERE resolution = '1d'
-              AND symbol = ANY($1::text[])
-            ORDER BY symbol, ts
-            """,
-            symbols,
+    if not (prices_path.exists() and probs_path.exists()):
+        raise FileNotFoundError(
+            f"Backtest requires prebuilt {prices_path} and {probs_path}. "
+            "Regenerate them with `python -m ingest --rebuild`; the optimizer no "
+            "longer reads Postgres directly."
         )
-        probability_rows = await conn.fetch(
-            f"""
-            SELECT DISTINCT ON (market_id, (hour_ts AT TIME ZONE 'UTC')::date)
-                   market_id,
-                   (hour_ts AT TIME ZONE 'UTC')::date AS d,
-                   probability
-            FROM {SCHEMA}.historical_probability_points
-            WHERE market_id = ANY($1::text[])
-              AND EXTRACT(HOUR FROM hour_ts AT TIME ZONE 'UTC') <= 20
-            ORDER BY market_id, (hour_ts AT TIME ZONE 'UTC')::date, hour_ts DESC
-            """,
-            markets,
-        )
-    finally:
-        await conn.close()
-
-    prices: dict[str, list[tuple[pd.Timestamp, float, float, float]]] = {}
-    for bar in bars:
-        prices.setdefault(bar["symbol"], []).append(
-            (
-                as_utc_day(bar["ts"]),
-                float(bar["high"]),
-                float(bar["low"]),
-                float(bar["close"]),
-            )
-        )
-
-    probs: dict[str, list[tuple[pd.Timestamp, float]]] = {}
-    for row in probability_rows:
-        probs.setdefault(row["market_id"], []).append(
-            (as_utc_day(row["d"]), float(row["probability"]))
-        )
-
-    for data in (prices, probs):
-        for key in data:
-            data[key].sort(key=lambda item: item[0])
+    print("  [Data] Loading cached prices and probabilities from data/*.pkl", flush=True)
+    with open(prices_path, "rb") as f:
+        prices = pickle.load(f)
+    with open(probs_path, "rb") as f:
+        probs = pickle.load(f)
 
     _CLOSE_CACHE.clear()
     _PATH_CUTOFF_CACHE.clear()

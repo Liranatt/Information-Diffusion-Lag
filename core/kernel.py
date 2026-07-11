@@ -1,45 +1,35 @@
-"""
-Numba-accelerated core for ``pipeline.strategy.simulate_one``.
+"""The one authoritative entry/exit kernel, shared by both planes.
 
-Why this module exists
-----------------------
-``simulate_one`` is the innermost hot loop of the experiment runners. Each CEM
-fit evaluates ~``CEM_POP`` policies for ~``CEM_ITERS`` iterations (≈120 portfolio
-simulations), every simulation calls ``simulate_one`` once per candidate, and a
-single run issues thousands of fits (8 experiments × 2 benchmarks × folds ×
-seeds). The per-call work — filtering a symbol's price window, building a
-probability-by-day dict, scanning the holding path bar-by-bar for ATR-trailing /
-profit-lock / probability / resolution exits — is pure-Python pandas/list code,
-so it dominates wall-clock time.
+Two implementations of the *same* trade semantics live here so they can never
+drift apart:
 
-This module reproduces that numeric core as a JIT-compiled kernel.
+* ``scan_candidate`` — numba-compiled fast path. The CEM backtest hot loop
+  (``backtesting.optimize_cem``) drives this thousands of times per search, so
+  it must stay JIT-compiled. Do not downgrade it to Python.
+* ``_simulate_one_py`` — the pure-Python reference. It is the authoritative
+  definition of the trade semantics; the live trader (``live.strategy_engine``)
+  uses it, because live makes only a handful of decisions per hour and its speed
+  is irrelevant.
 
-Design and safety
------------------
-* **Bit-identical output.** The kernel only ever sees ``int64`` / ``float64``
-  numpy arrays and scalars and performs exactly the same arithmetic, in the same
-  order, as the reference Python. All timestamp normalization and every
-  date-string / reason-string is produced in Python from the original tz-aware
-  ``pandas.Timestamp`` objects, so the result is tz-correct and matches the
-  pure-Python path field for field. ``tests``/parity scripts assert this.
-* **No new parallelism.** This changes *how fast* one simulation runs, never
-  *what* it computes and never the order in which the runners drive it, so it
-  cannot introduce look-ahead/leakage. The CEM population loop stays serial.
-* **Reuse across the population.** The per-(price/prob object, symbol/market)
-  numpy views are independent of the policy, so they are built once and reused
-  for every policy evaluation inside a CEM fit. ``truncate_paths`` already
-  memoizes one dict object per horizon, so the cache key (object id, symbol)
-  stays stable across the 120 evaluations of that horizon.
-* **Graceful fallback.** If numba is unavailable the caller keeps using the
-  original pure-Python implementation; nothing here is required for correctness.
+``simulate_one`` dispatches to whichever is active (``_USE_KERNEL``). The
+``SIM_KERNEL=0`` parity test asserts the two paths return byte-identical dicts.
 
-The kernel assumes chronologically sorted daily bars and probability points,
-which every loader in this project already guarantees.
+The numba section was formerly ``backtesting.pipeline.sim_kernel``; the reference
++ dispatch were formerly in ``backtesting.pipeline.strategy``. The book is
+long-only on raw P(YES): entry fires on HIGH probability, and there is no signal
+inversion.
 """
 from __future__ import annotations
 
+import json
+import os
+import re
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
+
+from core.policy import RELEVANCE_COL
 
 try:  # numba is optional; callers fall back to pure Python when it is absent.
     from numba import njit
@@ -58,6 +48,23 @@ except Exception:  # pragma: no cover - exercised only when numba is missing
 
         return _wrap
 
+
+# The numba kernel is used automatically when numba is importable. It produces
+# output identical to the pure-Python reference (_simulate_one_py); set
+# SIM_KERNEL=0 to force the reference path (used by the parity test).
+_USE_KERNEL = HAVE_NUMBA and os.environ.get("SIM_KERNEL", "1") != "0"
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Numba-accelerated kernel (formerly pipeline/sim_kernel.py)
+# ══════════════════════════════════════════════════════════════════════════════
+#
+# The kernel only ever sees int64/float64 numpy arrays and scalars and performs
+# exactly the same arithmetic, in the same order, as the reference Python. All
+# timestamp normalization and every date/reason string is produced in Python
+# from the original tz-aware Timestamps, so the result is tz-correct and matches
+# the pure-Python path field for field. It assumes chronologically sorted daily
+# bars and probability points, which every loader guarantees.
 
 # Caches keyed by (id(container), key). The container ids stay valid because the
 # runners (and ``truncate_paths``) keep the price/probability dicts alive for the
@@ -497,4 +504,277 @@ def scan_candidate(
         float(peak),
         float(trough),
         float(ret_c),
+    )
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Pure-Python reference + dispatch (formerly pipeline/strategy), long-only
+# ══════════════════════════════════════════════════════════════════════════════
+
+
+def calc_atr(bars: list[tuple]) -> float:
+    """Average True Range from (t, h, l, c) bars."""
+    if len(bars) < 2:
+        return 0.0
+    trs = []
+    for i in range(1, len(bars)):
+        h, l, c = bars[i][1], bars[i][2], bars[i][3]
+        pc = bars[i - 1][3]
+        tr = max(h - l, abs(h - pc), abs(l - pc))
+        trs.append(tr)
+    return sum(trs) / len(trs)
+
+
+def entry_day(
+    prob_path: list[tuple],
+    t_theta: pd.Timestamp,
+    policy: dict,
+) -> tuple[pd.Timestamp, float] | None:
+    """Apply the entry rule; return (entry_ts, entry_prob) or None."""
+    first_eligible_day = t_theta.normalize()
+    pts = [(t, v) for t, v in prob_path if t >= first_eligible_day]
+    if not pts:
+        return None
+    held = 0
+    for t, v in pts:
+        if v >= policy["enter_strong"]:
+            return t, v
+        elif v >= policy["enter_floor"]:
+            held += 1
+            if held >= policy["hold_days"]:
+                return t, v
+        else:
+            held = 0
+    return None
+
+
+
+def clear_kernel_caches() -> None:
+    """Drop cached numpy views (call when fresh price/probability dicts load)."""
+    clear_caches()
+
+
+def _simulate_one_py(
+    row: dict | pd.Series,
+    prices: dict[str, list[tuple]],
+    probs: dict[str, list[tuple]],
+    policy: dict,
+) -> dict | None:
+    """Reference pure-Python trade simulation. Returns trade dict or None.
+
+    This is the authoritative definition of the trade semantics. The numba
+    kernel reproduces it exactly; ``simulate_one`` dispatches to whichever is
+    active.
+    """
+    sym, mkt = row["symbol"], row["market_id"]
+    t_theta = pd.Timestamp(row["t_theta"]).tz_convert("UTC")
+    t_e = pd.Timestamp(row["t_e"]).tz_convert("UTC")
+
+    question = str(row.get("question", ""))
+    is_earnings = "earnings" in str(row.get("feat_archetype", "")).lower()
+    closes = prices.get(sym, [])
+
+    win = [(t, h, l, c) for t, h, l, c in closes
+           if t_theta - pd.Timedelta(days=30) <= t <= t_e]
+    if len(win) < 2:
+        return None
+
+    ent = entry_day(probs.get(mkt, []), t_theta, policy)
+    if ent is None:
+        return None
+    entry_ts = ent[0]
+
+    p_surge = row.get("feat_prob_surge_since_t0")
+    r_surge = row.get("feat_runup_since_t0")
+    if p_surge is not None and p_surge > policy.get("max_prob_surge", 999.0):
+        return None
+    if r_surge is not None and r_surge > policy.get("max_price_runup", 999.0):
+        return None
+
+    entry_idx = next((i for i, b in enumerate(win) if b[0] >= entry_ts), -1)
+    if entry_idx == -1:
+        return None
+    resolution_cut = t_e - pd.Timedelta(days=1)
+    if win[entry_idx][0] >= resolution_cut:
+        return None
+
+    path = [bar for bar in win[entry_idx:] if bar[0] < resolution_cut]
+    if len(path) < 2:
+        return None
+
+    hist_bars = win[max(0, entry_idx - 15):entry_idx + 1]
+    atr = calc_atr(hist_bars)
+
+    entry_price = path[0][3]
+    if atr == 0 or entry_price == 0:
+        return None
+    atr_pct = atr / entry_price
+
+    prob_path = {t.normalize(): v for t, v in probs.get(mkt, [])}
+
+    atr_mult = policy["atr_mult"]
+    lock_activate = policy["lock_activate"]
+    theta_out = policy["theta_out"]
+    peak = 0.0
+
+    for i, (t, h, l, c) in enumerate(path):
+        ret_c = c / entry_price - 1.0
+        ret_h = h / entry_price - 1.0
+        ret_l = l / entry_price - 1.0
+
+        reason = None
+        if i > 0:
+            stop_dist = atr_mult * atr_pct
+
+            if prob_path.get(t.normalize(), 1.0) < theta_out:
+                reason = f"poly<{theta_out}"
+            elif ret_l <= peak - stop_dist:
+                reason = f"trailing_{atr_mult:.1f}ATR"
+                c = max(l, entry_price * (1.0 + peak - stop_dist))
+                ret_c = c / entry_price - 1.0
+            elif peak >= lock_activate:
+                hard_floor_pct = int(peak * 100)
+                hard_floor = hard_floor_pct / 100.0
+                if ret_l < hard_floor:
+                    reason = f"profit_lock_{hard_floor_pct}%"
+                    c = max(l, entry_price * (1.0 + hard_floor))
+                    ret_c = c / entry_price - 1.0
+
+            if reason is None and i == len(path) - 1:
+                reason = "resolution-1d"
+
+        if reason:
+            lo = min(ll / entry_price - 1.0 for _, _, ll, _ in path[:i + 1])
+            mkt_probs = probs.get(mkt, [])
+            converged = "YES" if mkt_probs and mkt_probs[-1][1] >= 0.5 else "NO" if mkt_probs else "UNKNOWN"
+            return dict(
+                market_id=mkt, symbol=sym,
+                question=question,
+                pct=round(ent[1], 3),
+                converged=converged,
+                asset_confidence=row.get("confidence_score"),
+                question_confidence=row.get("feat_llm_confidence"),
+                archetype=row.get("feat_archetype", ""),
+                relevance=round(float(row.get(RELEVANCE_COL, 0)), 3),
+                split=row.get("split", ""),
+                entry_date=str(path[0][0].date()), entry_prob=round(ent[1], 3),
+                entry_price=round(entry_price, 2),
+                exit_date=str(t.date()), exit_price=round(c, 2),
+                exit_reason=reason,
+                peak_pct=round(peak * 100, 2), trough_pct=round(lo * 100, 2),
+                return_pct=round(ret_c * 100, 2),
+            )
+
+        if i == 0:
+            peak = 0.0
+        else:
+            peak = max(peak, ret_h)
+
+    t, h, l, c = path[-1]
+    ret_c = c / entry_price - 1.0
+    lo = min(ll / entry_price - 1.0 for _, _, ll, _ in path)
+    mkt_probs = probs.get(mkt, [])
+    converged = "YES" if mkt_probs and mkt_probs[-1][1] >= 0.5 else "NO" if mkt_probs else "UNKNOWN"
+    return dict(
+        market_id=mkt, symbol=sym,
+        question=question,
+        pct=round(ent[1], 3),
+        converged=converged,
+        asset_confidence=row.get("confidence_score"),
+        question_confidence=row.get("feat_llm_confidence"),
+        archetype=row.get("feat_archetype", ""),
+        relevance=round(float(row.get(RELEVANCE_COL, 0)), 3),
+        split=row.get("split", ""),
+        entry_date=str(path[0][0].date()), entry_prob=round(ent[1], 3),
+        entry_price=round(entry_price, 2),
+        exit_date=str(t.date()), exit_price=round(c, 2),
+        exit_reason="end_of_window",
+        peak_pct=round(peak * 100, 2), trough_pct=round(lo * 100, 2),
+        return_pct=round(ret_c * 100, 2),
+    )
+
+
+def simulate_one(
+    row: dict | pd.Series,
+    prices: dict[str, list[tuple]],
+    probs: dict[str, list[tuple]],
+    policy: dict,
+) -> dict | None:
+    """Simulate a single trade. Returns trade result dict or None.
+
+    Dispatches to the numba kernel (``scan_candidate``) when available
+    (``_USE_KERNEL``), otherwise to the pure-Python reference
+    ``_simulate_one_py``. Both return identical dicts; the kernel only removes
+    the per-call pandas/list overhead so the CEM search runs faster. The
+    timestamp and string formatting below stays in Python so the fast path is
+    timezone-correct and byte-for-byte compatible with the reference.
+    """
+    if not _USE_KERNEL:
+        return _simulate_one_py(row, prices, probs, policy)
+
+    sym, mkt = row["symbol"], row["market_id"]
+    question = str(row.get("question", ""))
+
+    t_theta = pd.Timestamp(row["t_theta"]).tz_convert("UTC")
+    t_e = pd.Timestamp(row["t_e"]).tz_convert("UTC")
+    is_earnings = "earnings" in str(row.get("feat_archetype", "")).lower()
+
+    scanned = scan_candidate(
+        prices,
+        probs,
+        sym,
+        mkt,
+        t_theta,
+        t_e,
+        is_earnings,
+        row.get("feat_prob_surge_since_t0"),
+        row.get("feat_runup_since_t0"),
+        policy,
+    )
+    if scanned is None:
+        return None
+
+    (
+        entry_ts,
+        entry_prob,
+        entry_price,
+        exit_ts,
+        exit_price,
+        reason_code,
+        hard_floor_pct,
+        peak,
+        trough,
+        ret_c,
+    ) = scanned
+
+    if reason_code == 1:
+        reason = f"trailing_{policy['atr_mult']:.1f}ATR"
+    elif reason_code == 2:
+        reason = f"profit_lock_{hard_floor_pct}%"
+    elif reason_code == 3:
+        reason = f"poly<{policy['theta_out']}"
+    elif reason_code == 4:
+        reason = "resolution-1d"
+    else:
+        reason = "end_of_window"
+
+    # `converged` reports whether the market resolved YES (P >= 0.5 at the end).
+    mkt_probs = probs.get(mkt, [])
+    converged = "YES" if mkt_probs and mkt_probs[-1][1] >= 0.5 else "NO" if mkt_probs else "UNKNOWN"
+    return dict(
+        market_id=mkt, symbol=sym,
+        question=question,
+        pct=round(entry_prob, 3),
+        converged=converged,
+        asset_confidence=row.get("confidence_score"),
+        question_confidence=row.get("feat_llm_confidence"),
+        archetype=row.get("feat_archetype", ""),
+        relevance=round(float(row.get(RELEVANCE_COL, 0)), 3),
+        split=row.get("split", ""),
+        entry_date=str(entry_ts.date()), entry_prob=round(entry_prob, 3),
+        entry_price=round(entry_price, 2),
+        exit_date=str(exit_ts.date()), exit_price=round(exit_price, 2),
+        exit_reason=reason,
+        peak_pct=round(peak * 100, 2), trough_pct=round(trough * 100, 2),
+        return_pct=round(ret_c * 100, 2),
     )
