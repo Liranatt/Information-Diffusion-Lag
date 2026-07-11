@@ -16,6 +16,30 @@ long-run edge.
 The live system runs on a home server against an **IBKR paper account**, with a
 read-only web dashboard.
 
+## Where to look (60-second orientation)
+
+| To understand… | Read this |
+|---|---|
+| **The thesis + how a market becomes a trade** | this README, next two sections |
+| **The trading rules** (entry/exit, the actual math) | `core/kernel.py` (one file, both planes use it) |
+| **The features** (`feat_*`, T0/Tθ) | `core/features.py` |
+| **The idea pipeline** (scan → clean → Gemini → candidate) | `ingest/chain.py` |
+| **The CEM optimizer + walk-forward backtest** | `backtesting/optimize_cem.py` |
+| **The live trader** (the hourly loop) | `live/control_pipeline.py` → `live/strategy_engine.py` |
+| **The dashboard + statistics** | `live/dashboard.py`, `live/analytics.py` |
+
+Fastest way to see it work (no IB/Gemini needed):
+
+```bash
+pip install -e .
+python -m backtesting.optimize_cem   # runs the CEM search on the committed data/*.parquet+pkl
+pytest testing/                      # kernel-parity + invariant checks
+```
+
+The backtest reads only the three committed artifacts in `data/`
+(`candidates.parquet`, `prices.pkl`, `probs.pkl`) — no database or API keys
+required to reproduce it.
+
 ## The idea pipeline — how a Polymarket market becomes a trade
 
 ```
