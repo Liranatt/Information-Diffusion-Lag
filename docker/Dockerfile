@@ -25,4 +25,9 @@ RUN pip install -r requirements.txt
 # propagate without a rebuild.
 COPY . .
 
+# Editable install so `core`, `ingest`, `backtesting`, `live`, `database` import
+# absolutely from anywhere (no sys.path hacks). The bind-mount at runtime keeps
+# /app pointing at the live repo, so the editable finder still resolves.
+RUN pip install -e . --no-deps
+
 CMD ["python", "-m", "live.run_live", "--daemon"]

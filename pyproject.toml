@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cem"
+version = "0.1.0"
+description = "CEM / Information-Diffusion-Lag: Polymarket-oracle event strategy (backtest + live paper trader)"
+requires-python = ">=3.12"
+dynamic = ["dependencies"]
+
+# The package tree is imported absolutely from the repo root, e.g.
+#   from core.kernel import scan_candidate
+#   from backtesting.pipeline.strategy import run_backtest
+#   from ingest.chain import discover_and_track
+# `pip install -e .` makes these importable regardless of CWD, which is what the
+# Docker image, pytest, and the dashboard all rely on. No sys.path hacks anywhere.
+[tool.setuptools]
+packages = [
+    "core",
+    "ingest",
+    "backtesting",
+    "backtesting.pipeline",
+    "live",
+    "database",
+    "database.backtesting",
+]
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
+
+[tool.pytest.ini_options]
+testpaths = ["testing"]

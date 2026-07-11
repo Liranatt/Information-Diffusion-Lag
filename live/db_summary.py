@@ -3,10 +3,6 @@ from __future__ import annotations
 
 import asyncio
 import json
-import sys
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from database.backtesting.schema import SCHEMA
 from database.db_connection import create_pool
