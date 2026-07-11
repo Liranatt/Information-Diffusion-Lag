@@ -19,5 +19,12 @@ if [[ "$LOCAL_SHA" == "$REMOTE_SHA" ]]; then
 fi
 
 echo "deploying $REMOTE_SHA from origin/$DEPLOY_BRANCH"
-git reset --hard "$REMOTE_SHA"
+# Never discard the server's own (nightly-rebuild) commits. If HEAD is an
+# ancestor of the remote there are no local-only commits and a hard reset is
+# safe; otherwise replay the local commits on top of the remote via rebase.
+if git merge-base --is-ancestor HEAD "origin/$DEPLOY_BRANCH"; then
+  git reset --hard "origin/$DEPLOY_BRANCH"
+else
+  git rebase "origin/$DEPLOY_BRANCH" || { git rebase --abort; echo "rebase failed" >&2; exit 1; }
+fi
 bash scripts/deploy.sh

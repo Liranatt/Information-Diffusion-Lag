@@ -39,5 +39,12 @@ data/opp_cost_trades.csv
 main_backtesting/
 !main_backtesting/**/*.py
 
+# Policy artifacts that MUST travel with the code: the live trader loads its
+# walk-forward policy from these (live/config.py). The monthly optimize_cem run
+# regenerates them and they are pushed so the server picks up the new policy.
+!data/experiment_walkforward_folds_clean.csv
+!data/experiment_results_clean.csv
+!data/backtest_equity_log.csv
+
 # ── Namespaced run outputs (optimize_cem.py --run-id) ────────────
 runs/

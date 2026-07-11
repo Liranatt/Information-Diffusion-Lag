@@ -3,8 +3,8 @@ from __future__ import annotations
 import pytest
 import pandas as pd
 
-import pipeline.strategy as strategy
-from pipeline.data_loader import compute_features
+import backtesting.pipeline.strategy as strategy
+from backtesting.pipeline.data_loader import compute_features
 
 
 def _ts(day: str) -> pd.Timestamp:
@@ -141,7 +141,7 @@ def test_earnings_trades_receive_trailing_stops():
     assert trade["exit_reason"].startswith("trailing_")
 
 
-def test_compute_features_uses_fixed_lookbacks_for_event_gates():
+def test_compute_features_measures_surge_and_runup_since_t0():
     prices = [
         (_ts("2026-01-01") + pd.Timedelta(days=i), float(100 + i))
         for i in range(25)
@@ -170,8 +170,10 @@ def test_compute_features_uses_fixed_lookbacks_for_event_gates():
     )
     assert rec is not None
     assert rec["feat_has_pre_crossing_history"] is True
-    assert rec["feat_prob_surge_since_t0"] == pytest.approx(0.10)
-    assert rec["feat_runup_since_t0"] == pytest.approx(124.0 / 104.0 - 1.0)
+    # Since-T0: probability rise from creation (0.60) to the theta crossing (0.80),
+    # and asset run-up from the creation close (100) to the theta close (124).
+    assert rec["feat_prob_surge_since_t0"] == pytest.approx(0.20)
+    assert rec["feat_runup_since_t0"] == pytest.approx(124.0 / 100.0 - 1.0)
 
 
 @pytest.mark.skipif(not strategy.HAVE_NUMBA, reason="numba kernel is not available")
