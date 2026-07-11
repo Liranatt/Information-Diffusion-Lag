@@ -105,6 +105,7 @@ function renderShell(){
 
       <section class="view" id="strategy">
         <div class="row c4" id="btsummary"></div>
+        <div class="card" style="margin-bottom:16px"><h3>Statistics, out-of-sample backtest vs live</h3><div class="tw" id="btstats"></div><div class="mut" id="btstatsnote" style="font-size:11px;margin-top:8px"></div></div>
         <div class="card" style="margin-bottom:16px"><h3 id="btttl">Walk-forward out-of-sample folds</h3><div id="btchart"></div><div class="legrow"><span><i style="border-color:var(--brand)"></i>Strategy return</span><span><i style="border-color:var(--faint)"></i>Benchmark return</span></div></div>
         <div class="card" style="margin-bottom:16px"><h3>Overall out-of-sample NAV curve</h3><div class="chartWrap"><div id="bt_equity_chart"></div><div class="chartTip" id="btTip"></div></div></div>
         <div class="row c2b"><div class="card"><h3>Per-fold detail</h3><div class="tw" id="bttable"></div></div><div class="card"><h3>Live policy parameters</h3><div class="params" id="btparams"></div></div></div>
@@ -501,6 +502,9 @@ async function loadBacktest(){
     kpi("Benchmark", pct(s.total_benchmark_pct,1), "", null, cl(s.total_benchmark_pct)||"neu") +
     kpi("Excess", pct(s.total_excess_pct,1), `${s.positive_folds}/${s.n_folds} positive`, null, s.total_excess_pct>=0?"up":"down") +
     kpi("Worst drawdown", nn(s.worst_dd_pct,1)+"%", `${s.total_trades} trades`, null, "neu");
+  let liveStats = {};
+  try{ const m = await (await fetch("/api/metrics",{cache:"no-store"})).json(); liveStats = m.live_stats || {}; }catch(e){}
+  renderStats(d.stats || {}, liveStats);
   barChart($("#btchart"), d.folds);
   if(d.equity_series) areaChart($("#bt_equity_chart"), d.equity_series, "btTip");
   $("#bttable").innerHTML = table(d.folds, [
@@ -520,6 +524,37 @@ async function loadBacktest(){
     else if(k==="atr_mult") v=Number(v).toFixed(2)+"x"; else v=String(v);
     return `<div class="param"><div class="k">${defs[k][0]}</div><div class="v">${esc(v)}</div><div class="d">${defs[k][1]}</div></div>`;
   }).join("");
+}
+
+function renderStats(bt, live){
+  const bs = bt.trades || {}, ls = live.trades || {};
+  const v = (x, suf="") => (x == null ? '<span class="mut">n/a</span>' : esc(String(x)) + suf);
+  const ci = s => (s.ci_low == null ? null : `[${s.ci_low}, ${s.ci_high}]`);
+  const rows = [
+    {m:"Sharpe, annualized", b:v(bt.sharpe), l:v(live.sharpe)},
+    {m:"Excess vs benchmark", b:v(bt.excess_pct,"%"), l:v(live.excess_pct,"%")},
+    {m:"Max drawdown", b:v(bt.max_dd_pct,"%"), l:v(live.max_dd_pct,"%")},
+    {m:"Mean trade return", b:v(bs.mean_pct,"%"), l:v(ls.mean_pct,"%")},
+    {m:"Win rate", b:v(bs.win_rate,"%"), l:v(ls.win_rate,"%")},
+    {m:"t-stat, return &gt; 0", b:v(bs.t_stat), l:v(ls.t_stat)},
+    {m:"p-value, one-sided", b:v(bs.p_one_sided), l:v(ls.p_one_sided)},
+    {m:"95% CI, mean trade", b:v(ci(bs)), l:v(ci(ls))},
+    {m:"Trades, n", b:v(bs.n), l:v(ls.n)},
+  ];
+  $("#btstats").innerHTML = table(rows, [
+    {h:"Metric", f:r=>r.m},
+    {h:"Backtest OOS", n:1, f:r=>r.b},
+    {h:"Live", n:1, f:r=>r.l},
+  ]);
+  const notes = [];
+  if(bs.n) notes.push(bs.significant
+    ? `Backtest OOS mean trade return is significantly &gt; 0 (p=${bs.p_one_sided}, n=${bs.n}).`
+    : `Backtest OOS: not significant at 5%${bs.underpowered ? ` (underpowered, n=${bs.n})` : ` (p=${bs.p_one_sided}, n=${bs.n})`}.`);
+  notes.push(!ls.n ? "Live: no closed trades yet."
+    : ls.underpowered ? `Live: only ${ls.n} closed trades, significance not claimed (underpowered).`
+    : ls.significant ? `Live: significant (p=${ls.p_one_sided}, n=${ls.n}).`
+    : `Live: not significant (p=${ls.p_one_sided}, n=${ls.n}).`);
+  $("#btstatsnote").innerHTML = notes.join(" ");
 }
 
 renderShell();

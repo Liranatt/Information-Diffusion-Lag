@@ -192,9 +192,27 @@ def load_backtest() -> dict:
             except Exception:
                 pass
 
+        # Honest OOS statistics: Sharpe + drawdown from the equity curve, and a
+        # one-sided significance test on the per-trade OOS returns.
+        from live.analytics import equity_stats, return_stats
+        eq_vals = [p["equity"] for p in equity_series]
+        trade_path = (CONFIG.results_csv.parent / "experiment_trade_logs_clean"
+                      / f"{CONFIG.benchmark.lower()}_{slug}_test.csv")
+        trade_returns: list[float] = []
+        if trade_path.exists():
+            try:
+                tdf = pd.read_csv(trade_path)
+                if "return_pct" in tdf.columns:
+                    trade_returns = [float(v) for v in tdf["return_pct"].dropna().tolist()]
+            except Exception:
+                pass
+        stats = {**equity_stats(eq_vals), "excess_pct": summary["total_excess_pct"],
+                 "trades": return_stats(trade_returns)}
+
         return {"available": True, "experiment": CONFIG.experiment,
                 "benchmark": CONFIG.benchmark, "folds": folds,
-                "summary": summary, "policy": policy, "equity_series": equity_series}
+                "summary": summary, "policy": policy, "equity_series": equity_series,
+                "stats": stats}
     except Exception as error:  # noqa: BLE001
         return {"available": False, "error": str(error)}
 
@@ -505,8 +523,16 @@ async def gather_metrics() -> dict:
         next_prune = runtime_map["prune"]["ts"] + timedelta(seconds=CONFIG.tick_seconds * CONFIG.prune_every_ticks)
     next_tick = eq["ts"] + timedelta(seconds=CONFIG.tick_seconds) if eq and eq.get("ts") else None
 
+    # Honest live statistics: Sharpe + drawdown from the reconciled equity curve,
+    # significance from realized-trade returns (usually underpowered early on --
+    # the panel footnotes rather than headlines a non-significant / thin result).
+    from live.analytics import equity_stats as _eqstats, return_stats as _retstats
+    live_trade_returns = [float(t["pnl_pct"]) for t in trades if t["pnl_pct"] is not None]
+    live_stats = {**_eqstats(equity_curve), "excess_pct": active_return_pct,
+                  "trades": _retstats(live_trade_returns)}
 
     return {
+        "live_stats": live_stats,
         "generated_at": _iso(datetime.now(timezone.utc)), "benchmark": BENCH,
         "experiment": CONFIG.experiment, "tick_seconds": CONFIG.tick_seconds,
         "market": market_session_status(),
