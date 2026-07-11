@@ -15,7 +15,7 @@ Every tick (hourly by default):
 Once per discovery interval (daily by default):
   8. Discover new Polymarket markets (Gamma scan, 5-60 day window), run the
      exact backtest cleaning chain (regex -> Gemini catalyst -> Gemini asset
-     mapping, reused from scan_historical.py), backfill probability history,
+     mapping, via the one ingest.chain cleaning pipeline), and
      and start tracking whatever passes.
   9. Prune stale hourly bars / probability points (we are low on space).
 """
@@ -37,7 +37,7 @@ from .order_manager import OrderManager
 from .policy import kelly_size, load_live_policy
 from .position_manager import PositionManager
 from .strategy_engine import StrategyEngine
-from .utils import is_market_hours, retry_async, seconds_to_market_close
+from .utils import is_gather_window, is_market_hours, retry_async, seconds_to_market_close
 
 log = logging.getLogger("live.control")
 
@@ -67,6 +67,14 @@ class ControlPipeline:
         self._tick_count += 1
         now = datetime.now(timezone.utc)
         log.info("=== tick %d @ %s ===", self._tick_count, now.isoformat(timespec="seconds"))
+
+        # Gate the ENTIRE tick to the data-gathering window (09:30-16:30 ET =
+        # 16:30-23:30 Israel). Outside it — including overnight and weekends —
+        # nothing is pulled, decided, tracked, or snapshotted. A manual
+        # --once --discover (force_discovery) bypasses this for testing.
+        if not force_discovery and not is_gather_window(now):
+            log.info("outside gather window (09:30-16:30 ET) -- tick is a no-op")
+            return
 
         policy = load_live_policy(self.cfg)
         engine = StrategyEngine(policy)
@@ -124,13 +132,14 @@ class ControlPipeline:
         await self.mark_resolutions(markets, now)
         markets = [m for m in markets if m["end_at"] > now]
 
-        # 3. Price bars (IB only fills during/around market hours).
+        # 3. Price bars — refreshed across the whole gather window (IB serves the
+        #    session's bars during and just after the close). Trading itself
+        #    still requires the market to be open so orders can fill.
         market_open = is_market_hours(now)
-        if market_open:
-            try:
-                await fetcher.refresh_tracked(self.cfg.benchmark)
-            except Exception as error:  # noqa: BLE001
-                log.exception("bar refresh failed: %s", error)
+        try:
+            await fetcher.refresh_tracked(self.cfg.benchmark)
+        except Exception as error:  # noqa: BLE001
+            log.exception("bar refresh failed: %s", error)
 
         snapshot = await positions.snapshot()
 
@@ -398,18 +407,14 @@ class ControlPipeline:
                  snapshot["equity"], snapshot["cash"],
                  snapshot["benchmark_shares"], len(snapshot["open_positions"]))
 
-    # ── Discovery (reuses the exact backtest cleaning chain) ─────────────
+    # ── Discovery (the one consolidated ingest cleaning chain) ───────────
 
     async def discover_new_markets(self) -> int:
-        """Gamma scan -> regex -> Gemini catalyst -> Gemini asset mapping ->
-        track. Returns how many new markets entered tracking."""
+        """Gamma scan -> dedup -> regex -> Gemini catalyst -> Gemini asset
+        mapping -> track, via ingest.chain. Returns how many new markets
+        entered tracking."""
         assert self.store is not None
-        from pipeline.scanner import fetch_active_markets
-        from scan_historical import step2a_regex_filter, step2b_catalyst_filter, \
-            step2c_asset_mapping
-
-        async with httpx.AsyncClient(timeout=httpx.Timeout(60)) as client:
-            scanned = await fetch_active_markets(client)
+        from ingest.chain import discover_and_clean
 
         known = {m["market_id"] for m in await self.store.active_markets()}
         async with self.store.pool.acquire() as conn:
@@ -418,19 +423,8 @@ class ControlPipeline:
             )
             known.update(r["market_id"] for r in rows)
 
-        fresh = [{
-            "event_id": m.event_id, "market_id": m.market_id, "question": m.question,
-            "event_title": m.event_title, "tags": m.tags,
-            "created_at": m.created_at.isoformat(), "end_at": m.end_at.isoformat(),
-            "yes_token_id": m.yes_token_id, "condition_id": m.condition_id,
-        } for m in scanned if m.market_id not in known]
-        log.info("discovery: %d scanned, %d new", len(scanned), len(fresh))
-        if not fresh:
-            return 0
-
-        regex_passed = await step2a_regex_filter(fresh)
-        catalysts = await step2b_catalyst_filter(regex_passed)
-        passed = await step2c_asset_mapping(catalysts)
+        async with httpx.AsyncClient(timeout=httpx.Timeout(60)) as client:
+            passed = await discover_and_clean(client, known=known)
         if not passed:
             return 0
 

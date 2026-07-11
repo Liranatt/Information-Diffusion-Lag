@@ -265,13 +265,14 @@ class LiveStore:
             return 0
         now = datetime.now(timezone.utc)
         async with self.pool.acquire() as conn:
+            # Append-only: the first probability recorded for an (market, hour) is
+            # what we knew at that available_at, so never overwrite it — the
+            # backtest and the nightly rebuild treat this history as immutable.
             result = await conn.executemany(
                 f"""INSERT INTO {SCHEMA}.historical_probability_points
                     (market_id, yes_token_id, hour_ts, source_ts, available_at, probability)
                     VALUES ($1,$2,$3,$4,$5,$6)
-                    ON CONFLICT (market_id, hour_ts) DO UPDATE
-                    SET probability   = EXCLUDED.probability,
-                        available_at  = EXCLUDED.available_at""",
+                    ON CONFLICT (market_id, hour_ts) DO NOTHING""",
                 [(market_id, yes_token_id, ts, ts, now, p) for ts, p in points],
             )
         return len(points)
@@ -304,14 +305,16 @@ class LiveStore:
     async def upsert_bars(self, symbol: str, resolution: str, bars: list[dict]) -> int:
         if not bars:
             return 0
+        # Append-only into the shared historical table: never overwrite a bar the
+        # backtest may already depend on. Daily bars use midnight-UTC ts (see
+        # DataFetcher._bars_to_rows / market_data) so a re-fetch of the same
+        # session collides on the primary key and is left untouched.
         async with self.pool.acquire() as conn:
             await conn.executemany(
                 f"""INSERT INTO {SCHEMA}.historical_price_bars
                     (symbol, resolution, ts, open, high, low, close, volume)
                     VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
-                    ON CONFLICT (symbol, resolution, ts) DO UPDATE
-                    SET open=EXCLUDED.open, high=EXCLUDED.high,
-                        low=EXCLUDED.low, close=EXCLUDED.close, volume=EXCLUDED.volume""",
+                    ON CONFLICT (symbol, resolution, ts) DO NOTHING""",
                 [(symbol, resolution, b["ts"], b["open"], b["high"], b["low"],
                   b["close"], float(b.get("volume") or 0.0)) for b in bars],
             )
@@ -319,6 +322,14 @@ class LiveStore:
 
     async def daily_bars(self, symbol: str, lookback_days: int) -> list[dict]:
         since = datetime.now(timezone.utc) - timedelta(days=lookback_days)
+        return await self.daily_bars_since(symbol, since)
+
+    async def daily_bars_since(self, symbol: str, since: datetime) -> list[dict]:
+        """Daily bars for `symbol` with ts >= `since` (ascending).
+
+        The kernel replay needs the price window back to t_theta - 30d, which can
+        be older than the fixed daily lookback, so callers pass an explicit start.
+        """
         async with self.pool.acquire() as conn:
             rows = await conn.fetch(
                 f"""SELECT ts, open, high, low, close FROM {SCHEMA}.historical_price_bars
@@ -505,24 +516,16 @@ class LiveStore:
 
     async def prune_stale(self, *, tracked_symbols: list[str],
                           bar_retention_days: int, prob_retention_days: int) -> None:
-        bar_cutoff = datetime.now(timezone.utc) - timedelta(days=bar_retention_days)
-        prob_cutoff = datetime.now(timezone.utc) - timedelta(days=prob_retention_days)
-        async with self.pool.acquire() as conn:
-            deleted_bars = await conn.execute(
-                f"""DELETE FROM {SCHEMA}.historical_price_bars
-                    WHERE resolution='1h' AND ts < $1
-                      AND NOT (symbol = ANY($2::text[]))""",
-                bar_cutoff, tracked_symbols,
-            )
-            deleted_probs = await conn.execute(
-                f"""DELETE FROM {SCHEMA}.historical_probability_points p
-                    USING {SCHEMA}.live_tracked_markets m
-                    WHERE p.market_id = m.market_id
-                      AND m.status IN ('resolved', 'dropped')
-                      AND m.end_at < $1""",
-                prob_cutoff,
-            )
-        log.info("prune: %s hourly bars, %s prob points", deleted_bars, deleted_probs)
+        """Retention is DISABLED for the shared historical tables.
+
+        The nightly `python -m ingest --rebuild` job treats
+        historical_price_bars / historical_probability_points as the immutable
+        source of truth for the backtest artifacts, so the live loop must never
+        delete rows out from under it. DB head-room is sufficient; if that ever
+        changes, archive cold rows to a *_archive table the rebuild also reads
+        rather than deleting here.
+        """
+        log.debug("prune_stale: retention disabled on shared historical tables")
 
     # ── System telemetry (DB size + disk) ────────────────────────────────
 

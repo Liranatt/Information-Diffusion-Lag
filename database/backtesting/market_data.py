@@ -144,15 +144,16 @@ def _download_prices(
             continue
         bar_timestamp = timestamp.to_pydatetime().astimezone(timezone.utc)
         if resolution == "1d":
+            # Canonical daily-bar timestamp: midnight UTC of the trading day, so
+            # yfinance (backtest) and IB (live) daily bars share one (symbol, ts)
+            # primary key and never create duplicate rows for the same session.
             market_date = bar_timestamp.date()
             bar_timestamp = datetime(
                 market_date.year,
                 market_date.month,
                 market_date.day,
-                9,
-                30,
-                tzinfo=ZoneInfo("America/New_York"),
-            ).astimezone(timezone.utc)
+                tzinfo=timezone.utc,
+            )
         bars.append(
             PriceBar(
                 timestamp=bar_timestamp,

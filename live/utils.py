@@ -95,11 +95,27 @@ def affordable_buy_qty_frac(cash_available: float, price: float) -> float:
 
 def is_market_hours(now: datetime | None = None) -> bool:
     """True during regular NYSE trading hours (no holiday calendar; IB rejects
-    orders on holidays anyway, and the control loop tolerates that)."""
+    orders on holidays anyway, and the control loop tolerates that). Used to gate
+    order placement, which can only fill while the equity market is open."""
     now = (now or datetime.now(timezone.utc)).astimezone(NY)
     if now.weekday() >= 5:
         return False
     return time(9, 30) <= now.time() <= time(16, 0)
+
+
+# The whole control tick is gated to this data-gathering window: 09:30-16:30 ET,
+# which is 16:30-23:30 Israel time (a constant 7h offset year-round). It is the
+# trading session plus a 30-minute post-close tail so the day's final bars and
+# probabilities are captured. Outside it, a tick is a no-op.
+GATHER_CLOSE = time(16, 30)
+
+
+def is_gather_window(now: datetime | None = None) -> bool:
+    """True during the data-gathering window (09:30-16:30 ET, weekdays)."""
+    now = (now or datetime.now(timezone.utc)).astimezone(NY)
+    if now.weekday() >= 5:
+        return False
+    return time(9, 30) <= now.time() <= GATHER_CLOSE
 
 
 def seconds_to_market_close(now: datetime | None = None) -> float | None:

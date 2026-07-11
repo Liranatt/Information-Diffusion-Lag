@@ -16,15 +16,14 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from core.policy import KELLY_MIN_N, KELLY_LOOKBACK_N, KELLY_MIN_SZ, KELLY_MAX_SZ
+
 from .config import LiveConfig
 
 log = logging.getLogger("live.policy")
 
-# Sizing constants mirror optimize_cem.py exactly.
-KELLY_MIN_N = 10
-KELLY_LOOKBACK_N = 30
-KELLY_MIN_SZ = 0.03
-KELLY_MAX_SZ = 0.15
+# Sizing constants are the single core.policy source (formerly duplicated here as
+# 0.03/0.15, which had drifted from the backtest's 0.05/0.20 — now unified).
 
 REQUIRED_KEYS = (
     "atr_mult", "lock_activate", "theta_out", "enter_strong", "enter_floor",
