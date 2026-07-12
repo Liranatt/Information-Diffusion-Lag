@@ -304,6 +304,24 @@ _CRYPTO_TERMS = re.compile(
     r"crypto|\bdefi\b|\bnft\b|web3|on-?chain|\bcoin\b|\btoken\b)\b", re.I)
 
 
+# Raw asset price-level targets ("Will X hit $Y", "close above $Y", "(HIGH)/(LOW)"
+# markers, price brackets, all-time-high, best/worst-performing rankings). These
+# are not information catalysts -- just the market restating a price -- and carry
+# no diffusion edge. The fundamental guard prevents collisions: a real earnings/
+# revenue/sales question is never a price target, and the guard also saves tickers
+# that happen to spell HIGH/LOW (e.g. Lowe's "(LOW)").
+_PRICE_TARGET = re.compile(
+    r"\((HIGH|LOW)\)|\bclose(s|d)?\s+(above|below|at)\s+\$?[\d,]"
+    r"|\bfinish(es)?\s+[\w\s]{0,20}?\b(above|below)\s+\$?[\d,]"
+    r"|\bhit(s)?\s+\$?[\d,][\d,.]*|\breach(es|ed)?\s+\$[\d,]"
+    r"|\ball[-\s]?time high\b|\b(best|worst)\s+performing\b"
+    r"|\$[\d,]+\s*[-–]\s*\$?[\d,]", re.I)
+_FUNDAMENTAL_GUARD = re.compile(
+    r"\b(earnings|revenue|sales|\beps\b|deliver(ies|y)?|customers|subscribers|bookings"
+    r"|margin|\busers\b|trips|nights|comparable|same[-\s](restaurant|store)|beat|guidance|forecast)\b",
+    re.I)
+
+
 def structural_noise_rule(question: str) -> str | None:
     """Return the name of the first structural-noise pattern the question hits,
     or None. See `_STRUCTURAL_NOISE`."""
@@ -314,6 +332,9 @@ def structural_noise_rule(question: str) -> str | None:
     # Cryptocurrency/token question with no US-listed equity ticker → out of scope.
     if _CRYPTO_TERMS.search(q) and _extract_ticker(q) is None:
         return "crypto_asset"
+    # Raw price-level target (not a fundamental catalyst) → out of scope.
+    if _PRICE_TARGET.search(q) and not _FUNDAMENTAL_GUARD.search(q):
+        return "stock_price_target"
     return None
 
 
