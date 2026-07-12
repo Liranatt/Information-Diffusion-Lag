@@ -207,6 +207,24 @@ class Pass1Result:
     reason: str
 
 
+# Cost pre-cull threshold — NOT a relevance judgment.
+#
+# The regex prefilter no longer decides which CATEGORIES of event are relevant
+# (that was a hindsight-tuned gate: Iran 0.62 in, macro 0.40 / general-geo 0.45
+# out, hand-drawn around a 0.60 floor). Relevance and sentiment are now judged
+# only by the Gemini catalyst gate + relevance gate (ingest/world.py), which
+# grade every surviving market with calibrated, as-of-date reasoning and
+# generalize instead of pattern-matching the wording.
+#
+# This floor exists solely to avoid paying Gemini to classify questions with no
+# mechanical US-equity channel at all — podcasts, earnings-call word counts, raw
+# crypto price targets (scored 0.02–0.12). Everything with a plausible channel
+# (macro, geopolitics, diplomacy, IPOs, country ETFs, single names) passes
+# through to Gemini to judge. Keep this LOW; it must never encode which
+# catalysts are expected to be profitable.
+NOISE_FLOOR = 0.15
+
+
 def regex_prefilter(m: dict) -> Pass1Result:
     """Score relevance and sentiment for a single market question (no API)."""
     q = m["question"]

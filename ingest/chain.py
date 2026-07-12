@@ -36,12 +36,11 @@ from ingest.scanner import (
     fetch_active_markets,
     fetch_markets_in_range,
 )
-from ingest.prefilter import regex_prefilter
+from ingest.prefilter import regex_prefilter, NOISE_FLOOR
 from ingest.dedup import dedup_markets
 from ingest.evaluator import evaluate as gemini_evaluate
 from ingest.gemini_client import GeminiClient
 from ingest.world import (
-    QUESTION_RELEVANCE_FLOOR,
     CatalystBatch,
     GEMINI_CATALYST_PROMPT,
 )
@@ -93,13 +92,16 @@ def _scanned_to_dict(m: ScannedMarket) -> dict:
 # ── Stage 1: cheap regex prefilter (free) ────────────────────────────────────
 
 async def regex_filter(markets: list[dict]) -> list[dict]:
-    """Keep markets clearing the relevance floor with positive sentiment."""
-    passed = []
-    for m in markets:
-        p1 = regex_prefilter(m)
-        if p1.question_relevance >= QUESTION_RELEVANCE_FLOOR and p1.positive_sentiment:
-            passed.append(m)
-    print(f"[regex] {len(markets)} -> {len(passed)}")
+    """Drop only structurally-untradable noise (no US-equity channel at all).
+
+    This is a cheap cost pre-cull, NOT a relevance/sentiment judgment: every
+    surviving market is graded by the Gemini catalyst gate (CATALYST/NOISE +
+    sentiment) and the Gemini relevance gate (question_relevance >= floor +
+    sentiment) downstream. The regex stage no longer decides which categories
+    of event are relevant. See ingest.prefilter.NOISE_FLOOR.
+    """
+    passed = [m for m in markets if regex_prefilter(m).question_relevance > NOISE_FLOOR]
+    print(f"[regex] {len(markets)} -> {len(passed)} (noise-cull only, floor={NOISE_FLOOR})")
     return passed
 
 
