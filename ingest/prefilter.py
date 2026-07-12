@@ -260,6 +260,34 @@ _STRUCTURAL_NOISE: list[tuple[str, re.Pattern]] = [
     ("misc_non_catalyst", re.compile(
         r"\bnext Pope\b|\bNOF1\.ai\b|\bokbet\b|\brichest person\b|\bnet worth be\b"
         r"|\bto its[\w\s,]{0,20}13F\b", re.I)),
+    # IPO / pre-listing: no US-listed instrument exists at signal time, so the
+    # strategy has nothing to trade. (M&A about a public acquirer -- "Apple
+    # acquires X" -- does NOT match and is left for Gemini.)
+    ("ipo_prelisting", re.compile(r"\bIPO\b", re.I)),
+    # Foreign parliamentary seat-counts and election horse-race placement -- no
+    # mechanical US-equity channel. (Bare "meet with"/"talk to" diplomacy and
+    # foreign GDP prints are deliberately NOT here: a summit or a major-economy
+    # print can be a real signal, so that judgment stays with the Gemini gate.)
+    ("election_horserace", re.compile(
+        r"\bwin the (most|second most|third most|fewest) seats\b"
+        r"|\bcome in (first|second|third|fourth|fifth|1st|2nd|3rd|4th|5th)\b[\w\s]{0,15}\bround\b"
+        r"|\bqualify for the (second|next|runoff|1st|first) round\b"
+        r"|\b(Legislative Assembly|National People'?s Assembly|House of Councillors|House of Representatives)\b[\w\s]{0,10}\belection\b"
+        r"|\bwin the \d{4}[\w\s]{0,30}\bpresidential election\b", re.I)),
+    # Awards / sports / entertainment outcomes.
+    ("awards_sports", re.compile(
+        r"\bNobel\b|\bOscar(s)?\b|\bGrammy(s)?\b|\bSuper Bowl\b|\bWorld Cup\b|\bbox office\b"
+        r"|\bPerson of the Year\b|\bBallon d'?Or\b|\bGolden Globe|\bchampionship\b|\bthe Masters\b", re.I)),
+    # Tweet / social-post occurrence bets.
+    ("tweet_occurrence", re.compile(r"\btweet", re.I)),
+    # Crypto listing / token launch (not a US-listed equity catalyst).
+    ("crypto_listing", re.compile(
+        r"\bnext coin listed\b|\bcoin listed on Robinhood\b|\blaunch a token\b|\btoken launch\b", re.I)),
+    # Celebrity divorce.
+    ("divorce", re.compile(r"\bdivorce\b", re.I)),
+    # Service-uptime / outage counting.
+    ("service_uptime", re.compile(
+        r"\bgo(es)? down\s+\d|\b(full|partial)\s+outage\b|\bgo down\b[\w\s]{0,10}\btimes\b", re.I)),
 ]
 
 
