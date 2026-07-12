@@ -291,12 +291,29 @@ _STRUCTURAL_NOISE: list[tuple[str, re.Pattern]] = [
 ]
 
 
+# Cryptocurrency / token subject matter. The strategy trades US-listed equities,
+# not crypto, so a question ABOUT a coin/token (price, listing, launch) is out of
+# scope. Public crypto-EXPOSED companies are kept: they carry a parenthetical US
+# ticker ("Coinbase (COIN) beat earnings", "Bitcoin Depot (BTM)…"), which the
+# ticker check below preserves. Deliberately excludes bare "airdrop" — that
+# matches humanitarian aid airdrops, not only crypto airdrops.
+_CRYPTO_TERMS = re.compile(
+    r"\b(bitcoin|btc|ethereum|\beth\b|xrp|ripple|solana|dogecoin|doge|cardano|litecoin|ltc|"
+    r"polkadot|chainlink|avalanche|avax|toncoin|shiba|pepe|monero|tron|worldcoin|"
+    r"memecoin|meme\s*coin|altcoin|stablecoin|hyperliquid|fartcoin|\bbnb\b|"
+    r"crypto|\bdefi\b|\bnft\b|web3|on-?chain|\bcoin\b|\btoken\b)\b", re.I)
+
+
 def structural_noise_rule(question: str) -> str | None:
     """Return the name of the first structural-noise pattern the question hits,
     or None. See `_STRUCTURAL_NOISE`."""
+    q = question or ""
     for name, rx in _STRUCTURAL_NOISE:
-        if rx.search(question or ""):
+        if rx.search(q):
             return name
+    # Cryptocurrency/token question with no US-listed equity ticker → out of scope.
+    if _CRYPTO_TERMS.search(q) and _extract_ticker(q) is None:
+        return "crypto_asset"
     return None
 
 
