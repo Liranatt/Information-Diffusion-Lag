@@ -91,6 +91,17 @@ def event_key(question: str) -> str:
     q = re.sub(r'\d+\s+or\s+more\s+average\s+daily\s+transits', 'X transits', q)
     q = re.sub(r'be\s+between\s+\d+\s+and\s+\d+\s+on', 'be X on', q)
 
+    # --- Operational-metric threshold ladders (deliveries, customers, trips,
+    #     subscribers, orders, rooms, payers, revenue in $B, ...). Polymarket
+    #     splits one KPI into 5-10 rungs at different thresholds; they map to the
+    #     same asset, so collapse them to one signature. The subject (company +
+    #     metric) is preserved, so distinct events never merge. ---
+    q = re.sub(r'\b(deliver|delivers|delivered)\s+(between\s+)?[\d,]+(\s*[-–]\s*[\d,]+)?'
+               r'(\s+(and|or)\s+(more|less|fewer|[\d,]+))?', r'\1 X', q)
+    q = re.sub(r'\b[\d,]*\.?\d+\s*(?:million|billion|[bmk])\b', 'X', q)   # 4.4B, 800M, 1.78 million
+    q = re.sub(r'\bbetween\s+X\s+and\s+X\b', 'X', q)                      # "between 800M and 825M" -> X
+    q = re.sub(r'\b(above|below|over|under|to|reach|reaches|hit|hits)\s+[\d,]+\b', r'\1 X', q)
+
     # --- Dollar amounts ---
     q = re.sub(r'\$[\d.]+[MBKmb]?', '$X', q)
 
