@@ -225,11 +225,64 @@ class Pass1Result:
 NOISE_FLOOR = 0.15
 
 
+# ── Structural noise removal (data cleaning, NOT relevance scoring) ───────────
+#
+# These patterns drop question FORMATS that have no discrete tradable US-equity
+# catalyst at all, regardless of subject: model leaderboards, market-cap
+# rankings (an outcome mechanically equal to the stock price, not a catalyst),
+# search-popularity charts, app-store positions, keynote word-bingo, CEO-naming
+# lotteries, arbitrary price-level ladders, home-value brackets, personal-wealth
+# trivia. This is data cleaning — removing things that are not financial-market
+# catalysts — and it must NEVER encode which real catalysts are relevant or
+# profitable. That judgment (is a Fed print / a foreign election / an Iran strike
+# worth trading?) belongs entirely to the Gemini relevance gate. Every pattern
+# must be defensible as "this FORMAT can never map to a US-listed equity
+# catalyst", independent of any backtest outcome. Validated against a full
+# 2024-07→2026-05 Gamma scan: removes ~3,000 junk questions, zero of which were
+# in the pre-existing candidate universe.
+_STRUCTURAL_NOISE: list[tuple[str, re.Pattern]] = [
+    ("ai_model_leaderboard", re.compile(r"\bAI model\b", re.I)),
+    ("market_cap_ranking", re.compile(
+        r"\b(largest|second[- ]largest|third[- ]largest|most valuable|second most valuable)"
+        r"\b[\w\s'-]{0,40}\b(company|market cap)\b|\bby market cap\b", re.I)),
+    ("search_popularity", re.compile(
+        r"\bYear in Search\b|\bmost searched\b|\bsearched\b[\w\s]{0,25}\bon Google\b"
+        r"|#\s*\d+\s+searched\b", re.I)),
+    ("app_store_rank", re.compile(
+        r"#\s*\d+\s+(Free|Paid|Grossing|utility|finance)\s+App\b|\btop\s+\d+\s+app\b"
+        r"|\bbe\s+#1\b[\w\s]{0,30}\bApp\b|\b#1\s+(Free|Paid|Grossing)\b", re.I)),
+    ("speech_wordcount", re.compile(
+        r'\bsay\s+["“].+?["”]|\b(keynote|product showcase)\b|\btweet\s+\d', re.I)),
+    ("ceo_naming_lottery", re.compile(
+        r"\bbe\s+announced\s+as\s+the\s+next\s+CEO\b|\bbe\s+the\s+next\s+CEO\b", re.I)),
+    ("price_level_ladder", re.compile(r"\b(reach|dip to)\s+\$?[\d,.]+", re.I)),
+    ("home_value_bracket", re.compile(r"\bmedian home value\b", re.I)),
+    ("misc_non_catalyst", re.compile(
+        r"\bnext Pope\b|\bNOF1\.ai\b|\bokbet\b|\brichest person\b|\bnet worth be\b"
+        r"|\bto its[\w\s,]{0,20}13F\b", re.I)),
+]
+
+
+def structural_noise_rule(question: str) -> str | None:
+    """Return the name of the first structural-noise pattern the question hits,
+    or None. See `_STRUCTURAL_NOISE`."""
+    for name, rx in _STRUCTURAL_NOISE:
+        if rx.search(question or ""):
+            return name
+    return None
+
+
 def regex_prefilter(m: dict) -> Pass1Result:
     """Score relevance and sentiment for a single market question (no API)."""
     q = m["question"]
     tags = m.get("tags", [])
     q_lower = q.lower()
+
+    # ── Structural noise (question format has no tradable US-equity catalyst) ──
+    rule = structural_noise_rule(q)
+    if rule is not None:
+        return Pass1Result(m["market_id"], 0.0, True,
+                           f"Structural noise ({rule}): question format has no tradable US-equity catalyst.")
 
     # ── Noise filter ──
     if NOISE_RE.search(q):
