@@ -16,10 +16,10 @@ paths as they stand *now* and reuses the shared core kernel primitives:
              profit-lock / probability-out / resolution); a non-terminal
              ``end_of_window`` result means "still holding".
 
-Because both planes call the same function on the same inputs, live and backtest
-cannot make different entry/exit decisions on the same data. Features are the
-core definitions (`core.features`), and sizing/ATR all come from core. The book
-is long-only on raw P(YES) — no signal polarity.
+Both planes reuse the same mechanical entry/exit primitives. Features are the
+core definitions (`core.features`), sizing/ATR come from core, and both backtest
+and live engines apply the resolved signal polarity (3-state, long-only) to ensure
+the logic remains in lockstep.
 
 t_theta is the first daily probability crossing of the fixed 0.55 threshold
 (`core.features.find_t_theta`) — the universe anchor, not an entry rule; entry is
@@ -35,6 +35,7 @@ import pandas as pd
 
 from core.features import find_t_theta
 from core.kernel import _simulate_one_py, calc_atr, entry_day
+from core.polarity import resolve_polarity, effective_prob_path, effective_prob_surge
 from core.policy import RELEVANCE_COL
 
 log = logging.getLogger("live.engine")
@@ -175,15 +176,19 @@ class StrategyEngine:
                 # holding path, which do not exist yet. So the entry uses the same
                 # core primitives the kernel's entry uses (entry_day, the surge/
                 # run-up gates, calc_atr), staying in lockstep with the backtest,
-                # and fires only when the entry lands on the freshest bar. Long-only
-                # on raw P(YES) — no polarity.
+                # and fires only when the entry lands on the freshest bar.
+                polarity, polarity_source = resolve_polarity(market["question"], symbol)
+                if polarity == 0:
+                    continue  # Skip pair entirely if no clean side exists
+
                 prob_path = probs[market["market_id"]]
-                ent = entry_day(prob_path, t_theta, self.policy)
+                effective_path = effective_prob_path(prob_path, polarity)
+                ent = entry_day(effective_path, t_theta, self.policy)
                 if ent is None:
                     continue
                 entry_ts, entry_prob = ent
 
-                p_surge = row["feat_prob_surge_since_t0"]
+                p_surge = effective_prob_surge(row, polarity)
                 r_surge = row["feat_runup_since_t0"]
                 if p_surge is not None and p_surge > self.policy.get("max_prob_surge", 999.0):
                     continue
@@ -237,7 +242,13 @@ class StrategyEngine:
                 continue
             row, prices, probs, _price_path, _t_theta = built
 
-            trade = _simulate_one_py(row, prices, probs, self.policy)
+            trade = _simulate_one_py(
+                row,
+                prices,
+                probs,
+                self.policy,
+                apply_polarity=True,
+            )
             if trade is None:
                 continue
             # A terminal exit reason means the trade should already be closed given

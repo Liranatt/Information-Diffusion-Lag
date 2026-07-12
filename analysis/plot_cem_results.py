@@ -1,12 +1,12 @@
 import pandas as pd
 import numpy as np
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from pathlib import Path
 import re
 
-# To run sim_opp_cost, we need to import from optimize_cem
-# But optimize_cem has if __name__ == "__main__": main()
-import optimize_cem
+PROJECT = Path(__file__).resolve().parent.parent
 
 def calc_daily_metrics(r_series):
     if len(r_series) < 2: return {"sharpe":0, "sortino":0, "pnl":0, "max_dd":0}
@@ -95,8 +95,9 @@ def plot_equity_curve(df, title, filename):
     plt.close()
 
 def main():
-    equity_dir = Path("data/experiment_equity_logs_clean")
-    results_csv = Path("data/experiment_results_clean.csv")
+    equity_dir = PROJECT / "data" / "experiment_equity_logs_clean"
+    results_csv = PROJECT / "data" / "experiment_results_clean.csv"
+    charts_dir = PROJECT / "data"
     
     experiments = [
         "Baseline", "T1 FrictionPenalty", "T2 TrainWindows", "T3 Kelly",
@@ -136,10 +137,10 @@ def main():
         metrics["Sortino"].append(sm["sortino"])
         
     if metrics["Exp"]:
-        plot_bar_chart("Total Return (PnL)", "Percentage (%)", metrics["Exp"], metrics["PnL"], bench_pnl, "data/cem_metrics_pnl.png")
-        plot_bar_chart("Sharpe Ratio", "Ratio", metrics["Exp"], metrics["Sharpe"], bench_sharpe, "data/cem_metrics_sharpe.png")
-        plot_bar_chart("Max Drawdown", "Percentage (%)", metrics["Exp"], metrics["Max DD"], bench_max_dd, "data/cem_metrics_maxdd.png")
-        plot_bar_chart("Sortino Ratio", "Ratio", metrics["Exp"], metrics["Sortino"], bench_sortino, "data/cem_metrics_sortino.png")
+        plot_bar_chart("Total Return (PnL)", "Percentage (%)", metrics["Exp"], metrics["PnL"], bench_pnl, charts_dir / "cem_metrics_pnl.png")
+        plot_bar_chart("Sharpe Ratio", "Ratio", metrics["Exp"], metrics["Sharpe"], bench_sharpe, charts_dir / "cem_metrics_sharpe.png")
+        plot_bar_chart("Max Drawdown", "Percentage (%)", metrics["Exp"], metrics["Max DD"], bench_max_dd, charts_dir / "cem_metrics_maxdd.png")
+        plot_bar_chart("Sortino Ratio", "Ratio", metrics["Exp"], metrics["Sortino"], bench_sortino, charts_dir / "cem_metrics_sortino.png")
         print("Generated 4 bar charts.")
         
         # Mean equity plot
@@ -155,24 +156,25 @@ def main():
                 df_mean["qqq_equity"] = pd.read_csv(equity_dir / "qqq_baseline_test.csv")["benchmark_equity"].iloc[:min_len]
                 
             # Truncate to first trade of OOS (using T1+T2+T3 as reference)
-            trade_log = Path("data/experiment_trade_logs_clean/spy_t1_t2_t3_test.csv")
+            trade_log = PROJECT / "data" / "experiment_trade_logs_clean" / "spy_t1_t2_t3_test.csv"
             if trade_log.exists():
                 tdf = pd.read_csv(trade_log)
                 if not tdf.empty:
                     first_trade_date = tdf["entry_date"].min()
                     df_mean = df_mean[df_mean["date"] >= first_trade_date].copy()
-            
-            plot_equity_curve(df_mean, "Mean Strategy Equity (All 8 Experiments) vs Benchmarks", "data/cem_mean_strategy_equity.png")
+
+            plot_equity_curve(df_mean, "Mean Strategy Equity (All 8 Experiments) vs Benchmarks", charts_dir / "cem_mean_strategy_equity.png")
             print("Generated Mean Strategy plot.")
 
     # 2. Simulate best strategy (Test OOS only, truncated to first trade)
     if results_csv.exists():
         df_res = pd.read_csv(results_csv)
-        best_row = df_res.sort_values(by="oos_return_pct", ascending=False).iloc[0]
+        df_res = df_res[df_res["benchmark"].astype(str).str.upper() == "SPY"]
+        best_row = df_res.sort_values(by="test_return_pct", ascending=False).iloc[0]
         slug = re.sub(r"[^a-z0-9]+", "_", best_row["experiment"].lower()).strip("_")
-        
+
         eq_file = equity_dir / f"spy_{slug}_test.csv"
-        trade_log = Path(f"data/experiment_trade_logs_clean/spy_{slug}_test.csv")
+        trade_log = PROJECT / "data" / "experiment_trade_logs_clean" / f"spy_{slug}_test.csv"
         
         if eq_file.exists() and trade_log.exists():
             df_best = pd.read_csv(eq_file)
@@ -186,7 +188,7 @@ def main():
                 first_trade_date = tdf["entry_date"].min()
                 df_best = df_best[df_best["date"] >= first_trade_date].copy()
                 
-            plot_equity_curve(df_best, f"OOS Equity: Best Strategy ({best_row['experiment']})", "data/cem_best_strategy_equity.png")
+            plot_equity_curve(df_best, f"OOS Equity: Best Strategy ({best_row['experiment']})", charts_dir / "cem_best_strategy_equity.png")
             print("Generated Best Strategy OOS plot.")
 
 if __name__ == "__main__":

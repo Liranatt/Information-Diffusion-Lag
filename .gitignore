@@ -36,6 +36,7 @@ scratch*.py
 data/experiment_*
 data/rf_experiment_*
 data/opp_cost_trades.csv
+data/polarity_labels.json
 main_backtesting/
 !main_backtesting/**/*.py
 

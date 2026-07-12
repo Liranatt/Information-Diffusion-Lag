@@ -8,16 +8,18 @@ drift apart:
   it must stay JIT-compiled. Do not downgrade it to Python.
 * ``_simulate_one_py`` — the pure-Python reference. It is the authoritative
   definition of the trade semantics; the live trader (``live.strategy_engine``)
-  uses it, because live makes only a handful of decisions per hour and its speed
-  is irrelevant.
+  uses its explicit raw-signal mode because polarity remains research-only
+  until it has been validated.
 
 ``simulate_one`` dispatches to whichever is active (``_USE_KERNEL``). The
 ``SIM_KERNEL=0`` parity test asserts the two paths return byte-identical dicts.
 
 The numba section was formerly ``backtesting.pipeline.sim_kernel``; the reference
 + dispatch were formerly in ``backtesting.pipeline.strategy``. The book is
-long-only on raw P(YES): entry fires on HIGH probability, and there is no signal
-inversion.
+long-only in equities: entry fires on HIGH *effective* probability, where
+``core.polarity`` decides per (question, symbol) pair whether the effective
+path is raw P(YES) (+1), the flipped 1-P(YES) (-1, e.g. "war ends" markets for
+USO), or no clean side at all (0 — the pair is skipped). There is no shorting.
 """
 from __future__ import annotations
 
@@ -30,6 +32,12 @@ import numpy as np
 import pandas as pd
 
 from core.policy import RELEVANCE_COL
+from core.polarity import (
+    clear_effective_probs_cache,
+    effective_prob_surge,
+    effective_probs,
+    resolve_polarity,
+)
 
 try:  # numba is optional; callers fall back to pure Python when it is absent.
     from numba import njit
@@ -550,8 +558,9 @@ def entry_day(
 
 
 def clear_kernel_caches() -> None:
-    """Drop cached numpy views (call when fresh price/probability dicts load)."""
+    """Drop cached numpy views AND the polarity-corrected probability paths."""
     clear_caches()
+    clear_effective_probs_cache()
 
 
 def _simulate_one_py(
@@ -559,6 +568,8 @@ def _simulate_one_py(
     prices: dict[str, list[tuple]],
     probs: dict[str, list[tuple]],
     policy: dict,
+    *,
+    apply_polarity: bool = True,
 ) -> dict | None:
     """Reference pure-Python trade simulation. Returns trade dict or None.
 
@@ -571,6 +582,19 @@ def _simulate_one_py(
     t_e = pd.Timestamp(row["t_e"]).tz_convert("UTC")
 
     question = str(row.get("question", ""))
+    if apply_polarity:
+        # Re-polarize before anything reads the path: entry_day, theta_out and
+        # `converged` must all see "high == bullish". Polarity 0 means neither
+        # side is a clean signal for this symbol, so the pair is not tradable.
+        polarity, polarity_source = resolve_polarity(question, sym)
+        if polarity == 0:
+            return None
+        probs = effective_probs(probs, mkt, polarity)
+    else:
+        # Explicit compatibility mode for the live plane. Keeping this opt-out
+        # here prevents the research default from silently changing live exits.
+        polarity, polarity_source = 1, "raw"
+
     is_earnings = "earnings" in str(row.get("feat_archetype", "")).lower()
     closes = prices.get(sym, [])
 
@@ -584,7 +608,7 @@ def _simulate_one_py(
         return None
     entry_ts = ent[0]
 
-    p_surge = row.get("feat_prob_surge_since_t0")
+    p_surge = effective_prob_surge(row, polarity)
     r_surge = row.get("feat_runup_since_t0")
     if p_surge is not None and p_surge > policy.get("max_prob_surge", 999.0):
         return None
@@ -645,11 +669,15 @@ def _simulate_one_py(
 
         if reason:
             lo = min(ll / entry_price - 1.0 for _, _, ll, _ in path[:i + 1])
+            # `probs` is the polarity-corrected view, so `converged` reports
+            # whether the bullish thesis resolved true -- not raw YES.
             mkt_probs = probs.get(mkt, [])
             converged = "YES" if mkt_probs and mkt_probs[-1][1] >= 0.5 else "NO" if mkt_probs else "UNKNOWN"
             return dict(
                 market_id=mkt, symbol=sym,
                 question=question,
+                polarity=polarity,
+                polarity_source=polarity_source,
                 pct=round(ent[1], 3),
                 converged=converged,
                 asset_confidence=row.get("confidence_score"),
@@ -678,6 +706,8 @@ def _simulate_one_py(
     return dict(
         market_id=mkt, symbol=sym,
         question=question,
+        polarity=polarity,
+        polarity_source=polarity_source,
         pct=round(ent[1], 3),
         converged=converged,
         asset_confidence=row.get("confidence_score"),
@@ -713,7 +743,14 @@ def simulate_one(
         return _simulate_one_py(row, prices, probs, policy)
 
     sym, mkt = row["symbol"], row["market_id"]
+
+    # The kernel never sees `question`, so polarity must be resolved here. See
+    # `core.polarity` for why this is a flip (or a skip), never a short.
     question = str(row.get("question", ""))
+    polarity, polarity_source = resolve_polarity(question, sym)
+    if polarity == 0:
+        return None
+    probs = effective_probs(probs, mkt, polarity)
 
     t_theta = pd.Timestamp(row["t_theta"]).tz_convert("UTC")
     t_e = pd.Timestamp(row["t_e"]).tz_convert("UTC")
@@ -727,7 +764,7 @@ def simulate_one(
         t_theta,
         t_e,
         is_earnings,
-        row.get("feat_prob_surge_since_t0"),
+        effective_prob_surge(row, polarity),
         row.get("feat_runup_since_t0"),
         policy,
     )
@@ -758,12 +795,15 @@ def simulate_one(
     else:
         reason = "end_of_window"
 
-    # `converged` reports whether the market resolved YES (P >= 0.5 at the end).
+    # `probs` is the polarity-corrected view, so `converged` reports whether the
+    # bullish thesis resolved true -- not whether the raw market resolved YES.
     mkt_probs = probs.get(mkt, [])
     converged = "YES" if mkt_probs and mkt_probs[-1][1] >= 0.5 else "NO" if mkt_probs else "UNKNOWN"
     return dict(
         market_id=mkt, symbol=sym,
         question=question,
+        polarity=polarity,
+        polarity_source=polarity_source,
         pct=round(entry_prob, 3),
         converged=converged,
         asset_confidence=row.get("confidence_score"),

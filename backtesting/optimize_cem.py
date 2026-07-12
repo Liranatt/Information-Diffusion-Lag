@@ -68,6 +68,7 @@ from core.kernel import (
     simulate_one,
     entry_day,
 )
+from core.polarity import effective_prob_path, effective_prob_surge, resolve_polarity
 from backtesting.pipeline.trade_forensics import combine_forensic_csvs, write_trade_forensics
 
 
@@ -485,9 +486,16 @@ def _diagnose_candidate_rejection(
         "_candidate_order": candidate_order,
     }
 
-    # Mirror simulate_one exactly (long-only on raw P(YES)). Diverging here would
-    # make the disposition log lie about why a candidate was rejected.
+    # Mirror simulate_one exactly: a bearish-YES question is re-polarized (never
+    # shorted), and a no-clean-side pair is skipped. Diverging here would make
+    # the disposition log lie about why a candidate was rejected.
     question = str(row.get("question", ""))
+    polarity, polarity_source = resolve_polarity(question, sym)
+    diag["polarity"] = polarity
+    diag["polarity_source"] = polarity_source
+    if polarity == 0:
+        diag["disposition"] = "no_clean_signal_side"
+        return diag
 
     closes = prices.get(sym, [])
     win = [(t, h, l, c) for t, h, l, c in closes if t_theta - pd.Timedelta(days=30) <= t <= t_e]
@@ -495,7 +503,7 @@ def _diagnose_candidate_rejection(
         diag["disposition"] = "insufficient_price_window"
         return diag
 
-    mkt_probs = probs.get(mkt, [])
+    mkt_probs = effective_prob_path(probs.get(mkt, []), polarity)
     if not mkt_probs:
         diag["disposition"] = "no_probability_data"
         return diag
@@ -507,7 +515,7 @@ def _diagnose_candidate_rejection(
 
     diag["entry_prob"] = round(ent[1], 3)
 
-    p_surge = row.get("feat_prob_surge_since_t0")
+    p_surge = effective_prob_surge(row, polarity)
     if p_surge is not None and p_surge > policy.get("max_prob_surge", 999.0):
         diag["disposition"] = "prob_surge_exceeded"
         return diag
@@ -552,6 +560,8 @@ def _make_disposition_row(
         "market_id": trade.get("market_id", ""),
         "symbol": trade.get("symbol", ""),
         "question": trade.get("question", ""),
+        "polarity": trade.get("polarity", ""),
+        "polarity_source": trade.get("polarity_source", ""),
         "event_family": family,
         "event_priority": EVENT_PRIORITY_ORDER.get(family, EVENT_PRIORITY_ORDER["other"]) if allocation_mode == ALLOCATION_EVENT_PRIORITY else "",
         "entry_prob": trade.get("entry_prob", ""),

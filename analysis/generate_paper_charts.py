@@ -19,7 +19,7 @@ from matplotlib.patches import FancyBboxPatch, FancyArrowPatch
 from matplotlib.ticker import FuncFormatter
 from scipy.stats import gaussian_kde
 
-PROJECT = Path(__file__).resolve().parent
+PROJECT = Path(__file__).resolve().parent.parent
 OUTPUT_DIR = PROJECT / "output" / "paper_charts"
 TRADES_CSV = PROJECT / "output" / "raw_expectation_tminus1" / "raw_expectation_trades_candidate_level.csv"
 INFERENCE_CSV = PROJECT / "output" / "raw_expectation_tminus1" / "h1_inference_summary.csv"

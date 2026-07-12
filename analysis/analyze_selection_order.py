@@ -3,17 +3,20 @@ from __future__ import annotations
 import json
 import pickle
 import re
+import sys
 from pathlib import Path
 from typing import Any, Callable
 
 import numpy as np
 import pandas as pd
 
-from optimize_cem import _close_on, as_utc_day, truncate_paths
-from pipeline.strategy import simulate_one
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from backtesting.optimize_cem import _close_on, as_utc_day, truncate_paths
+from backtesting.pipeline.strategy import simulate_one
 
 
-PROJECT = Path(__file__).resolve().parent
+PROJECT = Path(__file__).resolve().parent.parent
 DATA = PROJECT / "data"
 OUTPUT = PROJECT / "output"
 
@@ -25,9 +28,9 @@ PROBS = DATA / "probs.pkl"
 TRADE_DIR = DATA / "experiment_trade_logs_clean"
 
 RUNS_TO_AUDIT = [
-    ("SPY", "T1 FrictionPenalty"),
-    ("SPY", "T1+T2+T3"),
-    ("QQQ", "T1+T2+T3"),
+    ("SPY", "T1+T2+T3+T4"),
+    ("QQQ", "T1+T2+T3+T4"),
+    ("SPY", "T4 GeoPriority"),
 ]
 
 JOIN_COLS = [

@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 
 
-PROJECT = Path(__file__).resolve().parent
+PROJECT = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJECT / "data"
 OUTPUT_DIR = PROJECT / "output"
 
@@ -37,9 +37,8 @@ EXPERIMENT_IDS = {
 }
 
 REQUIRED_OOS_RUNS = {
-    ("SPY", "T1 FrictionPenalty"),
-    ("SPY", "T1+T2+T3"),
-    ("QQQ", "T1+T2+T3"),
+    ("SPY", "T1+T2+T3+T4"),
+    ("QQQ", "T1+T2+T3+T4"),
 }
 
 JOIN_FIELDS = [

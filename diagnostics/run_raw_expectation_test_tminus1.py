@@ -27,12 +27,9 @@ from scipy import stats as sp_stats
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-from pipeline.strategy import (
-    entry_day,
-    resolve_polarity,
-    effective_prob_path,
-)
-from optimize_cem import (
+from core.kernel import entry_day
+from core.polarity import effective_prob_path, resolve_polarity
+from backtesting.optimize_cem import (
     ib_cost,
     as_utc_day,
     event_family_from_text,
@@ -153,6 +150,12 @@ def process_candidate(row, prices, probs, fold_windows):
         return _invalid("no_policy_available", "No fold policy", sched_res=sched_res)
 
     polarity, polarity_source = resolve_polarity(question, sym)
+    if polarity == 0:
+        return _invalid(
+            "no_clean_signal_side",
+            "Neither YES nor NO is a clean bullish signal for this symbol",
+            sched_res=sched_res,
+        )
 
     raw_prob_path = probs.get(mkt, [])
     if not raw_prob_path:
@@ -611,6 +614,7 @@ def write_markdown(trades, collapsed, invalids, event_level, monthly, robustness
         f"| Invalid: entry >= T-1 | {inv_reasons.get('entry_not_before_T_minus_1', 0)} |",
         f"| Invalid: missing prices | {inv_reasons.get('missing_price', 0)} |",
         f"| Invalid: bad price | {inv_reasons.get('bad_price', 0)} |",
+        f"| Rejected: no clean signal side | {inv_reasons.get('no_clean_signal_side', 0)} |",
         f"| Rejected: below entry threshold | {inv_reasons.get('below_entry_threshold', 0)} |",
         f"| Rejected: prob surge exceeded | {inv_reasons.get('prob_surge_exceeded', 0)} |",
         f"| Rejected: price runup exceeded | {inv_reasons.get('price_runup_exceeded', 0)} |",

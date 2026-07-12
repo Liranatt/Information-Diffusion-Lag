@@ -406,7 +406,7 @@ def _run_drawdown_mark_metrics(
     return out
 
 
-def _policy_for(policy: dict | Callable[[pd.Timestamp], dict] | None, day: pd.Timestamp | None) -> dict:
+def _policy_for(policy: dict | list | Callable[[pd.Timestamp], dict] | None, day: pd.Timestamp | None) -> dict:
     if policy is None:
         return {}
     if callable(policy):
@@ -414,6 +414,24 @@ def _policy_for(policy: dict | Callable[[pd.Timestamp], dict] | None, day: pd.Ti
             return dict(policy(day or pd.Timestamp("1970-01-01", tz="UTC")))
         except Exception:
             return {}
+    if isinstance(policy, list):
+        # Walk-forward schedule as stored in results-CSV policy_json:
+        # [{fold, eval_start_date, eval_end_exclusive_date, policy}, ...]
+        windows = sorted(policy, key=lambda e: str(e.get("eval_start_date", "")))
+        if not windows:
+            return {}
+        day_ts = pd.Timestamp(day) if day is not None else pd.Timestamp("1970-01-01")
+        if day_ts.tzinfo is None:
+            day_ts = day_ts.tz_localize("UTC")
+        matched = dict(windows[0].get("policy", {}))
+        for entry in windows:
+            start = pd.Timestamp(entry["eval_start_date"], tz="UTC")
+            end_exclusive = pd.Timestamp(entry["eval_end_exclusive_date"], tz="UTC")
+            if start <= day_ts < end_exclusive:
+                return dict(entry.get("policy", {}))
+            if day_ts >= start:
+                matched = dict(entry.get("policy", {}))
+        return matched
     return dict(policy)
 
 

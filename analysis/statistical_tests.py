@@ -569,7 +569,7 @@ def _write_h1_paper_outputs(summary: pd.DataFrame, h1_dir: Path) -> None:
 
 
 def run_h1_battery():
-    repo_root = Path(__file__).resolve().parent
+    repo_root = Path(__file__).resolve().parent.parent
     h1_dir = repo_root / "output" / "raw_expectation_tminus1"
     summary_rows: list[dict] = []
 
@@ -734,7 +734,7 @@ def run_h1_battery():
 # ═══════════════════════════════════════════════════════════════════════════
 
 def run_tests(experiment_slugs: list[str]):
-    repo_root = Path(__file__).resolve().parent
+    repo_root = Path(__file__).resolve().parent.parent
 
     for slug in experiment_slugs:
         for benchmark in ['SPY', 'QQQ']:
@@ -926,7 +926,7 @@ def jensens_alpha_test(
 
 
 def run_jensens_alpha():
-    repo_root = Path(__file__).resolve().parent
+    repo_root = Path(__file__).resolve().parent.parent
     equity_dir = repo_root / "data" / "experiment_equity_logs_clean"
 
     for benchmark in ["SPY", "QQQ"]:
@@ -1060,7 +1060,7 @@ EXPERIMENT_SLUGS = [
 
 
 def run_spa():
-    repo_root = Path(__file__).resolve().parent
+    repo_root = Path(__file__).resolve().parent.parent
     equity_dir = repo_root / "data" / "experiment_equity_logs_clean"
 
     for benchmark in ["SPY", "QQQ"]:
