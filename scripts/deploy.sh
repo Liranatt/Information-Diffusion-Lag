@@ -17,7 +17,10 @@ cd "$APP_DIR"
   live/strategy_engine.py \
   live/utils.py
 
-docker compose -f docker/docker-compose.yml up -d --build
+docker compose -f docker/docker-compose.yml build trader
+docker compose -f docker/docker-compose.yml run --rm --no-deps trader \
+  python scripts/validate_live_policy.py
+docker compose -f docker/docker-compose.yml up -d
 
 healthy=0
 for _attempt in $(seq 1 30); do

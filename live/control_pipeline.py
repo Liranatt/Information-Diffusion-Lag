@@ -53,6 +53,9 @@ class ControlPipeline:
         self._tick_count = 0
 
     async def start(self) -> None:
+        # Fail fast before the daemon enters its hourly loop.  A missing policy
+        # is a deployment/readiness failure, not a recoverable per-tick error.
+        load_live_policy(self.cfg)
         self.store = await LiveStore.create()
 
     async def stop(self) -> None:
@@ -179,7 +182,7 @@ class ControlPipeline:
                         "does not globally block deterministic strategy orders",
                         float(snapshot.get("cash") or 0.0),
                     )
-                await self.run_exits(engine, orders, snapshot)
+                await self.run_exits(engine, orders, positions, snapshot)
                 snapshot = await positions.snapshot()
                 if snapshot["valid"] and snapshot["trade_safe"] and not orders.execution_anomaly:
                     await self.run_entries(
@@ -272,21 +275,27 @@ class ControlPipeline:
                 log.info("market resolved: %s", market["question"][:70])
 
     async def run_exits(self, engine: StrategyEngine, orders: OrderManager,
-                        snapshot: dict) -> None:
+                        positions: PositionManager, snapshot: dict) -> None:
         assert self.store is not None
         open_positions = snapshot["open_positions"]
         if not open_positions:
             return
         exits = await engine.scan_exits(self.store, open_positions)
         by_id = {p["position_id"]: p for p in open_positions}
+        current_snapshot = snapshot
         for signal in exits:
             pos = by_id[signal.position_id]
-            await orders.exit_position(
-                pos, signal.reason, snapshot["benchmark_price"],
-                cash=float(snapshot.get("cash") or 0.0),
+            closed = await orders.exit_position(
+                pos, signal.reason, current_snapshot["benchmark_price"],
+                cash=float(current_snapshot.get("cash") or 0.0),
             )
             if orders.execution_anomaly:
                 break
+            if closed:
+                current_snapshot = await positions.snapshot()
+                if not current_snapshot.get("valid"):
+                    log.warning("IB snapshot failed between exits; stopping exit chain")
+                    break
 
     async def run_entries(self, engine: StrategyEngine, orders: OrderManager,
                           positions: PositionManager, snapshot: dict,

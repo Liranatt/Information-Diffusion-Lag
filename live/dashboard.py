@@ -308,7 +308,9 @@ async def gather_metrics() -> dict:
             f"SELECT * FROM {SCHEMA}.live_system_metrics ORDER BY ts DESC LIMIT 1")
         runtime_rows = await conn.fetch(
             f"""SELECT key, ts, value, updated_at FROM {SCHEMA}.live_runtime_state
-                WHERE key = ANY($1::text[])""", ["discovery", "prune", "broker_sync"])
+                WHERE key = ANY($1::text[])""",
+            ["discovery", "prune", "broker_sync", "trader_tick", "trader_error"],
+        )
         cost = await conn.fetchrow(
             f"""SELECT COALESCE(SUM(est_cost_usd),0) AS total, COALESCE(SUM(calls),0) AS calls,
                        COALESCE(SUM(est_cost_usd) FILTER (WHERE ts>=date_trunc('day',now())),0) AS today,
@@ -400,6 +402,8 @@ async def gather_metrics() -> dict:
             exit_risk = "near_stop"
         elif theta_distance_pp is not None and theta_distance_pp <= 3.0:
             exit_risk = "near_theta"
+        elif days_to_resolution is not None and days_to_resolution < 0:
+            exit_risk = "resolution_overdue"
         elif days_to_resolution is not None and days_to_resolution <= 2.0:
             exit_risk = "near_resolution"
         elif entry_age_seconds is not None and entry_age_seconds >= 7 * 86400:
@@ -660,9 +664,32 @@ async def gather_metrics() -> dict:
             "title": "Performance baseline is provisional",
             "detail": performance_detail,
         })
-    failed_recent = len(failed)
-    if failed_recent:
-        warning_alerts.append({"title": "Recent order issues", "detail": f"{failed_recent} of the last {len(orders)} orders are not filled/dry-run."})
+    if failed_24h:
+        warning_alerts.append({
+            "title": "Order issues in the last 24h",
+            "detail": f"{failed_24h} orders in the last 24 hours are not filled/dry-run.",
+        })
+    trader_tick_state = runtime_map.get("trader_tick")
+    trader_error_state = runtime_map.get("trader_error")
+    if (
+        trader_error_state
+        and trader_error_state["ts"]
+        and (
+            not trader_tick_state
+            or not trader_tick_state["ts"]
+            or trader_error_state["ts"] > trader_tick_state["ts"]
+        )
+    ):
+        error_value = trader_error_state["value"] or {}
+        if isinstance(error_value, str):
+            try:
+                error_value = json.loads(error_value)
+            except Exception:  # noqa: BLE001
+                error_value = {}
+        critical_alerts.append({
+            "title": "Last trader tick failed",
+            "detail": str((error_value or {}).get("error") or "Unknown trader error"),
+        })
     near_exit = [p for p in positions if p["exit_risk"] != "normal"]
     if near_exit:
         warning_alerts.append({"title": "Positions need attention", "detail": ", ".join(f"{p['symbol']}:{p['exit_risk'].replace('_', ' ')}" for p in near_exit[:5])})
@@ -945,8 +972,18 @@ async def api_backtest() -> JSONResponse:
 
 
 @app.get("/healthz")
-async def healthz() -> dict:
-    return {"ok": True}
+async def healthz() -> JSONResponse:
+    try:
+        policy = load_live_policy(CONFIG)
+    except Exception as error:  # noqa: BLE001 - health endpoint reports readiness
+        return JSONResponse(
+            status_code=503,
+            content={"ok": False, "policy_ok": False, "error": str(error)},
+        )
+    return JSONResponse(
+        {"ok": True, "policy_ok": True, "experiment": CONFIG.experiment,
+         "benchmark": CONFIG.benchmark, "max_concurrent": int(policy["max_concurrent"])},
+    )
 
 
 @app.get("/", response_class=HTMLResponse)

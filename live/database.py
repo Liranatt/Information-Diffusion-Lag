@@ -72,7 +72,10 @@ CREATE TABLE IF NOT EXISTS {SCHEMA}.live_positions (
     pnl_pct         DOUBLE PRECISION,
     pnl_source      TEXT NOT NULL DEFAULT 'legacy_model',
     pnl_verified    BOOLEAN NOT NULL DEFAULT FALSE,
+    entry_costs_verified BOOLEAN NOT NULL DEFAULT FALSE,
     operation_id    TEXT,
+    metadata_source TEXT NOT NULL DEFAULT 'strategy_entry',
+    recovered_from_position_id BIGINT,
     broker_qty      DOUBLE PRECISION,
     broker_observed_at TIMESTAMPTZ,
     broker_state    TEXT,
@@ -262,7 +265,10 @@ ALTER TABLE {SCHEMA}.live_equity_snapshots
     ADD COLUMN IF NOT EXISTS source TEXT NOT NULL DEFAULT 'legacy';
 ALTER TABLE {SCHEMA}.live_positions ADD COLUMN IF NOT EXISTS pnl_source TEXT NOT NULL DEFAULT 'legacy_model';
 ALTER TABLE {SCHEMA}.live_positions ADD COLUMN IF NOT EXISTS pnl_verified BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE {SCHEMA}.live_positions ADD COLUMN IF NOT EXISTS entry_costs_verified BOOLEAN NOT NULL DEFAULT FALSE;
 ALTER TABLE {SCHEMA}.live_positions ADD COLUMN IF NOT EXISTS operation_id TEXT;
+ALTER TABLE {SCHEMA}.live_positions ADD COLUMN IF NOT EXISTS metadata_source TEXT NOT NULL DEFAULT 'strategy_entry';
+ALTER TABLE {SCHEMA}.live_positions ADD COLUMN IF NOT EXISTS recovered_from_position_id BIGINT;
 ALTER TABLE {SCHEMA}.live_positions ADD COLUMN IF NOT EXISTS broker_qty DOUBLE PRECISION;
 ALTER TABLE {SCHEMA}.live_positions ADD COLUMN IF NOT EXISTS broker_observed_at TIMESTAMPTZ;
 ALTER TABLE {SCHEMA}.live_positions ADD COLUMN IF NOT EXISTS broker_state TEXT;
@@ -297,7 +303,13 @@ CREATE INDEX IF NOT EXISTS idx_live_cash_flows_ts
     ON {SCHEMA}.live_account_cash_flows(flow_ts);
 CREATE INDEX IF NOT EXISTS idx_live_reconciliation_observed
     ON {SCHEMA}.live_reconciliation_events(observed_at DESC);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_live_positions_one_open_recovery
+    ON {SCHEMA}.live_positions(recovered_from_position_id)
+    WHERE status='open' AND recovered_from_position_id IS NOT NULL;
 UPDATE {SCHEMA}.live_orders SET requested_qty = qty WHERE requested_qty IS NULL;
+UPDATE {SCHEMA}.live_positions
+SET entry_costs_verified=TRUE
+WHERE status='open' AND pnl_source='IB_execution';
 """
 
 
@@ -544,8 +556,10 @@ class LiveStore:
                 f"""INSERT INTO {SCHEMA}.live_positions
                     (market_id, symbol, question, is_earnings, qty, entry_ts, entry_price,
                      entry_prob, atr_pct, position_size_pct, benchmark_sell_qty,
-                     entry_costs, operation_id, pnl_source, pnl_verified, t_e)
-                    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,'IB_execution',TRUE,$14)
+                     entry_costs, entry_costs_verified, operation_id, pnl_source,
+                     pnl_verified, metadata_source, t_e)
+                    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,TRUE,$13,
+                            'IB_execution',TRUE,'strategy_entry',$14)
                     RETURNING position_id""",
                 pos["market_id"], pos["symbol"], pos["question"], pos["is_earnings"],
                 pos["qty"], pos["entry_ts"], pos["entry_price"], pos.get("entry_prob"),
@@ -554,6 +568,103 @@ class LiveStore:
                 pos.get("operation_id"), pos["t_e"],
             )
         return int(row["position_id"])
+
+    async def recover_broker_metadata_from_history(
+        self,
+        *,
+        symbols: list[str],
+        broker_positions: dict[str, dict[str, float]],
+        observed_at: datetime,
+        apply: bool = False,
+    ) -> list[dict[str, Any]]:
+        """Plan/apply metadata recovery for IB holdings absent from open DB state.
+
+        Quantity, average cost and presence come exclusively from IB.  Market
+        identity, question and resolution date are copied from the latest
+        historical strategy row for that symbol.  Recovery never sends orders
+        and never marks historical entry costs or P&L as verified.
+        """
+        results: list[dict[str, Any]] = []
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                for symbol in sorted(set(symbols)):
+                    broker = broker_positions.get(symbol)
+                    qty = float((broker or {}).get("qty") or 0.0)
+                    if qty <= 1e-9:
+                        results.append({"symbol": symbol, "status": "not_held_at_IB"})
+                        continue
+                    if abs(qty - round(qty)) > 1e-6:
+                        results.append({
+                            "symbol": symbol,
+                            "status": "fractional_asset_requires_review",
+                            "broker_qty": qty,
+                        })
+                        continue
+                    existing = await conn.fetchrow(
+                        f"""SELECT position_id FROM {SCHEMA}.live_positions
+                            WHERE symbol=$1 AND status='open' LIMIT 1""",
+                        symbol,
+                    )
+                    if existing:
+                        results.append({
+                            "symbol": symbol,
+                            "status": "already_open",
+                            "position_id": int(existing["position_id"]),
+                        })
+                        continue
+                    source = await conn.fetchrow(
+                        f"""SELECT * FROM {SCHEMA}.live_positions
+                            WHERE symbol=$1 AND status='closed'
+                            ORDER BY exit_ts DESC NULLS LAST, position_id DESC
+                            LIMIT 1""",
+                        symbol,
+                    )
+                    if not source:
+                        results.append({
+                            "symbol": symbol,
+                            "status": "no_strategy_history",
+                            "broker_qty": qty,
+                        })
+                        continue
+                    plan = {
+                        "symbol": symbol,
+                        "status": "planned",
+                        "broker_qty": qty,
+                        "broker_avg_cost": float(broker.get("avg_cost") or 0.0),
+                        "source_position_id": int(source["position_id"]),
+                        "market_id": source["market_id"],
+                        "t_e": source["t_e"],
+                    }
+                    if not apply:
+                        results.append(plan)
+                        continue
+                    entry_price = float(broker.get("avg_cost") or source["entry_price"])
+                    operation_id = f"recovered:{source['position_id']}:{int(observed_at.timestamp())}"
+                    inserted = await conn.fetchrow(
+                        f"""INSERT INTO {SCHEMA}.live_positions
+                            (market_id, symbol, question, is_earnings, qty, entry_ts,
+                             entry_price, entry_prob, atr_pct, peak_ret,
+                             position_size_pct, benchmark_sell_qty, entry_costs,
+                             entry_costs_verified, status, pnl_source, pnl_verified,
+                             operation_id, metadata_source,
+                             recovered_from_position_id, broker_qty,
+                             broker_observed_at, broker_state, t_e)
+                            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,0,0,FALSE,
+                                    'open','IB_recovered_metadata',FALSE,$12,
+                                    'IB_qty_plus_historical_strategy_metadata',$13,
+                                    $16,$14,'recovered_metadata',$15)
+                            RETURNING position_id""",
+                        source["market_id"], symbol, source["question"],
+                        source["is_earnings"], int(round(qty)), source["entry_ts"],
+                        entry_price, source["entry_prob"], source["atr_pct"],
+                        source["peak_ret"], source["position_size_pct"],
+                        operation_id, source["position_id"], observed_at, source["t_e"],
+                        qty,
+                    )
+                    plan["status"] = "recovered"
+                    plan["position_id"] = int(inserted["position_id"])
+                    results.append(plan)
+        return results
 
     async def update_peak(self, position_id: int, peak_ret: float) -> None:
         async with self.pool.acquire() as conn:
@@ -570,8 +681,12 @@ class LiveStore:
             await conn.execute(
                 f"""UPDATE {SCHEMA}.live_positions
                     SET status='closed', exit_ts=$2, exit_price=$3, exit_reason=$4,
-                        exit_costs=$5, pnl=$6, pnl_pct=$7, pnl_source=$8,
-                        pnl_verified=TRUE
+                        exit_costs=$5, pnl=$6, pnl_pct=$7,
+                        pnl_source=CASE
+                            WHEN entry_costs_verified THEN $8
+                            ELSE 'IB_exit_with_unverified_entry_costs'
+                        END,
+                        pnl_verified=entry_costs_verified
                     WHERE position_id=$1""",
                 position_id, exit_ts, exit_price, exit_reason, exit_costs, pnl, pnl_pct,
                 pnl_source,

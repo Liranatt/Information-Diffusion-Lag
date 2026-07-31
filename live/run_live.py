@@ -68,6 +68,21 @@ async def run_once(cfg: LiveConfig, force_discovery: bool) -> None:
     await pipeline.start()
     try:
         await pipeline.tick(force_discovery=force_discovery)
+    except Exception as error:
+        if pipeline.store is not None:
+            await pipeline.store.mark_runtime_event(
+                "trader_error",
+                datetime.now(timezone.utc),
+                {"error": str(error), "type": type(error).__name__},
+            )
+        raise
+    else:
+        if pipeline.store is not None:
+            await pipeline.store.mark_runtime_event(
+                "trader_tick",
+                datetime.now(timezone.utc),
+                {"status": "ok"},
+            )
     finally:
         await pipeline.stop()
 
@@ -94,6 +109,19 @@ async def run_daemon(cfg: LiveConfig) -> None:
                 await pipeline.tick()
             except Exception as error:  # noqa: BLE001 - the loop must survive
                 log.exception("tick failed: %s", error)
+                if pipeline.store is not None:
+                    await pipeline.store.mark_runtime_event(
+                        "trader_error",
+                        datetime.now(timezone.utc),
+                        {"error": str(error), "type": type(error).__name__},
+                    )
+            else:
+                if pipeline.store is not None:
+                    await pipeline.store.mark_runtime_event(
+                        "trader_tick",
+                        datetime.now(timezone.utc),
+                        {"status": "ok"},
+                    )
             now = datetime.now(timezone.utc)
             next_half = now.replace(minute=30, second=0, microsecond=0)
             if (next_half - now).total_seconds() < 60:

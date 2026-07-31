@@ -249,7 +249,7 @@ function stateTag(v){
   return `<span class="tag ${m[0]}">${esc(m[1])}</span>`;
 }
 function riskTag(p){
-  const map = {near_stop:["bad","Near stop"],near_theta:["bad","Theta"],near_resolution:["warn","Resolution"],aging:["warn","Aging"],normal:["ok","Normal"]};
+  const map = {near_stop:["bad","Near stop"],near_theta:["bad","Theta"],resolution_overdue:["bad","Resolution overdue"],near_resolution:["warn","Resolution"],aging:["warn","Aging"],normal:["ok","Normal"]};
   const m = map[p.exit_risk] || map.normal;
   return `<span class="tag ${m[0]}">${m[1]}</span>`;
 }

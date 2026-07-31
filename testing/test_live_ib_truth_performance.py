@@ -7,6 +7,8 @@ from unittest.mock import AsyncMock
 import pytest
 
 from live.performance import excess_performance, passive_equity, passive_units
+from live.config import LiveConfig
+from live.control_pipeline import ControlPipeline
 from live.strategy_engine import StrategyEngine
 
 
@@ -93,3 +95,57 @@ def test_live_resolution_reason_is_actionable_inside_resolution_window(monkeypat
 
     assert len(exits) == 1
     assert exits[0].reason == "resolution-1d"
+
+
+def test_multiple_exits_refresh_ib_cash_between_orders():
+    class Engine:
+        async def scan_exits(self, _store, _positions):
+            return [
+                type("Signal", (), {"position_id": 1, "reason": "resolution-1d"})(),
+                type("Signal", (), {"position_id": 2, "reason": "resolution-1d"})(),
+            ]
+
+    class Orders:
+        execution_anomaly = False
+
+        def __init__(self):
+            self.cash_seen = []
+
+        async def exit_position(self, _pos, _reason, _benchmark_price, *, cash):
+            self.cash_seen.append(cash)
+            return True
+
+    class Positions:
+        def __init__(self):
+            self.calls = 0
+
+        async def snapshot(self):
+            self.calls += 1
+            return {
+                "valid": True,
+                "cash": 250.0 if self.calls == 1 else 500.0,
+                "benchmark_price": 100.0,
+            }
+
+    async def run():
+        pipeline = ControlPipeline(LiveConfig())
+        pipeline.store = object()  # type: ignore[assignment]
+        orders = Orders()
+        positions = Positions()
+        await pipeline.run_exits(
+            Engine(), orders, positions,
+            {
+                "cash": -4_694.51,
+                "benchmark_price": 100.0,
+                "open_positions": [
+                    {"position_id": 1},
+                    {"position_id": 2},
+                ],
+            },
+        )
+        return orders, positions
+
+    orders, positions = asyncio.run(run())
+
+    assert orders.cash_seen == [-4_694.51, 250.0]
+    assert positions.calls == 2
