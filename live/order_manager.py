@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import math
 from datetime import datetime, timezone
 
 try:
@@ -140,6 +141,8 @@ class OrderManager:
             # Some IB wrappers omit the filled field after a complete fill.
             filled_qty = float(qty)
         fill_price = float(trade.orderStatus.avgFillPrice or 0.0) or None
+        if filled_qty > 0 and (getattr(trade, "fills", []) or []):
+            await self._wait_for_commission_reports(trade)
         commission = self._fill_commission(trade)
 
         complete = (
@@ -163,11 +166,14 @@ class OrderManager:
             status=recorded_status, position_id=position_id, note=note,
             commission=commission, reference_price=reference_price,
         )
+        execution_rows = self._execution_rows(trade, symbol=symbol, action=action)
+        if execution_rows:
+            await self.store.record_execution_fills(execution_rows)
         if not complete:
             self.execution_anomaly = True
             log.error(
                 "order incomplete: %s %s %s -> %s (filled=%s remaining=%s); "
-                "broker drift guard will block further trading if holdings changed",
+                "this tick will stop; the next tick will re-read IB as source of truth",
                 action, qty, symbol, recorded_status, filled_qty, remaining_qty,
             )
             return None
@@ -181,10 +187,75 @@ class OrderManager:
         for fill in getattr(trade, "fills", []) or []:
             report = getattr(fill, "commissionReport", None)
             commission = getattr(report, "commission", None) if report else None
-            if commission:
+            if (
+                getattr(report, "execId", "")
+                and OrderManager._valid_ib_number(commission)
+            ):
                 total += float(commission)
                 seen = True
         return total if seen else None
+
+    @staticmethod
+    def _valid_ib_number(value) -> bool:
+        try:
+            number = float(value)
+        except (TypeError, ValueError):
+            return False
+        return math.isfinite(number) and abs(number) < 1e100
+
+    async def _wait_for_commission_reports(self, trade) -> None:
+        """Allow IB's CommissionReport events to catch up with the fill."""
+        deadline = asyncio.get_running_loop().time() + 5.0
+        while asyncio.get_running_loop().time() < deadline:
+            fills = list(getattr(trade, "fills", []) or [])
+            if fills and all(
+                getattr(getattr(fill, "commissionReport", None), "execId", "")
+                and self._valid_ib_number(
+                    getattr(
+                        getattr(fill, "commissionReport", None),
+                        "commission",
+                        None,
+                    )
+                )
+                for fill in fills
+            ):
+                return
+            await asyncio.sleep(0.25)
+
+    @classmethod
+    def _execution_rows(cls, trade, *, symbol: str, action: str) -> list[dict]:
+        rows = []
+        for fill in getattr(trade, "fills", []) or []:
+            execution = getattr(fill, "execution", None)
+            if execution is None or not getattr(execution, "execId", None):
+                continue
+            report = getattr(fill, "commissionReport", None)
+            commission = getattr(report, "commission", None) if report else None
+            realized_pnl = getattr(report, "realizedPNL", None) if report else None
+            report_ready = bool(getattr(report, "execId", ""))
+            rows.append(
+                {
+                    "exec_id": str(execution.execId),
+                    "ib_order_id": int(trade.order.orderId),
+                    "symbol": symbol,
+                    "action": action,
+                    "exec_ts": getattr(execution, "time", None),
+                    "shares": float(execution.shares),
+                    "price": float(execution.price),
+                    "exchange": getattr(execution, "exchange", None),
+                    "commission": (
+                        float(commission)
+                        if report_ready and cls._valid_ib_number(commission)
+                        else None
+                    ),
+                    "realized_pnl": (
+                        float(realized_pnl)
+                        if report_ready and cls._valid_ib_number(realized_pnl)
+                        else None
+                    ),
+                }
+            )
+        return rows
 
     # ── Rotation legs ────────────────────────────────────────────────────
 
@@ -332,7 +403,15 @@ class OrderManager:
                             benchmark_price: float | None, *,
                             cash: float = 0.0) -> bool:
         """Sell the asset, rebuy the benchmark with the proceeds."""
-        qty = int(pos["qty"])
+        # IB, not the cached strategy row, owns the executable quantity.
+        broker_positions = await self.ib_conn.portfolio_positions()
+        qty = float(broker_positions.get(pos["symbol"], 0.0))
+        if qty <= 0:
+            log.warning(
+                "IB reports no %s position; cached DB exit row is not executable",
+                pos["symbol"],
+            )
+            return False
         exit_ref = await self.store.latest_close(pos["symbol"])
         fill_price = await self._execute(pos["symbol"], "SELL", qty, kind="exit",
                                          position_id=pos["position_id"], note=reason,
@@ -379,7 +458,7 @@ class OrderManager:
             pnl=round(net_pnl, 2),
             pnl_pct=round(net_pnl / exposure * 100.0, 4),
         )
-        log.info("EXIT %s x%d @ %.2f (%s) pnl=%.2f", pos["symbol"], qty, fill_price,
+        log.info("EXIT %s x%g @ %.2f (%s) pnl=%.2f", pos["symbol"], qty, fill_price,
                  reason, net_pnl)
         return True
 

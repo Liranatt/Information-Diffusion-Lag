@@ -1,15 +1,14 @@
 from __future__ import annotations
 
 import asyncio
+from datetime import datetime, timezone
 from types import SimpleNamespace
 
 import pytest
 
 from live.config import LiveConfig
-from live.control_pipeline import ControlPipeline
 from live.order_manager import OrderManager
 from live.position_manager import PositionManager
-from scripts.reconcile_ib_ledger import _plan
 
 
 class _PositionStore:
@@ -19,124 +18,44 @@ class _PositionStore:
     async def latest_close(self, symbol: str):
         return {"SPY": 100.0, "AAPL": 10.0}[symbol]
 
-    async def reconciled_cash(self):
-        return 1_000.0
-
-    async def reconciled_position_qty(self, symbol: str):
-        assert symbol == "SPY"
-        return 5.0
-
-
 class _PositionIB:
     async def account_summary(self):
         return {"TotalCashValue": 99_999.0, "NetLiquidation": 123_456.0}
 
-    async def portfolio_positions(self):
-        return {"SPY": 7.0, "AAPL": 2.0, "UNTY": 3.0}
+    async def portfolio_snapshot(self):
+        return {
+            "SPY": {
+                "qty": 7.0, "market_price": 100.0, "market_value": 700.0,
+                "avg_cost": 90.0, "unrealized_pnl": 70.0, "realized_pnl": 0.0,
+            },
+            "AAPL": {
+                "qty": 2.0, "market_price": 10.0, "market_value": 20.0,
+                "avg_cost": 9.0, "unrealized_pnl": 2.0, "realized_pnl": 0.0,
+            },
+            "UNTY": {
+                "qty": 3.0, "market_price": 20.0, "market_value": 60.0,
+                "avg_cost": 18.0, "unrealized_pnl": 6.0, "realized_pnl": 0.0,
+            },
+        }
 
 
-def test_snapshot_values_benchmark_from_same_ledger_and_scopes_drift_by_symbol():
+def test_snapshot_uses_ib_for_cash_nav_quantities_prices_and_costs():
     async def run():
         manager = PositionManager(LiveConfig(), _PositionIB(), _PositionStore())
         return await manager.snapshot()
 
     snapshot = asyncio.run(run())
 
-    assert snapshot["cash"] == pytest.approx(1_000.0)
-    assert snapshot["benchmark_shares"] == pytest.approx(5.0)
+    assert snapshot["cash"] == pytest.approx(99_999.0)
+    assert snapshot["benchmark_shares"] == pytest.approx(7.0)
     assert snapshot["ib_benchmark_shares"] == pytest.approx(7.0)
-    assert snapshot["equity"] == pytest.approx(1_520.0)
+    assert snapshot["benchmark_price"] == pytest.approx(100.0)
+    assert snapshot["equity"] == pytest.approx(123_456.0)
+    assert snapshot["broker_positions"]["UNTY"]["avg_cost"] == pytest.approx(18.0)
+    assert snapshot["broker_position_count"] == 2
+    assert snapshot["metadata_gaps"] == ["UNTY"]
+    assert snapshot["source"] == "IB"
     assert snapshot["trade_safe"] is True
-    assert snapshot["blocked_symbols"] == ["SPY", "UNTY"]
-    assert "SPY: ledger=5 ib=7" in snapshot["broker_drift"]
-    assert "UNTY: ledger=0 ib=3" in snapshot["broker_drift"]
-
-
-def test_reconciliation_plan_matches_broker_to_ledger_without_touching_matches():
-    assert _plan(
-        {"SPY": 175.0, "AAPL": 32.0},
-        {"SPY": 188.0, "AAPL": 32.0, "UNTY": 318.0, "USO": 80.0},
-    ) == [
-        {
-            "symbol": "SPY",
-            "expected_qty": 175.0,
-            "ib_qty": 188.0,
-            "action": "SELL",
-            "qty": 13.0,
-        },
-        {
-            "symbol": "UNTY",
-            "expected_qty": 0.0,
-            "ib_qty": 318.0,
-            "action": "SELL",
-            "qty": 318.0,
-        },
-        {
-            "symbol": "USO",
-            "expected_qty": 0.0,
-            "ib_qty": 80.0,
-            "action": "SELL",
-            "qty": 80.0,
-        },
-    ]
-
-
-class _ExitEngine:
-    async def scan_exits(self, _store, _positions):
-        return [
-            SimpleNamespace(position_id=1, reason="exit-aapl"),
-            SimpleNamespace(position_id=2, reason="exit-msft"),
-        ]
-
-
-class _ExitOrders:
-    def __init__(self):
-        self.execution_anomaly = False
-        self.calls: list[str] = []
-
-    async def exit_position(self, pos, _reason, _benchmark_price, *, cash):
-        assert cash == pytest.approx(100.0)
-        self.calls.append(pos["symbol"])
-
-
-def test_exit_stage_skips_only_drifted_asset_when_benchmark_is_clean():
-    async def run():
-        pipeline = ControlPipeline(LiveConfig())
-        pipeline.store = object()  # run_exits only needs a non-null store handle
-        orders = _ExitOrders()
-        snapshot = {
-            "open_positions": [
-                {"position_id": 1, "symbol": "AAPL"},
-                {"position_id": 2, "symbol": "MSFT"},
-            ],
-            "blocked_symbols": ["AAPL"],
-            "benchmark_price": 100.0,
-            "cash": 100.0,
-        }
-        await pipeline.run_exits(_ExitEngine(), orders, snapshot)
-        return orders.calls
-
-    assert asyncio.run(run()) == ["MSFT"]
-
-
-def test_exit_stage_stops_benchmark_dependent_legs_when_benchmark_drifted():
-    async def run():
-        pipeline = ControlPipeline(LiveConfig())
-        pipeline.store = object()
-        orders = _ExitOrders()
-        snapshot = {
-            "open_positions": [
-                {"position_id": 1, "symbol": "AAPL"},
-                {"position_id": 2, "symbol": "MSFT"},
-            ],
-            "blocked_symbols": ["SPY"],
-            "benchmark_price": 100.0,
-            "cash": 100.0,
-        }
-        await pipeline.run_exits(_ExitEngine(), orders, snapshot)
-        return orders.calls
-
-    assert asyncio.run(run()) == []
 
 
 class _OrderStore:
@@ -279,3 +198,34 @@ def test_uncertain_asset_fill_does_not_send_compensating_spy_order():
 
     assert result is None
     assert manager.calls == [("SPY", "SELL"), ("AAPL", "BUY")]
+
+
+def test_execution_audit_copies_fill_price_quantity_and_commission_from_ib():
+    execution = SimpleNamespace(
+        execId="exec-123",
+        shares=3.0,
+        price=101.25,
+        time=datetime(2026, 7, 31, 13, 30, tzinfo=timezone.utc),
+        exchange="NYSE",
+    )
+    report = SimpleNamespace(execId="exec-123", commission=0.35, realizedPNL=12.5)
+    trade = SimpleNamespace(
+        order=SimpleNamespace(orderId=456),
+        fills=[SimpleNamespace(execution=execution, commissionReport=report)],
+    )
+
+    rows = OrderManager._execution_rows(trade, symbol="AAPL", action="SELL")
+
+    assert rows == [{
+        "exec_id": "exec-123",
+        "ib_order_id": 456,
+        "symbol": "AAPL",
+        "action": "SELL",
+        "exec_ts": execution.time,
+        "shares": 3.0,
+        "price": 101.25,
+        "exchange": "NYSE",
+        "commission": 0.35,
+        "realized_pnl": 12.5,
+    }]
+    assert OrderManager._fill_commission(trade) == pytest.approx(0.35)

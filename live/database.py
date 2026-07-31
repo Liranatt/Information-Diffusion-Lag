@@ -8,7 +8,9 @@ space); only live *state* gets its own tables:
   live_tracked_markets   -- open Polymarket markets we monitor + their assets
   live_positions         -- open/closed paper positions with full cost audit
   live_orders            -- every order sent to IB
-  live_broker_reconciliations -- broker-only inventory corrections (not strategy P&L)
+  live_broker_account_cache -- latest account values copied verbatim from IB
+  live_broker_positions_cache -- latest position facts copied verbatim from IB
+  live_execution_fills   -- immutable execution/fill facts reported by IB
   live_equity_snapshots  -- hourly NAV curve (equity vs passive benchmark)
 
 All access goes through one shared asyncpg pool.
@@ -87,26 +89,45 @@ CREATE TABLE IF NOT EXISTS {SCHEMA}.live_orders (
     note            TEXT
 );
 
--- Inventory corrections are deliberately separate from live_orders.  Ghost or
--- manual broker inventory did not consume strategy cash, so recording its
--- liquidation as a strategy SELL would manufacture cash/P&L in the ledger.
-CREATE TABLE IF NOT EXISTS {SCHEMA}.live_broker_reconciliations (
-    reconciliation_id BIGSERIAL PRIMARY KEY,
-    ts              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    ib_order_id     INTEGER,
-    symbol          TEXT NOT NULL,
-    expected_qty    DOUBLE PRECISION NOT NULL,
-    ib_qty_before   DOUBLE PRECISION NOT NULL,
-    action          TEXT NOT NULL,
-    requested_qty   DOUBLE PRECISION NOT NULL,
-    filled_qty      DOUBLE PRECISION NOT NULL DEFAULT 0,
-    fill_price      DOUBLE PRECISION,
-    commission      DOUBLE PRECISION,
-    status          TEXT NOT NULL,
-    note            TEXT
+-- The DB is a cache/audit trail; these values are copied from IB and are never
+-- used to overrule the broker during execution.
+CREATE TABLE IF NOT EXISTS {SCHEMA}.live_broker_account_cache (
+    cache_key           TEXT PRIMARY KEY DEFAULT 'primary',
+    observed_at         TIMESTAMPTZ NOT NULL,
+    net_liquidation     DOUBLE PRECISION,
+    total_cash_value    DOUBLE PRECISION,
+    buying_power        DOUBLE PRECISION,
+    available_funds     DOUBLE PRECISION,
+    gross_position_value DOUBLE PRECISION,
+    source              TEXT NOT NULL DEFAULT 'IB'
 );
-CREATE INDEX IF NOT EXISTS idx_live_broker_reconciliations_ts
-    ON {SCHEMA}.live_broker_reconciliations(ts);
+
+CREATE TABLE IF NOT EXISTS {SCHEMA}.live_broker_positions_cache (
+    symbol              TEXT PRIMARY KEY,
+    observed_at         TIMESTAMPTZ NOT NULL,
+    qty                 DOUBLE PRECISION NOT NULL,
+    market_price        DOUBLE PRECISION,
+    market_value        DOUBLE PRECISION,
+    avg_cost            DOUBLE PRECISION,
+    unrealized_pnl      DOUBLE PRECISION,
+    realized_pnl        DOUBLE PRECISION,
+    source              TEXT NOT NULL DEFAULT 'IB'
+);
+
+CREATE TABLE IF NOT EXISTS {SCHEMA}.live_execution_fills (
+    exec_id             TEXT PRIMARY KEY,
+    ib_order_id         INTEGER,
+    symbol              TEXT NOT NULL,
+    action              TEXT NOT NULL,
+    exec_ts             TIMESTAMPTZ,
+    shares              DOUBLE PRECISION NOT NULL,
+    price               DOUBLE PRECISION NOT NULL,
+    exchange            TEXT,
+    commission          DOUBLE PRECISION,
+    realized_pnl        DOUBLE PRECISION,
+    recorded_at         TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    source              TEXT NOT NULL DEFAULT 'IB'
+);
 
 CREATE TABLE IF NOT EXISTS {SCHEMA}.live_equity_snapshots (
     ts                  TIMESTAMPTZ PRIMARY KEY,
@@ -165,6 +186,8 @@ ALTER TABLE {SCHEMA}.live_orders
 ALTER TABLE {SCHEMA}.live_orders ADD COLUMN IF NOT EXISTS commission DOUBLE PRECISION;
 ALTER TABLE {SCHEMA}.live_orders ADD COLUMN IF NOT EXISTS reference_price DOUBLE PRECISION;
 ALTER TABLE {SCHEMA}.live_orders ADD COLUMN IF NOT EXISTS requested_qty DOUBLE PRECISION;
+ALTER TABLE {SCHEMA}.live_equity_snapshots
+    ADD COLUMN IF NOT EXISTS source TEXT NOT NULL DEFAULT 'legacy';
 UPDATE {SCHEMA}.live_orders SET requested_qty = qty WHERE requested_qty IS NULL;
 """
 
@@ -475,45 +498,108 @@ class LiveStore:
                 requested_qty if requested_qty is not None else qty,
             )
 
-    async def record_broker_reconciliation(
+    async def cache_broker_state(
         self,
         *,
-        ib_order_id: int | None,
-        symbol: str,
-        expected_qty: float,
-        ib_qty_before: float,
-        action: str,
-        requested_qty: float,
-        filled_qty: float,
-        fill_price: float | None,
-        commission: float | None,
-        status: str,
-        note: str = "",
+        observed_at: datetime,
+        account_summary: dict[str, float],
+        positions: dict[str, dict[str, float]],
     ) -> None:
-        """Audit a broker-only inventory correction outside strategy P&L.
-
-        These rows intentionally do not participate in ``reconciled_cash`` or
-        ``reconciled_position_qty``.  They remove broker inventory that the
-        strategy ledger never bought, without turning its sale proceeds into a
-        fictitious strategy gain.
-        """
-        async with self.pool.acquire() as conn:
-            await conn.execute(
-                f"""INSERT INTO {SCHEMA}.live_broker_reconciliations
-                    (ib_order_id, symbol, expected_qty, ib_qty_before, action,
-                     requested_qty, filled_qty, fill_price, commission, status, note)
-                    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)""",
-                ib_order_id,
+        """Mirror the latest IB account/portfolio facts into Postgres."""
+        rows = [
+            (
                 symbol,
-                expected_qty,
-                ib_qty_before,
-                action,
-                requested_qty,
-                filled_qty,
-                fill_price,
-                commission,
-                status,
-                note,
+                observed_at,
+                float(item.get("qty") or 0.0),
+                float(item.get("market_price") or 0.0),
+                float(item.get("market_value") or 0.0),
+                float(item.get("avg_cost") or 0.0),
+                float(item.get("unrealized_pnl") or 0.0),
+                float(item.get("realized_pnl") or 0.0),
+            )
+            for symbol, item in positions.items()
+            if abs(float(item.get("qty") or 0.0)) > 1e-9
+        ]
+        symbols = [row[0] for row in rows]
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                await conn.execute(
+                    f"""INSERT INTO {SCHEMA}.live_broker_account_cache
+                        (cache_key, observed_at, net_liquidation, total_cash_value,
+                         buying_power, available_funds, gross_position_value, source)
+                        VALUES ('primary',$1,$2,$3,$4,$5,$6,'IB')
+                        ON CONFLICT (cache_key) DO UPDATE SET
+                            observed_at=EXCLUDED.observed_at,
+                            net_liquidation=EXCLUDED.net_liquidation,
+                            total_cash_value=EXCLUDED.total_cash_value,
+                            buying_power=EXCLUDED.buying_power,
+                            available_funds=EXCLUDED.available_funds,
+                            gross_position_value=EXCLUDED.gross_position_value,
+                            source='IB'""",
+                    observed_at,
+                    account_summary.get("NetLiquidation"),
+                    account_summary.get("TotalCashValue"),
+                    account_summary.get("BuyingPower"),
+                    account_summary.get("AvailableFunds"),
+                    account_summary.get("GrossPositionValue"),
+                )
+                if symbols:
+                    await conn.execute(
+                        f"DELETE FROM {SCHEMA}.live_broker_positions_cache "
+                        "WHERE NOT (symbol = ANY($1::text[]))",
+                        symbols,
+                    )
+                    await conn.executemany(
+                        f"""INSERT INTO {SCHEMA}.live_broker_positions_cache
+                            (symbol, observed_at, qty, market_price, market_value,
+                             avg_cost, unrealized_pnl, realized_pnl, source)
+                            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,'IB')
+                            ON CONFLICT (symbol) DO UPDATE SET
+                                observed_at=EXCLUDED.observed_at,
+                                qty=EXCLUDED.qty,
+                                market_price=EXCLUDED.market_price,
+                                market_value=EXCLUDED.market_value,
+                                avg_cost=EXCLUDED.avg_cost,
+                                unrealized_pnl=EXCLUDED.unrealized_pnl,
+                                realized_pnl=EXCLUDED.realized_pnl,
+                                source='IB'""",
+                        rows,
+                    )
+                else:
+                    await conn.execute(
+                        f"DELETE FROM {SCHEMA}.live_broker_positions_cache"
+                    )
+
+    async def record_execution_fills(self, fills: list[dict[str, Any]]) -> None:
+        """Persist immutable execution and commission facts reported by IB."""
+        if not fills:
+            return
+        async with self.pool.acquire() as conn:
+            await conn.executemany(
+                f"""INSERT INTO {SCHEMA}.live_execution_fills
+                    (exec_id, ib_order_id, symbol, action, exec_ts, shares, price,
+                     exchange, commission, realized_pnl, source)
+                    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'IB')
+                    ON CONFLICT (exec_id) DO UPDATE SET
+                        commission=COALESCE(EXCLUDED.commission,
+                                            {SCHEMA}.live_execution_fills.commission),
+                        realized_pnl=COALESCE(EXCLUDED.realized_pnl,
+                                             {SCHEMA}.live_execution_fills.realized_pnl)""",
+                [
+                    (
+                        row["exec_id"],
+                        row.get("ib_order_id"),
+                        row["symbol"],
+                        row["action"],
+                        row.get("exec_ts"),
+                        row["shares"],
+                        row["price"],
+                        row.get("exchange"),
+                        row.get("commission"),
+                        row.get("realized_pnl"),
+                    )
+                    for row in fills
+                ],
             )
 
     async def reconciled_cash(self) -> float | None:
@@ -560,22 +646,24 @@ class LiveStore:
 
     async def snapshot_equity(self, *, equity: float, cash: float, benchmark_shares: float,
                               benchmark_price: float | None, open_positions: int,
-                              passive_equity: float | None) -> None:
+                              passive_equity: float | None,
+                              source: str = "IB") -> None:
         ts = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
         async with self.pool.acquire() as conn:
             await conn.execute(
                 f"""INSERT INTO {SCHEMA}.live_equity_snapshots
                     (ts, equity, cash, benchmark_shares, benchmark_price,
-                     open_positions, passive_equity)
-                    VALUES ($1,$2,$3,$4,$5,$6,$7)
+                     open_positions, passive_equity, source)
+                    VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
                     ON CONFLICT (ts) DO UPDATE
                     SET equity=EXCLUDED.equity, cash=EXCLUDED.cash,
                         benchmark_shares=EXCLUDED.benchmark_shares,
                         benchmark_price=EXCLUDED.benchmark_price,
                         open_positions=EXCLUDED.open_positions,
-                        passive_equity=EXCLUDED.passive_equity""",
+                        passive_equity=EXCLUDED.passive_equity,
+                        source=EXCLUDED.source""",
                 ts, equity, cash, benchmark_shares, benchmark_price,
-                open_positions, passive_equity,
+                open_positions, passive_equity, source,
             )
 
     # ── Runtime cadence state ───────────────────────────────────────────

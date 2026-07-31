@@ -479,8 +479,8 @@ function renderDiagnostics(d, openPnl){
     kv("Failed 24h", String(x.failed_24h || 0), x.failed_24h ? "down" : "") +
     kv("Avg slippage", x.avg_slip_bps == null ? "-" : sg(x.avg_slip_bps,2)+"bp", x.avg_slip_bps > 0 ? "down" : "up") +
     kv("Buy / sell slip", `${x.avg_buy_slip_bps == null ? "-" : sg(x.avg_buy_slip_bps,2)+"bp"} / ${x.avg_sell_slip_bps == null ? "-" : sg(x.avg_sell_slip_bps,2)+"bp"}`) +
-    kv("Actual commissions", usd(x.commission_total)) + kv("Modeled costs", usd(x.modeled_cost_total)) +
-    kv("Actual - modeled", susd(x.cost_delta), x.cost_delta > 0 ? "down" : x.cost_delta < 0 ? "up" : "") +
+    kv("IB commissions", usd(x.commission_total)) + kv("IB execution fills", String(x.ib_execution_fills || 0)) +
+    kv("Execution source", x.execution_source || "IB") + kv("Account source", g.source_of_truth || "IB") +
     kv("Market", marketText(d.market)) + kv("Capital base", usd0(g.investable)) +
     kv("Buy cap", "+"+nn(g.execution_buffer_pct,2)+"%") + kv("Sizing", `${g.kelly_enabled ? "Half-Kelly" : "Fixed"} | min ${usd0(g.min_order_notional)}`);
   $("#runtime").innerHTML =

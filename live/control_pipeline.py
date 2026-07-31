@@ -150,20 +150,23 @@ class ControlPipeline:
             log.warning("IB balance unavailable -- skipping trading + NAV snapshot this "
                         "tick (gateway/account farm warming up)")
         else:
-            drift = await positions.report_drift(snapshot)
+            await self.store.cache_broker_state(
+                observed_at=now,
+                account_summary=snapshot["account_summary"],
+                positions=snapshot["broker_positions"],
+            )
             await self.store.mark_runtime_event(
-                "broker_drift", now,
+                "broker_sync", now,
                 {
-                    "items": drift,
-                    "ledger_benchmark_shares": snapshot.get("benchmark_shares"),
-                    "ib_benchmark_shares": snapshot.get("ib_benchmark_shares"),
+                    "source": "IB",
+                    "position_count": len(snapshot["broker_positions"]),
+                    "metadata_gaps": snapshot.get("metadata_gaps", []),
                 },
             )
-            if market_open and drift:
+            if snapshot.get("metadata_gaps"):
                 log.warning(
-                    "broker drift present; only affected symbols and "
-                    "benchmark-dependent legs will be skipped: %s",
-                    "; ".join(drift),
+                    "IB positions without strategy metadata (still authoritative): %s",
+                    ", ".join(snapshot["metadata_gaps"]),
                 )
 
             # 4-6. Trade only when the equity market can fill us.
@@ -185,22 +188,16 @@ class ControlPipeline:
                         orders, positions, snapshot, reason="pre-sweep",
                     )
                 if snapshot["valid"] and snapshot["trade_safe"] and not orders.execution_anomaly:
-                    if self._benchmark_blocked(snapshot):
-                        log.warning(
-                            "%s drift blocks only the cash sweep",
-                            self.cfg.benchmark,
-                        )
-                    else:
-                        swept = await orders.sweep_idle_cash(
-                            cash=snapshot["cash"],
-                            benchmark_price=snapshot["benchmark_price"],
-                        )
-                        if swept:
-                            snapshot = await positions.snapshot()
-                            if snapshot["valid"] and snapshot["trade_safe"] and not orders.execution_anomaly:
-                                snapshot = await self.enforce_no_margin(
-                                    orders, positions, snapshot, reason="post-sweep",
-                                )
+                    swept = await orders.sweep_idle_cash(
+                        cash=snapshot["cash"],
+                        benchmark_price=snapshot["benchmark_price"],
+                    )
+                    if swept:
+                        snapshot = await positions.snapshot()
+                        if snapshot["valid"] and snapshot["trade_safe"] and not orders.execution_anomaly:
+                            snapshot = await self.enforce_no_margin(
+                                orders, positions, snapshot, reason="post-sweep",
+                            )
                 if snapshot["valid"] and snapshot["trade_safe"] and not orders.execution_anomaly:
                     snapshot = await self.final_hour_cash_sweep(
                         orders, positions, snapshot,
@@ -209,13 +206,18 @@ class ControlPipeline:
             # 7. NAV snapshot (also overnight -- probs still move), but only with
             # a real balance so the curve is never polluted by zero rows.
             if snapshot["valid"]:
-                final_drift = await positions.report_drift(snapshot)
+                observed_at = datetime.now(timezone.utc)
+                await self.store.cache_broker_state(
+                    observed_at=observed_at,
+                    account_summary=snapshot["account_summary"],
+                    positions=snapshot["broker_positions"],
+                )
                 await self.store.mark_runtime_event(
-                    "broker_drift", now,
+                    "broker_sync", observed_at,
                     {
-                        "items": final_drift,
-                        "ledger_benchmark_shares": snapshot.get("benchmark_shares"),
-                        "ib_benchmark_shares": snapshot.get("ib_benchmark_shares"),
+                        "source": "IB",
+                        "position_count": len(snapshot["broker_positions"]),
+                        "metadata_gaps": snapshot.get("metadata_gaps", []),
                         "execution_anomaly": orders.execution_anomaly,
                     },
                 )
@@ -228,13 +230,6 @@ class ControlPipeline:
             log.warning("system-metrics snapshot failed: %s", error)
 
     # ── Stages ───────────────────────────────────────────────────────────
-
-    @staticmethod
-    def _blocked_symbols(snapshot: dict) -> set[str]:
-        return set(snapshot.get("blocked_symbols") or [])
-
-    def _benchmark_blocked(self, snapshot: dict) -> bool:
-        return self.cfg.benchmark in self._blocked_symbols(snapshot)
 
     async def update_probabilities(self, markets: list[dict]) -> None:
         assert self.store is not None
@@ -287,18 +282,8 @@ class ControlPipeline:
             return
         exits = await engine.scan_exits(self.store, open_positions)
         by_id = {p["position_id"]: p for p in open_positions}
-        blocked = self._blocked_symbols(snapshot)
-        if self.cfg.benchmark in blocked:
-            log.warning(
-                "%s drift blocks exits because every exit rebuys the benchmark",
-                self.cfg.benchmark,
-            )
-            return
         for signal in exits:
             pos = by_id[signal.position_id]
-            if pos["symbol"] in blocked:
-                log.warning("skipping exit for drifted symbol %s", pos["symbol"])
-                continue
             await orders.exit_position(
                 pos, signal.reason, snapshot["benchmark_price"],
                 cash=float(snapshot.get("cash") or 0.0),
@@ -309,24 +294,19 @@ class ControlPipeline:
     async def run_entries(self, engine: StrategyEngine, orders: OrderManager,
                           snapshot: dict, markets: list[dict], policy: dict) -> None:
         assert self.store is not None
-        blocked = self._blocked_symbols(snapshot)
-        if self.cfg.benchmark in blocked:
-            log.warning(
-                "%s drift blocks entries because entries use benchmark funding",
-                self.cfg.benchmark,
-            )
-            return
         open_positions = snapshot["open_positions"]
         max_concurrent = int(policy["max_concurrent"])
-        slots = max_concurrent - len(open_positions)
+        slots = max_concurrent - int(snapshot.get("broker_position_count", len(open_positions)))
         if slots <= 0:
             return
 
-        open_symbols = {p["symbol"] for p in open_positions}
+        open_symbols = {
+            symbol for symbol, qty in snapshot.get("ib_positions", {}).items()
+            if symbol != self.cfg.benchmark and abs(float(qty)) > 1e-6
+        }
         open_market_assets = {(p["market_id"], p["symbol"]) for p in open_positions}
         signals = await engine.scan_entries(self.store, markets,
                                             open_symbols, open_market_assets)
-        signals = [signal for signal in signals if signal.symbol not in blocked]
         if not signals:
             return
 
@@ -383,13 +363,6 @@ class ControlPipeline:
         cash = float(snapshot.get("cash") or 0.0)
         if cash >= 0:
             return snapshot
-        if self._benchmark_blocked(snapshot):
-            log.error(
-                "cannot repair negative ledger cash while %s itself has broker drift",
-                self.cfg.benchmark,
-            )
-            return snapshot
-
         restored = await orders.restore_no_margin_from_benchmark(
             cash=cash,
             benchmark_price=snapshot.get("benchmark_price"),
@@ -410,12 +383,6 @@ class ControlPipeline:
     async def final_hour_cash_sweep(self, orders: OrderManager, positions: PositionManager,
                                     snapshot: dict) -> dict:
         """Last-hour sweep loop: keep trying to convert idle cash into benchmark."""
-        if self._benchmark_blocked(snapshot):
-            log.warning(
-                "%s drift blocks only the final-hour benchmark sweep",
-                self.cfg.benchmark,
-            )
-            return snapshot
         seconds_left = seconds_to_market_close()
         start_seconds = self.cfg.close_sweep_start_minutes * 60
         if seconds_left is None or seconds_left > start_seconds:
@@ -474,8 +441,9 @@ class ControlPipeline:
             equity=snapshot["equity"], cash=snapshot["cash"],
             benchmark_shares=snapshot["benchmark_shares"],
             benchmark_price=snapshot["benchmark_price"],
-            open_positions=len(snapshot["open_positions"]),
+            open_positions=int(snapshot.get("broker_position_count", 0)),
             passive_equity=passive,
+            source=str(snapshot.get("source") or "IB"),
         )
         log.info("equity=%.2f cash=%.2f bench=%.4f open=%d",
                  snapshot["equity"], snapshot["cash"],

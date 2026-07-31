@@ -118,10 +118,51 @@ class IBConnection:
             timeout=self.cfg.ib_request_timeout_seconds,
         )
         res = {}
+        wanted = {
+            "TotalCashValue",
+            "NetLiquidation",
+            "BuyingPower",
+            "AvailableFunds",
+            "GrossPositionValue",
+        }
         for row in rows:
-            if row.currency == "USD" and row.tag in ("TotalCashValue", "NetLiquidation"):
+            if row.currency == "USD" and row.tag in wanted:
                 res[row.tag] = float(row.value)
         return res if res else None
+
+    async def portfolio_snapshot(self) -> dict[str, dict[str, float]]:
+        """Current IB portfolio facts keyed by symbol.
+
+        This is the authoritative live view used by the strategy and then
+        mirrored to Postgres.  Values come from IB's PortfolioItem objects;
+        the DB never reconstructs quantities, marks, cost basis, or P&L.
+        """
+        ib = await self.ensure_connected()
+        account = self.cfg.account or ""
+        items = ib.portfolio(account)
+        out: dict[str, dict[str, float]] = {}
+        for item in items:
+            symbol = item.contract.symbol
+            row = out.setdefault(
+                symbol,
+                {
+                    "qty": 0.0,
+                    "market_price": 0.0,
+                    "market_value": 0.0,
+                    "avg_cost": 0.0,
+                    "unrealized_pnl": 0.0,
+                    "realized_pnl": 0.0,
+                },
+            )
+            row["qty"] += float(item.position or 0.0)
+            row["market_value"] += float(item.marketValue or 0.0)
+            row["unrealized_pnl"] += float(item.unrealizedPNL or 0.0)
+            row["realized_pnl"] += float(item.realizedPNL or 0.0)
+            # One SMART USD contract per symbol is expected in this account.
+            # Keep IB's own aggregate price/cost rather than re-deriving them.
+            row["market_price"] = float(item.marketPrice or 0.0)
+            row["avg_cost"] = float(item.averageCost or 0.0)
+        return out
 
     async def portfolio_positions(self) -> dict[str, float]:
         """Current IB paper account positions as {symbol: signed qty}.
