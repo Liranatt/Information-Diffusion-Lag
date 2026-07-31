@@ -164,6 +164,24 @@ def test_partial_fill_records_only_executed_quantity_and_stops_order_chain():
     assert store.orders[0]["status"] == "PartiallyFilled"
 
 
+def test_actual_ib_fill_updates_tick_local_cash_projection():
+    async def run():
+        broker = _Broker()
+        store = _OrderStore()
+        manager = OrderManager(
+            LiveConfig(order_timeout_seconds=0), _OrderIB(broker), store
+        )
+        manager.seed_broker_state({"cash": 1_000.0, "ib_positions": {"SPY": 0.0}})
+        price = await manager._execute("SPY", "BUY", 1.0, kind="cash_sweep")
+        return manager, price
+
+    manager, price = asyncio.run(run())
+
+    assert price == pytest.approx(100.0)
+    assert manager.projected_cash == pytest.approx(900.0)
+    assert manager.projected_positions["SPY"] == pytest.approx(1.0)
+
+
 class _EntryStore:
     async def latest_close(self, _symbol: str):
         return 50.0

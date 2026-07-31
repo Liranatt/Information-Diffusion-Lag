@@ -20,6 +20,9 @@ class _FakeOrderManager(OrderManager):
         )
         return float(kwargs.get("reference_price") or 100.0)
 
+    async def confirm_broker_cash(self) -> bool:
+        return True
+
 
 def test_restore_no_margin_is_warning_only_and_never_sells_spy():
     async def run() -> _FakeOrderManager:
@@ -110,3 +113,30 @@ def test_entry_does_not_sell_benchmark_when_inventory_cannot_cover_margin_and_bu
 
     assert result is None
     assert manager.executed == []
+
+
+def test_cash_sweep_uses_fill_projected_cash_when_ib_summary_is_stale():
+    async def run() -> _FakeOrderManager:
+        manager = _FakeOrderManager(
+            LiveConfig(
+                benchmark="SPY",
+                fractional_benchmark=False,
+                min_order_notional=200.0,
+                execution_buffer_pct=0.01,
+            )
+        )
+        manager.seed_broker_state({
+            "cash": 9_511.55,
+            "ib_positions": {"SPY": 194.0},
+        })
+        await manager.sweep_idle_cash(
+            cash=13_989.0,  # stale IB summary from before a just-filled SPY buy
+            benchmark_price=746.06,
+        )
+        return manager
+
+    manager = asyncio.run(run())
+
+    assert manager.executed[0]["symbol"] == "SPY"
+    assert manager.executed[0]["action"] == "BUY"
+    assert manager.executed[0]["qty"] == pytest.approx(12.0)

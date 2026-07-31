@@ -47,6 +47,80 @@ class OrderManager:
         self.execution_anomaly = False
         self.last_commission: float | None = None
         self.last_ib_order_id: int | None = None
+        self.projected_cash: float | None = None
+        self.projected_positions: dict[str, float] = {}
+
+    def seed_broker_state(self, snapshot: dict) -> None:
+        """Seed a tick-local ledger exclusively from an authoritative IB snapshot.
+
+        IB portfolio quantities update almost immediately after a fill, while
+        ``TotalCashValue`` can lag by a few seconds.  Between those updates we
+        project cash only from IB's actual fill price/quantity/commission so a
+        later order cannot spend the same cash twice.  Postgres is never used
+        for execution sizing.
+        """
+        self.projected_cash = float(snapshot.get("cash") or 0.0)
+        self.projected_positions = {
+            str(symbol): float(qty)
+            for symbol, qty in snapshot.get("ib_positions", {}).items()
+        }
+
+    def _execution_cash(self, broker_cash: float) -> float:
+        if self.projected_cash is None:
+            return float(broker_cash)
+        return float(self.projected_cash)
+
+    def _execution_position(self, symbol: str, broker_qty: float) -> float:
+        return float(self.projected_positions.get(symbol, broker_qty))
+
+    def _apply_fill_projection(
+        self,
+        *,
+        symbol: str,
+        action: str,
+        qty: float,
+        price: float,
+        commission: float | None,
+    ) -> None:
+        if self.projected_cash is None or qty <= 0:
+            return
+        costs = float(commission or 0.0)
+        notional = float(qty) * float(price)
+        signed_qty = float(qty) if action.upper() == "BUY" else -float(qty)
+        cash_delta = -notional - costs if action.upper() == "BUY" else notional - costs
+        self.projected_cash += cash_delta
+        self.projected_positions[symbol] = (
+            float(self.projected_positions.get(symbol, 0.0)) + signed_qty
+        )
+
+    async def confirm_broker_cash(self) -> bool:
+        """Wait until IB confirms the fill-derived cash before another order chain."""
+        if self.cfg.dry_run or self.projected_cash is None:
+            return True
+        expected = float(self.projected_cash)
+        deadline = (
+            asyncio.get_running_loop().time()
+            + min(float(self.cfg.ib_request_timeout_seconds), 15.0)
+        )
+        last_seen: float | None = None
+        while asyncio.get_running_loop().time() < deadline:
+            try:
+                summary = await self.ib_conn.account_summary()
+                if summary and summary.get("TotalCashValue") is not None:
+                    last_seen = float(summary["TotalCashValue"])
+                    if abs(last_seen - expected) <= 5.0:
+                        return True
+            except Exception as error:  # noqa: BLE001 - retry until the barrier expires
+                log.warning("IB cash confirmation retry: %s", error)
+            await asyncio.sleep(0.5)
+        self.execution_anomaly = True
+        log.error(
+            "IB cash did not confirm after fills (expected %.2f, last reported %s); "
+            "stopping this tick before any dependent order",
+            expected,
+            f"{last_seen:.2f}" if last_seen is not None else "unavailable",
+        )
+        return False
 
     # ── Low-level ────────────────────────────────────────────────────────
 
@@ -192,6 +266,14 @@ class OrderManager:
         )
         if execution_rows:
             await self.store.record_execution_fills(execution_rows)
+        if filled_qty > 0 and fill_price is not None:
+            self._apply_fill_projection(
+                symbol=symbol,
+                action=action,
+                qty=filled_qty,
+                price=fill_price,
+                commission=commission,
+            )
         if not complete:
             self.execution_anomaly = True
             log.error(
@@ -319,6 +401,10 @@ class OrderManager:
                              benchmark_price: float, cash: float,
                              benchmark_shares: float, position_size_pct: float) -> dict | None:
         """Benchmark rotation entry. Returns the stored position dict or None."""
+        cash = self._execution_cash(cash)
+        benchmark_shares = self._execution_position(
+            self.cfg.benchmark, benchmark_shares
+        )
         operation_id = uuid.uuid4().hex
         entry_ref_price = await self.store.latest_close(signal.symbol)
         if entry_ref_price is None or entry_ref_price <= 0:
@@ -418,15 +504,19 @@ class OrderManager:
         position["position_id"] = await self.store.insert_position(position)
         log.info("ENTER %s x%d @ %.2f (%s, prob=%.3f)",
                  signal.symbol, asset_qty, fill_price, signal.question[:60], signal.prob)
+        await self.confirm_broker_cash()
         return position
 
     async def exit_position(self, pos: dict, reason: str,
                             benchmark_price: float | None, *,
                             cash: float = 0.0) -> bool:
         """Sell the asset, rebuy the benchmark with the proceeds."""
+        cash = self._execution_cash(cash)
         # IB, not the cached strategy row, owns the executable quantity.
         broker_positions = await self.ib_conn.portfolio_positions()
-        qty = float(broker_positions.get(pos["symbol"], 0.0))
+        qty = self._execution_position(
+            pos["symbol"], float(broker_positions.get(pos["symbol"], 0.0))
+        )
         if qty <= 0:
             log.warning(
                 "IB reports no %s position; cached DB exit row is not executable",
@@ -484,12 +574,14 @@ class OrderManager:
         )
         log.info("EXIT %s x%g @ %.2f (%s) pnl=%.2f", pos["symbol"], qty, fill_price,
                  reason, net_pnl)
+        await self.confirm_broker_cash()
         return True
 
     async def sweep_idle_cash(self, *, cash: float, benchmark_price: float | None,
                               kind: str = "cash_sweep", note: str = "fully-invested sweep",
                               buffer_pct: float | None = None) -> float:
         """Fully-invested rule: idle cash -> benchmark shares."""
+        cash = self._execution_cash(cash)
         if not benchmark_price or benchmark_price <= 0:
             return 0.0
         # Sub-threshold sweeps churn the $0.35 minimum commission for nothing.
@@ -503,4 +595,6 @@ class OrderManager:
                                    note=note,
                                    reference_price=benchmark_price,
                                    limit_price=benchmark_buy_limit)
+        if fill is not None:
+            await self.confirm_broker_cash()
         return qty if fill is not None else 0.0

@@ -153,6 +153,7 @@ class ControlPipeline:
             log.warning("IB balance unavailable -- skipping trading + NAV snapshot this "
                         "tick (gateway/account farm warming up)")
         else:
+            orders.seed_broker_state(snapshot)
             await self.store.cache_broker_state(
                 observed_at=snapshot["observed_at"],
                 account_summary=snapshot["account_summary"],
