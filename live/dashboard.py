@@ -243,12 +243,12 @@ async def gather_metrics() -> dict:
             f"SELECT * FROM {SCHEMA}.live_positions WHERE status='open' ORDER BY entry_ts")
         orders = await conn.fetch(
             f"""SELECT ts, symbol, action, qty, kind, fill_price, status,
-                       reference_price, commission
+                       reference_price, commission, requested_qty
                 FROM {SCHEMA}.live_orders ORDER BY ts DESC LIMIT 200""")
         order_economics = await conn.fetch(
             f"""SELECT ts, action, qty, fill_price, reference_price, commission, status
                 FROM {SCHEMA}.live_orders
-                WHERE status IN ('Filled', 'dry_run') AND fill_price IS NOT NULL""")
+                WHERE fill_price IS NOT NULL AND qty > 0""")
         trades = await conn.fetch(
             f"""SELECT symbol, pnl, pnl_pct, exit_reason, exit_ts
                 FROM {SCHEMA}.live_positions WHERE status='closed'
@@ -265,7 +265,7 @@ async def gather_metrics() -> dict:
             f"SELECT * FROM {SCHEMA}.live_system_metrics ORDER BY ts DESC LIMIT 1")
         runtime_rows = await conn.fetch(
             f"""SELECT key, ts, value, updated_at FROM {SCHEMA}.live_runtime_state
-                WHERE key = ANY($1::text[])""", ["discovery", "prune"])
+                WHERE key = ANY($1::text[])""", ["discovery", "prune", "broker_drift"])
         cost = await conn.fetchrow(
             f"""SELECT COALESCE(SUM(est_cost_usd),0) AS total, COALESCE(SUM(calls),0) AS calls,
                        COALESCE(SUM(est_cost_usd) FILTER (WHERE ts>=date_trunc('day',now())),0) AS today,
@@ -277,6 +277,14 @@ async def gather_metrics() -> dict:
                 WHERE market_id = ANY($1::text[])""", pos_market_ids) if pos_market_ids else []
     mkt_map = {r["market_id"]: r for r in mkt_rows}
     runtime_map = {r["key"]: r for r in runtime_rows}
+    drift_state = runtime_map.get("broker_drift")
+    drift_value = drift_state["value"] if drift_state else {}
+    if isinstance(drift_value, str):
+        try:
+            drift_value = json.loads(drift_value)
+        except Exception:  # noqa: BLE001 - malformed telemetry must not break dashboard
+            drift_value = {}
+    broker_drift = list((drift_value or {}).get("items") or [])
 
     equity = _f(eq["equity"]) if eq else None
     passive = _f(eq["passive_equity"]) if eq and eq["passive_equity"] is not None else None
@@ -376,16 +384,20 @@ async def gather_metrics() -> dict:
             "resolution_ts": _iso(mk["end_at"]) if mk and mk["end_at"] else None,
         })
 
-    bench_shares = float(eq["benchmark_shares"]) if eq else 0.0
     bench_price = await store.latest_close(BENCH)
-    spy_value = bench_shares * (bench_price or 0.0)
 
-    # Reconcile away IB paper-account ghost-fill inflation using the shared cash
-    # ledger -- the same source the trader now stores (LiveStore.reconciled_cash):
+    # Reconcile both cash and benchmark inventory from one fill ledger. Mixing
+    # ledger cash with IB-reported SPY shares lets ghost/late fills appear as
+    # free inventory and creates fake alpha.
     #   real_cash = all-cash start equity - net filled buys - commissions
-    #   equity    = real_cash + open-position market value + benchmark value
-    # `glitch` is any leftover gap vs the stored (pre-fix) equity, for display.
+    #   SPY qty   = filled SPY buys - filled SPY sells
     ledger_cash = await store.reconciled_cash()
+    bench_shares = (
+        await store.reconciled_position_qty(BENCH)
+        if ledger_cash is not None
+        else (float(eq["benchmark_shares"]) if eq else 0.0)
+    )
+    spy_value = bench_shares * (bench_price or 0.0)
     reported_equity = _f(eq["equity"]) if eq else None
     if ledger_cash is not None:
         cash = ledger_cash
@@ -397,7 +409,7 @@ async def gather_metrics() -> dict:
         glitch = None
     total = spy_value + trades_value + cash
     closed, wins = int(perf["closed"] or 0), int(perf["wins"] or 0)
-    filled = sum(1 for o in orders if o["status"] in ("Filled", "dry_run"))
+    filled = sum(1 for o in orders if o["fill_price"] is not None and float(o["qty"]) > 0)
     failed = [{"symbol": o["symbol"], "action": o["action"], "kind": o["kind"],
                "status": o["status"], "ts": _iso(o["ts"])}
               for o in orders if o["status"] not in ("Filled", "dry_run")]
@@ -429,7 +441,9 @@ async def gather_metrics() -> dict:
     deficit_to_cover = -cash if cash < 0 else 0.0
     spy_shares_to_sell = 0.0
     margin_status = "OK"
-    if deficit_to_cover > 0:
+    if broker_drift:
+        margin_status = "Broker drift — trading blocked"
+    elif deficit_to_cover > 0:
         if bench_shares > 0 and bench_price:
             spy_shares_to_sell = benchmark_sell_qty_for_cash_deficit(
                 cash=cash, benchmark_price=bench_price, benchmark_shares=bench_shares,
@@ -503,6 +517,11 @@ async def gather_metrics() -> dict:
         critical_alerts.append({"title": "Trader heartbeat stale", "detail": f"Last NAV snapshot was {round(trader_uptime / 60)} minutes ago."})
     elif is_market_open and trader_uptime > CONFIG.tick_seconds * 1.5:
         warning_alerts.append({"title": "Trader heartbeat delayed", "detail": f"Last NAV snapshot was {round(trader_uptime / 60)} minutes ago."})
+    if broker_drift:
+        critical_alerts.append({
+            "title": "Broker holdings differ from ledger — trading blocked",
+            "detail": "; ".join(str(item) for item in broker_drift[:8]),
+        })
     if deficit_to_cover > 0:
         level = critical_alerts if margin_status == "No SPY inventory" else warning_alerts
         level.append({"title": margin_status, "detail": f"Cash deficit {round(deficit_to_cover, 2):,.2f}; estimated {BENCH} sale {round(spy_shares_to_sell, 4):,.4f} shares."})
@@ -570,6 +589,8 @@ async def gather_metrics() -> dict:
             "execution_buffer_pct": round(float(CONFIG.execution_buffer_pct) * 100.0, 2),
             "kelly_enabled": bool(CONFIG.use_kelly),
             "fractional_benchmark": bool(CONFIG.fractional_benchmark),
+            "broker_drift": broker_drift,
+            "ib_bench_shares": (drift_value or {}).get("ib_benchmark_shares"),
             "deficit_to_cover": round(deficit_to_cover, 2),
             "spy_shares_to_sell": round(spy_shares_to_sell, 4),
             "margin_status": margin_status,
@@ -624,6 +645,8 @@ async def gather_metrics() -> dict:
         "recent_orders": [
             {"ts": _iso(r["ts"]), "symbol": r["symbol"], "action": r["action"],
              "qty": round(float(r["qty"]), 4), "kind": r["kind"],
+             "requested_qty": round(float(r["requested_qty"]), 4)
+                 if r["requested_qty"] is not None else round(float(r["qty"]), 4),
              "fill_price": round(float(r["fill_price"]), 2) if r["fill_price"] is not None else None,
              "commission": round(float(r["commission"]), 2) if r["commission"] is not None else None,
              "slip_bps": round((float(r["fill_price"]) / float(r["reference_price"]) - 1.0) * 1e4, 1)

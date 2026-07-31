@@ -435,7 +435,7 @@ function renderOrdersTrades(d){
   const orderRows = showAllOrders ? d.recent_orders : d.recent_orders.slice(0,10);
   $("#orders").innerHTML = table(orderRows, [
     {h:"When",n:1,f:r=>dt(r.ts)},{h:"Sym",f:r=>esc(r.symbol)},{h:"Side",f:r=>esc(r.action)},
-    {h:"Qty",n:1,f:r=>nn(r.qty,r.qty<10?3:0)},{h:"Kind",f:r=>`<span class="tag neu">${esc(r.kind)}</span>`},
+    {h:"Qty",n:1,f:r=>r.requested_qty!=null && Math.abs(r.requested_qty-r.qty)>1e-6 ? `${nn(r.qty,r.qty<10?3:0)} / ${nn(r.requested_qty,r.requested_qty<10?3:0)}` : nn(r.qty,r.qty<10?3:0)},{h:"Kind",f:r=>`<span class="tag neu">${esc(r.kind)}</span>`},
     {h:"Fill",n:1,f:r=>nn(r.fill_price)},{h:"Comm",n:1,f:r=>r.commission==null ? "-" : usd(r.commission)},
     {h:"Slip",n:1,f:r=>r.slip_bps==null ? "-" : sg(r.slip_bps,1)+"bp",cl:r=>r.slip_bps==null ? "" : (r.slip_bps>0 ? "down" : "up")},
     {h:"Status",f:r=>{const ok=r.status==="Filled"||r.status==="dry_run", bad=["Cancelled","unqualified","ApiCancelled","Inactive","dry_run_limit_miss","dry_run_no_price"].includes(r.status); return `<span class="tag ${ok?"ok":bad?"bad":"warn"}">${esc(r.status)}</span>`;}}

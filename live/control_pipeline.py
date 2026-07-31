@@ -150,44 +150,64 @@ class ControlPipeline:
             log.warning("IB balance unavailable -- skipping trading + NAV snapshot this "
                         "tick (gateway/account farm warming up)")
         else:
-            await positions.report_drift(snapshot)
+            drift = await positions.report_drift(snapshot)
+            await self.store.mark_runtime_event(
+                "broker_drift", now,
+                {
+                    "items": drift,
+                    "ledger_benchmark_shares": snapshot.get("benchmark_shares"),
+                    "ib_benchmark_shares": snapshot.get("ib_benchmark_shares"),
+                },
+            )
 
             # 4-6. Trade only when the equity market can fill us.
-            if market_open:
+            if market_open and snapshot["trade_safe"]:
                 snapshot = await self.enforce_no_margin(
                     orders, positions, snapshot, reason="pre-exit",
                 )
                 await self.run_exits(engine, orders, snapshot)
                 snapshot = await positions.snapshot()
-                if snapshot["valid"]:
+                if snapshot["valid"] and snapshot["trade_safe"] and not orders.execution_anomaly:
                     snapshot = await self.enforce_no_margin(
                         orders, positions, snapshot, reason="pre-entry",
                     )
-                if snapshot["valid"]:
+                if snapshot["valid"] and snapshot["trade_safe"] and not orders.execution_anomaly:
                     await self.run_entries(engine, orders, snapshot, markets, policy)
                     snapshot = await positions.snapshot()
-                if snapshot["valid"]:
+                if snapshot["valid"] and snapshot["trade_safe"] and not orders.execution_anomaly:
                     snapshot = await self.enforce_no_margin(
                         orders, positions, snapshot, reason="pre-sweep",
                     )
-                if snapshot["valid"]:
+                if snapshot["valid"] and snapshot["trade_safe"] and not orders.execution_anomaly:
                     swept = await orders.sweep_idle_cash(
                         cash=snapshot["cash"], benchmark_price=snapshot["benchmark_price"],
                     )
                     if swept:
                         snapshot = await positions.snapshot()
-                        if snapshot["valid"]:
+                        if snapshot["valid"] and snapshot["trade_safe"] and not orders.execution_anomaly:
                             snapshot = await self.enforce_no_margin(
                                 orders, positions, snapshot, reason="post-sweep",
                             )
-                if snapshot["valid"]:
+                if snapshot["valid"] and snapshot["trade_safe"] and not orders.execution_anomaly:
                     snapshot = await self.final_hour_cash_sweep(
                         orders, positions, snapshot,
                     )
+            elif market_open:
+                log.error("automated trading skipped because broker holdings drift from ledger")
 
             # 7. NAV snapshot (also overnight -- probs still move), but only with
             # a real balance so the curve is never polluted by zero rows.
             if snapshot["valid"]:
+                final_drift = await positions.report_drift(snapshot)
+                await self.store.mark_runtime_event(
+                    "broker_drift", now,
+                    {
+                        "items": final_drift,
+                        "ledger_benchmark_shares": snapshot.get("benchmark_shares"),
+                        "ib_benchmark_shares": snapshot.get("ib_benchmark_shares"),
+                        "execution_anomaly": orders.execution_anomaly,
+                    },
+                )
                 await self.snapshot_equity(snapshot)
 
         # 7b. System telemetry (DB size + disk) so space is observable.
@@ -255,6 +275,8 @@ class ControlPipeline:
                 pos, signal.reason, snapshot["benchmark_price"],
                 cash=float(snapshot.get("cash") or 0.0),
             )
+            if orders.execution_anomaly:
+                break
 
     async def run_entries(self, engine: StrategyEngine, orders: OrderManager,
                           snapshot: dict, markets: list[dict], policy: dict) -> None:
@@ -311,6 +333,8 @@ class ControlPipeline:
                 benchmark_shares=benchmark_shares,
                 position_size_pct=position_size,
             )
+            if orders.execution_anomaly:
+                break
             if position:
                 open_symbols.add(signal.symbol)
                 cash = max(0.0, cash - desired)
@@ -377,6 +401,8 @@ class ControlPipeline:
                 buffer_pct=self.cfg.close_sweep_buffer_pct,
             )
             snapshot = await positions.snapshot()
+            if orders.execution_anomaly or not snapshot.get("trade_safe", False):
+                return snapshot
             if swept or float(snapshot.get("cash") or 0.0) < self.cfg.min_order_notional:
                 return snapshot
 
@@ -403,7 +429,7 @@ class ControlPipeline:
             open_positions=len(snapshot["open_positions"]),
             passive_equity=passive,
         )
-        log.info("equity=%.2f cash=%.2f bench=%d open=%d",
+        log.info("equity=%.2f cash=%.2f bench=%.4f open=%d",
                  snapshot["equity"], snapshot["cash"],
                  snapshot["benchmark_shares"], len(snapshot["open_positions"]))
 

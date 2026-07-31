@@ -142,6 +142,8 @@ ALTER TABLE {SCHEMA}.live_orders
 -- decided at, so slippage = fill_price - reference_price.
 ALTER TABLE {SCHEMA}.live_orders ADD COLUMN IF NOT EXISTS commission DOUBLE PRECISION;
 ALTER TABLE {SCHEMA}.live_orders ADD COLUMN IF NOT EXISTS reference_price DOUBLE PRECISION;
+ALTER TABLE {SCHEMA}.live_orders ADD COLUMN IF NOT EXISTS requested_qty DOUBLE PRECISION;
+UPDATE {SCHEMA}.live_orders SET requested_qty = qty WHERE requested_qty IS NULL;
 """
 
 
@@ -430,15 +432,25 @@ class LiveStore:
                            qty: float, kind: str, fill_price: float | None, status: str,
                            position_id: int | None = None, note: str = "",
                            commission: float | None = None,
-                           reference_price: float | None = None) -> None:
+                           reference_price: float | None = None,
+                           requested_qty: float | None = None) -> None:
+        """Persist one broker-order outcome.
+
+        ``qty`` is the quantity that actually executed whenever ``fill_price``
+        is present. ``requested_qty`` preserves the original order size for
+        cancelled and partially-filled orders. Keeping those two quantities
+        separate prevents an unfilled remainder from entering the cash or
+        inventory ledger.
+        """
         async with self.pool.acquire() as conn:
             await conn.execute(
                 f"""INSERT INTO {SCHEMA}.live_orders
                     (ib_order_id, symbol, action, qty, kind, fill_price, status,
-                     position_id, note, commission, reference_price)
-                    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)""",
+                     position_id, note, commission, reference_price, requested_qty)
+                    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)""",
                 ib_order_id, symbol, action, qty, kind, fill_price, status,
                 position_id, note, commission, reference_price,
+                requested_qty if requested_qty is not None else qty,
             )
 
     async def reconciled_cash(self) -> float | None:
@@ -459,11 +471,29 @@ class LiveStore:
                 return None
             fills = await conn.fetch(
                 f"""SELECT action, qty, fill_price, commission FROM {SCHEMA}.live_orders
-                    WHERE status IN ('Filled', 'dry_run') AND fill_price IS NOT NULL""")
+                    WHERE fill_price IS NOT NULL AND qty > 0""")
         net_buys = sum(float(f["qty"]) * float(f["fill_price"])
                        * (1.0 if f["action"] == "BUY" else -1.0) for f in fills)
         commissions = sum(float(f["commission"] or 0.0) for f in fills)
         return float(first["equity"]) - net_buys - commissions
+
+    async def reconciled_position_qty(self, symbol: str) -> float:
+        """Net executed quantity for ``symbol`` from the same fill ledger as cash.
+
+        Portfolio NAV must never combine ledger cash with broker-reported
+        inventory: paper-account ghost or late fills can otherwise appear as
+        free shares. Any disagreement with IB is reported separately as drift.
+        """
+        async with self.pool.acquire() as conn:
+            qty = await conn.fetchval(
+                f"""SELECT COALESCE(SUM(
+                            CASE WHEN action='BUY' THEN qty ELSE -qty END
+                        ), 0)
+                    FROM {SCHEMA}.live_orders
+                    WHERE symbol=$1 AND fill_price IS NOT NULL AND qty > 0""",
+                symbol,
+            )
+        return float(qty or 0.0)
 
     async def snapshot_equity(self, *, equity: float, cash: float, benchmark_shares: float,
                               benchmark_price: float | None, open_positions: int,

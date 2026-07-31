@@ -44,6 +44,7 @@ class OrderManager:
         self.cfg = cfg
         self.ib_conn = ib_conn
         self.store = store
+        self.execution_anomaly = False
 
     # ── Low-level ────────────────────────────────────────────────────────
 
@@ -75,10 +76,11 @@ class OrderManager:
             price = await self.store.latest_close(symbol)
             if price is None:
                 await self.store.record_order(
-                    ib_order_id=None, symbol=symbol, action=action, qty=qty, kind=kind,
+                    ib_order_id=None, symbol=symbol, action=action, qty=0.0, kind=kind,
                     fill_price=None, status="dry_run_no_price",
                     position_id=position_id, note=note,
                     reference_price=reference_price,
+                    requested_qty=qty,
                 )
                 return None
             if (
@@ -88,10 +90,11 @@ class OrderManager:
                 log.info("[dry-run] %s %s %s missed limit %.2f < mark %.2f (%s)",
                          action, qty, symbol, limit_price, price, kind)
                 await self.store.record_order(
-                    ib_order_id=None, symbol=symbol, action=action, qty=qty, kind=kind,
+                    ib_order_id=None, symbol=symbol, action=action, qty=0.0, kind=kind,
                     fill_price=None, status="dry_run_limit_miss",
                     position_id=position_id, note=note,
                     reference_price=reference_price,
+                    requested_qty=qty,
                 )
                 return None
             log.info("[dry-run] %s %s %s @~%s (%s)", action, qty, symbol, price, kind)
@@ -99,6 +102,7 @@ class OrderManager:
                 ib_order_id=None, symbol=symbol, action=action, qty=qty, kind=kind,
                 fill_price=price, status="dry_run", position_id=position_id, note=note,
                 reference_price=reference_price,
+                requested_qty=qty,
             )
             return price
 
@@ -106,9 +110,10 @@ class OrderManager:
         contract = await self.ib_conn.qualified_stock(symbol)
         if contract is None:
             await self.store.record_order(
-                ib_order_id=None, symbol=symbol, action=action, qty=qty, kind=kind,
+                ib_order_id=None, symbol=symbol, action=action, qty=0.0, kind=kind,
                 fill_price=None, status="unqualified", position_id=position_id, note=note,
                 reference_price=reference_price,
+                requested_qty=qty,
             )
             return None
 
@@ -118,26 +123,53 @@ class OrderManager:
         while not trade.isDone() and asyncio.get_event_loop().time() < deadline:
             await asyncio.sleep(1.0)
 
-        status = trade.orderStatus.status
+        # Do not persist the pre-cancellation state. A fill can race with our
+        # timeout/cancel request; recording "Submitted" or "Cancelled" first
+        # and then returning a late fill is exactly how inventory became free in
+        # the old ledger.
+        if not trade.isDone():
+            ib.cancelOrder(trade.order)
+            cancel_deadline = asyncio.get_event_loop().time() + 5.0
+            while not trade.isDone() and asyncio.get_event_loop().time() < cancel_deadline:
+                await asyncio.sleep(0.5)
+
+        status = str(trade.orderStatus.status or "Unknown")
+        filled_qty = float(getattr(trade.orderStatus, "filled", 0.0) or 0.0)
+        remaining_qty = float(getattr(trade.orderStatus, "remaining", 0.0) or 0.0)
+        if status == "Filled" and filled_qty <= 0:
+            # Some IB wrappers omit the filled field after a complete fill.
+            filled_qty = float(qty)
         fill_price = float(trade.orderStatus.avgFillPrice or 0.0) or None
         commission = self._fill_commission(trade)
+
+        complete = (
+            fill_price is not None
+            and filled_qty >= float(qty) - 1e-6
+            and remaining_qty <= 1e-6
+        )
+        if filled_qty > 0 and fill_price is None:
+            recorded_status = "UnpricedFill"
+        elif filled_qty > 0 and not complete:
+            recorded_status = "PartiallyFilled"
+        elif complete:
+            recorded_status = "Filled"
+        else:
+            recorded_status = status
+
         await self.store.record_order(
-            ib_order_id=trade.order.orderId, symbol=symbol, action=action, qty=qty,
-            kind=kind, fill_price=fill_price, status=status,
-            position_id=position_id, note=note,
+            ib_order_id=trade.order.orderId, symbol=symbol, action=action,
+            qty=filled_qty if fill_price is not None else 0.0,
+            requested_qty=qty, kind=kind, fill_price=fill_price,
+            status=recorded_status, position_id=position_id, note=note,
             commission=commission, reference_price=reference_price,
         )
-        if status not in {"Filled"}:
-            log.warning("order not filled: %s %s %s -> %s", action, qty, symbol, status)
-            if not trade.isDone():
-                ib.cancelOrder(trade.order)
-                cancel_deadline = asyncio.get_event_loop().time() + 5.0
-                while not trade.isDone() and asyncio.get_event_loop().time() < cancel_deadline:
-                    await asyncio.sleep(0.5)
-                # Check status one last time after waiting
-                if trade.orderStatus.status == "Filled":
-                    log.warning("order %s %s %s filled right before cancellation!", action, qty, symbol)
-                    return float(trade.orderStatus.avgFillPrice or 0.0) or None
+        if not complete:
+            self.execution_anomaly = True
+            log.error(
+                "order incomplete: %s %s %s -> %s (filled=%s remaining=%s); "
+                "broker drift guard will block further trading if holdings changed",
+                action, qty, symbol, recorded_status, filled_qty, remaining_qty,
+            )
             return None
         return fill_price
 
@@ -265,14 +297,10 @@ class OrderManager:
                                          reference_price=entry_ref_price,
                                          limit_price=entry_limit_price)
         if fill_price is None:
-            if benchmark_sell_qty > 0:
-                undo_cash = max(0.0, benchmark_sell_proceeds)
-                undo_qty = self._bench_qty(undo_cash, benchmark_buy_limit)
-                await self._execute(
-                    self.cfg.benchmark, "BUY", undo_qty,
-                    kind="rotation_undo", note=f"undo {signal.symbol}",
-                    reference_price=benchmark_price, limit_price=benchmark_buy_limit,
-                )
+            # A cancelled/partial order can still turn into a late paper fill.
+            # Do not send a compensating order while execution is uncertain;
+            # keep the sale proceeds as cash and let the broker-drift guard halt
+            # the next stage until holdings are reconciled.
             return None
 
         entry_costs = (

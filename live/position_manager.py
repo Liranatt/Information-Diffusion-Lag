@@ -44,7 +44,8 @@ class PositionManager:
                 log.warning("IB returned no cash/NAV balance -- snapshot marked incomplete")
 
         open_db = await self.store.open_positions()
-        benchmark_shares = float(ib_positions.get(self.cfg.benchmark, 0.0))
+        ib_benchmark_shares = float(ib_positions.get(self.cfg.benchmark, 0.0))
+        benchmark_shares = ib_benchmark_shares
         benchmark_price = await self.store.latest_close(self.cfg.benchmark)
 
         open_value = 0.0
@@ -61,11 +62,15 @@ class PositionManager:
             ledger_cash = await self.store.reconciled_cash()
             if ledger_cash is not None:
                 cash = ledger_cash
+                benchmark_shares = await self.store.reconciled_position_qty(
+                    self.cfg.benchmark
+                )
         equity = (cash or 0.0) + benchmark_shares * (benchmark_price or 0.0) + open_value
 
-        return {
+        snapshot = {
             "cash": cash or 0.0,
             "benchmark_shares": benchmark_shares,
+            "ib_benchmark_shares": ib_benchmark_shares,
             "benchmark_price": benchmark_price,
             "open_positions": open_db,
             "open_value": open_value,
@@ -73,22 +78,35 @@ class PositionManager:
             "ib_positions": ib_positions,
             "valid": valid,
         }
+        snapshot["broker_drift"] = self._drift(snapshot)
+        snapshot["trade_safe"] = valid and (
+            self.cfg.dry_run or not snapshot["broker_drift"]
+        )
+        return snapshot
 
     async def report_drift(self, snapshot: dict) -> list[str]:
         """Symbols where IB holdings disagree with DB open positions."""
+        drift = list(snapshot.get("broker_drift") or self._drift(snapshot))
+        if drift:
+            log.error("position drift detected; automated trading is blocked: %s",
+                      "; ".join(drift))
+        return drift
+
+    def _drift(self, snapshot: dict) -> list[str]:
+        """Return broker-vs-ledger quantity differences, including benchmark."""
         expected: dict[str, int] = {}
         for pos in snapshot["open_positions"]:
             expected[pos["symbol"]] = expected.get(pos["symbol"], 0) + int(pos["qty"])
 
+        expected[self.cfg.benchmark] = float(snapshot["benchmark_shares"])
+
         drift: list[str] = []
         ib_positions = dict(snapshot["ib_positions"])
-        ib_positions.pop(self.cfg.benchmark, None)
         for symbol, qty in expected.items():
-            if ib_positions.get(symbol, 0) != qty:
-                drift.append(f"{symbol}: db={qty} ib={ib_positions.get(symbol, 0)}")
+            ib_qty = float(ib_positions.get(symbol, 0.0))
+            if abs(ib_qty - float(qty)) > 1e-6:
+                drift.append(f"{symbol}: ledger={qty:g} ib={ib_qty:g}")
         for symbol, qty in ib_positions.items():
-            if symbol not in expected and qty != 0:
-                drift.append(f"{symbol}: db=0 ib={qty}")
-        if drift:
-            log.warning("position drift detected: %s", "; ".join(drift))
+            if symbol not in expected and abs(float(qty)) > 1e-6:
+                drift.append(f"{symbol}: ledger=0 ib={float(qty):g}")
         return drift
