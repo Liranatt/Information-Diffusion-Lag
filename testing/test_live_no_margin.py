@@ -5,7 +5,9 @@ from types import SimpleNamespace
 
 import pytest
 
+from live import control_pipeline as control_module
 from live.config import LiveConfig
+from live.control_pipeline import ControlPipeline
 from live.order_manager import OrderManager
 
 
@@ -183,3 +185,40 @@ def test_cash_sweep_uses_fill_projected_cash_when_ib_summary_is_stale():
     assert manager.executed[0]["symbol"] == "SPY"
     assert manager.executed[0]["action"] == "BUY"
     assert manager.executed[0]["qty"] == pytest.approx(12.0)
+
+
+def test_final_hour_sweep_stops_when_cash_cannot_buy_one_whole_spy(monkeypatch):
+    class Orders:
+        execution_anomaly = False
+
+        def __init__(self):
+            self.calls = 0
+
+        async def sweep_idle_cash(self, **_kwargs):
+            self.calls += 1
+            return 0.0
+
+    class Positions:
+        async def snapshot(self):
+            raise AssertionError("no resnapshot should be needed")
+
+    monkeypatch.setattr(control_module, "seconds_to_market_close", lambda: 2_000.0)
+    pipeline = ControlPipeline(LiveConfig(
+        benchmark="SPY",
+        fractional_benchmark=False,
+        min_order_notional=200.0,
+        close_sweep_buffer_pct=0.03,
+    ))
+    orders = Orders()
+    snapshot = {
+        "cash": 565.20,
+        "benchmark_price": 747.47,
+        "trade_safe": True,
+    }
+
+    result = asyncio.run(pipeline.final_hour_cash_sweep(
+        orders, Positions(), snapshot,
+    ))
+
+    assert result is snapshot
+    assert orders.calls == 0

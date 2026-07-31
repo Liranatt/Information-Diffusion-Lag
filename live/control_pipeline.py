@@ -429,6 +429,16 @@ class ControlPipeline:
                 or not benchmark_price
             ):
                 return snapshot
+            if (
+                not self.cfg.fractional_benchmark
+                and cash < benchmark_price * (1.0 + self.cfg.close_sweep_buffer_pct)
+            ):
+                log.info(
+                    "final-hour cash %.2f cannot fund one whole %s share; sweep complete",
+                    cash,
+                    self.cfg.benchmark,
+                )
+                return snapshot
 
             log.info(
                 "final-hour cash sweep: cash=%.2f seconds_to_close=%.0f",
