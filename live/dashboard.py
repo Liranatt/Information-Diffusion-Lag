@@ -39,8 +39,16 @@ _STATE: dict = {}
 BENCH = CONFIG.benchmark
 _BOOT_TIME = datetime.now(timezone.utc)
 try:
-    _GIT_SHA = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], stderr=subprocess.DEVNULL, text=True).strip()
-    _GIT_BRANCH = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"], stderr=subprocess.DEVNULL, text=True).strip()
+    _REPO_DIR = str(Path(__file__).resolve().parents[1])
+    _GIT_BASE = ["git", "-c", f"safe.directory={_REPO_DIR}"]
+    _GIT_SHA = subprocess.check_output(
+        [*_GIT_BASE, "rev-parse", "--short", "HEAD"],
+        stderr=subprocess.DEVNULL, text=True,
+    ).strip()
+    _GIT_BRANCH = subprocess.check_output(
+        [*_GIT_BASE, "rev-parse", "--abbrev-ref", "HEAD"],
+        stderr=subprocess.DEVNULL, text=True,
+    ).strip()
 except Exception:
     _GIT_SHA = "unknown"
     _GIT_BRANCH = "unknown"

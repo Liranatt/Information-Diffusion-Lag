@@ -18,6 +18,18 @@ cd "$APP_DIR"
   live/utils.py
 
 docker compose -f docker/docker-compose.yml up -d --build
-curl -fsS --max-time 10 "$HEALTH_URL" >/dev/null
+
+healthy=0
+for _attempt in $(seq 1 30); do
+  if curl -fsS --max-time 10 "$HEALTH_URL" >/dev/null; then
+    healthy=1
+    break
+  fi
+  sleep 1
+done
+if [[ "$healthy" != "1" ]]; then
+  echo "dashboard healthcheck failed after 30 attempts" >&2
+  exit 1
+fi
 
 echo "deploy ok: $(date -Is)"
