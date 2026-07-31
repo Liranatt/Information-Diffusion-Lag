@@ -9,10 +9,11 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from datetime import datetime, timezone
+from datetime import datetime, time, timedelta, timezone
 
 from .connection import IBConnection
 from .database import LiveStore
+from .utils import NY
 
 log = logging.getLogger("live.data")
 
@@ -32,6 +33,33 @@ def _bars_to_rows(bars) -> list[dict]:
             "volume": float(b.volume) if b.volume and b.volume > 0 else 0.0,
         })
     return rows
+
+
+def _partition_session_rows(
+    rows: list[dict], resolution: str, now: datetime,
+) -> tuple[list[dict], list[dict], list[datetime]]:
+    """Split immutable history, replaceable completed-session rows and open bars."""
+    now = now.astimezone(timezone.utc)
+    ny_now = now.astimezone(NY)
+    session_day = ny_now.date()
+    historical: list[dict] = []
+    completed_session: list[dict] = []
+    incomplete: list[datetime] = []
+    for row in rows:
+        ts = row["ts"].astimezone(timezone.utc)
+        if resolution == "1d":
+            row_session_day = ts.date()
+            is_complete = ny_now.time() > time(16, 0)
+        else:
+            row_session_day = ts.astimezone(NY).date()
+            is_complete = ts + timedelta(hours=1) <= now
+        if row_session_day != session_day:
+            historical.append(row)
+        elif is_complete:
+            completed_session.append(row)
+        else:
+            incomplete.append(ts)
+    return historical, completed_session, incomplete
 
 
 class DataFetcher:
@@ -66,8 +94,22 @@ class DataFetcher:
         except Exception as error:  # noqa: BLE001
             log.warning("historical data failed for %s: %s", symbol, error)
             return False
-        n_h = await self.store.upsert_bars(symbol, "1h", _bars_to_rows(hourly))
-        n_d = await self.store.upsert_bars(symbol, "1d", _bars_to_rows(daily))
+        now = datetime.now(timezone.utc)
+        hourly_old, hourly_done, hourly_open = _partition_session_rows(
+            _bars_to_rows(hourly), "1h", now,
+        )
+        daily_old, daily_done, daily_open = _partition_session_rows(
+            _bars_to_rows(daily), "1d", now,
+        )
+        # Old versions cached IB's in-progress bar with ON CONFLICT DO NOTHING,
+        # permanently freezing an intraday value as the day's close. Remove
+        # exact open intervals and replace only completed rows from this session.
+        await self.store.delete_session_bars(symbol, "1h", hourly_open)
+        await self.store.delete_session_bars(symbol, "1d", daily_open)
+        n_h = await self.store.upsert_bars(symbol, "1h", hourly_old)
+        n_h += await self.store.replace_session_bars(symbol, "1h", hourly_done)
+        n_d = await self.store.upsert_bars(symbol, "1d", daily_old)
+        n_d += await self.store.replace_session_bars(symbol, "1d", daily_done)
         log.debug("%s: %d hourly, %d daily bars", symbol, n_h, n_d)
         return True
 

@@ -29,6 +29,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 
 from database.backtesting.schema import SCHEMA
+from core.polarity import resolve_polarity
 
 from .config import CONFIG
 from .database import LiveStore
@@ -262,6 +263,7 @@ async def gather_metrics() -> dict:
                        open_positions, passive_equity, source, broker_observed_at
                 FROM {SCHEMA}.live_equity_snapshots
                 WHERE source='IB_same_snapshot_v2'
+                  AND baseline_verified=TRUE
                 ORDER BY ts DESC LIMIT 600""")
         broker_account = await conn.fetchrow(
             f"SELECT * FROM {SCHEMA}.live_broker_account_cache WHERE cache_key='primary'")
@@ -365,12 +367,22 @@ async def gather_metrics() -> dict:
             unrealized = 0.0
         trades_value += notional
         mk = mkt_map.get(p["market_id"])
-        t0_prob = _f(mk["t0_prob"]) if mk else None
-        prob_now = await store.latest_prob(p["market_id"])
+        raw_t0_prob = _f(mk["t0_prob"]) if mk else None
+        raw_prob_now = await store.latest_prob(p["market_id"])
+        polarity, polarity_source = resolve_polarity(p["question"], p["symbol"])
+
+        def _effective_prob(value):
+            if value is None or polarity == 0:
+                return None
+            return float(value) if polarity == 1 else 1.0 - float(value)
+
+        t0_prob = _effective_prob(raw_t0_prob)
+        prob_now = _effective_prob(raw_prob_now)
         stock_t0 = await store.close_near(p["symbol"], mk["discovered_at"]) if mk and mk["discovered_at"] else None
-        # Stop-loss: ATR trailing for non-earnings, theta-only for earnings
+        # The shared strategy kernel applies the same protective ATR/profit-lock
+        # stop to every open equity position, including earnings-linked trades.
         stop_loss = None
-        if not p["is_earnings"] and atr_mult and p["atr_pct"]:
+        if atr_mult and p["atr_pct"]:
             atr_pct = float(p["atr_pct"])
             peak = float(p["peak_ret"] or 0.0)
             stop_ret = peak - atr_mult * atr_pct
@@ -390,22 +402,30 @@ async def gather_metrics() -> dict:
             entry_age_seconds = max(0.0, (now_ts - entry_ts.astimezone(timezone.utc)).total_seconds())
         else:
             entry_age_seconds = None
+        resolution_at = p["t_e"] or (mk["end_at"] if mk else None)
         days_to_resolution = None
-        if mk and mk["end_at"]:
-            days_to_resolution = round((mk["end_at"].astimezone(timezone.utc) - now_ts).total_seconds() / 86400, 1)
+        days_to_exit = None
+        if resolution_at:
+            resolution_at = resolution_at.astimezone(timezone.utc)
+            days_to_resolution = round((resolution_at - now_ts).total_seconds() / 86400, 1)
+            days_to_exit = round((resolution_at - timedelta(days=1) - now_ts).total_seconds() / 86400, 1)
         stop_distance_pct = None
         if stop_loss and last:
             stop_distance_pct = round((float(last) / stop_loss - 1.0) * 100.0, 2)
         theta_distance_pp = None
         if theta_out and prob_now is not None:
             theta_distance_pp = round((float(prob_now) - theta_out) * 100.0, 1)
-        if not p["is_earnings"] and stop_distance_pct is not None and stop_distance_pct <= 2.0:
+        if days_to_exit is not None and days_to_exit <= 0:
+            exit_risk = "exit_overdue"
+        elif stop_distance_pct is not None and stop_distance_pct <= 0:
+            exit_risk = "stop_triggered"
+        elif theta_distance_pp is not None and theta_distance_pp < 0:
+            exit_risk = "theta_triggered"
+        elif stop_distance_pct is not None and stop_distance_pct <= 2.0:
             exit_risk = "near_stop"
         elif theta_distance_pp is not None and theta_distance_pp <= 3.0:
             exit_risk = "near_theta"
-        elif days_to_resolution is not None and days_to_resolution < 0:
-            exit_risk = "resolution_overdue"
-        elif days_to_resolution is not None and days_to_resolution <= 2.0:
+        elif days_to_exit is not None and days_to_exit <= 2.0:
             exit_risk = "near_resolution"
         elif entry_age_seconds is not None and entry_age_seconds >= 7 * 86400:
             exit_risk = "aging"
@@ -425,6 +445,10 @@ async def gather_metrics() -> dict:
             "t0_prob": round(t0_prob, 3) if t0_prob is not None else None,
             "entry_prob": round(float(p["entry_prob"]), 3) if p["entry_prob"] is not None else None,
             "prob_now": round(float(prob_now), 3) if prob_now is not None else None,
+            "raw_t0_prob": round(raw_t0_prob, 3) if raw_t0_prob is not None else None,
+            "raw_prob_now": round(float(raw_prob_now), 3) if raw_prob_now is not None else None,
+            "polarity": polarity,
+            "polarity_source": polarity_source,
             "theta_out": round(theta_out, 3) if theta_out else None,
             "theta_distance_pp": theta_distance_pp,
             "prob_entry_runup_pp": round((float(p["entry_prob"]) - t0_prob) * 100.0, 1)
@@ -441,9 +465,10 @@ async def gather_metrics() -> dict:
             "exit_risk": exit_risk,
             "days_held": round(entry_age_seconds / 86400, 1) if entry_age_seconds is not None else None,
             "days_to_resolution": days_to_resolution,
+            "days_to_exit": days_to_exit,
             "is_earnings": bool(p["is_earnings"]),
             "question": p["question"], "entry_ts": _iso(p["entry_ts"]),
-            "resolution_ts": _iso(mk["end_at"]) if mk and mk["end_at"] else None,
+            "resolution_ts": _iso(resolution_at),
         })
 
     strategy_symbols = {str(p["symbol"]) for p in open_pos}
@@ -470,6 +495,10 @@ async def gather_metrics() -> dict:
             "t0_prob": None,
             "entry_prob": None,
             "prob_now": None,
+            "raw_t0_prob": None,
+            "raw_prob_now": None,
+            "polarity": None,
+            "polarity_source": None,
             "theta_out": None,
             "theta_distance_pp": None,
             "prob_entry_runup_pp": None,
@@ -483,6 +512,7 @@ async def gather_metrics() -> dict:
             "exit_risk": "broker_only",
             "days_held": None,
             "days_to_resolution": None,
+            "days_to_exit": None,
             "is_earnings": False,
             "question": "IB holding without cached strategy metadata",
             "entry_ts": None,
@@ -518,16 +548,18 @@ async def gather_metrics() -> dict:
             (broker_account["observed_at"] - bench["observed_at"]).total_seconds()
         ) <= 1.0
     if baseline and broker_account and bench_price > 0 and same_snapshot:
-        passive, baseline, cumulative_cash_flows = await store.current_passive_equity(
-            benchmark_price=bench_price,
-            observed_at=broker_account["observed_at"],
-        )
-        performance_status = "verified" if baseline.get("verified") else "provisional_baseline"
-        performance_detail = (
-            "Account NAV and benchmark price are from the same IB snapshot."
-            if baseline.get("verified")
-            else "Current values are from IB; the preserved historical starting baseline is not independently verified."
-        )
+        if baseline.get("verified"):
+            passive, baseline, cumulative_cash_flows = await store.current_passive_equity(
+                benchmark_price=bench_price,
+                observed_at=broker_account["observed_at"],
+            )
+            performance_status = "verified"
+            performance_detail = "Account NAV and benchmark price are from the same IB snapshot."
+        else:
+            performance_status = "provisional_baseline"
+            performance_detail = (
+                "The old DB baseline is not an IB account value, so excess performance is hidden until it is reset from IB."
+            )
     elif baseline and not same_snapshot:
         performance_status = "timestamp_mismatch"
         performance_detail = "IB account NAV and benchmark mark are not from the same snapshot."
@@ -962,6 +994,13 @@ async def api_position_history(position_id: int) -> JSONResponse:
                 WHERE market_id=$1 AND hour_ts >= $2 ORDER BY hour_ts""",
             pos["market_id"], t0_ts,
         )
+    polarity, polarity_source = resolve_polarity(pos["question"], pos["symbol"])
+
+    def _history_probability(value: float) -> float | None:
+        if polarity == 0:
+            return None
+        return float(value) if polarity == 1 else 1.0 - float(value)
+
     return JSONResponse({
         "position_id": position_id,
         "symbol": pos["symbol"],
@@ -971,7 +1010,14 @@ async def api_position_history(position_id: int) -> JSONResponse:
         "entry_price": round(float(pos["entry_price"]), 2),
         "entry_prob": round(float(pos["entry_prob"]), 3) if pos["entry_prob"] is not None else None,
         "stock": [{"ts": _iso(r["ts"]), "close": round(float(r["close"]), 2)} for r in stock_rows],
-        "prob":  [{"ts": _iso(r["hour_ts"]), "p": round(float(r["probability"]), 3)} for r in prob_rows],
+        "polarity": polarity,
+        "polarity_source": polarity_source,
+        "prob":  [{
+            "ts": _iso(r["hour_ts"]),
+            "p": round(_history_probability(r["probability"]), 3)
+                if _history_probability(r["probability"]) is not None else None,
+            "raw_p": round(float(r["probability"]), 3),
+        } for r in prob_rows],
     })
 
 

@@ -81,7 +81,7 @@ function renderShell(){
         <div id="alerts"></div>
         <div class="row commandStrip" id="commandStrip"></div>
         <div class="row c2">
-          <div class="card"><h3>NAV, strategy vs passive benchmark</h3><div class="chartWrap"><div id="chart"></div><div class="chartTip" id="chartTip"></div></div>
+          <div class="card"><h3>Verified IB NAV vs passive benchmark</h3><div class="chartWrap"><div id="chart"></div><div class="chartTip" id="chartTip"></div></div>
             <div class="legrow"><span><i style="border-color:var(--brand)"></i>Strategy equity</span><span><i style="border-color:var(--faint);border-top-style:dashed"></i>Passive benchmark</span></div></div>
           <div class="card"><h3>Capital allocation</h3><div class="alloc"><div class="donut"><div id="donut"></div><div class="ctr"><b id="invpct">-</b><span>invested</span></div></div><div class="leg" id="alloclegend"></div></div></div>
         </div>
@@ -192,20 +192,24 @@ function areaChart(el, series, tipId="chartTip"){
   if(pts.length < 2){ el.innerHTML = `<div class="empty">Not enough NAV snapshots yet.</div>`; return; }
   const W=1000,H=270,pl=56,pr=58,pt=18,pb=32;
   const eq=pts.map(p=>p.equity), pv=pts.map(p=>p.passive == null ? p.equity : p.passive);
-  const lo=Math.min(...eq,...pv), hi=Math.max(...eq,...pv), sp=(hi-lo)||1;
-  const X=i=>pl+i*(W-pl-pr)/(pts.length-1), Y=v=>H-pb-(v-lo)/sp*(H-pt-pb);
+  const rawLo=Math.min(...eq,...pv), rawHi=Math.max(...eq,...pv), rawSpan=rawHi-rawLo;
+  const pad=Math.max(rawSpan*.06, Math.abs(rawHi)*.00005, 1), lo=rawLo-pad, hi=rawHi+pad, sp=hi-lo;
+  const times=pts.map(p=>new Date(p.ts).getTime()), tlo=Math.min(...times), thi=Math.max(...times), tsp=thi-tlo;
+  const X=i=>tsp ? pl+(times[i]-tlo)*(W-pl-pr)/tsp : pl+i*(W-pl-pr)/(pts.length-1), Y=v=>H-pb-(v-lo)/sp*(H-pt-pb);
   const pe=pts.map((p,i)=>[X(i),Y(p.equity)]), pp=pts.map((p,i)=>[X(i),Y(p.passive == null ? p.equity : p.passive)]);
   const area=smooth(pe)+` L ${X(pts.length-1)} ${H-pb} L ${pl} ${H-pb} Z`;
   const grid=[0,.25,.5,.75,1].map(f=>{const y=pt+f*(H-pt-pb), v=hi-f*sp;
     return `<line x1="${pl}" y1="${y.toFixed(1)}" x2="${W-pr}" y2="${y.toFixed(1)}" stroke="${C.grid}"/><text x="${pl-8}" y="${y+4}" fill="${C.faint}" font-size="10.5" text-anchor="end" font-family="var(--num)">${(v/1000).toFixed(1)}k</text>`;
   }).join("");
   const last=pts[pts.length-1], lastY=Y(last.equity);
+  const sameDay = new Date(pts[0].ts).toLocaleDateString(LOCALE) === new Date(pts[pts.length-1].ts).toLocaleDateString(LOCALE);
+  const axisLabel = s => sameDay ? new Date(s).toLocaleTimeString(LOCALE,{hour:"2-digit",minute:"2-digit"}) : dday(s);
   el.innerHTML = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Strategy equity versus passive benchmark chart">
     <defs><linearGradient id="navArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${C.brand}" stop-opacity=".18"/><stop offset="1" stop-color="${C.brand}" stop-opacity="0"/></linearGradient></defs>
     ${grid}<path d="${area}" fill="url(#navArea)"/><path d="${smooth(pp)}" fill="none" stroke="${C.faint}" stroke-width="1.8" stroke-dasharray="5 4"/>
     <path d="${smooth(pe)}" fill="none" stroke="${C.brand}" stroke-width="2.6" stroke-linecap="round"/>
     <circle cx="${X(pts.length-1)}" cy="${lastY}" r="4" fill="${C.brand}"/><text x="${W-pr+8}" y="${lastY+4}" fill="${C.brand}" font-size="11" font-family="var(--num)">${usd0(last.equity)}</text>
-    <text x="${pl}" y="${H-8}" fill="${C.faint}" font-size="10.5" font-family="var(--num)">${dday(pts[0].ts)}</text><text x="${W-pr}" y="${H-8}" fill="${C.faint}" font-size="10.5" text-anchor="end" font-family="var(--num)">${dday(pts[pts.length-1].ts)}</text>
+    <text x="${pl}" y="${H-8}" fill="${C.faint}" font-size="10.5" font-family="var(--num)">${axisLabel(pts[0].ts)}</text><text x="${W-pr}" y="${H-8}" fill="${C.faint}" font-size="10.5" text-anchor="end" font-family="var(--num)">${axisLabel(pts[pts.length-1].ts)}</text>
   </svg>`;
   const svg = el.querySelector("svg"), tip = document.getElementById(tipId);
   svg.onmousemove = (ev) => {
@@ -249,7 +253,7 @@ function stateTag(v){
   return `<span class="tag ${m[0]}">${esc(m[1])}</span>`;
 }
 function riskTag(p){
-  const map = {near_stop:["bad","Near stop"],near_theta:["bad","Theta"],resolution_overdue:["bad","Resolution overdue"],near_resolution:["warn","Resolution"],aging:["warn","Aging"],normal:["ok","Normal"]};
+  const map = {exit_overdue:["bad","Exit overdue"],stop_triggered:["bad","Stop triggered"],theta_triggered:["bad","Theta triggered"],near_stop:["bad","Near stop"],near_theta:["bad","Near theta"],near_resolution:["warn","Resolution"],aging:["warn","Aging"],normal:["ok","Normal"]};
   const m = map[p.exit_risk] || map.normal;
   return `<span class="tag ${m[0]}">${m[1]}</span>`;
 }
@@ -390,7 +394,7 @@ async function refresh(){
     {h:"Risk",f:r=>riskTag(r)},{h:"Sym",f:r=>esc(r.symbol)},{h:"Unreal",n:1,f:r=>susd(r.unrealized),cl:r=>cl(r.unrealized)},
     {h:"Stop dist",n:1,f:r=>r.stop_distance_pct==null ? "-" : pct(r.stop_distance_pct,2),cl:r=>r.stop_distance_pct!=null && r.stop_distance_pct<=2 ? "down" : ""},
     {h:"Theta dist",n:1,f:r=>r.theta_distance_pp==null ? "-" : sg(r.theta_distance_pp,1)+"pp",cl:r=>r.theta_distance_pp!=null && r.theta_distance_pp<=3 ? "down" : ""},
-    {h:"Days left",n:1,f:r=>nn(r.days_to_resolution,1)}
+    {h:"Exit in",n:1,f:r=>nn(r.days_to_exit,1)+"d"}
   ]);
 
   donut($("#donut"),[{v:a.spy_pct,c:C.brand},{v:a.trades_pct,c:C.sky},{v:Math.max(0,a.cash_pct),c:"#cbd5e1"}]);
@@ -412,7 +416,7 @@ function renderPositions(rows){
     {h:"Risk",f:r=>riskTag(r)},{h:"Sym",f:r=>esc(r.symbol)+(r.is_earnings ? ' <span class="tag er">ER</span>' : "")},
     {h:"Qty",n:1,f:r=>nn(r.qty,0)},{h:"Notional",n:1,f:r=>usd0(r.notional)},
     {h:"Entry",n:1,f:r=>nn(r.entry_price)},{h:"Last",n:1,f:r=>nn(r.last)},
-    {h:"Stop",n:1,f:r=>r.is_earnings ? '<span class="tag neu">Theta</span>' : (r.stop_loss==null ? "-" : nn(r.stop_loss)),cl:r=>r.stop_distance_pct!=null && r.stop_distance_pct<=2 ? "down" : ""},
+    {h:"Stop",n:1,f:r=>r.stop_loss==null ? "-" : nn(r.stop_loss),cl:r=>r.stop_distance_pct!=null && r.stop_distance_pct<=2 ? "down" : ""},
     {h:"Unreal $",n:1,f:r=>susd(r.unrealized),cl:r=>cl(r.unrealized)},
     {h:"Unreal %",n:1,f:r=>r.unrealized_pct==null ? "-" : pct(r.unrealized_pct,2),cl:r=>cl(r.unrealized_pct)},
     {h:"Prob now",n:1,f:r=>r.prob_now==null ? "-" : nn(r.prob_now,3)},
@@ -429,9 +433,9 @@ function renderPositions(rows){
 function positionDetail(r){
   return `<tr class="detailRow"><td colspan="15"><div class="positionDetail">
     <div class="detailBlock"><div class="k">Why this trade exists</div><div class="v">${esc(r.question)}</div></div>
-    <div class="detailBlock"><div class="k">Probability path</div><div class="v">T0 ${nn(r.t0_prob,3)} | Entry ${nn(r.entry_prob,3)} | Now ${nn(r.prob_now,3)} | d ${r.prob_runup_pp==null ? "-" : sg(r.prob_runup_pp,1)+"pp"}</div></div>
+    <div class="detailBlock"><div class="k">Signal probability (${r.polarity===-1 ? "NO side" : "YES side"})</div><div class="v">T0 ${nn(r.t0_prob,3)} | Entry ${nn(r.entry_prob,3)} | Now ${nn(r.prob_now,3)} | d ${r.prob_runup_pp==null ? "-" : sg(r.prob_runup_pp,1)+"pp"}</div></div>
     <div class="detailBlock"><div class="k">Stock path</div><div class="v">T0 ${usd(r.stock_t0)} | T0->entry ${r.stock_entry_runup_pct==null ? "-" : pct(r.stock_entry_runup_pct,2)} | T0->now ${r.stock_runup_pct==null ? "-" : pct(r.stock_runup_pct,2)}</div></div>
-    <div class="detailBlock"><div class="k">Exit pressure</div><div class="v">Stop dist ${r.stop_distance_pct==null ? "-" : pct(r.stop_distance_pct,2)} | Theta dist ${r.theta_distance_pp==null ? "-" : sg(r.theta_distance_pp,1)+"pp"} | Resolves ${dt(r.resolution_ts)}</div></div>
+    <div class="detailBlock"><div class="k">Exit pressure</div><div class="v">Stop dist ${r.stop_distance_pct==null ? "-" : pct(r.stop_distance_pct,2)} | Theta dist ${r.theta_distance_pp==null ? "-" : sg(r.theta_distance_pp,1)+"pp"} | Exit cutoff ${r.days_to_exit==null ? "-" : nn(r.days_to_exit,1)+"d"} | Resolves ${dt(r.resolution_ts)}</div></div>
   </div>
   <div id="pos-history-${r.position_id}" class="chartWrap" style="margin-top:12px;min-height:52px"></div>
   </td></tr>`;

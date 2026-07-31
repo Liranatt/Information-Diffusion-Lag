@@ -10,11 +10,9 @@ paths as they stand *now* and reuses the shared core kernel primitives:
              signal is firing right now, not days ago) and we are flat on that
              (market, symbol). The full-trade replay cannot decide entry at entry
              time — it needs future bars that do not exist yet.
-  * EXIT   — the authoritative reference simulation
-             ``core.kernel._simulate_one_py`` over data-up-to-now: exit iff the
-             simulated trade has already hit a terminal stop (trailing /
-             profit-lock / probability-out / resolution); a non-terminal
-             ``end_of_window`` result means "still holding".
+  * EXIT   — evaluate the position that IB actually holds from its persisted
+             fill facts.  Never require the historical entry simulation to be
+             reproducible before an already-open position can be sold.
 
 Both planes reuse the same mechanical entry/exit primitives. Features are the
 core definitions (`core.features`), sizing/ATR come from core, and both backtest
@@ -34,7 +32,7 @@ from datetime import datetime, timedelta, timezone
 import pandas as pd
 
 from core.features import find_t_theta
-from core.kernel import _simulate_one_py, calc_atr, entry_day
+from core.kernel import calc_atr, entry_day
 from core.polarity import resolve_polarity, effective_prob_path, effective_prob_surge
 from core.policy import RELEVANCE_COL
 
@@ -65,6 +63,94 @@ class ExitSignal:
     symbol: str
     qty: int
     reason: str
+
+
+def _existing_position_exit(
+    pos: dict,
+    price_path: list[tuple],
+    prob_path: list[tuple],
+    policy: dict,
+    now: datetime,
+) -> tuple[str | None, float]:
+    """Return the first exit already triggered for an IB-held position.
+
+    The old live implementation replayed entry selection on every tick.  Any
+    later data/policy drift that made the historical entry fail caused the
+    simulator to return ``None`` and made the real IB position immortal.  Exit
+    rules only need the actual fill, ATR and event metadata already persisted
+    for that position, so evaluate those facts directly and chronologically.
+    """
+    entry_ts = pd.Timestamp(pos["entry_ts"])
+    if entry_ts.tzinfo is None:
+        entry_ts = entry_ts.tz_localize("UTC")
+    else:
+        entry_ts = entry_ts.tz_convert("UTC")
+    if now.date() <= entry_ts.date():
+        return None, 0.0
+
+    t_e = pd.Timestamp(pos["t_e"])
+    if t_e.tzinfo is None:
+        t_e = t_e.tz_localize("UTC")
+    else:
+        t_e = t_e.tz_convert("UTC")
+    cutoff = t_e - RESOLUTION_CUT
+    now_ts = pd.Timestamp(now)
+    if now_ts.tzinfo is None:
+        now_ts = now_ts.tz_localize("UTC")
+    else:
+        now_ts = now_ts.tz_convert("UTC")
+
+    entry_price = float(pos.get("entry_price") or 0.0)
+    atr_pct = float(pos.get("atr_pct") or 0.0)
+    atr_mult = float(policy.get("atr_mult") or 0.0)
+    lock_activate = float(policy.get("lock_activate") or 0.0)
+    theta_out = float(policy.get("theta_out") or 0.0)
+
+    polarity, _source = resolve_polarity(pos.get("question", ""), pos.get("symbol"))
+    effective_by_day: dict[object, float] = {}
+    if polarity in {-1, 1}:
+        for ts, probability in effective_prob_path(prob_path, polarity):
+            effective_by_day[pd.Timestamp(ts).date()] = float(probability)
+
+    peak = 0.0
+    entry_day = entry_ts.date()
+    for bar_ts, high, low, _close in price_path:
+        bar_time = pd.Timestamp(bar_ts)
+        if bar_time.tzinfo is None:
+            bar_time = bar_time.tz_localize("UTC")
+        else:
+            bar_time = bar_time.tz_convert("UTC")
+        if bar_time.date() <= entry_day:
+            continue
+        if bar_time >= cutoff or bar_time.normalize() > now_ts.normalize():
+            break
+
+        if entry_price > 0 and atr_pct > 0 and atr_mult > 0:
+            stop_dist = atr_mult * atr_pct
+            active_stop = entry_price * (1.0 + peak - stop_dist)
+            reason = "trailing-ATR"
+            if peak >= lock_activate:
+                hard_floor = int(peak * 100.0) / 100.0
+                lock_stop = entry_price * (1.0 + hard_floor)
+                if lock_stop >= active_stop:
+                    active_stop = lock_stop
+                    reason = "profit-lock"
+            if float(low) <= active_stop:
+                return reason, peak
+
+        probability = effective_by_day.get(bar_time.date())
+        if theta_out > 0 and probability is not None and probability < theta_out:
+            return "probability-out", peak
+
+        if entry_price > 0:
+            peak = max(peak, float(high) / entry_price - 1.0)
+
+    # Resolution is an unconditional lifecycle exit.  Missing probability,
+    # bars, polarity labels, or a no-longer-reproducible entry can never keep an
+    # IB holding alive beyond the strategy's one-day-before-resolution cutoff.
+    if now_ts >= cutoff:
+        return "resolution-1d", peak
+    return None, peak
 
 
 def _prob_path(prob_rows: list[tuple]) -> list[tuple]:
@@ -232,45 +318,21 @@ class StrategyEngine:
             if now.date() <= pos["entry_ts"].date():
                 continue
 
-            built = await self._candidate(
-                store, market_id=pos["market_id"], symbol=pos["symbol"],
-                question=pos.get("question", ""), is_earnings=bool(pos.get("is_earnings")),
-                t_e=pos["t_e"], relevance=float(pos.get("relevance") or 1.0),
-                t0=pos.get("created_at"),
+            entry_day = pd.Timestamp(pos["entry_ts"]).normalize()
+            price_path = _price_path(
+                await store.daily_bars_since(
+                    pos["symbol"], entry_day.to_pydatetime(),
+                )
             )
-            if built is None:
-                continue
-            row, prices, probs, _price_path, _t_theta = built
-
-            trade = _simulate_one_py(
-                row,
-                prices,
-                probs,
-                self.policy,
-                apply_polarity=True,
+            prob_path = _prob_path(await store.daily_prob_closes(pos["market_id"]))
+            reason, peak_ret = _existing_position_exit(
+                pos, price_path, prob_path, self.policy, now,
             )
-            if trade is None:
-                continue
-            peak_ret = float(trade.get("peak_pct") or 0.0) / 100.0
-            if peak_ret > float(pos.get("peak_ret") or 0.0):
+            if abs(peak_ret - float(pos.get("peak_ret") or 0.0)) > 1e-9:
                 await store.update_peak(pos["position_id"], peak_ret)
-
-            # The shared backtest kernel treats the final bar in its input as
-            # the resolution bar.  In live mode the input is intentionally
-            # truncated at "now", so that convention must not turn every
-            # current last bar into a fake early resolution exit.
-            if (
-                trade["exit_reason"] == "resolution-1d"
-                and now < pos["t_e"] - RESOLUTION_CUT
-            ):
-                continue
-            # A terminal exit reason means the trade should already be closed given
-            # today's data; end_of_window means it is still open.
-            if trade["exit_reason"] == "end_of_window":
-                continue
-
-            signals.append(ExitSignal(
-                position_id=pos["position_id"], symbol=pos["symbol"],
-                qty=int(pos["qty"]), reason=trade["exit_reason"],
-            ))
+            if reason is not None:
+                signals.append(ExitSignal(
+                    position_id=pos["position_id"], symbol=pos["symbol"],
+                    qty=int(pos["qty"]), reason=reason,
+                ))
         return signals

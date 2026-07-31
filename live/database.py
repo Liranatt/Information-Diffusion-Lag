@@ -488,6 +488,51 @@ class LiveStore:
             )
         return len(bars)
 
+    async def replace_session_bars(
+        self, symbol: str, resolution: str, bars: list[dict]
+    ) -> int:
+        """Replace only explicitly supplied current-session bars.
+
+        IB includes an in-progress daily/hourly bar in historical responses.
+        Those rows are not immutable facts until their interval closes.  The
+        fetcher routes only current-session timestamps here; older finalized
+        history continues through the append-only ``upsert_bars`` path.
+        """
+        if not bars:
+            return 0
+        timestamps = [bar["ts"] for bar in bars]
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                await conn.execute(
+                    f"""DELETE FROM {SCHEMA}.historical_price_bars
+                        WHERE symbol=$1 AND resolution=$2
+                          AND ts = ANY($3::timestamptz[])""",
+                    symbol, resolution, timestamps,
+                )
+                await conn.executemany(
+                    f"""INSERT INTO {SCHEMA}.historical_price_bars
+                        (symbol, resolution, ts, open, high, low, close, volume)
+                        VALUES ($1,$2,$3,$4,$5,$6,$7,$8)""",
+                    [(symbol, resolution, b["ts"], b["open"], b["high"], b["low"],
+                      b["close"], float(b.get("volume") or 0.0)) for b in bars],
+                )
+        return len(bars)
+
+    async def delete_session_bars(
+        self, symbol: str, resolution: str, timestamps: list[datetime]
+    ) -> int:
+        """Remove exact in-progress timestamps accidentally cached as final."""
+        if not timestamps:
+            return 0
+        async with self.pool.acquire() as conn:
+            result = await conn.execute(
+                f"""DELETE FROM {SCHEMA}.historical_price_bars
+                    WHERE symbol=$1 AND resolution=$2
+                      AND ts = ANY($3::timestamptz[])""",
+                symbol, resolution, timestamps,
+            )
+        return _rowcount(result)
+
     async def daily_bars(self, symbol: str, lookback_days: int) -> list[dict]:
         since = datetime.now(timezone.utc) - timedelta(days=lookback_days)
         return await self.daily_bars_since(symbol, since)
@@ -925,11 +970,13 @@ class LiveStore:
         current_benchmark_price: float,
         observed_at: datetime,
     ) -> dict[str, Any]:
-        """Create the one performance baseline without rewriting history.
+        """Create or repair the performance baseline from one IB snapshot.
 
-        Existing installations retain their earliest legacy starting point but
-        it is explicitly marked unverified.  A clean installation starts from
-        the current IB snapshot and is marked verified.
+        A legacy simulator NAV is not commensurate with IB NetLiquidation.  If
+        an older deployment preserved that legacy value as an unverified
+        baseline, archive it for audit and reset ``primary`` to the current
+        same-timestamp IB NAV/SPY mark.  Only a verified IB baseline may drive
+        live excess-performance claims.
         """
         async with self.pool.acquire() as conn:
             async with conn.transaction():
@@ -938,27 +985,43 @@ class LiveStore:
                         WHERE baseline_key='primary' FOR UPDATE"""
                 )
                 if existing:
-                    return dict(existing)
-                legacy = await conn.fetchrow(
-                    f"""SELECT ts, equity, benchmark_price
-                        FROM {SCHEMA}.live_equity_snapshots
-                        WHERE equity > 0 AND benchmark_price > 0
-                        ORDER BY ts LIMIT 1"""
-                )
-                if legacy:
-                    start_ts = legacy["ts"]
-                    start_nav = float(legacy["equity"])
-                    start_price = float(legacy["benchmark_price"])
-                    source = "legacy_snapshot"
-                    verified = False
-                    note = "Preserved historical baseline; not independently verified against IB."
-                else:
-                    start_ts = observed_at
-                    start_nav = float(current_nav)
-                    start_price = float(current_benchmark_price)
-                    source = "IB"
-                    verified = True
-                    note = "Created from a same-timestamp IB account and benchmark snapshot."
+                    if bool(existing["verified"]):
+                        return dict(existing)
+                    archive_key = (
+                        "legacy-unverified-"
+                        + existing["start_ts"].astimezone(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+                    )
+                    await conn.execute(
+                        f"""INSERT INTO {SCHEMA}.live_performance_baselines
+                            (baseline_key, start_ts, start_nav, benchmark_symbol,
+                             benchmark_start_price, source, verified, note,
+                             created_at, updated_at)
+                            VALUES ($1,$2,$3,$4,$5,$6,FALSE,$7,$8,$9)
+                            ON CONFLICT (baseline_key) DO NOTHING""",
+                        archive_key, existing["start_ts"], existing["start_nav"],
+                        existing["benchmark_symbol"], existing["benchmark_start_price"],
+                        existing["source"], existing["note"], existing["created_at"],
+                        existing["updated_at"],
+                    )
+                    row = await conn.fetchrow(
+                        f"""UPDATE {SCHEMA}.live_performance_baselines
+                            SET start_ts=$1, start_nav=$2, benchmark_symbol=$3,
+                                benchmark_start_price=$4, source='IB_same_snapshot_v2',
+                                verified=TRUE,
+                                note='Reset from a same-timestamp IB NAV and benchmark snapshot; legacy baseline archived.',
+                                updated_at=NOW()
+                            WHERE baseline_key='primary'
+                            RETURNING *""",
+                        observed_at, float(current_nav), benchmark,
+                        float(current_benchmark_price),
+                    )
+                    return dict(row)
+                start_ts = observed_at
+                start_nav = float(current_nav)
+                start_price = float(current_benchmark_price)
+                source = "IB_same_snapshot_v2"
+                verified = True
+                note = "Created from a same-timestamp IB account and benchmark snapshot."
                 row = await conn.fetchrow(
                     f"""INSERT INTO {SCHEMA}.live_performance_baselines
                         (baseline_key, start_ts, start_nav, benchmark_symbol,
