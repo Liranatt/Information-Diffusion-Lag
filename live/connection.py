@@ -96,12 +96,12 @@ class IBConnection:
     async def cancel_all_open_orders(self) -> None:
         """Fetch all open orders from IB and cancel them if any are left over."""
         ib = await self.ensure_connected()
-        open_orders = ib.reqAllOpenOrders()
+        open_orders = await ib.reqAllOpenOrdersAsync()
         if not open_orders:
             return
         log.warning("Found %d leftover open orders in IB! Cancelling them now...", len(open_orders))
-        for order in open_orders:
-            ib.cancelOrder(order)
+        for trade in open_orders:
+            ib.cancelOrder(trade.order)
         # Wait a moment for cancellations to process
         await asyncio.sleep(2.0)
 

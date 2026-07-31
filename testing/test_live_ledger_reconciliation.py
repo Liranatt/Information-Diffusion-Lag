@@ -6,8 +6,10 @@ from types import SimpleNamespace
 import pytest
 
 from live.config import LiveConfig
+from live.control_pipeline import ControlPipeline
 from live.order_manager import OrderManager
 from live.position_manager import PositionManager
+from scripts.reconcile_ib_ledger import _plan
 
 
 class _PositionStore:
@@ -33,7 +35,7 @@ class _PositionIB:
         return {"SPY": 7.0, "AAPL": 2.0, "UNTY": 3.0}
 
 
-def test_snapshot_values_benchmark_from_same_ledger_as_cash_and_blocks_drift():
+def test_snapshot_values_benchmark_from_same_ledger_and_scopes_drift_by_symbol():
     async def run():
         manager = PositionManager(LiveConfig(), _PositionIB(), _PositionStore())
         return await manager.snapshot()
@@ -44,9 +46,97 @@ def test_snapshot_values_benchmark_from_same_ledger_as_cash_and_blocks_drift():
     assert snapshot["benchmark_shares"] == pytest.approx(5.0)
     assert snapshot["ib_benchmark_shares"] == pytest.approx(7.0)
     assert snapshot["equity"] == pytest.approx(1_520.0)
-    assert snapshot["trade_safe"] is False
+    assert snapshot["trade_safe"] is True
+    assert snapshot["blocked_symbols"] == ["SPY", "UNTY"]
     assert "SPY: ledger=5 ib=7" in snapshot["broker_drift"]
     assert "UNTY: ledger=0 ib=3" in snapshot["broker_drift"]
+
+
+def test_reconciliation_plan_matches_broker_to_ledger_without_touching_matches():
+    assert _plan(
+        {"SPY": 175.0, "AAPL": 32.0},
+        {"SPY": 188.0, "AAPL": 32.0, "UNTY": 318.0, "USO": 80.0},
+    ) == [
+        {
+            "symbol": "SPY",
+            "expected_qty": 175.0,
+            "ib_qty": 188.0,
+            "action": "SELL",
+            "qty": 13.0,
+        },
+        {
+            "symbol": "UNTY",
+            "expected_qty": 0.0,
+            "ib_qty": 318.0,
+            "action": "SELL",
+            "qty": 318.0,
+        },
+        {
+            "symbol": "USO",
+            "expected_qty": 0.0,
+            "ib_qty": 80.0,
+            "action": "SELL",
+            "qty": 80.0,
+        },
+    ]
+
+
+class _ExitEngine:
+    async def scan_exits(self, _store, _positions):
+        return [
+            SimpleNamespace(position_id=1, reason="exit-aapl"),
+            SimpleNamespace(position_id=2, reason="exit-msft"),
+        ]
+
+
+class _ExitOrders:
+    def __init__(self):
+        self.execution_anomaly = False
+        self.calls: list[str] = []
+
+    async def exit_position(self, pos, _reason, _benchmark_price, *, cash):
+        assert cash == pytest.approx(100.0)
+        self.calls.append(pos["symbol"])
+
+
+def test_exit_stage_skips_only_drifted_asset_when_benchmark_is_clean():
+    async def run():
+        pipeline = ControlPipeline(LiveConfig())
+        pipeline.store = object()  # run_exits only needs a non-null store handle
+        orders = _ExitOrders()
+        snapshot = {
+            "open_positions": [
+                {"position_id": 1, "symbol": "AAPL"},
+                {"position_id": 2, "symbol": "MSFT"},
+            ],
+            "blocked_symbols": ["AAPL"],
+            "benchmark_price": 100.0,
+            "cash": 100.0,
+        }
+        await pipeline.run_exits(_ExitEngine(), orders, snapshot)
+        return orders.calls
+
+    assert asyncio.run(run()) == ["MSFT"]
+
+
+def test_exit_stage_stops_benchmark_dependent_legs_when_benchmark_drifted():
+    async def run():
+        pipeline = ControlPipeline(LiveConfig())
+        pipeline.store = object()
+        orders = _ExitOrders()
+        snapshot = {
+            "open_positions": [
+                {"position_id": 1, "symbol": "AAPL"},
+                {"position_id": 2, "symbol": "MSFT"},
+            ],
+            "blocked_symbols": ["SPY"],
+            "benchmark_price": 100.0,
+            "cash": 100.0,
+        }
+        await pipeline.run_exits(_ExitEngine(), orders, snapshot)
+        return orders.calls
+
+    assert asyncio.run(run()) == []
 
 
 class _OrderStore:

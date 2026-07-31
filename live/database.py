@@ -8,6 +8,7 @@ space); only live *state* gets its own tables:
   live_tracked_markets   -- open Polymarket markets we monitor + their assets
   live_positions         -- open/closed paper positions with full cost audit
   live_orders            -- every order sent to IB
+  live_broker_reconciliations -- broker-only inventory corrections (not strategy P&L)
   live_equity_snapshots  -- hourly NAV curve (equity vs passive benchmark)
 
 All access goes through one shared asyncpg pool.
@@ -85,6 +86,27 @@ CREATE TABLE IF NOT EXISTS {SCHEMA}.live_orders (
     position_id     BIGINT,
     note            TEXT
 );
+
+-- Inventory corrections are deliberately separate from live_orders.  Ghost or
+-- manual broker inventory did not consume strategy cash, so recording its
+-- liquidation as a strategy SELL would manufacture cash/P&L in the ledger.
+CREATE TABLE IF NOT EXISTS {SCHEMA}.live_broker_reconciliations (
+    reconciliation_id BIGSERIAL PRIMARY KEY,
+    ts              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    ib_order_id     INTEGER,
+    symbol          TEXT NOT NULL,
+    expected_qty    DOUBLE PRECISION NOT NULL,
+    ib_qty_before   DOUBLE PRECISION NOT NULL,
+    action          TEXT NOT NULL,
+    requested_qty   DOUBLE PRECISION NOT NULL,
+    filled_qty      DOUBLE PRECISION NOT NULL DEFAULT 0,
+    fill_price      DOUBLE PRECISION,
+    commission      DOUBLE PRECISION,
+    status          TEXT NOT NULL,
+    note            TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_live_broker_reconciliations_ts
+    ON {SCHEMA}.live_broker_reconciliations(ts);
 
 CREATE TABLE IF NOT EXISTS {SCHEMA}.live_equity_snapshots (
     ts                  TIMESTAMPTZ PRIMARY KEY,
@@ -451,6 +473,47 @@ class LiveStore:
                 ib_order_id, symbol, action, qty, kind, fill_price, status,
                 position_id, note, commission, reference_price,
                 requested_qty if requested_qty is not None else qty,
+            )
+
+    async def record_broker_reconciliation(
+        self,
+        *,
+        ib_order_id: int | None,
+        symbol: str,
+        expected_qty: float,
+        ib_qty_before: float,
+        action: str,
+        requested_qty: float,
+        filled_qty: float,
+        fill_price: float | None,
+        commission: float | None,
+        status: str,
+        note: str = "",
+    ) -> None:
+        """Audit a broker-only inventory correction outside strategy P&L.
+
+        These rows intentionally do not participate in ``reconciled_cash`` or
+        ``reconciled_position_qty``.  They remove broker inventory that the
+        strategy ledger never bought, without turning its sale proceeds into a
+        fictitious strategy gain.
+        """
+        async with self.pool.acquire() as conn:
+            await conn.execute(
+                f"""INSERT INTO {SCHEMA}.live_broker_reconciliations
+                    (ib_order_id, symbol, expected_qty, ib_qty_before, action,
+                     requested_qty, filled_qty, fill_price, commission, status, note)
+                    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)""",
+                ib_order_id,
+                symbol,
+                expected_qty,
+                ib_qty_before,
+                action,
+                requested_qty,
+                filled_qty,
+                fill_price,
+                commission,
+                status,
+                note,
             )
 
     async def reconciled_cash(self) -> float | None:

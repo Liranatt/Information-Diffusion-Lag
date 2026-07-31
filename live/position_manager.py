@@ -79,18 +79,30 @@ class PositionManager:
             "valid": valid,
         }
         snapshot["broker_drift"] = self._drift(snapshot)
-        snapshot["trade_safe"] = valid and (
-            self.cfg.dry_run or not snapshot["broker_drift"]
+        snapshot["blocked_symbols"] = sorted(
+            self.drift_symbols(snapshot["broker_drift"])
         )
+        # A discrepancy blocks only the affected symbol.  The control pipeline
+        # separately knows that every benchmark-funded leg also depends on the
+        # benchmark being clean.  Connectivity/balance validity remains the
+        # only global trading gate.
+        snapshot["trade_safe"] = valid
         return snapshot
 
     async def report_drift(self, snapshot: dict) -> list[str]:
         """Symbols where IB holdings disagree with DB open positions."""
         drift = list(snapshot.get("broker_drift") or self._drift(snapshot))
         if drift:
-            log.error("position drift detected; automated trading is blocked: %s",
-                      "; ".join(drift))
+            log.error(
+                "position drift detected; affected symbols are blocked: %s",
+                "; ".join(drift),
+            )
         return drift
+
+    @staticmethod
+    def drift_symbols(drift: list[str]) -> set[str]:
+        """Extract the exact affected symbols from human-readable drift rows."""
+        return {item.split(":", 1)[0] for item in drift if ":" in item}
 
     def _drift(self, snapshot: dict) -> list[str]:
         """Return broker-vs-ledger quantity differences, including benchmark."""

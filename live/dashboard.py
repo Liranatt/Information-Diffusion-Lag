@@ -442,7 +442,7 @@ async def gather_metrics() -> dict:
     spy_shares_to_sell = 0.0
     margin_status = "OK"
     if broker_drift:
-        margin_status = "Broker drift — trading blocked"
+        margin_status = "Broker drift — affected symbols blocked"
     elif deficit_to_cover > 0:
         if bench_shares > 0 and bench_price:
             spy_shares_to_sell = benchmark_sell_qty_for_cash_deficit(
@@ -519,7 +519,7 @@ async def gather_metrics() -> dict:
         warning_alerts.append({"title": "Trader heartbeat delayed", "detail": f"Last NAV snapshot was {round(trader_uptime / 60)} minutes ago."})
     if broker_drift:
         critical_alerts.append({
-            "title": "Broker holdings differ from ledger — trading blocked",
+            "title": "Broker holdings differ from ledger — affected symbols blocked",
             "detail": "; ".join(str(item) for item in broker_drift[:8]),
         })
     if deficit_to_cover > 0:
@@ -590,6 +590,11 @@ async def gather_metrics() -> dict:
             "kelly_enabled": bool(CONFIG.use_kelly),
             "fractional_benchmark": bool(CONFIG.fractional_benchmark),
             "broker_drift": broker_drift,
+            "blocked_symbols": sorted({
+                str(item).split(":", 1)[0]
+                for item in broker_drift
+                if ":" in str(item)
+            }),
             "ib_bench_shares": (drift_value or {}).get("ib_benchmark_shares"),
             "deficit_to_cover": round(deficit_to_cover, 2),
             "spy_shares_to_sell": round(spy_shares_to_sell, 4),
