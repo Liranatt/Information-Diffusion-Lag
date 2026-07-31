@@ -18,7 +18,6 @@ import base64
 import json
 import os
 import secrets
-import subprocess
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -38,20 +37,38 @@ from .utils import market_session_status
 _STATE: dict = {}
 BENCH = CONFIG.benchmark
 _BOOT_TIME = datetime.now(timezone.utc)
+
+
+def _read_git_identity(repo_dir: Path) -> tuple[str, str]:
+    """Read Git identity without requiring a git executable in the slim image."""
+    git_dir = repo_dir / ".git"
+    if git_dir.is_file():
+        marker = git_dir.read_text(encoding="utf-8").strip()
+        if marker.startswith("gitdir:"):
+            target = Path(marker.split(":", 1)[1].strip())
+            git_dir = target if target.is_absolute() else (repo_dir / target).resolve()
+    head = (git_dir / "HEAD").read_text(encoding="utf-8").strip()
+    if not head.startswith("ref:"):
+        return head[:7], "detached"
+    ref = head.split(":", 1)[1].strip()
+    ref_file = git_dir / ref
+    if ref_file.exists():
+        sha = ref_file.read_text(encoding="utf-8").strip()
+    else:
+        sha = ""
+        for line in (git_dir / "packed-refs").read_text(encoding="utf-8").splitlines():
+            if line and not line.startswith(("#", "^")):
+                candidate, candidate_ref = line.split(" ", 1)
+                if candidate_ref == ref:
+                    sha = candidate
+                    break
+    return (sha[:7] if sha else "unknown"), ref.rsplit("/", 1)[-1]
+
+
 try:
-    _REPO_DIR = str(Path(__file__).resolve().parents[1])
-    _GIT_BASE = ["git", "-c", f"safe.directory={_REPO_DIR}"]
-    _GIT_SHA = subprocess.check_output(
-        [*_GIT_BASE, "rev-parse", "--short", "HEAD"],
-        stderr=subprocess.DEVNULL, text=True,
-    ).strip()
-    _GIT_BRANCH = subprocess.check_output(
-        [*_GIT_BASE, "rev-parse", "--abbrev-ref", "HEAD"],
-        stderr=subprocess.DEVNULL, text=True,
-    ).strip()
+    _GIT_SHA, _GIT_BRANCH = _read_git_identity(Path(__file__).resolve().parents[1])
 except Exception:
-    _GIT_SHA = "unknown"
-    _GIT_BRANCH = "unknown"
+    _GIT_SHA, _GIT_BRANCH = "unknown", "unknown"
 
 
 
