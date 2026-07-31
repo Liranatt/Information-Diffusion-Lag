@@ -18,13 +18,21 @@ class _FakeOrderManager(OrderManager):
         self.executed.append(
             {"symbol": symbol, "action": action, "qty": qty, **kwargs}
         )
-        return float(kwargs.get("reference_price") or 100.0)
+        price = float(kwargs.get("reference_price") or 100.0)
+        self._apply_fill_projection(
+            symbol=symbol,
+            action=action,
+            qty=qty,
+            price=price,
+            commission=0.0,
+        )
+        return price
 
     async def confirm_broker_cash(self) -> bool:
         return True
 
 
-def test_restore_no_margin_is_warning_only_and_never_sells_spy():
+def test_restore_no_margin_sells_only_minimum_spy_needed():
     async def run() -> _FakeOrderManager:
         manager = _FakeOrderManager(
             LiveConfig(
@@ -34,18 +42,53 @@ def test_restore_no_margin_is_warning_only_and_never_sells_spy():
                 execution_buffer_pct=0.01,
             )
         )
-        restored = await manager.restore_no_margin_from_benchmark(
-            cash=-19_228.0,
-            benchmark_price=751.34,
-            benchmark_shares=78.0,
-            reason="pre-entry",
+        manager.seed_broker_state({
+            "cash": -3_918.53,
+            "ib_positions": {"SPY": 212.0},
+        })
+        sold = await manager.restore_no_margin_from_benchmark(
+            cash=-3_918.53,
+            benchmark_price=746.04,
+            benchmark_shares=212.0,
+            reason="post-exits",
         )
-        assert restored is False
-        return manager
+        return manager, sold
 
-    manager = asyncio.run(run())
+    manager, sold = asyncio.run(run())
 
-    assert manager.executed == []
+    assert sold == pytest.approx(6.0)
+    assert manager.executed == [{
+        "symbol": "SPY",
+        "action": "SELL",
+        "qty": 6.0,
+        "kind": "cash_rebalance",
+        "note": "cover negative IB cash (post-exits)",
+        "reference_price": 746.04,
+    }]
+    assert manager.projected_cash == pytest.approx(557.71)
+    assert manager.projected_positions["SPY"] == pytest.approx(206.0)
+
+
+def test_restore_no_margin_stops_tick_when_spy_cannot_cover_deficit():
+    async def run() -> _FakeOrderManager:
+        manager = _FakeOrderManager(LiveConfig(benchmark="SPY"))
+        manager.seed_broker_state({
+            "cash": -5_000.0,
+            "ib_positions": {"SPY": 1.0},
+        })
+        sold = await manager.restore_no_margin_from_benchmark(
+            cash=-5_000.0,
+            benchmark_price=100.0,
+            benchmark_shares=1.0,
+            reason="post-exits",
+        )
+        return manager, sold
+
+    manager, sold = asyncio.run(run())
+
+    assert sold is None
+    assert manager.execution_anomaly is True
+    assert manager.executed[0]["qty"] == pytest.approx(1.0)
 
 
 def test_entry_with_margin_sells_only_the_amount_needed_for_the_strategy_entry():

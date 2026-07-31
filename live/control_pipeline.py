@@ -186,10 +186,18 @@ class ControlPipeline:
                 await self.run_exits(engine, orders, positions, snapshot)
                 snapshot = await positions.snapshot()
                 if snapshot["valid"] and snapshot["trade_safe"] and not orders.execution_anomaly:
+                    snapshot = await self.enforce_no_margin(
+                        orders, positions, snapshot, reason="post-exits",
+                    )
+                if snapshot["valid"] and snapshot["trade_safe"] and not orders.execution_anomaly:
                     await self.run_entries(
                         engine, orders, positions, snapshot, markets, policy,
                     )
                     snapshot = await positions.snapshot()
+                if snapshot["valid"] and snapshot["trade_safe"] and not orders.execution_anomaly:
+                    snapshot = await self.enforce_no_margin(
+                        orders, positions, snapshot, reason="post-entries",
+                    )
                 if snapshot["valid"] and snapshot["trade_safe"] and not orders.execution_anomaly:
                     swept = await orders.sweep_idle_cash(
                         cash=snapshot["cash"],
@@ -200,6 +208,10 @@ class ControlPipeline:
                 if snapshot["valid"] and snapshot["trade_safe"] and not orders.execution_anomaly:
                     snapshot = await self.final_hour_cash_sweep(
                         orders, positions, snapshot,
+                    )
+                if snapshot["valid"] and snapshot["trade_safe"] and not orders.execution_anomaly:
+                    snapshot = await self.enforce_no_margin(
+                        orders, positions, snapshot, reason="end-of-tick",
                     )
 
             # 7. NAV snapshot (also overnight -- probs still move), but only with
@@ -369,10 +381,28 @@ class ControlPipeline:
                 )
     async def enforce_no_margin(self, orders: OrderManager, positions: PositionManager,
                                 snapshot: dict, *, reason: str) -> dict:
-        """Compatibility hook: margin is an IB fact and produces a warning only."""
+        """Restore the no-margin invariant from IB facts without a global block."""
         cash = float(snapshot.get("cash") or 0.0)
-        if cash < 0:
-            log.warning("IB margin cash %.2f at %s; no corrective order sent", cash, reason)
+        if orders.projected_cash is not None:
+            cash = float(orders.projected_cash)
+        if cash >= 0:
+            return snapshot
+        sold = await orders.restore_no_margin_from_benchmark(
+            cash=cash,
+            benchmark_price=snapshot.get("benchmark_price"),
+            benchmark_shares=float(snapshot.get("benchmark_shares") or 0.0),
+            reason=reason,
+        )
+        if sold is None:
+            return snapshot
+        if sold > 0:
+            log.warning(
+                "automatic cash rebalance sold %g %s at %s",
+                sold,
+                self.cfg.benchmark,
+                reason,
+            )
+            return await positions.snapshot()
         return snapshot
 
     async def final_hour_cash_sweep(self, orders: OrderManager, positions: PositionManager,

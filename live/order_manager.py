@@ -387,15 +387,72 @@ class OrderManager:
         benchmark_price: float | None,
         benchmark_shares: float,
         reason: str,
-    ) -> bool:
-        """Deprecated warning-only hook; never trades merely to reconcile cash."""
-        if cash >= 0:
-            return True
-        log.warning(
-            "IB reports negative cash %.2f before %s; warning only, no corrective order sent",
-            cash, reason,
+    ) -> float | None:
+        """Sell the minimum benchmark inventory needed to clear negative IB cash.
+
+        The starting cash and inventory come from IB.  Sizing then uses a
+        conservative sale price, while the tick-local balance is updated only
+        from IB's actual fills and commissions.  ``None`` means the invariant
+        could not be restored and the current tick must not place dependent
+        orders; there is no persistent/global strategy block.
+        """
+        cash = self._execution_cash(cash)
+        benchmark_shares = self._execution_position(
+            self.cfg.benchmark, benchmark_shares
         )
-        return False
+        if cash >= 0:
+            return 0.0
+        if not benchmark_price or benchmark_price <= 0 or benchmark_shares <= 0:
+            self.execution_anomaly = True
+            log.error(
+                "cannot cover IB cash %.2f at %s: benchmark price/shares unavailable",
+                cash,
+                reason,
+            )
+            return None
+
+        sold = 0.0
+        # Leave a small cash cushion for the actual commission and protect the
+        # quantity calculation against a worse market fill than the last mark.
+        cash_cushion = 5.0
+        conservative_price = benchmark_price * (1.0 - self.cfg.execution_buffer_pct)
+        for _attempt in range(3):
+            cash = self._execution_cash(cash)
+            benchmark_shares = self._execution_position(
+                self.cfg.benchmark, benchmark_shares
+            )
+            if cash >= 0:
+                return sold
+            required = -cash + cash_cushion
+            if self.cfg.fractional_benchmark:
+                qty = round(min(required / conservative_price, benchmark_shares), 4)
+            else:
+                qty = float(min(math.ceil(required / conservative_price), benchmark_shares))
+            if qty <= 0:
+                break
+            fill = await self._execute(
+                self.cfg.benchmark,
+                "SELL",
+                qty,
+                kind="cash_rebalance",
+                note=f"cover negative IB cash ({reason})",
+                reference_price=benchmark_price,
+            )
+            if fill is None:
+                return None
+            sold += qty
+            if not await self.confirm_broker_cash():
+                return None
+
+        if self._execution_cash(cash) < 0:
+            self.execution_anomaly = True
+            log.error(
+                "automatic cash rebalance exhausted available %s; projected cash %.2f",
+                self.cfg.benchmark,
+                self._execution_cash(cash),
+            )
+            return None
+        return sold
 
     async def enter_position(self, signal, *, desired_allocation: float,
                              benchmark_price: float, cash: float,

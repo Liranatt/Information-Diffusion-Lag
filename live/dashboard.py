@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import base64
 import json
+import math
 import os
 import secrets
 from contextlib import asynccontextmanager
@@ -569,6 +570,18 @@ async def gather_metrics() -> dict:
     margin_status = "OK"
     if deficit_to_cover > 0:
         margin_status = "Margin in use (IB)"
+        if bench_price and bench_price > 0 and bench_shares > 0:
+            conservative_price = bench_price * (1.0 - CONFIG.execution_buffer_pct)
+            if CONFIG.fractional_benchmark:
+                spy_shares_to_sell = round(
+                    min((deficit_to_cover + 5.0) / conservative_price, bench_shares),
+                    4,
+                )
+            else:
+                spy_shares_to_sell = float(min(
+                    math.ceil((deficit_to_cover + 5.0) / conservative_price),
+                    bench_shares,
+                ))
 
     max_pos_notional = max((p["qty"] * p["last"] for p in positions), default=0.0)
     max_pos_pct = round(max_pos_notional / total * 100.0, 1) if total else 0.0
@@ -655,8 +668,9 @@ async def gather_metrics() -> dict:
         warning_alerts.append({
             "title": margin_status,
             "detail": (
-                f"IB reports cash {cash:,.2f}. This is a warning only; no automatic "
-                f"{BENCH} corrective sale and no global strategy block."
+                f"IB reports cash {cash:,.2f}. During market hours the strategy "
+                f"automatically sells the minimum {BENCH} needed to clear it "
+                f"(currently about {spy_shares_to_sell:g} shares); no global block."
             ),
         })
     if performance_status != "verified":
@@ -763,7 +777,7 @@ async def gather_metrics() -> dict:
             "deficit_to_cover": round(deficit_to_cover, 2),
             "spy_shares_to_sell": round(spy_shares_to_sell, 4),
             "margin_status": margin_status,
-            "margin_action": "warning_only",
+            "margin_action": "automatic_minimum_spy_sale",
         },
         "risk": {
             "max_pos_pct": max_pos_pct,
