@@ -7,40 +7,6 @@ import pytest
 
 from live.config import LiveConfig
 from live.order_manager import OrderManager
-from live.utils import benchmark_sell_qty_for_cash_deficit, ib_cost
-
-
-def _modeled_sell_proceeds(qty: float, price: float) -> float:
-    return qty * price - ib_cost(qty, price, True)
-
-
-def test_whole_share_deficit_sell_covers_negative_cash():
-    price = 751.34
-    qty = benchmark_sell_qty_for_cash_deficit(
-        -19_228.0,
-        price,
-        78.0,
-        fractional=False,
-        min_notional=200.0,
-        buffer_pct=0.01,
-    )
-
-    assert qty == pytest.approx(26.0)
-    assert _modeled_sell_proceeds(qty, price * 0.99) >= 19_228.0
-
-
-def test_fractional_deficit_sell_uses_minimum_notional_but_caps_to_holdings():
-    price = 100.0
-    qty = benchmark_sell_qty_for_cash_deficit(
-        -20.0,
-        price,
-        1.5,
-        fractional=True,
-        min_notional=200.0,
-        buffer_pct=0.0,
-    )
-
-    assert qty == pytest.approx(1.5)
 
 
 class _FakeOrderManager(OrderManager):
@@ -55,7 +21,7 @@ class _FakeOrderManager(OrderManager):
         return float(kwargs.get("reference_price") or 100.0)
 
 
-def test_restore_no_margin_sells_spy_gap_before_new_buys():
+def test_restore_no_margin_is_warning_only_and_never_sells_spy():
     async def run() -> _FakeOrderManager:
         manager = _FakeOrderManager(
             LiveConfig(
@@ -71,34 +37,76 @@ def test_restore_no_margin_sells_spy_gap_before_new_buys():
             benchmark_shares=78.0,
             reason="pre-entry",
         )
-        assert restored is True
+        assert restored is False
         return manager
 
     manager = asyncio.run(run())
 
-    assert manager.executed == [
-        {
-            "symbol": "SPY",
-            "action": "SELL",
-            "qty": pytest.approx(26.0),
-            "kind": "margin_rebalance",
-            "note": "pre-entry: cover negative reconciled cash",
-            "reference_price": 751.34,
-        }
-    ]
+    assert manager.executed == []
 
 
-def test_entry_refuses_to_open_when_cash_is_still_negative():
-    async def run() -> dict | None:
+def test_entry_with_margin_sells_only_the_amount_needed_for_the_strategy_entry():
+    class Store:
+        def __init__(self):
+            self.position = None
+
+        async def latest_close(self, _symbol):
+            return 50.0
+
+        async def insert_position(self, position):
+            self.position = position
+            return 1
+
+    async def run():
+        store = Store()
         manager = _FakeOrderManager(LiveConfig())
-        signal = SimpleNamespace(symbol="UNTY")
-        return await manager.enter_position(
+        manager.store = store
+        signal = SimpleNamespace(
+            symbol="UNTY", market_id="m1", question="question",
+            is_earnings=False, prob=0.8, atr_pct=0.02,
+            t_e=SimpleNamespace(),
+        )
+        position = await manager.enter_position(
             signal,
             desired_allocation=1_000.0,
             benchmark_price=100.0,
-            cash=-1.0,
-            benchmark_shares=10.0,
+            cash=-100.0,
+            benchmark_shares=20.0,
             position_size_pct=0.1,
         )
+        return manager, position
 
-    assert asyncio.run(run()) is None
+    manager, position = asyncio.run(run())
+
+    assert position is not None
+    assert manager.executed[0]["symbol"] == "SPY"
+    assert manager.executed[0]["action"] == "SELL"
+    assert manager.executed[0]["qty"] == pytest.approx(11.0)
+    assert manager.executed[0]["kind"] == "rotation_fund"
+    assert manager.executed[1]["symbol"] == "UNTY"
+    assert manager.executed[1]["action"] == "BUY"
+
+
+def test_entry_does_not_sell_benchmark_when_inventory_cannot_cover_margin_and_buy():
+    class Store:
+        async def latest_close(self, _symbol):
+            return 50.0
+
+    async def run():
+        manager = _FakeOrderManager(LiveConfig())
+        manager.store = Store()
+        signal = SimpleNamespace(symbol="UNTY")
+        result = await manager.enter_position(
+            signal,
+            desired_allocation=1_000.0,
+            benchmark_price=100.0,
+            cash=-5_000.0,
+            benchmark_shares=40.0,
+            position_size_pct=0.1,
+        )
+        return manager, result
+
+    manager, result = asyncio.run(run())
+
+    assert result is None
+    assert manager.executed == []

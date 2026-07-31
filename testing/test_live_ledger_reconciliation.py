@@ -54,6 +54,8 @@ def test_snapshot_uses_ib_for_cash_nav_quantities_prices_and_costs():
     assert snapshot["broker_positions"]["UNTY"]["avg_cost"] == pytest.approx(18.0)
     assert snapshot["broker_position_count"] == 2
     assert snapshot["metadata_gaps"] == ["UNTY"]
+    assert snapshot["open_positions"][0]["qty"] == 2
+    assert snapshot["benchmark_source"] == "IB_portfolio"
     assert snapshot["source"] == "IB"
     assert snapshot["trade_safe"] is True
 
@@ -122,8 +124,8 @@ def test_cancel_race_records_final_fill_instead_of_stale_submitted_state():
 
     assert price == pytest.approx(100.0)
     assert manager.execution_anomaly is False
-    assert store.orders == [
-        {
+    assert len(store.orders) == 1
+    assert store.orders[0] == {
             "ib_order_id": 123,
             "symbol": "SPY",
             "action": "BUY",
@@ -136,8 +138,11 @@ def test_cancel_race_records_final_fill_instead_of_stale_submitted_state():
             "note": "",
             "commission": None,
             "reference_price": None,
+            "perm_id": None,
+            "order_ref": store.orders[0]["order_ref"],
+            "operation_id": store.orders[0]["operation_id"],
         }
-    ]
+    assert store.orders[0]["order_ref"].startswith("CEM:")
 
 
 def test_partial_fill_records_only_executed_quantity_and_stops_order_chain():
@@ -227,5 +232,11 @@ def test_execution_audit_copies_fill_price_quantity_and_commission_from_ib():
         "exchange": "NYSE",
         "commission": 0.35,
         "realized_pnl": 12.5,
+        "perm_id": None,
+        "account": None,
+        "order_ref": None,
+        "kind": None,
+        "position_id": None,
+        "operation_id": None,
     }]
     assert OrderManager._fill_commission(trade) == pytest.approx(0.35)

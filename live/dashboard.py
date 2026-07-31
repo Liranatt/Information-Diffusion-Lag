@@ -33,7 +33,7 @@ from database.backtesting.schema import SCHEMA
 from .config import CONFIG
 from .database import LiveStore
 from .policy import load_live_policy
-from .utils import market_session_status, benchmark_sell_qty_for_cash_deficit
+from .utils import market_session_status
 
 _STATE: dict = {}
 BENCH = CONFIG.benchmark
@@ -99,14 +99,23 @@ def _f(v):
     return float(v) if v is not None else None
 
 
-def _broker_series(eq_series, broker_latest):
-    """NAV curve with the latest point pinned to the current IB cache."""
+def _broker_series(eq_series, broker_latest, passive_latest=None, observed_at=None):
+    """IB-only NAV curve with a same-timestamp current broker point."""
     series = [
-        {"ts": _iso(r["ts"]), "equity": round(float(r["equity"]), 2),
+        {"ts": _iso(r["broker_observed_at"] or r["ts"]),
+         "equity": round(float(r["equity"]), 2),
          "passive": round(float(r["passive_equity"]), 2) if r["passive_equity"] is not None else None}
         for r in reversed(eq_series)]
-    if series and broker_latest is not None:
-        series[-1]["equity"] = round(broker_latest, 2)
+    if broker_latest is not None and observed_at is not None:
+        point = {
+            "ts": _iso(observed_at),
+            "equity": round(broker_latest, 2),
+            "passive": round(passive_latest, 2) if passive_latest is not None else None,
+        }
+        if series and series[-1]["ts"] == point["ts"]:
+            series[-1] = point
+        else:
+            series.append(point)
     return series
 
 
@@ -220,26 +229,29 @@ async def gather_metrics() -> dict:
     pool = store.pool
     async with pool.acquire() as conn:
         eq = await conn.fetchrow(
-            f"SELECT * FROM {SCHEMA}.live_equity_snapshots ORDER BY ts DESC LIMIT 1")
+            f"""SELECT * FROM {SCHEMA}.live_equity_snapshots
+                WHERE source='IB_same_snapshot_v2' ORDER BY ts DESC LIMIT 1""")
         eq_series = await conn.fetch(
             f"""SELECT ts, equity, cash, benchmark_shares, benchmark_price,
-                       open_positions, passive_equity, source
+                       open_positions, passive_equity, source, broker_observed_at
                 FROM {SCHEMA}.live_equity_snapshots
+                WHERE source='IB_same_snapshot_v2'
                 ORDER BY ts DESC LIMIT 600""")
         broker_account = await conn.fetchrow(
             f"SELECT * FROM {SCHEMA}.live_broker_account_cache WHERE cache_key='primary'")
         broker_pos = await conn.fetch(
             f"SELECT * FROM {SCHEMA}.live_broker_positions_cache ORDER BY symbol")
         perf = await conn.fetchrow(
-            f"""SELECT COUNT(*) FILTER (WHERE status='closed') AS closed,
-                       COUNT(*) FILTER (WHERE status='closed' AND pnl > 0) AS wins,
-                       COALESCE(SUM(pnl) FILTER (WHERE status='closed'), 0) AS realized_pnl
+            f"""SELECT COUNT(*) FILTER (WHERE status='closed' AND pnl_verified) AS closed,
+                       COUNT(*) FILTER (WHERE status='closed' AND pnl_verified AND pnl > 0) AS wins,
+                       COUNT(*) FILTER (WHERE status='closed' AND NOT pnl_verified) AS unverified,
+                       COALESCE(SUM(pnl) FILTER (WHERE status='closed' AND pnl_verified), 0) AS realized_pnl
                 FROM {SCHEMA}.live_positions""")
         best_trade = await conn.fetchrow(
-            f"SELECT symbol, pnl, pnl_pct FROM {SCHEMA}.live_positions WHERE status='closed' AND pnl IS NOT NULL ORDER BY pnl DESC LIMIT 1"
+            f"SELECT symbol, pnl, pnl_pct FROM {SCHEMA}.live_positions WHERE status='closed' AND pnl_verified AND pnl IS NOT NULL ORDER BY pnl DESC LIMIT 1"
         )
         worst_trade = await conn.fetchrow(
-            f"SELECT symbol, pnl, pnl_pct FROM {SCHEMA}.live_positions WHERE status='closed' AND pnl IS NOT NULL ORDER BY pnl ASC LIMIT 1"
+            f"SELECT symbol, pnl, pnl_pct FROM {SCHEMA}.live_positions WHERE status='closed' AND pnl_verified AND pnl IS NOT NULL ORDER BY pnl ASC LIMIT 1"
         )
         open_pos = await conn.fetch(
             f"SELECT * FROM {SCHEMA}.live_positions WHERE status='open' ORDER BY entry_ts")
@@ -256,8 +268,8 @@ async def gather_metrics() -> dict:
                        COALESCE(SUM(commission), 0) AS commission_total
                 FROM {SCHEMA}.live_execution_fills""")
         trades = await conn.fetch(
-            f"""SELECT symbol, pnl, pnl_pct, exit_reason, exit_ts
-                FROM {SCHEMA}.live_positions WHERE status='closed'
+            f"""SELECT symbol, pnl, pnl_pct, exit_reason, exit_ts, pnl_source, pnl_verified
+                FROM {SCHEMA}.live_positions WHERE status='closed' AND pnl_verified
                 ORDER BY exit_ts DESC LIMIT 20""")
         markets = await conn.fetchrow(
             f"""SELECT COUNT(*) AS tracked,
@@ -294,8 +306,8 @@ async def gather_metrics() -> dict:
     broker_map = {str(row["symbol"]): row for row in broker_pos}
 
     equity = _f(eq["equity"]) if eq else None
-    passive = _f(eq["passive_equity"]) if eq and eq["passive_equity"] is not None else None
-    excess = (equity - passive) if (equity is not None and passive is not None) else None
+    passive = None
+    excess = None
 
     # Load policy for stop-loss computation
     try:
@@ -466,6 +478,29 @@ async def gather_metrics() -> dict:
         if broker_account else (_f(eq["equity"]) if eq else None)
     )
     reported_equity = equity
+    baseline = await store.performance_baseline()
+    cumulative_cash_flows = 0.0
+    performance_status = "missing_baseline"
+    performance_detail = "No performance baseline is available yet."
+    same_snapshot = False
+    if broker_account and bench and broker_account["observed_at"] and bench["observed_at"]:
+        same_snapshot = abs(
+            (broker_account["observed_at"] - bench["observed_at"]).total_seconds()
+        ) <= 1.0
+    if baseline and broker_account and bench_price > 0 and same_snapshot:
+        passive, baseline, cumulative_cash_flows = await store.current_passive_equity(
+            benchmark_price=bench_price,
+            observed_at=broker_account["observed_at"],
+        )
+        performance_status = "verified" if baseline.get("verified") else "provisional_baseline"
+        performance_detail = (
+            "Account NAV and benchmark price are from the same IB snapshot."
+            if baseline.get("verified")
+            else "Current values are from IB; the preserved historical starting baseline is not independently verified."
+        )
+    elif baseline and not same_snapshot:
+        performance_status = "timestamp_mismatch"
+        performance_detail = "IB account NAV and benchmark mark are not from the same snapshot."
     excess = (equity - passive) if (equity is not None and passive is not None) else None
     glitch = None
     total = float(equity or (spy_value + trades_value + cash))
@@ -504,19 +539,14 @@ async def gather_metrics() -> dict:
     spy_shares_to_sell = 0.0
     margin_status = "OK"
     if deficit_to_cover > 0:
-        if bench_shares > 0 and bench_price:
-            spy_shares_to_sell = benchmark_sell_qty_for_cash_deficit(
-                cash=cash, benchmark_price=bench_price, benchmark_shares=bench_shares,
-                fractional=CONFIG.fractional_benchmark, min_notional=CONFIG.min_order_notional,
-                buffer_pct=CONFIG.execution_buffer_pct,
-            )
-            margin_status = "Needs SPY rebalance"
-        else:
-            margin_status = "No SPY inventory"
+        margin_status = "Margin in use (IB)"
 
     max_pos_notional = max((p["qty"] * p["last"] for p in positions), default=0.0)
     max_pos_pct = round(max_pos_notional / total * 100.0, 1) if total else 0.0
-    broker_series_data = _broker_series(eq_series, equity)
+    broker_observed_at = broker_account["observed_at"] if broker_account else None
+    broker_series_data = _broker_series(
+        eq_series, equity, passive, broker_observed_at,
+    )
     equity_curve = [r["equity"] for r in broker_series_data if r["equity"] is not None]
     peak = max(equity_curve, default=total) if equity_curve else total
     dd_pct = round((total / peak - 1.0) * 100.0, 2) if peak > 0 and total < peak else 0.0
@@ -531,7 +561,8 @@ async def gather_metrics() -> dict:
     realized_contrib = round(float(perf["realized_pnl"] or 0.0) / total * 100.0, 2) if total else 0.0
     cash_drag = round(active_return_pct - (open_contrib + realized_contrib), 2) if active_return_pct is not None else 0.0
 
-    trader_uptime = (now_ts - eq["ts"]).total_seconds() if eq and eq.get("ts") else None
+    trader_heartbeat = (eq["broker_observed_at"] or eq["ts"]) if eq else None
+    trader_uptime = (now_ts - trader_heartbeat).total_seconds() if trader_heartbeat else None
     dash_uptime = (now_ts - _BOOT_TIME).total_seconds()
 
     eq_chrono = list(reversed(eq_series))
@@ -592,8 +623,18 @@ async def gather_metrics() -> dict:
                 "detail": f"Last successful IB snapshot was {round(broker_age / 60)} minutes ago.",
             })
     if deficit_to_cover > 0:
-        level = critical_alerts if margin_status == "No SPY inventory" else warning_alerts
-        level.append({"title": margin_status, "detail": f"Cash deficit {round(deficit_to_cover, 2):,.2f}; estimated {BENCH} sale {round(spy_shares_to_sell, 4):,.4f} shares."})
+        warning_alerts.append({
+            "title": margin_status,
+            "detail": (
+                f"IB reports cash {cash:,.2f}. This is a warning only; no automatic "
+                f"{BENCH} corrective sale and no global strategy block."
+            ),
+        })
+    if performance_status != "verified":
+        warning_alerts.append({
+            "title": "Performance baseline is provisional",
+            "detail": performance_detail,
+        })
     failed_recent = len(failed)
     if failed_recent:
         warning_alerts.append({"title": "Recent order issues", "detail": f"{failed_recent} of the last {len(orders)} orders are not filled/dry-run."})
@@ -612,7 +653,7 @@ async def gather_metrics() -> dict:
     next_prune = None
     if runtime_map.get("prune") and runtime_map["prune"]["ts"]:
         next_prune = runtime_map["prune"]["ts"] + timedelta(seconds=CONFIG.tick_seconds * CONFIG.prune_every_ticks)
-    next_tick = eq["ts"] + timedelta(seconds=CONFIG.tick_seconds) if eq and eq.get("ts") else None
+    next_tick = trader_heartbeat + timedelta(seconds=CONFIG.tick_seconds) if trader_heartbeat else None
 
     # Honest live statistics: Sharpe + drawdown from the reconciled equity curve,
     # significance from realized-trade returns (usually underpowered early on --
@@ -635,6 +676,9 @@ async def gather_metrics() -> dict:
             "reported_equity": round(reported_equity, 2) if reported_equity is not None else None,
             "glitch": round(glitch, 2) if glitch else None,
             "source": "IB",
+            "passive_equity": round(passive, 2) if passive is not None else None,
+            "performance_status": performance_status,
+            "performance_detail": performance_detail,
             "as_of": _iso(broker_account["observed_at"]) if broker_account else (_iso(eq["ts"]) if eq else None),
         },
         "deltas": deltas,
@@ -654,7 +698,7 @@ async def gather_metrics() -> dict:
             "bench_price": round(bench_price, 2) if bench_price else None,
         },
         "safety": {
-            "investable": round(max(0.0, cash) + max(0.0, spy_value), 2),
+            "investable": round(max(0.0, cash + max(0.0, spy_value)), 2),
             "min_order_notional": round(float(CONFIG.min_order_notional), 2),
             "execution_buffer_pct": round(float(CONFIG.execution_buffer_pct) * 100.0, 2),
             "kelly_enabled": bool(CONFIG.use_kelly),
@@ -667,6 +711,7 @@ async def gather_metrics() -> dict:
             "deficit_to_cover": round(deficit_to_cover, 2),
             "spy_shares_to_sell": round(spy_shares_to_sell, 4),
             "margin_status": margin_status,
+            "margin_action": "warning_only",
         },
         "risk": {
             "max_pos_pct": max_pos_pct,
@@ -699,9 +744,18 @@ async def gather_metrics() -> dict:
         "performance": {
             "realized_pnl": round(float(perf["realized_pnl"] or 0.0), 2),
             "closed_trades": closed, "wins": wins,
+            "unverified_trades": int(perf["unverified"] or 0),
             "best": dict(best_trade) if best_trade else None,
             "worst": dict(worst_trade) if worst_trade else None,
             "win_rate": round(wins / closed * 100.0, 1) if closed else None,
+            "baseline": {
+                "start_ts": _iso(baseline["start_ts"]) if baseline else None,
+                "start_nav": round(float(baseline["start_nav"]), 2) if baseline else None,
+                "benchmark_start_price": round(float(baseline["benchmark_start_price"]), 4) if baseline else None,
+                "source": baseline["source"] if baseline else None,
+                "verified": bool(baseline["verified"]) if baseline else False,
+                "cumulative_cash_flows": round(cumulative_cash_flows, 2),
+            },
         },
         "exec": {
             "filled": filled, "recent": len(orders), "failed": failed,
@@ -713,7 +767,7 @@ async def gather_metrics() -> dict:
             "ib_execution_fills": execution_fill_count,
             "execution_source": "IB",
         },
-        "equity_series": _broker_series(eq_series, equity),
+        "equity_series": broker_series_data,
         "open_positions": positions,
         "recent_orders": [
             {"ts": _iso(r["ts"]), "symbol": r["symbol"], "action": r["action"],
@@ -729,7 +783,8 @@ async def gather_metrics() -> dict:
             {"symbol": r["symbol"],
              "pnl": round(float(r["pnl"]), 2) if r["pnl"] is not None else None,
              "pnl_pct": round(float(r["pnl_pct"]), 2) if r["pnl_pct"] is not None else None,
-             "exit_reason": r["exit_reason"], "exit_ts": _iso(r["exit_ts"])} for r in trades],
+             "exit_reason": r["exit_reason"], "exit_ts": _iso(r["exit_ts"]),
+             "pnl_source": r["pnl_source"], "pnl_verified": bool(r["pnl_verified"])} for r in trades],
         "markets": await _build_markets_payload(store, markets, upcoming),
         "system": {
             "db_size_bytes": int(sys_latest["db_size_bytes"]) if sys_latest and sys_latest["db_size_bytes"] else None,

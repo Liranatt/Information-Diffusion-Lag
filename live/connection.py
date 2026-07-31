@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import math
 
 try:
     from ib_async import IB, Stock, util  # maintained fork
@@ -124,11 +125,64 @@ class IBConnection:
             "BuyingPower",
             "AvailableFunds",
             "GrossPositionValue",
+            "SettledCash",
+            "AccruedCash",
+            "InitMarginReq",
+            "MaintMarginReq",
+            "ExcessLiquidity",
+            "FullInitMarginReq",
+            "FullMaintMarginReq",
+            "LookAheadExcessLiquidity",
+            "Leverage",
         }
         for row in rows:
-            if row.currency == "USD" and row.tag in wanted:
+            if row.currency in {"USD", "BASE", ""} and row.tag in wanted:
                 res[row.tag] = float(row.value)
         return res if res else None
+
+    async def execution_snapshot(self) -> list[dict]:
+        """Executions currently retrievable from IB, including actual fees.
+
+        IB controls the execution-retention window.  Repeated calls are safe
+        because ``exec_id`` is immutable and the database upserts only the
+        late-arriving CommissionReport fields.
+        """
+        ib = await self.ensure_connected()
+        fills = await asyncio.wait_for(
+            ib.reqExecutionsAsync(),
+            timeout=self.cfg.ib_request_timeout_seconds,
+        )
+        rows: list[dict] = []
+        for fill in fills or []:
+            execution = getattr(fill, "execution", None)
+            contract = getattr(fill, "contract", None)
+            if execution is None or contract is None or not execution.execId:
+                continue
+            if self.cfg.account and execution.acctNumber != self.cfg.account:
+                continue
+            report = getattr(fill, "commissionReport", None)
+            commission = _ib_number(getattr(report, "commission", None)) if report else None
+            realized = _ib_number(getattr(report, "realizedPNL", None)) if report else None
+            side = str(getattr(execution, "side", "")).upper()
+            action = "BUY" if side in {"BOT", "BUY"} else "SELL"
+            rows.append(
+                {
+                    "exec_id": execution.execId,
+                    "ib_order_id": int(execution.orderId or 0) or None,
+                    "symbol": contract.symbol,
+                    "action": action,
+                    "exec_ts": getattr(execution, "time", None),
+                    "shares": float(execution.shares or 0.0),
+                    "price": float(execution.price or 0.0),
+                    "exchange": getattr(execution, "exchange", None),
+                    "commission": commission,
+                    "realized_pnl": realized,
+                    "perm_id": int(execution.permId or 0) or None,
+                    "account": getattr(execution, "acctNumber", None),
+                    "order_ref": getattr(execution, "orderRef", None),
+                }
+            )
+        return rows
 
     async def portfolio_snapshot(self) -> dict[str, dict[str, float]]:
         """Current IB portfolio facts keyed by symbol.
@@ -205,3 +259,12 @@ def _mask_account(account: str) -> str:
     if len(account) <= 4:
         return "*" * len(account)
     return f"{account[:2]}...{account[-4:]}"
+
+
+def _ib_number(value) -> float | None:
+    """Normalize IB's unset/NaN numeric sentinels to an honest missing value."""
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return None
+    return number if math.isfinite(number) and abs(number) < 1e100 else None

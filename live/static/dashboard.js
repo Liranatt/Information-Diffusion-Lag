@@ -367,10 +367,15 @@ async function refresh(){
   renderAlerts($("#alerts"), d.alerts, false);
   renderAlerts($("#palerts"), d.alerts, false);
   const openPnl=(d.open_positions||[]).reduce((s,x)=>s+(x.unrealized||0),0);
+  const excessBasis = p.performance_status === "verified"
+    ? "IB snapshot + verified baseline"
+    : p.performance_status === "provisional_baseline"
+      ? "IB snapshot + provisional baseline"
+      : "Performance unavailable";
   $("#commandStrip").innerHTML =
     healthCard(d) +
     kpi("Equity", usd0(p.equity), `Last tick ${deltaHtml(de.equity,true)}`, d.experiment, "brand") +
-    kpi("Excess vs passive", susd(p.excess), `Last tick ${deltaHtml(de.excess,true)}`, p.excess_pct==null ? null : pct(p.excess_pct,2), cl(p.excess) || "neu") +
+    kpi("Excess vs passive", susd(p.excess), excessBasis, p.excess_pct==null ? null : pct(p.excess_pct,2), cl(p.excess) || "neu") +
     kpi("Open P&L", susd(openPnl), `Positions ${deltaHtml(de.open_positions,false)}`, `${p.open_positions} open`, "neu") +
     kpi("Cash / margin", usd0(a.cash), `Last tick ${deltaHtml(de.cash,true)}`, g.margin_status, g.margin_status === "OK" ? "up" : "warn");
 

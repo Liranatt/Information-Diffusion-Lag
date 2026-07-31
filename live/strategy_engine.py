@@ -251,6 +251,19 @@ class StrategyEngine:
             )
             if trade is None:
                 continue
+            peak_ret = float(trade.get("peak_pct") or 0.0) / 100.0
+            if peak_ret > float(pos.get("peak_ret") or 0.0):
+                await store.update_peak(pos["position_id"], peak_ret)
+
+            # The shared backtest kernel treats the final bar in its input as
+            # the resolution bar.  In live mode the input is intentionally
+            # truncated at "now", so that convention must not turn every
+            # current last bar into a fake early resolution exit.
+            if (
+                trade["exit_reason"] == "resolution-1d"
+                and now < pos["t_e"] - RESOLUTION_CUT
+            ):
+                continue
             # A terminal exit reason means the trade should already be closed given
             # today's data; end_of_window means it is still open.
             if trade["exit_reason"] == "end_of_window":

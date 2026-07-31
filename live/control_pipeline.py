@@ -151,18 +151,20 @@ class ControlPipeline:
                         "tick (gateway/account farm warming up)")
         else:
             await self.store.cache_broker_state(
-                observed_at=now,
+                observed_at=snapshot["observed_at"],
                 account_summary=snapshot["account_summary"],
                 positions=snapshot["broker_positions"],
             )
             await self.store.mark_runtime_event(
-                "broker_sync", now,
+                "broker_sync", snapshot["observed_at"],
                 {
                     "source": "IB",
                     "position_count": len(snapshot["broker_positions"]),
                     "metadata_gaps": snapshot.get("metadata_gaps", []),
                 },
             )
+            await self.sync_ib_executions()
+            await self.record_reconciliation(snapshot, snapshot["observed_at"])
             if snapshot.get("metadata_gaps"):
                 log.warning(
                     "IB positions without strategy metadata (still authoritative): %s",
@@ -171,22 +173,19 @@ class ControlPipeline:
 
             # 4-6. Trade only when the equity market can fill us.
             if market_open and snapshot["trade_safe"]:
-                snapshot = await self.enforce_no_margin(
-                    orders, positions, snapshot, reason="pre-exit",
-                )
+                if float(snapshot.get("cash") or 0.0) < 0:
+                    log.warning(
+                        "IB reports margin cash %.2f; this is informational and "
+                        "does not globally block deterministic strategy orders",
+                        float(snapshot.get("cash") or 0.0),
+                    )
                 await self.run_exits(engine, orders, snapshot)
                 snapshot = await positions.snapshot()
                 if snapshot["valid"] and snapshot["trade_safe"] and not orders.execution_anomaly:
-                    snapshot = await self.enforce_no_margin(
-                        orders, positions, snapshot, reason="pre-entry",
+                    await self.run_entries(
+                        engine, orders, positions, snapshot, markets, policy,
                     )
-                if snapshot["valid"] and snapshot["trade_safe"] and not orders.execution_anomaly:
-                    await self.run_entries(engine, orders, snapshot, markets, policy)
                     snapshot = await positions.snapshot()
-                if snapshot["valid"] and snapshot["trade_safe"] and not orders.execution_anomaly:
-                    snapshot = await self.enforce_no_margin(
-                        orders, positions, snapshot, reason="pre-sweep",
-                    )
                 if snapshot["valid"] and snapshot["trade_safe"] and not orders.execution_anomaly:
                     swept = await orders.sweep_idle_cash(
                         cash=snapshot["cash"],
@@ -194,10 +193,6 @@ class ControlPipeline:
                     )
                     if swept:
                         snapshot = await positions.snapshot()
-                        if snapshot["valid"] and snapshot["trade_safe"] and not orders.execution_anomaly:
-                            snapshot = await self.enforce_no_margin(
-                                orders, positions, snapshot, reason="post-sweep",
-                            )
                 if snapshot["valid"] and snapshot["trade_safe"] and not orders.execution_anomaly:
                     snapshot = await self.final_hour_cash_sweep(
                         orders, positions, snapshot,
@@ -206,7 +201,7 @@ class ControlPipeline:
             # 7. NAV snapshot (also overnight -- probs still move), but only with
             # a real balance so the curve is never polluted by zero rows.
             if snapshot["valid"]:
-                observed_at = datetime.now(timezone.utc)
+                observed_at = snapshot["observed_at"]
                 await self.store.cache_broker_state(
                     observed_at=observed_at,
                     account_summary=snapshot["account_summary"],
@@ -221,6 +216,8 @@ class ControlPipeline:
                         "execution_anomaly": orders.execution_anomaly,
                     },
                 )
+                await self.sync_ib_executions()
+                await self.record_reconciliation(snapshot, observed_at)
                 await self.snapshot_equity(snapshot)
 
         # 7b. System telemetry (DB size + disk) so space is observable.
@@ -292,7 +289,8 @@ class ControlPipeline:
                 break
 
     async def run_entries(self, engine: StrategyEngine, orders: OrderManager,
-                          snapshot: dict, markets: list[dict], policy: dict) -> None:
+                          positions: PositionManager, snapshot: dict,
+                          markets: list[dict], policy: dict) -> None:
         assert self.store is not None
         open_positions = snapshot["open_positions"]
         max_concurrent = int(policy["max_concurrent"])
@@ -323,17 +321,13 @@ class ControlPipeline:
         if not benchmark_price:
             log.warning("no benchmark price -- skipping entries this tick")
             return
-        if cash < 0:
-            log.error(
-                "negative reconciled cash %.2f remains after margin rebalance -- "
-                "skipping entries",
-                cash,
-            )
-            return
-
         # Hard no-overspend guard: we only ever deploy capital we can fund from
-        # cash + liquidatable benchmark. Never buy on margin/borrowed money.
-        investable = max(0.0, cash) + max(0.0, benchmark_shares) * benchmark_price
+        # current IB cash + liquidatable benchmark. Existing margin reduces this
+        # amount, but does not become an unrelated global trading kill-switch.
+        investable = max(
+            0.0,
+            float(cash) + max(0.0, benchmark_shares) * benchmark_price,
+        )
 
         for signal in signals[:slots]:
             if investable < self.cfg.min_order_notional:
@@ -353,31 +347,22 @@ class ControlPipeline:
                 break
             if position:
                 open_symbols.add(signal.symbol)
-                cash = max(0.0, cash - desired)
-                benchmark_shares = max(0.0, benchmark_shares - position.get("benchmark_sell_qty", 0))
-                investable = max(0.0, investable - desired)
-
+                latest = await positions.snapshot()
+                if not latest.get("valid"):
+                    return
+                cash = float(latest["cash"])
+                benchmark_shares = float(latest["benchmark_shares"])
+                benchmark_price = float(latest["benchmark_price"] or benchmark_price)
+                investable = max(
+                    0.0,
+                    cash + max(0.0, benchmark_shares) * benchmark_price,
+                )
     async def enforce_no_margin(self, orders: OrderManager, positions: PositionManager,
                                 snapshot: dict, *, reason: str) -> dict:
-        """Bring negative ledger cash back to zero by selling benchmark inventory."""
+        """Compatibility hook: margin is an IB fact and produces a warning only."""
         cash = float(snapshot.get("cash") or 0.0)
-        if cash >= 0:
-            return snapshot
-        restored = await orders.restore_no_margin_from_benchmark(
-            cash=cash,
-            benchmark_price=snapshot.get("benchmark_price"),
-            benchmark_shares=float(snapshot.get("benchmark_shares") or 0.0),
-            reason=reason,
-        )
-        if restored:
-            snapshot = await positions.snapshot()
-
-        if snapshot.get("valid") and float(snapshot.get("cash") or 0.0) < 0:
-            log.error(
-                "reconciled cash remains negative after %s rebalance: %.2f; "
-                "new buys are disabled until cash is non-negative",
-                reason, float(snapshot.get("cash") or 0.0),
-            )
+        if cash < 0:
+            log.warning("IB margin cash %.2f at %s; no corrective order sent", cash, reason)
         return snapshot
 
     async def final_hour_cash_sweep(self, orders: OrderManager, positions: PositionManager,
@@ -393,10 +378,11 @@ class ControlPipeline:
             benchmark_price = snapshot.get("benchmark_price")
             seconds_left = seconds_to_market_close()
             if cash < 0:
-                snapshot = await self.enforce_no_margin(
-                    orders, positions, snapshot, reason="final-hour",
+                log.warning(
+                    "final-hour IB cash is %.2f; skipping only the optional cash sweep",
+                    cash,
                 )
-                cash = float(snapshot.get("cash") or 0.0)
+                return snapshot
             if (
                 seconds_left is None
                 or cash < self.cfg.min_order_notional
@@ -426,24 +412,83 @@ class ControlPipeline:
                 return snapshot
             await asyncio.sleep(sleep_for)
 
+    async def sync_ib_executions(self) -> None:
+        """Copy IB's retrievable executions/commissions into the audit cache."""
+        assert self.store is not None
+        try:
+            fills = await self.ib_conn.execution_snapshot()
+            await self.store.record_execution_fills(fills)
+            if fills:
+                log.info("synced %d IB executions", len(fills))
+        except Exception as error:  # noqa: BLE001 - audit sync must not trade
+            log.warning("IB execution sync failed: %s", error)
+
+    async def record_reconciliation(self, snapshot: dict, observed_at: datetime) -> None:
+        """Audit DB metadata gaps against IB without blocking or trading."""
+        assert self.store is not None
+        db_qty = {
+            str(pos["symbol"]): float(pos["qty"])
+            for pos in snapshot.get("db_open_positions", [])
+        }
+        ib_qty = {
+            str(symbol): float(qty)
+            for symbol, qty in snapshot.get("ib_positions", {}).items()
+            if symbol != self.cfg.benchmark
+        }
+        for symbol in sorted(set(db_qty) | set(ib_qty)):
+            broker_value = ib_qty.get(symbol, 0.0)
+            database_value = db_qty.get(symbol, 0.0)
+            if abs(broker_value - database_value) <= 1e-6:
+                continue
+            await self.store.record_reconciliation_event(
+                observed_at=observed_at,
+                severity="warning",
+                event_type="position_quantity_gap",
+                symbol=symbol,
+                broker_value=broker_value,
+                database_value=database_value,
+                details={
+                    "action": "warning_only",
+                    "execution_quantity_source": "IB",
+                    "strategy_metadata_source": "DB",
+                },
+            )
+
     async def snapshot_equity(self, snapshot: dict) -> None:
         assert self.store is not None
         passive = None
-        async with self.store.pool.acquire() as conn:
-            first = await conn.fetchrow(
-                f"""SELECT equity, benchmark_price FROM {SCHEMA}.live_equity_snapshots
-                    WHERE benchmark_price IS NOT NULL ORDER BY ts LIMIT 1"""
+        baseline = None
+        cumulative_flows = 0.0
+        observed_at = snapshot.get("observed_at") or datetime.now(timezone.utc)
+        benchmark_price = snapshot.get("benchmark_price")
+        if benchmark_price and str(snapshot.get("benchmark_source") or "").startswith("IB_"):
+            baseline = await self.store.bootstrap_performance_baseline(
+                benchmark=self.cfg.benchmark,
+                current_nav=float(snapshot["equity"]),
+                current_benchmark_price=float(benchmark_price),
+                observed_at=observed_at,
             )
-        if first and first["benchmark_price"] and snapshot["benchmark_price"]:
-            passive = float(first["equity"]) / float(first["benchmark_price"]) \
-                * float(snapshot["benchmark_price"])
+            passive, baseline, cumulative_flows = await self.store.current_passive_equity(
+                benchmark_price=float(benchmark_price),
+                observed_at=observed_at,
+            )
+        else:
+            log.warning(
+                "passive benchmark omitted: no authoritative same-snapshot IB %s price",
+                self.cfg.benchmark,
+            )
         await self.store.snapshot_equity(
             equity=snapshot["equity"], cash=snapshot["cash"],
             benchmark_shares=snapshot["benchmark_shares"],
-            benchmark_price=snapshot["benchmark_price"],
+            benchmark_price=benchmark_price,
             open_positions=int(snapshot.get("broker_position_count", 0)),
             passive_equity=passive,
-            source=str(snapshot.get("source") or "IB"),
+            source="IB_same_snapshot_v2",
+            observed_at=observed_at,
+            benchmark_observed_at=observed_at,
+            baseline_key=baseline.get("baseline_key") if baseline else None,
+            baseline_verified=bool(baseline.get("verified")) if baseline else None,
+            cumulative_cash_flows=cumulative_flows,
         )
         log.info("equity=%.2f cash=%.2f bench=%.4f open=%d",
                  snapshot["equity"], snapshot["cash"],

@@ -1,9 +1,13 @@
-"""Shared helpers: the backtest-identical cost model, market hours, retries."""
+"""Shared helpers for live execution, market hours, and retries.
+
+Live P&L always comes from IB fills and CommissionReports.  The small cost
+estimate below is used only *before* an order to keep an affordability limit
+inside available cash; it must never be booked as realised slippage or P&L.
+"""
 from __future__ import annotations
 
 import asyncio
 import logging
-import math
 from datetime import datetime, time, timezone
 from zoneinfo import ZoneInfo
 
@@ -13,64 +17,21 @@ NY = ZoneInfo("America/New_York")
 
 
 def ib_cost(shares: float, price: float, is_sell: bool) -> float:
-    """IB-style commission + SEC fee on sales + fixed 5 bp slippage.
+    """Conservative pre-trade estimate of commission and regulatory sell fee.
 
-    Identical to the backtest cost model (optimize_cem.ib_cost) so live paper
-    fills can be compared against modeled costs.
+    Slippage is deliberately absent: after execution it is observed directly
+    as ``fill_price - reference_price`` and is not charged a second time.
     """
     if shares <= 0 or price <= 0:
         return 0.0
     trade_value = shares * price
     commission = max(0.35, min(shares * 0.0035, trade_value * 0.01))
     sec = trade_value * 0.0000278 if is_sell else 0.0
-    return commission + sec + trade_value * 0.0005
-
-
-def benchmark_sell_qty_for_cash_deficit(
-    cash: float,
-    benchmark_price: float | None,
-    benchmark_shares: float,
-    *,
-    fractional: bool,
-    min_notional: float = 0.0,
-    buffer_pct: float = 0.0,
-) -> float:
-    """Shares of benchmark to sell so modeled proceeds cover negative cash."""
-    if cash >= 0 or not benchmark_price or benchmark_price <= 0 or benchmark_shares <= 0:
-        return 0.0
-
-    sell_price = benchmark_price * max(0.0, 1.0 - buffer_pct)
-    if sell_price <= 0:
-        return 0.0
-
-    deficit = -cash
-    target_notional = max(deficit, min_notional)
-    if fractional:
-        qty = min(benchmark_shares, target_notional / sell_price)
-        for _ in range(8):
-            proceeds = qty * sell_price - ib_cost(qty, sell_price, True)
-            if proceeds >= deficit or qty >= benchmark_shares:
-                break
-            qty = min(
-                benchmark_shares,
-                qty + (deficit - proceeds) / sell_price + 0.0001,
-            )
-        return min(math.ceil(qty * 10_000) / 10_000, benchmark_shares)
-
-    whole_shares = int(math.floor(benchmark_shares))
-    if whole_shares <= 0:
-        return 0.0
-    qty = min(int(math.ceil(target_notional / sell_price)), whole_shares)
-    while qty < whole_shares:
-        proceeds = qty * sell_price - ib_cost(qty, sell_price, True)
-        if proceeds >= deficit:
-            break
-        qty += 1
-    return float(qty)
+    return commission + sec
 
 
 def affordable_buy_qty(cash_available: float, price: float) -> int:
-    """Largest whole-share count whose price plus modeled cost fits the cash."""
+    """Largest whole-share count whose price plus estimated fees fits cash."""
     if cash_available <= 0 or price <= 0:
         return 0
     qty = int(cash_available / price)
@@ -80,7 +41,7 @@ def affordable_buy_qty(cash_available: float, price: float) -> int:
 
 
 def affordable_buy_qty_frac(cash_available: float, price: float) -> float:
-    """Fractional-share buy size fitting the cash after modeled costs.
+    """Fractional-share buy size fitting the cash after estimated fees.
 
     Used for benchmark legs (SPY/QQQ are fraction-eligible at IB; the account
     needs fractional-share trading permission enabled).

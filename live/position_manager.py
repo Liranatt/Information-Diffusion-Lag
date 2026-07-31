@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+from datetime import datetime, timezone
 
 from .config import LiveConfig
 from .connection import IBConnection
@@ -53,10 +54,16 @@ class PositionManager:
         benchmark_shares = float(ib_positions.get(self.cfg.benchmark, 0.0))
         benchmark_row = broker_positions.get(self.cfg.benchmark, {})
         benchmark_price = float(benchmark_row.get("market_price") or 0.0) or None
+        benchmark_source = "IB_portfolio" if benchmark_price is not None else None
         if benchmark_price is None and not self.cfg.dry_run and valid:
             benchmark_price = await self.ib_conn.last_price(self.cfg.benchmark)
+            if benchmark_price is not None:
+                benchmark_source = "IB_quote"
         if benchmark_price is None:
             benchmark_price = await self.store.latest_close(self.cfg.benchmark)
+            if benchmark_price is not None:
+                benchmark_source = "DB_close_fallback"
+        observed_at = datetime.now(timezone.utc)
 
         open_value = sum(
             float(row.get("market_value") or 0.0)
@@ -75,6 +82,18 @@ class PositionManager:
             equity = float(net_liquidation or 0.0)
 
         strategy_symbols = {str(pos["symbol"]) for pos in open_db}
+        actionable_positions = []
+        for pos in open_db:
+            broker_qty = float(ib_positions.get(str(pos["symbol"]), 0.0))
+            if broker_qty <= 1e-6:
+                continue
+            item = dict(pos)
+            # The metadata comes from Postgres, but executable inventory comes
+            # from IB.  If the cached quantity drifted, an exit acts on what the
+            # account actually owns rather than on the stale ledger number.
+            item["db_qty"] = item["qty"]
+            item["qty"] = int(broker_qty)
+            actionable_positions.append(item)
         metadata_gaps = sorted(
             symbol for symbol, qty in ib_positions.items()
             if symbol != self.cfg.benchmark
@@ -87,7 +106,10 @@ class PositionManager:
             "benchmark_shares": benchmark_shares,
             "ib_benchmark_shares": benchmark_shares,
             "benchmark_price": benchmark_price,
-            "open_positions": open_db,
+            "benchmark_source": benchmark_source,
+            "observed_at": observed_at,
+            "open_positions": actionable_positions,
+            "db_open_positions": open_db,
             "open_value": open_value,
             "equity": equity,
             "ib_positions": ib_positions,
