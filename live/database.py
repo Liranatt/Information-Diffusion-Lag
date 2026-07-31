@@ -980,12 +980,93 @@ class LiveStore:
         """
         async with self.pool.acquire() as conn:
             async with conn.transaction():
+                first_ib = await conn.fetchrow(
+                    f"""SELECT broker_observed_at AS start_ts, equity AS start_nav,
+                               benchmark_price AS start_price
+                        FROM {SCHEMA}.live_equity_snapshots
+                        WHERE source='IB_same_snapshot_v2'
+                          AND broker_observed_at IS NOT NULL
+                          AND benchmark_observed_at IS NOT NULL
+                          AND ABS(EXTRACT(EPOCH FROM
+                              (broker_observed_at - benchmark_observed_at))) <= 1
+                          AND equity > 0 AND benchmark_price > 0
+                        ORDER BY broker_observed_at LIMIT 1"""
+                )
+
+                async def _set_verified_baseline(
+                    start_ts: datetime, start_nav: float, start_price: float,
+                ) -> dict[str, Any]:
+                    row = await conn.fetchrow(
+                        f"""UPDATE {SCHEMA}.live_performance_baselines
+                            SET start_ts=$1, start_nav=$2, benchmark_symbol=$3,
+                                benchmark_start_price=$4, source='IB_same_snapshot_v2',
+                                verified=TRUE,
+                                note='Reset from the earliest same-timestamp IB NAV and benchmark snapshot; legacy baseline archived.',
+                                updated_at=NOW()
+                            WHERE baseline_key='primary'
+                            RETURNING *""",
+                        start_ts, float(start_nav), benchmark, float(start_price),
+                    )
+                    snapshots = await conn.fetch(
+                        f"""SELECT ts, broker_observed_at, benchmark_price
+                            FROM {SCHEMA}.live_equity_snapshots
+                            WHERE source='IB_same_snapshot_v2'
+                              AND broker_observed_at >= $1
+                              AND benchmark_price > 0
+                            ORDER BY broker_observed_at""",
+                        start_ts,
+                    )
+                    flows = await conn.fetch(
+                        f"""SELECT flow_ts, amount, benchmark_price
+                            FROM {SCHEMA}.live_account_cash_flows
+                            WHERE flow_ts > $1 ORDER BY flow_ts""",
+                        start_ts,
+                    )
+                    updates = []
+                    for snapshot in snapshots:
+                        applicable = [
+                            dict(flow) for flow in flows
+                            if flow["flow_ts"] <= snapshot["broker_observed_at"]
+                        ]
+                        passive = passive_equity(
+                            float(start_nav), float(start_price),
+                            float(snapshot["benchmark_price"]), applicable,
+                        )
+                        updates.append((
+                            snapshot["ts"], passive,
+                            sum(float(flow["amount"]) for flow in applicable),
+                        ))
+                    if updates:
+                        await conn.executemany(
+                            f"""UPDATE {SCHEMA}.live_equity_snapshots
+                                SET passive_equity=$2, baseline_key='primary',
+                                    baseline_verified=TRUE,
+                                    cumulative_cash_flows=$3
+                                WHERE ts=$1""",
+                            updates,
+                        )
+                    return dict(row)
+
                 existing = await conn.fetchrow(
                     f"""SELECT * FROM {SCHEMA}.live_performance_baselines
                         WHERE baseline_key='primary' FOR UPDATE"""
                 )
                 if existing:
                     if bool(existing["verified"]):
+                        has_legacy_archive = await conn.fetchval(
+                            f"""SELECT EXISTS (
+                                SELECT 1 FROM {SCHEMA}.live_performance_baselines
+                                WHERE baseline_key LIKE 'legacy-unverified-%'
+                            )"""
+                        )
+                        if (
+                            has_legacy_archive and first_ib
+                            and first_ib["start_ts"] < existing["start_ts"]
+                        ):
+                            return await _set_verified_baseline(
+                                first_ib["start_ts"], float(first_ib["start_nav"]),
+                                float(first_ib["start_price"]),
+                            )
                         return dict(existing)
                     archive_key = (
                         "legacy-unverified-"
@@ -1003,19 +1084,16 @@ class LiveStore:
                         existing["source"], existing["note"], existing["created_at"],
                         existing["updated_at"],
                     )
-                    row = await conn.fetchrow(
-                        f"""UPDATE {SCHEMA}.live_performance_baselines
-                            SET start_ts=$1, start_nav=$2, benchmark_symbol=$3,
-                                benchmark_start_price=$4, source='IB_same_snapshot_v2',
-                                verified=TRUE,
-                                note='Reset from a same-timestamp IB NAV and benchmark snapshot; legacy baseline archived.',
-                                updated_at=NOW()
-                            WHERE baseline_key='primary'
-                            RETURNING *""",
-                        observed_at, float(current_nav), benchmark,
-                        float(current_benchmark_price),
+                    baseline_source = first_ib or {
+                        "start_ts": observed_at,
+                        "start_nav": current_nav,
+                        "start_price": current_benchmark_price,
+                    }
+                    return await _set_verified_baseline(
+                        baseline_source["start_ts"],
+                        float(baseline_source["start_nav"]),
+                        float(baseline_source["start_price"]),
                     )
-                    return dict(row)
                 start_ts = observed_at
                 start_nav = float(current_nav)
                 start_price = float(current_benchmark_price)
