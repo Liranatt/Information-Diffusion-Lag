@@ -1,0 +1,22 @@
+{
+  "market_id": "648033",
+  "question": "Will Shake Shack (SHAK) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-24 15:30:41.715223+00:00",
+  "requested_end_utc": "2025-10-24 20:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "940fe29e106ef41ce4e339c1",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "5537900714257380879923068651993604115384762734574675710778813848715150412987",
+  "condition_id": "0xbbb65adc6fd52f0fecd996f37e62c3b8a54bde4df6815c949f7d8704cd85ed57",
+  "api_question": "Will Shake Shack (SHAK) beat quarterly earnings?",
+  "api_created_at": "2025-10-24T15:30:41.715223Z",
+  "api_end_date": "2025-10-30T13:00:00Z",
+  "status": "complete",
+  "row_count": 148,
+  "first_source_ts_utc": "2025-10-24 17:32:05+00:00",
+  "last_source_ts_utc": "2025-10-24 19:59:05+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\648033.csv",
+  "fragment_sha256": "bdf70de94b10410a0c294ed5f770b7760fd1cc227e9251f8ba395b25df2ab886",
+  "question_matches": true,
+  "error": null
+}

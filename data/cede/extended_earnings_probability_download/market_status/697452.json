@@ -1,0 +1,23 @@
+{
+  "market_id": "697452",
+  "question": "Will Sprinklr (CXM) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-19 20:26:13.546692+00:00",
+  "requested_end_utc": "2025-11-22 20:26:13.546692+00:00",
+  "first_candidate_t0_utc": "2025-11-22 20:26:13.546692+00:00",
+  "latest_candidate_decision_utc": "2025-11-24 21:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "72069280090842815789382397795179455174140926547196833140093762551803212123929",
+  "condition_id": "0xa1f261fd2b4085cc283c7baa3b2b7e20b8540d66f19b0c866dd985ebd7ca884c",
+  "api_question": "Will Sprinklr (CXM) beat quarterly earnings?",
+  "api_created_at": "2025-11-22T20:26:13.546692Z",
+  "api_end_date": "2025-12-03T14:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\697452.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

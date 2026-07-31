@@ -1,0 +1,21 @@
+{
+  "market_id": "0x28672a0b6507d61e5530fe2a585dbe5c9eb9cd3a9b9845332ebf4883bfe2a5eb",
+  "question": "Will USA Rare Earth (USAR) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-31 18:11:08.700594+00:00",
+  "requested_end_utc": "2025-11-03 21:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "0f9970ae19e24bc198e9d2de",
+  "mapping_source": "clob_condition_id",
+  "yes_token_id": "111126276898830146241880784788361951153569388862269234754309838089325441183714",
+  "condition_id": "0x28672a0b6507d61e5530fe2a585dbe5c9eb9cd3a9b9845332ebf4883bfe2a5eb",
+  "api_question": "Will USA Rare Earth (USAR) beat quarterly earnings?",
+  "api_end_date": "2025-11-06T00:00:00Z",
+  "status": "complete",
+  "row_count": 4472,
+  "first_source_ts_utc": "2025-10-31 18:28:06+00:00",
+  "last_source_ts_utc": "2025-11-03 20:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\0x28672a0b6507d61e5530fe2a585dbe5c9eb9cd3a9b9845332ebf4883bfe2a5eb.csv",
+  "fragment_sha256": "251ea4b434abab3c63220ac9b96af724eac3bfbf9cf4614552c0ba2c1a06d971",
+  "question_matches": true,
+  "error": null
+}

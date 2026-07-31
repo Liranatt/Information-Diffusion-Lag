@@ -1,0 +1,22 @@
+{
+  "market_id": "674922",
+  "question": "Will PagerDuty (PD) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-10 19:02:52.600537+00:00",
+  "requested_end_utc": "2025-11-11 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "031c400038d3f77aefa01147|10093b558537ed67276f3295",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "79592713343304660873944347980903882662184888146517646548981914791096485703588",
+  "condition_id": "0x53d35fb2ee3bfc83738082e083c4f2303301697463e8d49ae99a4abb75ab5811",
+  "api_question": "Will PagerDuty (PD) beat quarterly earnings?",
+  "api_created_at": "2025-11-10T19:02:52.600537Z",
+  "api_end_date": "2025-11-25T22:00:00Z",
+  "status": "complete",
+  "row_count": 1504,
+  "first_source_ts_utc": "2025-11-10 19:56:07+00:00",
+  "last_source_ts_utc": "2025-11-11 20:59:08+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\674922.csv",
+  "fragment_sha256": "fe88f5cef5fd79fd5b0b0a0cb864c577a71da748a9d002a1fdaba8a84c1d80c4",
+  "question_matches": true,
+  "error": null
+}

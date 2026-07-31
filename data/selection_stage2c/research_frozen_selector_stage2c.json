@@ -1,0 +1,39 @@
+{
+  "label": "research_frozen_selector_stage2c",
+  "decision_case": "Case C",
+  "selected_global_replay_selector": "family_aware_selector",
+  "direct_issuer_lane": {
+    "eligibility": "deterministic mapping_valid direct_issuer",
+    "ranking": "predeclared trade-quality prediction then expected_slot_days and source order",
+    "admission": "predicted_target_a_positive",
+    "raw_connection_threshold": null
+  },
+  "indirect_event_lane": {
+    "eligibility": "mapping_valid and mapping_confidence >= 3",
+    "within_event_ranking": [
+      "mapping_type",
+      "exposure_purity",
+      "impact_materiality",
+      "direction_confidence",
+      "expected_slot_days"
+    ],
+    "admission": "event novelty or absolute stock-minus-sector 20d repricing <= 10%; dynamic portfolio capacity enforced",
+    "hard_geo_quota": false,
+    "unconditional_geo_priority": false
+  },
+  "shared_allocator": "one corrected capacity-constrained exact portfolio allocator after lane-specific semantic checks",
+  "legacy_gemini_relevance_score_role": "diagnostic_only",
+  "decision_interpretation": "the raw score advantage was not stable after deterministic directness normalization and controls; it is removed from direct-event admission",
+  "predeclared_preservation_tolerance_percentage_points": 0.25,
+  "direct_performance_preserved": false,
+  "global_performance_preserved": false,
+  "valid_geo_macro_eligibility_restored": true,
+  "raw_score_adjusted_oof_stable": false,
+  "probability_price_disagreement_available": false,
+  "supporting_market_snapshot_available": false,
+  "selector_changes_allowed_during_exit_research": false,
+  "lockbox_opened": false,
+  "lockbox_reserved_for_final_full_pipeline_evaluation": true,
+  "te_is_never_exit": true,
+  "latest_legal_exit_horizon": "T_e - 1"
+}

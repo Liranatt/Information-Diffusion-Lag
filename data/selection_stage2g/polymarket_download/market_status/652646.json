@@ -1,0 +1,22 @@
+{
+  "market_id": "652646",
+  "question": "Will Lyft (LYFT) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-27 21:27:35.728507+00:00",
+  "requested_end_utc": "2025-10-28 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "821acde776a0c65df8f68640|ce2f667e30152948e1b23b4e",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "114989264999827458451630068707112888127540336094718072677453805032985315493833",
+  "condition_id": "0xb7ad64e3807a2715e3a68d9b4d2173e427ef68b77ce29ce1a0c9f46db87e5f5c",
+  "api_question": "Will Lyft (LYFT) beat quarterly earnings?",
+  "api_created_at": "2025-10-27T21:27:35.728507Z",
+  "api_end_date": "2025-11-05T22:00:00Z",
+  "status": "complete",
+  "row_count": 1336,
+  "first_source_ts_utc": "2025-10-27 21:44:07+00:00",
+  "last_source_ts_utc": "2025-10-28 19:59:07+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\652646.csv",
+  "fragment_sha256": "7f10272d2a0145cbe4db087d565b193b305b99aa7385f2d3c6b1287c766043d5",
+  "question_matches": true,
+  "error": null
+}

@@ -1,0 +1,22 @@
+{
+  "market_id": "643047",
+  "question": "Will Uber Technologies (UBER) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-21 22:14:27.821522+00:00",
+  "requested_end_utc": "2025-10-30 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "a766993e6f6e70150a1cc0ab|f2651e3d0133f865acd9ffd4",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "57875402157138348554091031265442114143526373889127360891118113761631721745897",
+  "condition_id": "0xa69793f4e18e169b21244bab9451acc7610ac41234d05a6edf2079b5c9f1e7e7",
+  "api_question": "Will Uber Technologies (UBER) beat quarterly earnings?",
+  "api_created_at": "2025-10-21T22:14:27.821522Z",
+  "api_end_date": "2025-11-04T14:00:00Z",
+  "status": "complete",
+  "row_count": 12609,
+  "first_source_ts_utc": "2025-10-21 22:31:05+00:00",
+  "last_source_ts_utc": "2025-10-30 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\643047.csv",
+  "fragment_sha256": "bf0e672c0cff5dd1a6d7fb04fa7c835b7cfb6c42872eeb751d39d904f7d1a033",
+  "question_matches": true,
+  "error": null
+}

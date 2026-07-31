@@ -1,0 +1,23 @@
+{
+  "market_id": "675520",
+  "question": "Will The Gap (GAP) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-07 22:52:09.577539+00:00",
+  "requested_end_utc": "2025-11-10 22:52:09.577539+00:00",
+  "first_candidate_t0_utc": "2025-11-10 22:52:09.577539+00:00",
+  "latest_candidate_decision_utc": "2025-11-11 21:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "5766616905556843799720839445783318750511327781460518241532849925352657153970",
+  "condition_id": "0x63075823f870341b0ce734a369e449a2c3f8a6f2dce2785ad6cd4c65f8a3b119",
+  "api_question": "Will The Gap (GAP) beat quarterly earnings?",
+  "api_created_at": "2025-11-10T22:52:09.577539Z",
+  "api_end_date": "2025-11-20T22:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\675520.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

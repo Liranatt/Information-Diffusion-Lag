@@ -1,0 +1,22 @@
+{
+  "market_id": "658905",
+  "question": "Will Wendy\u2019s (WEN) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-31 22:06:17.572583+00:00",
+  "requested_end_utc": "2025-11-03 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "8da496af3ee34c62ebe07945|dd97d463cc13a0f5b2959a35",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "113921916297620346298406070504572032823237323114516742671738733551018365900119",
+  "condition_id": "0x5302442ea569f4568014be75ac455b6d2d8d6cbe66da8a584778fcdcf6880960",
+  "api_question": "Will Wendy\u2019s (WEN) beat quarterly earnings?",
+  "api_created_at": "2025-10-31T22:06:17.572583Z",
+  "api_end_date": "2025-11-07T14:00:00Z",
+  "status": "complete",
+  "row_count": 4222,
+  "first_source_ts_utc": "2025-10-31 22:38:06+00:00",
+  "last_source_ts_utc": "2025-11-03 20:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\658905.csv",
+  "fragment_sha256": "413070e8129b516815dd26325abb7c69c3e588ffc44474fed6e2e7933b400dce",
+  "question_matches": true,
+  "error": null
+}

@@ -1,0 +1,23 @@
+{
+  "market_id": "569210",
+  "question": "FDA approves Donidalorsen?",
+  "requested_start_utc": "2025-07-28 14:45:15.556523+00:00",
+  "requested_end_utc": "2025-08-04 20:00:00+00:00",
+  "candidate_count": 2,
+  "research_families": "other",
+  "economic_event_ids": "34567",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "71178065307270989742843383709085402564544241738278127198369811882431424691379",
+  "condition_id": "0xa373233812d090d89ee33b933494da4fd6fdec3f28562c121ce9440d76cd8e1b",
+  "api_question": "FDA approves Donidalorsen?",
+  "api_created_at": "2025-07-28T14:45:15.556523Z",
+  "api_end_date": "2025-08-21T16:00:00Z",
+  "status": "complete",
+  "row_count": 8873,
+  "first_source_ts_utc": "2025-07-29 15:44:09+00:00",
+  "last_source_ts_utc": "2025-08-04 19:59:10+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\569210.csv",
+  "fragment_sha256": "c350181d0acb1784683f9f2bb94bc2878b0f8ec5e6c78870fba306d940384171",
+  "question_matches": true,
+  "error": null
+}

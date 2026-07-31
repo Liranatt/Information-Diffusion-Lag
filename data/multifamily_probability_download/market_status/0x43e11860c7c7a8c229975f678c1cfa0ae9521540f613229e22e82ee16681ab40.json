@@ -1,0 +1,22 @@
+{
+  "market_id": "0x43e11860c7c7a8c229975f678c1cfa0ae9521540f613229e22e82ee16681ab40",
+  "question": "Trump trade deal before July?",
+  "requested_start_utc": "2025-06-24 20:40:12.805467+00:00",
+  "requested_end_utc": "2025-06-27 20:00:00+00:00",
+  "candidate_count": 3,
+  "research_families": "macro",
+  "economic_event_ids": "28642",
+  "mapping_source": "clob_condition_id",
+  "yes_token_id": "80967098748939517984579817405211618597406442691819250044772325797649129060112",
+  "condition_id": "0x43e11860c7c7a8c229975f678c1cfa0ae9521540f613229e22e82ee16681ab40",
+  "api_question": "Trump trade deal before July?",
+  "api_end_date": "2025-06-30T00:00:00Z",
+  "status": "complete",
+  "row_count": 3908,
+  "first_source_ts_utc": "2025-06-25 02:50:07+00:00",
+  "last_source_ts_utc": "2025-06-27 19:59:07+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\0x43e11860c7c7a8c229975f678c1cfa0ae9521540f613229e22e82ee16681ab40.csv",
+  "fragment_sha256": "20fd9f9c89635409f6150790e7cada93bc632e22792bf46fe53675932690d2d3",
+  "question_matches": true,
+  "error": null
+}

@@ -1,0 +1,22 @@
+{
+  "market_id": "697462",
+  "question": "Will Hewlett Packard Enterprise (HPE) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-22 20:31:42.786772+00:00",
+  "requested_end_utc": "2025-11-24 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "220c3662669681815d26dc60|433233c0427c0ef4bde397d5",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "81336400969177324918972495690950327426134394275179508227161411477137093832094",
+  "condition_id": "0x4704dd8921a4baa8c84f7ba3117584f601d96f6c3d25945f309fb3a266f43f8a",
+  "api_question": "Will Hewlett Packard Enterprise (HPE) beat quarterly earnings?",
+  "api_created_at": "2025-11-22T20:31:42.786772Z",
+  "api_end_date": "2025-12-04T22:00:00Z",
+  "status": "complete",
+  "row_count": 2892,
+  "first_source_ts_utc": "2025-11-22 20:48:07+00:00",
+  "last_source_ts_utc": "2025-11-24 20:59:07+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\697462.csv",
+  "fragment_sha256": "567615e747e306adfa6f481bc3a5e1fb2aa17df646a0d8fe6911d4a762f25b16",
+  "question_matches": true,
+  "error": null
+}

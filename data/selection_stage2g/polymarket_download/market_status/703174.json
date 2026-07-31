@@ -1,0 +1,22 @@
+{
+  "market_id": "703174",
+  "question": "Will Paychex (PAYX) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-25 14:39:12.489976+00:00",
+  "requested_end_utc": "2025-12-08 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "081bb92c8e8fc64b278bc7ba|24fba42be8b8e3c99a982b12",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "59257303661567661863349158015862814279133108857327474475727467017630337062",
+  "condition_id": "0xa609275ff11d44a796888759b03dcb6bbc6cedf7adf57f97d17510d2aba252ad",
+  "api_question": "Will Paychex (PAYX) beat quarterly earnings?",
+  "api_created_at": "2025-11-25T14:39:12.489976Z",
+  "api_end_date": "2025-12-18T14:00:00Z",
+  "status": "complete",
+  "row_count": 19082,
+  "first_source_ts_utc": "2025-11-25 14:58:10+00:00",
+  "last_source_ts_utc": "2025-12-08 20:59:08+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\703174.csv",
+  "fragment_sha256": "a835e7fba35b65903827372662b23dcf0c3b70fa3f13a513436a8c78beef16d3",
+  "question_matches": true,
+  "error": null
+}

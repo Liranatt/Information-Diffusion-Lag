@@ -1,0 +1,22 @@
+{
+  "market_id": "613049",
+  "question": "Will Levi Strauss & Co. (LEVI) beat quarterly earnings?",
+  "requested_start_utc": "2025-09-25 23:17:56.757195+00:00",
+  "requested_end_utc": "2025-09-26 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "b43333c464ef3001f431821f|fa6568dbe1d526e616219d79",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "51250223986758549516977850613787947064751266418188945125474703643533167788296",
+  "condition_id": "0x6e467b16b650c174152daff7c695053121d92dc24bcf3729705649fe4eb7d197",
+  "api_question": "Will Levi Strauss & Co. (LEVI) beat quarterly earnings?",
+  "api_created_at": "2025-09-25T23:17:56.757195Z",
+  "api_end_date": "2025-10-09T00:00:00Z",
+  "status": "complete",
+  "row_count": 333,
+  "first_source_ts_utc": "2025-09-26 14:27:04+00:00",
+  "last_source_ts_utc": "2025-09-26 19:59:02+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\613049.csv",
+  "fragment_sha256": "ef861269a9bc91d45378f9e18106b116e667300acfaabbfc1aca51989bd2fa34",
+  "question_matches": true,
+  "error": null
+}

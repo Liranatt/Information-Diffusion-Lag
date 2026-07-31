@@ -1,0 +1,23 @@
+{
+  "market_id": "697463",
+  "question": "Will Dollar General (DG) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-19 20:31:45.522494+00:00",
+  "requested_end_utc": "2025-11-22 20:31:45.522494+00:00",
+  "first_candidate_t0_utc": "2025-11-22 20:31:45.522494+00:00",
+  "latest_candidate_decision_utc": "2025-11-25 21:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "105009326315619815513813732422062258084996706813123278513573709453843490102254",
+  "condition_id": "0x9c36c341e446ee96ad541ff4ddc9486dc1556948e40f7041be75e61814d20a28",
+  "api_question": "Will Dollar General (DG) beat quarterly earnings?",
+  "api_created_at": "2025-11-22T20:31:45.522494Z",
+  "api_end_date": "2025-12-04T14:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\697463.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

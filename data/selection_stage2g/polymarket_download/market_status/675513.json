@@ -1,0 +1,22 @@
+{
+  "market_id": "675513",
+  "question": "Will Intuit (INTU) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-10 22:45:17.075289+00:00",
+  "requested_end_utc": "2025-11-11 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "8d38883e9a0b75be6398d4a8|d8ff0307c89a4bf302a7f913",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "56361136297308073563518191068107487760994056126494061492420318080168398853272",
+  "condition_id": "0xe4d179b9cdfbdab157ac61a649750ab43aa969cd8492067fe350ed1b07354960",
+  "api_question": "Will Intuit (INTU) beat quarterly earnings?",
+  "api_created_at": "2025-11-10T22:45:17.075289Z",
+  "api_end_date": "2025-11-20T22:00:00Z",
+  "status": "complete",
+  "row_count": 1232,
+  "first_source_ts_utc": "2025-11-11 00:28:05+00:00",
+  "last_source_ts_utc": "2025-11-11 20:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\675513.csv",
+  "fragment_sha256": "d08bea2d9ec834ce81d1a5de9cac5bdb1151526cae64aa5e114da93d2476c9d1",
+  "question_matches": true,
+  "error": null
+}

@@ -1,0 +1,7 @@
+{
+  "selection_scope": "chronological_train_oof",
+  "primary_target": "te1_active_net_return_pct",
+  "selected_deterministic_tie_breaker": "expected_slot_days",
+  "random_median_seed": 306,
+  "current_test_is_exploratory_only": true
+}

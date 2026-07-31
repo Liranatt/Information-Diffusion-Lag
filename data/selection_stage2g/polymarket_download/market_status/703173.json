@@ -1,0 +1,22 @@
+{
+  "market_id": "703173",
+  "question": "Will Cintas (CTAS) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-25 14:39:10.215497+00:00",
+  "requested_end_utc": "2025-12-03 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "50aa231a86ad15a8fa519bcf|653ab2708f40acb3ca6d0ddb",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "101144131305507983309728958926297715318710755057179228098887162356826503337998",
+  "condition_id": "0x1615eee22bbef1e025233f7b3b755da43f1a3d362df79b6971d893c5b2869716",
+  "api_question": "Will Cintas (CTAS) beat quarterly earnings?",
+  "api_created_at": "2025-11-25T14:39:10.215497Z",
+  "api_end_date": "2025-12-18T14:00:00Z",
+  "status": "complete",
+  "row_count": 11881,
+  "first_source_ts_utc": "2025-11-25 14:59:07+00:00",
+  "last_source_ts_utc": "2025-12-03 20:59:07+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\703173.csv",
+  "fragment_sha256": "ec4429852121e546ad217714f92c18abf0ea714fead99be67ea2debf367b69d4",
+  "question_matches": true,
+  "error": null
+}

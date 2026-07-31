@@ -1,0 +1,22 @@
+{
+  "market_id": "703120",
+  "question": "Will Accenture (ACN) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-25 13:52:27.128997+00:00",
+  "requested_end_utc": "2025-12-04 21:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "2db13dcc05e5579aa34a85a3",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "3311835279569335648828487203357331171080988746073573536646941943021662861962",
+  "condition_id": "0x85988e902516aa98141dd505a1196499eed6861b14446e36068d3f1acc445b7e",
+  "api_question": "Will Accenture (ACN) beat quarterly earnings?",
+  "api_created_at": "2025-11-25T13:52:27.128997Z",
+  "api_end_date": "2025-12-18T14:00:00Z",
+  "status": "complete",
+  "row_count": 13370,
+  "first_source_ts_utc": "2025-11-25 14:10:06+00:00",
+  "last_source_ts_utc": "2025-12-04 20:59:07+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\703120.csv",
+  "fragment_sha256": "d9d2d017937595d1c28f32362a1062422e803efd8e5596012cd227898cecb5af",
+  "question_matches": true,
+  "error": null
+}

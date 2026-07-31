@@ -1,0 +1,22 @@
+{
+  "market_id": "675612",
+  "question": "Will BJ's Wholesale Club Holdings (BJ) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-10 23:40:24.754921+00:00",
+  "requested_end_utc": "2025-11-11 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "048f13c0676643eede905041|cce1aa24471475daa8ba7273",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "81955500224591828434749376425596555069027890982888068184129172499651137178740",
+  "condition_id": "0xb21f7da1c064869df42d2253392303b50a652551c88393ff3c10362704fbb68d",
+  "api_question": "Will BJ's Wholesale Club Holdings (BJ) beat quarterly earnings?",
+  "api_created_at": "2025-11-10T23:40:24.754921Z",
+  "api_end_date": "2025-11-21T14:00:00Z",
+  "status": "complete",
+  "row_count": 1230,
+  "first_source_ts_utc": "2025-11-11 00:30:08+00:00",
+  "last_source_ts_utc": "2025-11-11 20:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\675612.csv",
+  "fragment_sha256": "27bc5cbe519983ce5a63a5faa04ba2599149af87a70b00ae85b88ce46853163f",
+  "question_matches": true,
+  "error": null
+}

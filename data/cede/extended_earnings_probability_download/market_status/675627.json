@@ -1,0 +1,23 @@
+{
+  "market_id": "675627",
+  "question": "Will DICK'S Sporting Goods (DKS) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-07 23:58:14.091143+00:00",
+  "requested_end_utc": "2025-11-10 23:58:14.091143+00:00",
+  "first_candidate_t0_utc": "2025-11-10 23:58:14.091143+00:00",
+  "latest_candidate_decision_utc": "2025-11-11 21:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "98524967832977883822747659452679948929529850215008630266466808029914443728038",
+  "condition_id": "0x1f0ff9667bb7018d03eb91100ae6aa85ab11e969a87869caa5ab9b6ba20daf94",
+  "api_question": "Will DICK'S Sporting Goods (DKS) beat quarterly earnings?",
+  "api_created_at": "2025-11-10T23:58:14.091143Z",
+  "api_end_date": "2025-11-25T14:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\675627.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

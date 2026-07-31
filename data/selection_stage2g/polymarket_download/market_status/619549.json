@@ -1,0 +1,22 @@
+{
+  "market_id": "619549",
+  "question": "Will U.S. Bancorp (USB) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-01 23:01:51.643235+00:00",
+  "requested_end_utc": "2025-10-06 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "9d915c29c00a2715f62ad61b|a5afe4a9da34b2086e75c31c",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "106865457003124259687212454575882696730900230527840974331695821405487076662016",
+  "condition_id": "0x34b757c5f3db545a90059fe79b03ba79488b72acf7c2df7ad267a2424baf9c68",
+  "api_question": "Will U.S. Bancorp (USB) beat quarterly earnings?",
+  "api_created_at": "2025-10-01T23:01:51.643235Z",
+  "api_end_date": "2025-10-16T00:00:00Z",
+  "status": "complete",
+  "row_count": 4210,
+  "first_source_ts_utc": "2025-10-03 21:50:04+00:00",
+  "last_source_ts_utc": "2025-10-06 19:59:02+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\619549.csv",
+  "fragment_sha256": "509437bb59d5edf292ac4826b32df3c9fa097deeb22a01b9175f262e454fd286",
+  "question_matches": true,
+  "error": null
+}

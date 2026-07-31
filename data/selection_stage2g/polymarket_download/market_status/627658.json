@@ -1,0 +1,22 @@
+{
+  "market_id": "627658",
+  "question": "Will Philip Morris International (PM) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-08 17:37:45.527838+00:00",
+  "requested_end_utc": "2025-10-09 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "6204eb72e090776675cc9e42|659ace6f3daa84f7e50196b9",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "39629584666815526812768959013441143892515421120941721074503968371008562363348",
+  "condition_id": "0x06fbb392e84a4fd0e669a69569e74de8b203b7452939100bcc8cedd07b16601c",
+  "api_question": "Will Philip Morris International (PM) beat quarterly earnings?",
+  "api_created_at": "2025-10-08T17:37:45.527838Z",
+  "api_end_date": "2025-10-21T13:00:00Z",
+  "status": "complete",
+  "row_count": 1566,
+  "first_source_ts_utc": "2025-10-08 17:54:03+00:00",
+  "last_source_ts_utc": "2025-10-09 19:59:05+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\627658.csv",
+  "fragment_sha256": "8321f8ad8ed17941734b48c52311f8263227c2474679feb21b76501ea3bc5270",
+  "question_matches": true,
+  "error": null
+}

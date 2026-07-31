@@ -1,0 +1,22 @@
+{
+  "market_id": "637869",
+  "question": "Will Coursera (COUR) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-16 22:20:20.107502+00:00",
+  "requested_end_utc": "2025-10-20 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "3d854d4544804df36f533fa8|5c21faef812f499e3c3e2358",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "36738440831482532074925499073092128287083095066843373365723561723832150028490",
+  "condition_id": "0x66cb0f5cbfbb888eec1963fd9d8304f6792e27e078fd25d842d32b205e80f89a",
+  "api_question": "Will Coursera (COUR) beat quarterly earnings?",
+  "api_created_at": "2025-10-16T22:20:20.107502Z",
+  "api_end_date": "2025-10-23T21:00:00Z",
+  "status": "complete",
+  "row_count": 5594,
+  "first_source_ts_utc": "2025-10-16 22:46:06+00:00",
+  "last_source_ts_utc": "2025-10-20 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\637869.csv",
+  "fragment_sha256": "e7a8248896c28074a122bd4a29b9c1e7af7bd909babc767ee12d74b0dbe657fa",
+  "question_matches": true,
+  "error": null
+}

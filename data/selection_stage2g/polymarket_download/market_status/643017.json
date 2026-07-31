@@ -1,0 +1,22 @@
+{
+  "market_id": "643017",
+  "question": "Will Electronic Arts (EA) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-21 21:38:52.577681+00:00",
+  "requested_end_utc": "2025-10-22 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "a942894715c97c69ea402df0|ec8a91c7683519689aa7db7d",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "100465712134425693197549350431273539050304597873739478057780905966238224137653",
+  "condition_id": "0xc9ab0cf9372c095f7cd2cdda91a2e717a32315082f2da913a51346043f36fdcf",
+  "api_question": "Will Electronic Arts (EA) beat quarterly earnings?",
+  "api_created_at": "2025-10-21T21:38:52.577681Z",
+  "api_end_date": "2025-10-28T21:00:00Z",
+  "status": "complete",
+  "row_count": 1320,
+  "first_source_ts_utc": "2025-10-21 22:00:12+00:00",
+  "last_source_ts_utc": "2025-10-22 19:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\643017.csv",
+  "fragment_sha256": "bbd747f297806941805dc180e566ce3a4a3387ee7f2c0e24a1f0816db7b79898",
+  "question_matches": true,
+  "error": null
+}

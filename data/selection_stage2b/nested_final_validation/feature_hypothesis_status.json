@@ -1,0 +1,7 @@
+{
+  "monotonic_and_pooled_evaluated": true,
+  "verified_probability_price_disagreement_feature_available": false,
+  "verified_supporting_market_snapshot_features_available": false,
+  "interpretation": "current underperformance does not reject these feature hypotheses; they were not present in the evaluated model inputs",
+  "lockbox_opened": false
+}

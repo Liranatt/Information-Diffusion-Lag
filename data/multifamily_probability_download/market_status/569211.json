@@ -1,0 +1,23 @@
+{
+  "market_id": "569211",
+  "question": "FDA approves EYLEA HD?",
+  "requested_start_utc": "2025-07-28 14:48:26.769696+00:00",
+  "requested_end_utc": "2025-07-29 20:00:00+00:00",
+  "candidate_count": 1,
+  "research_families": "other",
+  "economic_event_ids": "34568",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "36243485577433892299108653292834249568919233893071779667482687612229838739273",
+  "condition_id": "0xd8bf33618342b8f97ef2db07fad4c1facb0934ab60d21f5b5e5a1d382b8269a7",
+  "api_question": "FDA approves EYLEA HD?",
+  "api_created_at": "2025-07-28T14:48:26.769696Z",
+  "api_end_date": "2025-08-19T16:00:00Z",
+  "status": "complete",
+  "row_count": 257,
+  "first_source_ts_utc": "2025-07-29 15:43:09+00:00",
+  "last_source_ts_utc": "2025-07-29 19:59:09+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\569211.csv",
+  "fragment_sha256": "9ab222ae395bb83dfca69b41d780cd3780fc45097216ae87e239284b048e9845",
+  "question_matches": true,
+  "error": null
+}

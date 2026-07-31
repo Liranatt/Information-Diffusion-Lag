@@ -1,0 +1,23 @@
+{
+  "market_id": "675506",
+  "question": "Will Lowe's Companies (LOW) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-07 22:38:36.496352+00:00",
+  "requested_end_utc": "2025-11-10 22:38:36.496352+00:00",
+  "first_candidate_t0_utc": "2025-11-10 22:38:36.496352+00:00",
+  "latest_candidate_decision_utc": "2025-11-11 21:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "49983299724864598834146371445163962417086372574298002749497949813531034151233",
+  "condition_id": "0x3b65b409d2030996de38861f6d1b45cc7f96b4148125630ad95a3369f8475b71",
+  "api_question": "Will Lowe's Companies (LOW) beat quarterly earnings?",
+  "api_created_at": "2025-11-10T22:38:36.496352Z",
+  "api_end_date": "2025-11-19T14:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\675506.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

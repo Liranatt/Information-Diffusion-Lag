@@ -1,0 +1,22 @@
+{
+  "market_id": "655460",
+  "question": "Will HubSpot (HUBS) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-29 17:00:23.890753+00:00",
+  "requested_end_utc": "2025-10-30 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "4cb0e4332806da5805a4b643|cb2ffb16b9b0c63cd0e3f8bb",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "13322883896883676657848383105577634475147087431701322777512768657997948761924",
+  "condition_id": "0xfb19ac4840a66e8a3025e4d66fa0cbad7ffedf835c17d5dabdbdaac3a9e31cd1",
+  "api_question": "Will HubSpot (HUBS) beat quarterly earnings?",
+  "api_created_at": "2025-10-29T17:00:23.890753Z",
+  "api_end_date": "2025-11-05T22:00:00Z",
+  "status": "complete",
+  "row_count": 1603,
+  "first_source_ts_utc": "2025-10-29 17:17:07+00:00",
+  "last_source_ts_utc": "2025-10-30 19:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\655460.csv",
+  "fragment_sha256": "eea41ef490055bd3930939a461e34141dd079cc0ff378118fba7c68e04fa1050",
+  "question_matches": true,
+  "error": null
+}

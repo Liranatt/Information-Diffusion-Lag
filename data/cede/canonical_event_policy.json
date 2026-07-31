@@ -1,0 +1,37 @@
+{
+  "policy_version": "2026-07-17.1",
+  "purpose": "Canonical, outcome-blind event-to-exposure mapping for the Causal Event-Dislocation Engine (CEDE).",
+  "global": {
+    "portfolio_hedge": "SPY",
+    "basket_construction": "equal_dollar",
+    "one_position_per_root_event": true,
+    "unknown_mapping_action": "reject_until_human_review"
+  },
+  "earnings": {
+    "eligible_mapping_types": ["direct_issuer"],
+    "construction": "single_issuer",
+    "hedge": "sector_etf",
+    "minimum_mapping_confidence": 0.8,
+    "rationale": "Only a same-issuer earnings contract is treated as a direct earnings catalyst."
+  },
+  "geopolitics": {
+    "eligible_symbols": ["USO", "BNO", "UNG", "WEAT"],
+    "construction": "equal_dollar_basket_of_all_eligible_direct_commodity_etps_for_the_event",
+    "hedge": "SPY",
+    "minimum_mapping_confidence": 0.8,
+    "reject_symbols": ["XLE", "CVX", "XOM"],
+    "rationale": "Commodity ETPs are the direct transmission vehicle. Sector equities and producers add company and equity-market basis risk, so they cannot create a second exposure to the same geopolitical event."
+  },
+  "macro": {
+    "hedge": "SPY",
+    "construction": "equal_dollar_basket_of_predeclared_components",
+    "minimum_mapping_confidence": 0.8,
+    "event_components": {
+      "tariff:21698": ["EWJ"],
+      "tariff:22524": ["AAPL", "WMT"],
+      "tariff:28642": ["AAPL", "BA", "CAT"],
+      "tariff:171012": ["EDEN", "EFNL", "EWD", "EWG", "EWN", "EWQ", "EWU"]
+    },
+    "rationale": "Each current tariff episode is one basket, rather than a set of independent country or company trades. A new macro event needs an explicit, pre-entry component review before it can be traded."
+  }
+}

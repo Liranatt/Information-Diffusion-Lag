@@ -1,0 +1,28 @@
+{
+  "supporting_market_relationship_available": false,
+  "reason": "probs.pkl keys are hashed and candidate market IDs are numeric; no verified event-to-supporting-market map exists",
+  "omitted_columns": [
+    "supporting_market_count",
+    "supporting_question_count",
+    "probability_mean",
+    "probability_median",
+    "probability_max",
+    "probability_min",
+    "probability_dispersion",
+    "probability_standard_deviation",
+    "number_of_distinct_deadlines",
+    "earliest_signal_time",
+    "latest_signal_time",
+    "signal_age",
+    "cross_market_directional_agreement",
+    "event_novelty",
+    "deadline_extension_only_flag"
+  ],
+  "probability_history_omitted_columns": [
+    "effective_probability_change_5d",
+    "probability_change_x_stock_response",
+    "probability_change_x_relative_stock_response"
+  ],
+  "no_post_entry_observations_used": true,
+  "entry_cutoff_rule": "price timestamps must be strictly earlier than entry_date"
+}

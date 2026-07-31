@@ -1,0 +1,23 @@
+{
+  "market_id": "550768",
+  "question": "FDA approves Merck\u2019s clesrovimab infant RSV prevention (MK\u20111654)?",
+  "requested_start_utc": "2025-06-08 19:00:43.460242+00:00",
+  "requested_end_utc": "2025-06-09 20:00:00+00:00",
+  "candidate_count": 2,
+  "research_families": "other",
+  "economic_event_ids": "26351",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "110277767978162820657507122560579831140491170286088857058778075751412428867594",
+  "condition_id": "0x108e7a674ae7c86ff698b50833e2c8ee8d02bc336cc3ca1a2c42bc348cbbc738",
+  "api_question": "FDA approves Merck\u2019s clesrovimab infant RSV prevention (MK\u20111654)?",
+  "api_created_at": "2025-06-08T19:00:43.460242Z",
+  "api_end_date": "2025-06-17T00:00:00Z",
+  "status": "complete",
+  "row_count": 1467,
+  "first_source_ts_utc": "2025-06-08 19:33:07+00:00",
+  "last_source_ts_utc": "2025-06-09 19:59:07+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\550768.csv",
+  "fragment_sha256": "c7eaf9d11174f8d59d1057459fca30dbf45aed18468fba90eb968f75c38e4a16",
+  "question_matches": true,
+  "error": null
+}

@@ -75,8 +75,8 @@ def _close_series(repo_root: Path, symbol: str) -> pd.Series | None:
     if not bars:
         return None
     return pd.Series(
-        data=[c for _, _, _, c in bars],
-        index=[ts.strftime("%Y-%m-%d") for ts, _, _, _ in bars],
+        data=[c for _, _, _, _, c in bars],
+        index=[ts.strftime("%Y-%m-%d") for ts, _, _, _, _ in bars],
     ).sort_index()
 
 

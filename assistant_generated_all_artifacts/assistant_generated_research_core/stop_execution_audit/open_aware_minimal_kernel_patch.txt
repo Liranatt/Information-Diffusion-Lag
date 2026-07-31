@@ -1,0 +1,57 @@
+MINIMAL NOTEBOOK PATCH (isolates only overnight-gap versus intraday stop fills)
+
+1. Preserve Open in the price tuple and cached arrays:
+
+    # old bars: (timestamp, high, low, close)
+    # new bars: (timestamp, open, high, low, close)
+
+    open_ = np.empty(n, dtype=np.float64)
+    high  = np.empty(n, dtype=np.float64)
+    low   = np.empty(n, dtype=np.float64)
+    close = np.empty(n, dtype=np.float64)
+    for i, bar in enumerate(bars):
+        open_[i] = bar[1]
+        high[i]  = bar[2]
+        low[i]   = bar[3]
+        close[i] = bar[4]
+
+2. Pass bar_open into _scan. Inside the existing daily loop, retain the original
+   exit priority and prior-day peak ordering. Change only each stop fill branch:
+
+    oo = bar_open[gj]
+
+    # probability exit remains first, unchanged
+    if pv < theta_out:
+        reason = 3
+
+    # original trailing trigger and stop level, gap-aware fill
+    else:
+        trailing_stop = entry_price * (1.0 + peak - stop_dist)
+        if oo <= trailing_stop:
+            reason = 1
+            cc = oo
+            ret_c = cc / entry_price - 1.0
+        elif ll <= trailing_stop:
+            reason = 1
+            cc = trailing_stop
+            ret_c = cc / entry_price - 1.0
+
+        # original profit-lock calculation, gap-aware fill
+        elif peak >= lock_activate:
+            hard_floor_pct = int(peak * 100.0)
+            hard_floor = hard_floor_pct / 100.0
+            floor_price = entry_price * (1.0 + hard_floor)
+            if oo <= floor_price:
+                reason = 2
+                cc = oo
+                ret_c = cc / entry_price - 1.0
+            elif ll < floor_price:
+                reason = 2
+                cc = floor_price
+                ret_c = cc / entry_price - 1.0
+
+3. Do not silently substitute Close, Low, or the stop when Open is missing.
+   Emit/classify missing_open and fail the frozen-policy audit for that trade.
+
+4. Keep the existing peak update after all exit checks. This preserves the original
+   no-same-bar-rearming semantics and isolates the fill correction.

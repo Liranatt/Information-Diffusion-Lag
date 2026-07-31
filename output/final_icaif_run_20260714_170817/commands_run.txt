@@ -1,0 +1,45 @@
+# All commands executed for the final ICAIF run (cwd = C:\Users\Liran\PycharmProjects\cem_clean_repo)
+# RUN = output/final_icaif_run_20260714_170817
+
+# 1. CEM configuration matrix (seed 42, 6x20, 5 active configs, SPY+QQQ, full logs)
+python -m backtesting.optimize_cem --run-id final_icaif_matrix_seed42_6x20 --seed 42
+
+# 2. Grid determinism probe (independent duplicate of one cell)
+python -m backtesting.optimize_cem --experiments t1_t2_t3_t4 --benchmarks SPY QQQ --seed 47 --cem-iters 6 --cem-pop 30 --run-id verify_icaif_6x30_seed47 --no-allocation-log --no-forensics-log
+
+# 3. Robustness grid: 40 x t1_t2_t3_t4 (budgets 6x20/6x30/10x20/10x30, seeds 42-51)
+#    + 10 x baseline (6x20, seeds 42-51); 6 parallel workers; run-ids icaif_grid_* / icaif_base_*
+python "output/final_icaif_run_20260714_170817/robustness/run_icaif_grid.py"
+
+# 4. Matrix verification + HAC/block-bootstrap inference + cleaning delta (20k, seed 42)
+python output/final_icaif_run_20260714_170817/cem_matrix/build_matrix_report.py
+
+# 5. H1 (canonical runner + full expectation protocol, 20,000 bootstraps, seed 42;
+#    resolved polarity + raw-YES ablation; installs audit-clean fold CSV after backup)
+python output/final_icaif_run_20260714_170817/h1/run_h1_final.py
+
+# 6. Benchmark-relative inference (20,000 bootstraps, seed 42)
+python -m analysis.benchmark_excess_h1 --output-dir output/final_icaif_run_20260714_170817/benchmark_excess --trades-path output/final_icaif_run_20260714_170817/h1/raw_expectation_tminus1_final/raw_expectation_trades_candidate_level.csv --candidates-path data/candidates_audit_clean.parquet --n-boot 20000 --seed 42
+# + PDF forest-plot variant via analysis.benchmark_excess_h1._forest_plot (inline python)
+
+# 7. Full-test robustness report + paired Baseline-vs-All comparison
+python output/final_icaif_run_20260714_170817/robustness/build_icaif_robustness_report.py
+
+# 8. Consolidated statistics (82 rows)
+python output/final_icaif_run_20260714_170817/stats/build_final_stats.py
+
+# 9. Figures and LaTeX tables (all values read from final CSVs)
+python output/final_icaif_run_20260714_170817/figures/build_final_figures.py
+python output/final_icaif_run_20260714_170817/tables/build_final_tables.py
+
+# 10. Paper compile (run twice for references/floats)
+cd output/final_icaif_run_20260714_170817/paper
+pdflatex -interaction=nonstopmode paper_final.tex
+pdflatex -interaction=nonstopmode paper_final.tex
+
+# --- Final revision session (2026-07-14, evening) ---
+python -m backtesting.optimize_cem --experiments t2_trainwindows --benchmarks SPY QQQ --seed 42 --cem-iters 6 --cem-pop 20 --run-id icaif_t2_only_seed42_6x20 --no-allocation-log --no-forensics-log
+python output/final_icaif_run_20260714_170817/figures/build_signal_window_v2.py
+python output/final_icaif_run_20260714_170817/paper/apply_trims.py
+python output/final_icaif_run_20260714_170817/paper/apply_trims2.py
+pdflatex -interaction=nonstopmode paper_final_revised.tex  (x2, in paper/)

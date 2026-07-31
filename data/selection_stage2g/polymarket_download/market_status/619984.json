@@ -1,0 +1,22 @@
+{
+  "market_id": "619984",
+  "question": "Will Applied Digital (APLD) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-02 16:24:12.385484+00:00",
+  "requested_end_utc": "2025-10-06 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "25a6ab753e195ddf005c68d3|f63c3a50c72c176d6f320573",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "112554553237492010389712832862437088485795745543136466480942257799712028422732",
+  "condition_id": "0x2bcb07b13e4086028a4398df1f20000ed83816828337aefbf5f0ffa851e75d10",
+  "api_question": "Will Applied Digital (APLD) beat quarterly earnings?",
+  "api_created_at": "2025-10-02T16:24:12.385484Z",
+  "api_end_date": "2025-10-09T00:00:00Z",
+  "status": "complete",
+  "row_count": 4193,
+  "first_source_ts_utc": "2025-10-03 22:07:03+00:00",
+  "last_source_ts_utc": "2025-10-06 19:59:03+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\619984.csv",
+  "fragment_sha256": "1d909b77b1f172bf00fdb5dd4c50ee26733c32df38dc2e3f68fccce48a2c5c0d",
+  "question_matches": true,
+  "error": null
+}

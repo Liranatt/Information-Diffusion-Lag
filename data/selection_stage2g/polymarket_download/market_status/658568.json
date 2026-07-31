@@ -1,0 +1,22 @@
+{
+  "market_id": "658568",
+  "question": "Will KKR & Co (KKR) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-31 20:36:52.564891+00:00",
+  "requested_end_utc": "2025-11-03 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "8de46d348ab1483a0521d6df|ee91e1470a4ab5f10f29dd88",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "23452120766649458254241049206954511610521740828335051070120371172598424800104",
+  "condition_id": "0x050863f2237eea3ac0b227d3c3e645fa839820de4da4f8bfba0f9c65e1e1eb22",
+  "api_question": "Will KKR & Co (KKR) beat quarterly earnings?",
+  "api_created_at": "2025-10-31T20:36:52.564891Z",
+  "api_end_date": "2025-11-07T14:00:00Z",
+  "status": "complete",
+  "row_count": 4325,
+  "first_source_ts_utc": "2025-10-31 20:55:10+00:00",
+  "last_source_ts_utc": "2025-11-03 20:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\658568.csv",
+  "fragment_sha256": "130eb62c65eb4c8e10b2983a89775141bc171d5b298049f212791f2785e060f8",
+  "question_matches": true,
+  "error": null
+}

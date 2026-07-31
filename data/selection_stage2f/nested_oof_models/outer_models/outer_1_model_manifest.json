@@ -1,0 +1,144 @@
+{
+  "outer_fold": 1,
+  "pooled_selected_specs": {
+    "opportunity_probability": {
+      "penalty": 20.0,
+      "threshold": 0.5,
+      "inner_loss": 0.7047243476125853
+    },
+    "expected_best_legal_return": {
+      "penalty": 20.0,
+      "threshold": NaN,
+      "inner_loss": 2.335367067668934
+    },
+    "expected_time_to_opportunity": {
+      "penalty": 1.0,
+      "threshold": NaN,
+      "inner_loss": 0.9594936429564658
+    },
+    "never_profitable_probability": {
+      "penalty": 20.0,
+      "threshold": 0.6,
+      "inner_loss": 0.8753400105363508
+    },
+    "persistent_loss_probability": {
+      "penalty": 20.0,
+      "threshold": 0.4,
+      "inner_loss": 0.9091087455062061
+    },
+    "severe_adverse_probability": {
+      "penalty": 20.0,
+      "threshold": 0.4,
+      "inner_loss": 0.8405480600852919
+    }
+  },
+  "family_models": {
+    "earnings": {
+      "rows": 159,
+      "independent_events": 90,
+      "binary_class_counts": {
+        "opportunity_probability": {
+          "0": 100,
+          "1": 59
+        },
+        "never_profitable_probability": {
+          "0": 111,
+          "1": 48
+        },
+        "persistent_loss_probability": {
+          "0": 101,
+          "1": 58
+        },
+        "severe_adverse_probability": {
+          "0": 111,
+          "1": 48
+        }
+      },
+      "minimum_rows": 40,
+      "minimum_events": 25,
+      "status": "fitted",
+      "selected_specs": {
+        "opportunity_probability": {
+          "penalty": 20.0,
+          "threshold": 0.5,
+          "inner_loss": 0.7679169631110139
+        },
+        "expected_best_legal_return": {
+          "penalty": 20.0,
+          "threshold": NaN,
+          "inner_loss": 1.9726326716014022
+        },
+        "expected_time_to_opportunity": {
+          "penalty": 20.0,
+          "threshold": NaN,
+          "inner_loss": 1.2454726825344236
+        },
+        "never_profitable_probability": {
+          "penalty": 20.0,
+          "threshold": 0.6,
+          "inner_loss": 0.757316186840518
+        },
+        "persistent_loss_probability": {
+          "penalty": 20.0,
+          "threshold": 0.6,
+          "inner_loss": 0.8264078772705131
+        },
+        "severe_adverse_probability": {
+          "penalty": 1.0,
+          "threshold": 0.5,
+          "inner_loss": 0.7228227225468865
+        }
+      }
+    }
+  },
+  "target_b_baseline_model": {
+    "target": "active_return_per_slot_day_pct",
+    "intercept": 0.1282390142671099,
+    "coefficients": [
+      -0.10606095321112181,
+      -0.034368294343658706,
+      -0.17353058166017393,
+      -0.05148903649570635,
+      -0.30496976103504386,
+      -0.05547057752883096
+    ],
+    "medians": [
+      13.0,
+      0.0,
+      0.725,
+      0.0,
+      0.00559618927440825,
+      15.0
+    ],
+    "means": [
+      13.441028681120144,
+      0.02277638930932493,
+      0.6544735772357725,
+      0.0197540650406504,
+      0.01805287130363703,
+      17.040650406504064
+    ],
+    "scales": [
+      7.462703832223134,
+      0.11773704742060162,
+      0.23461383319105839,
+      0.08661510436761972,
+      0.07653881179623083,
+      9.497452267685865
+    ],
+    "features": [
+      "expected_slot_days",
+      "stock_minus_sector_20d",
+      "feat_prob_at_trigger",
+      "feat_prob_surge_since_t0",
+      "feat_asset_2w_trend",
+      "candidates_seen_previous_5_trading_days"
+    ],
+    "ridge_penalty": 5.0,
+    "training_rows": 246
+  },
+  "training_end": "2025-10-20 00:00:00+00:00",
+  "validation_start": "2025-10-21 00:00:00+00:00",
+  "oracle_labels_used_as_features": false,
+  "lockbox_opened": false
+}

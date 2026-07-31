@@ -1,0 +1,23 @@
+{
+  "market_id": "647508",
+  "question": "Will Carvana (CVNA) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-20 21:49:32.154236+00:00",
+  "requested_end_utc": "2025-10-23 21:49:32.154236+00:00",
+  "first_candidate_t0_utc": "2025-10-23 21:49:32.154236+00:00",
+  "latest_candidate_decision_utc": "2025-10-24 20:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "25179265823309916310323173507597352427012875454986854395950521001395734184630",
+  "condition_id": "0xf6326bae751b61c32ec2918e44af5dac245c10875c4a034343f9a0e0473b3f6a",
+  "api_question": "Will Carvana (CVNA) beat quarterly earnings?",
+  "api_created_at": "2025-10-23T21:49:32.154236Z",
+  "api_end_date": "2025-10-29T21:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\647508.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

@@ -1,0 +1,22 @@
+{
+  "market_id": "614609",
+  "question": "Will Interactive Brokers Group (IBKR) beat quarterly earnings?",
+  "requested_start_utc": "2025-09-26 18:18:28.218293+00:00",
+  "requested_end_utc": "2025-10-03 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "0208ea7b8a48ef4bbef2d581|08edeabcaf0c7a4aab698a51",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "3086502392806172150230111536706608136392491549973390323894382088053539239682",
+  "condition_id": "0x1d3a78376b50e04fdc49fb0318f01bac1ae45fc41217718df5dfc32e985ce839",
+  "api_question": "Will Interactive Brokers Group (IBKR) beat quarterly earnings?",
+  "api_created_at": "2025-09-26T18:18:28.218293Z",
+  "api_end_date": "2025-10-16T00:00:00Z",
+  "status": "complete",
+  "row_count": 10097,
+  "first_source_ts_utc": "2025-09-26 19:43:04+00:00",
+  "last_source_ts_utc": "2025-10-03 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\614609.csv",
+  "fragment_sha256": "0408e8e32770140ac10efdabbab03a7a8d5051c09bfd6bfd62c45aeee348ef1e",
+  "question_matches": true,
+  "error": null
+}

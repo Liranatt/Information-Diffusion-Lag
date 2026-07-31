@@ -1,0 +1,22 @@
+{
+  "market_id": "675502",
+  "question": "Will Weibo (WB) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-10 22:35:20.390970+00:00",
+  "requested_end_utc": "2025-11-11 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "a0377a039a563d1622fbfb90|e663144aa3046dcc15852f19",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "28090055205682632863053503390291104180621219786414708686201160628311918023337",
+  "condition_id": "0xf65865cf70adde28879bd3692be67f89db8053fd57f1285192d55da2d8ed13b0",
+  "api_question": "Will Weibo (WB) beat quarterly earnings?",
+  "api_created_at": "2025-11-10T22:35:20.39097Z",
+  "api_end_date": "2025-11-18T14:00:00Z",
+  "status": "complete",
+  "row_count": 1243,
+  "first_source_ts_utc": "2025-11-11 00:17:06+00:00",
+  "last_source_ts_utc": "2025-11-11 20:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\675502.csv",
+  "fragment_sha256": "02acb033f356bad4ef0065668b6ac71f37a29ed0abc6667beb0cf531947f7480",
+  "question_matches": true,
+  "error": null
+}

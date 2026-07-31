@@ -1,0 +1,22 @@
+{
+  "market_id": "648228",
+  "question": "Will Cboe Global Markets (CBOE) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-24 16:57:49.609140+00:00",
+  "requested_end_utc": "2025-10-24 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "7d2ae5b1c30a06b665fd7ab7|7d30fd8f188ba7a0830a9001",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "57926583933484486537276734187718529401270444931173851333016501963553064865735",
+  "condition_id": "0xe8b78ad8fa1c3f460f429a01c4c0877d6e0db4c18f972855a1e532391d1b93d4",
+  "api_question": "Will Cboe Global Markets (CBOE) beat quarterly earnings?",
+  "api_created_at": "2025-10-24T16:57:49.60914Z",
+  "api_end_date": "2025-10-31T13:00:00Z",
+  "status": "complete",
+  "row_count": 138,
+  "first_source_ts_utc": "2025-10-24 17:42:06+00:00",
+  "last_source_ts_utc": "2025-10-24 19:59:05+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\648228.csv",
+  "fragment_sha256": "d18d88ca9b28ad64a050942d8a22626d7b5a3b96e53ff4823f61a3527832f580",
+  "question_matches": true,
+  "error": null
+}

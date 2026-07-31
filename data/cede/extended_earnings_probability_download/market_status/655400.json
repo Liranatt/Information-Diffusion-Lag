@@ -1,0 +1,23 @@
+{
+  "market_id": "655400",
+  "question": "Will Robinhood Markets (HOOD) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-26 16:19:54.252632+00:00",
+  "requested_end_utc": "2025-10-29 16:19:54.252632+00:00",
+  "first_candidate_t0_utc": "2025-10-29 16:19:54.252632+00:00",
+  "latest_candidate_decision_utc": "2025-10-29 20:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "35126927351537345497155214468412100338022648518429197160411131769450220233021",
+  "condition_id": "0x8e757ed568f11b6494cea42e5b07392aad15a647d080ba436e6023836950bbbd",
+  "api_question": "Will Robinhood Markets (HOOD) beat quarterly earnings?",
+  "api_created_at": "2025-10-29T16:19:54.252632Z",
+  "api_end_date": "2025-11-05T22:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\655400.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

@@ -40,7 +40,6 @@ def _policy(**overrides):
             "enter_strong": 0.75,
             "enter_floor": 0.70,
             "hold_days": 1,
-            "max_prob_surge": 999.0,
             "max_price_runup": 999.0,
         }
     )
@@ -111,7 +110,7 @@ def test_entry_too_near_resolution_cut_is_not_opened():
     assert trade is None
 
 
-def test_theta_out_precedes_price_stops():
+def test_protective_stop_precedes_theta_out():
     prices = {
         "XYZ": [
             (_ts("2026-01-01"), 101.0, 99.0, 100.0),
@@ -123,7 +122,61 @@ def test_theta_out_precedes_price_stops():
     probs = {"m1": [(_ts("2026-01-03"), 0.80), (_ts("2026-01-04"), 0.40)]}
     trade = strategy._simulate_one_py(_row(), prices, probs, _policy(theta_out=0.55))
     assert trade is not None
-    assert trade["exit_reason"] == "poly<0.55"
+    assert trade["exit_reason"].startswith("trailing_")
+    # Legacy HLC input has no Open; the conservative fallback is the daily Low.
+    assert trade["exit_price"] == 80.0
+
+
+def test_overnight_gap_stop_fills_at_open():
+    prices = {
+        "XYZ": [
+            (_ts("2026-01-01"), 99.0, 101.0, 98.0, 100.0),
+            (_ts("2026-01-02"), 100.0, 102.0, 99.0, 101.0),
+            (_ts("2026-01-03"), 100.0, 101.0, 99.0, 100.0),
+            (_ts("2026-01-04"), 90.0, 96.0, 85.0, 92.0),
+        ]
+    }
+    probs = {"m1": [(_ts("2026-01-03"), 0.80), (_ts("2026-01-04"), 0.80)]}
+    trade = strategy._simulate_one_py(_row(), prices, probs, _policy())
+    assert trade is not None
+    assert trade["exit_reason"].startswith("trailing_")
+    assert trade["exit_price"] == 90.0
+
+
+def test_intraday_stop_touch_fills_at_standing_stop_not_low():
+    prices = {
+        "XYZ": [
+            (_ts("2026-01-01"), 99.0, 101.0, 98.0, 100.0),
+            (_ts("2026-01-02"), 100.0, 102.0, 99.0, 101.0),
+            (_ts("2026-01-03"), 100.0, 101.0, 99.0, 100.0),
+            (_ts("2026-01-04"), 100.0, 96.0, 85.0, 92.0),
+        ]
+    }
+    probs = {"m1": [(_ts("2026-01-03"), 0.80), (_ts("2026-01-04"), 0.80)]}
+    trade = strategy._simulate_one_py(_row(), prices, probs, _policy())
+    assert trade is not None
+    assert trade["exit_reason"].startswith("trailing_")
+    assert 85.0 < trade["exit_price"] < 100.0
+
+
+@pytest.mark.skipif(not strategy.HAVE_NUMBA, reason="numba kernel is not available")
+def test_ohlc_gap_semantics_match_numba_and_python():
+    prices = {
+        "XYZ": [
+            (_ts("2026-01-01"), 99.0, 101.0, 98.0, 100.0),
+            (_ts("2026-01-02"), 100.0, 102.0, 99.0, 101.0),
+            (_ts("2026-01-03"), 100.0, 101.0, 99.0, 100.0),
+            (_ts("2026-01-04"), 90.0, 96.0, 85.0, 92.0),
+        ]
+    }
+    probs = {"m1": [(_ts("2026-01-03"), 0.80), (_ts("2026-01-04"), 0.80)]}
+    policy = _policy()
+    row = _row()
+    strategy.clear_kernel_caches()
+    expected = strategy._simulate_one_py(row, prices, probs, policy)
+    strategy.clear_kernel_caches()
+    actual = strategy.simulate_one(row, prices, probs, policy)
+    assert actual == expected
 
 
 def test_earnings_trades_receive_trailing_stops():

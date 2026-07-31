@@ -1,0 +1,22 @@
+{
+  "market_id": "647509",
+  "question": "Will Caterpillar (CAT) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-23 21:55:00.658974+00:00",
+  "requested_end_utc": "2025-10-24 20:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "1107212cb05ae5a7dafc8f17",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "35900003717215056313956262507885248614777475301342883769635216810270316207153",
+  "condition_id": "0xa15dbb6882f583235b417a23ba5b12f41899b1bf78f6a917d11a658e3df96c20",
+  "api_question": "Will Caterpillar (CAT) beat quarterly earnings?",
+  "api_created_at": "2025-10-23T21:55:00.658974Z",
+  "api_end_date": "2025-10-29T13:00:00Z",
+  "status": "complete",
+  "row_count": 1307,
+  "first_source_ts_utc": "2025-10-23 22:13:05+00:00",
+  "last_source_ts_utc": "2025-10-24 19:59:05+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\647509.csv",
+  "fragment_sha256": "a2a405c1b41861c745ed5ca7c33f16658fd6eeedc92d4791e956b3155b8df3d4",
+  "question_matches": true,
+  "error": null
+}

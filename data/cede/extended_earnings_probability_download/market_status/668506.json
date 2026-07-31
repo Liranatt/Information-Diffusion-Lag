@@ -1,0 +1,23 @@
+{
+  "market_id": "668506",
+  "question": "Will Applied Materials (AMAT) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-03 21:16:30.369002+00:00",
+  "requested_end_utc": "2025-11-06 21:16:30.369002+00:00",
+  "first_candidate_t0_utc": "2025-11-06 21:16:30.369002+00:00",
+  "latest_candidate_decision_utc": "2025-11-07 21:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "85111369659311794694021558718760968591350920572975524009883110134243413105586",
+  "condition_id": "0x1d6fabd17f8925213468fd175cbc85df74a76e7152cc16188e5f2b426a4e1b35",
+  "api_question": "Will Applied Materials (AMAT) beat quarterly earnings?",
+  "api_created_at": "2025-11-06T21:16:30.369002Z",
+  "api_end_date": "2025-11-13T22:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\668506.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

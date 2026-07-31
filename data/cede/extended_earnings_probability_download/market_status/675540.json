@@ -1,0 +1,23 @@
+{
+  "market_id": "675540",
+  "question": "Will Bath & Body Works (BBWI) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-07 22:57:48.525352+00:00",
+  "requested_end_utc": "2025-11-10 22:57:48.525352+00:00",
+  "first_candidate_t0_utc": "2025-11-10 22:57:48.525352+00:00",
+  "latest_candidate_decision_utc": "2025-11-14 21:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "109394427114462139409179374838376747293163308357304852094725444304375479463669",
+  "condition_id": "0x3206e3e62ec273d4656e26b9c1816e824cf8b2f4db34a346650389851d37e57d",
+  "api_question": "Will Bath & Body Works (BBWI) beat quarterly earnings?",
+  "api_created_at": "2025-11-10T22:57:48.525352Z",
+  "api_end_date": "2025-11-20T14:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\675540.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

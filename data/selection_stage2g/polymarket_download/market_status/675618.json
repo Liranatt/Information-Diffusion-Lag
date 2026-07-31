@@ -1,0 +1,22 @@
+{
+  "market_id": "675618",
+  "question": "Will Semtech (SMTC) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-10 23:47:02.505773+00:00",
+  "requested_end_utc": "2025-11-12 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "46cfe5510fadd447a5c7e3c9|bc22c7f131bdac2a76f61bad",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "3133446320034166927242347077001625882543248858732580788475808011005539260128",
+  "condition_id": "0x71573c097b3b0be64ff26c940174f4795e1a5467315d8d3645ddb37f2d8830ce",
+  "api_question": "Will Semtech (SMTC) beat quarterly earnings?",
+  "api_created_at": "2025-11-10T23:47:02.505773Z",
+  "api_end_date": "2025-11-24T22:00:00Z",
+  "status": "complete",
+  "row_count": 2658,
+  "first_source_ts_utc": "2025-11-11 00:42:18+00:00",
+  "last_source_ts_utc": "2025-11-12 20:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\675618.csv",
+  "fragment_sha256": "d3a5f2092a1ee671c0291e5a46c99c8ecb3e5121d461c16f1436a0743f5d925d",
+  "question_matches": true,
+  "error": null
+}

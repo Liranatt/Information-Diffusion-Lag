@@ -1,0 +1,22 @@
+{
+  "market_id": "637874",
+  "question": "Will FTI Consulting (FCN) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-16 22:32:34.772690+00:00",
+  "requested_end_utc": "2025-10-20 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "5942fecc62f98413415d3606|980d30956418d646da4d4502",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "28195338999165432072935128304228274109234143409123915134412394238683365538305",
+  "condition_id": "0xa2221f058b7e12f2a7d8ebc807a0e8f230f62154354b2ad6705c2f98fc537e55",
+  "api_question": "Will FTI Consulting (FCN) beat quarterly earnings?",
+  "api_created_at": "2025-10-16T22:32:34.77269Z",
+  "api_end_date": "2025-10-23T13:00:00Z",
+  "status": "complete",
+  "row_count": 5591,
+  "first_source_ts_utc": "2025-10-16 22:49:04+00:00",
+  "last_source_ts_utc": "2025-10-20 19:59:03+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\637874.csv",
+  "fragment_sha256": "efe11867fb60d73302acff5f9febf37fb894179615747160d09d13d3bb6245cf",
+  "question_matches": true,
+  "error": null
+}

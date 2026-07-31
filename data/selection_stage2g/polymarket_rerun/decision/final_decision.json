@@ -1,0 +1,19 @@
+{
+  "final_decision": "close_earnings_selection_and_proceed_to_exits",
+  "promoted": false,
+  "selected_operational_selector": "A_target_b_baseline",
+  "coverage_sufficient": true,
+  "paired_median_fold_excess_improvement": -0.11919999999999997,
+  "positive_folds": 1,
+  "benchmark_mean_excess_improvement": {
+    "QQQ": -2.5197125000000002,
+    "SPY": -0.7268749999999999
+  },
+  "worse_exit_policy_count": 8,
+  "mean_drawdown_change_by_benchmark": {
+    "QQQ": 0.10435920214240946,
+    "SPY": 0.761068946236855
+  },
+  "lockbox_opened": false,
+  "geo_and_other_included": false
+}

@@ -1,0 +1,22 @@
+{
+  "market_id": "643023",
+  "question": "Will Labcorp Holdings (LH) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-21 21:57:11.086391+00:00",
+  "requested_end_utc": "2025-10-24 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "0b24dac89c6322eb53acfb8a|70acdde6958d6e05da1b2db1",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "95396760909942450935971661084385733966923076509949443743263528906478466148054",
+  "condition_id": "0xfa77b327795ce598c432bea566514de8e89de775babc61e7812bf899e4abd1ce",
+  "api_question": "Will Labcorp Holdings (LH) beat quarterly earnings?",
+  "api_created_at": "2025-10-21T21:57:11.086391Z",
+  "api_end_date": "2025-10-28T13:00:00Z",
+  "status": "complete",
+  "row_count": 4186,
+  "first_source_ts_utc": "2025-10-21 22:14:06+00:00",
+  "last_source_ts_utc": "2025-10-24 19:59:07+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\643023.csv",
+  "fragment_sha256": "6919fdba3637a21d8e340397cb01f0d5687ccda1fac3b709bd5ce5829c560366",
+  "question_matches": true,
+  "error": null
+}

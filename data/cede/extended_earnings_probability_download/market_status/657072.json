@@ -1,0 +1,23 @@
+{
+  "market_id": "657072",
+  "question": "Will Hyatt Hotels (H) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-27 18:21:48.719764+00:00",
+  "requested_end_utc": "2025-10-30 18:21:48.719764+00:00",
+  "first_candidate_t0_utc": "2025-10-30 18:21:48.719764+00:00",
+  "latest_candidate_decision_utc": "2025-11-03 21:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "64731858116237959203194310535102435666314786719050436528457503195937395893091",
+  "condition_id": "0x615a2a38e8d86cf7cfae2613359f15201f8533506004415d27825de9d99923b3",
+  "api_question": "Will Hyatt Hotels (H) beat quarterly earnings?",
+  "api_created_at": "2025-10-30T18:21:48.719764Z",
+  "api_end_date": "2025-11-06T14:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\657072.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

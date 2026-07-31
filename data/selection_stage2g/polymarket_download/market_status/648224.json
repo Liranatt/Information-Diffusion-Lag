@@ -1,0 +1,22 @@
+{
+  "market_id": "648224",
+  "question": "Will Waystar Holding (WAY) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-24 16:47:10.366353+00:00",
+  "requested_end_utc": "2025-10-27 20:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "68d69e0b5789e41797ae3908",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "95174673318939502778401126748290578754446695498846181445751715252658561331057",
+  "condition_id": "0x75f7bf711106b1a3e5f0eb2eae969f964df69e57ffb06e5822add43f6fd38c03",
+  "api_question": "Will Waystar Holding (WAY) beat quarterly earnings?",
+  "api_created_at": "2025-10-24T16:47:10.366353Z",
+  "api_end_date": "2025-10-29T21:00:00Z",
+  "status": "complete",
+  "row_count": 4460,
+  "first_source_ts_utc": "2025-10-24 17:40:07+00:00",
+  "last_source_ts_utc": "2025-10-27 19:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\648224.csv",
+  "fragment_sha256": "7ebb6d9af5f54e4e0cfc6c8f3484d142900828d4cb988f49b79363750bcf7437",
+  "question_matches": true,
+  "error": null
+}

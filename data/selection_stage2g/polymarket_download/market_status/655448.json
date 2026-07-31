@@ -1,0 +1,22 @@
+{
+  "market_id": "655448",
+  "question": "Will TKO Group Holdings (TKO) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-29 16:32:14.044499+00:00",
+  "requested_end_utc": "2025-11-03 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "385b613e4e092ce79570a6b4|fc989774b918f348022449c0",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "105329548350748525199753364185646661433376069894845797952725519723854992977970",
+  "condition_id": "0x91e382ae262dc07f6839fa413615d4211cccdb3d03cf32b7d591c59e0593528b",
+  "api_question": "Will TKO Group Holdings (TKO) beat quarterly earnings?",
+  "api_created_at": "2025-10-29T16:32:14.044499Z",
+  "api_end_date": "2025-11-05T22:00:00Z",
+  "status": "complete",
+  "row_count": 7451,
+  "first_source_ts_utc": "2025-10-29 16:49:05+00:00",
+  "last_source_ts_utc": "2025-11-03 20:59:05+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\655448.csv",
+  "fragment_sha256": "b2892491d7656598eea0bd95a143f649e8a4d275b13e2cf54cdf025aa28e6215",
+  "question_matches": true,
+  "error": null
+}

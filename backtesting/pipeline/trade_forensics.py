@@ -87,7 +87,7 @@ def _bars_frame(prices: dict, symbol: str, cache: dict[str, pd.DataFrame]) -> pd
 
     rows = []
     for item in prices.get(symbol, []):
-        if len(item) < 4:
+        if len(item) < 5:
             continue
         ts = _day(item[0])
         if ts is None:
@@ -95,9 +95,10 @@ def _bars_frame(prices: dict, symbol: str, cache: dict[str, pd.DataFrame]) -> pd
         rows.append(
             {
                 "date": ts,
-                "high": float(item[1]),
-                "low": float(item[2]),
-                "close": float(item[3]),
+                "open": float(item[1]),
+                "high": float(item[2]),
+                "low": float(item[3]),
+                "close": float(item[4]),
             }
         )
     frame = pd.DataFrame(rows)

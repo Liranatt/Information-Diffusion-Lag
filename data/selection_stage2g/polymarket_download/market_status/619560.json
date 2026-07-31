@@ -1,0 +1,22 @@
+{
+  "market_id": "619560",
+  "question": "Will Equifax Inc. (EFX) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-01 23:48:15.837188+00:00",
+  "requested_end_utc": "2025-10-06 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "20382a731454e534b25bfa07|576aee6c432fc643d7513351",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "112254036656079920581969779319392906738652659419937749324428418845431971083159",
+  "condition_id": "0x7944a0bd55b7c3acf9fc3da78ebe6a53881c576bf7a72074d868181403a00a7b",
+  "api_question": "Will Equifax Inc. (EFX) beat quarterly earnings?",
+  "api_created_at": "2025-10-01T23:48:15.837188Z",
+  "api_end_date": "2025-10-21T00:00:00Z",
+  "status": "complete",
+  "row_count": 255,
+  "first_source_ts_utc": "2025-10-06 15:45:04+00:00",
+  "last_source_ts_utc": "2025-10-06 19:59:02+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\619560.csv",
+  "fragment_sha256": "1356f3c844af64e274d9177a90389fc4c9d0aa907da48315d4799ec466352d96",
+  "question_matches": true,
+  "error": null
+}

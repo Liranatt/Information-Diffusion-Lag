@@ -1,0 +1,22 @@
+{
+  "market_id": "627739",
+  "question": "Will American Airlines Group (AAL) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-08 18:59:07.286527+00:00",
+  "requested_end_utc": "2025-10-13 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "4634d4817520ccd36db2409b|b656c9c007ca52c3bb1d0a88",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "36043758623449620730615334016592382893406249128327117321512664009220628708776",
+  "condition_id": "0xece7f644bc968acd0f2bbd1fb4113fbd5dacc82731b20b120517e5fe0e1b18ea",
+  "api_question": "Will American Airlines Group (AAL) beat quarterly earnings?",
+  "api_created_at": "2025-10-08T18:59:07.286527Z",
+  "api_end_date": "2025-10-23T13:00:00Z",
+  "status": "complete",
+  "row_count": 7243,
+  "first_source_ts_utc": "2025-10-08 19:17:04+00:00",
+  "last_source_ts_utc": "2025-10-13 19:59:03+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\627739.csv",
+  "fragment_sha256": "bada4035a94679ba0c0fa4fbe8814d55eb69ca3e09a6a8b588c875171489e266",
+  "question_matches": true,
+  "error": null
+}

@@ -1,0 +1,26 @@
+{
+  "label": "timestamp_safe_stage2b_feature_table",
+  "candidate_sha256": "96833cd225bf846d7d46a2bb0efa3b8d5f20fffc33e15718cbcb37c6fb121046",
+  "prices_sha256": "559baa811114d9975d13f96872073d3580bcbe4e9df875eb0d4631c1a0d345dc",
+  "probs_sha256": "ec3bd7eb08ecc31986e01e37c0cd84338732f0a2807c7e6edd86a9630d3fe347",
+  "derived_features": [
+    "stock_return_20d",
+    "sector_return_20d",
+    "stock_minus_sector_20d",
+    "same_day_stock_minus_sector_rank",
+    "same_day_stock_minus_sector_zscore",
+    "stock_return_5d",
+    "sector_return_5d",
+    "stock_minus_sector_return_5d",
+    "expected_slot_days",
+    "candidate_arrival_pressure"
+  ],
+  "supporting_market_features": "not_available_without_verified_id_map",
+  "timestamp_rule": "strictly prior observations only",
+  "te_is_never_exit": true,
+  "terminal_horizon_assertion": true,
+  "outputs": {
+    "feature_table": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\feature_table\\timestamp_safe_feature_table.csv",
+    "supporting_market_audit": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\feature_table\\supporting_market_snapshot_audit.json"
+  }
+}

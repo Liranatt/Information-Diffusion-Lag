@@ -1,0 +1,22 @@
+{
+  "market_id": "613051",
+  "question": "Will Delta Air Lines (DAL) beat quarterly earnings?",
+  "requested_start_utc": "2025-09-25 23:21:11.956181+00:00",
+  "requested_end_utc": "2025-10-02 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "7e18d30aa3ee37ca476f0ca0|bac0a6c736636ae8e75ae6ad",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "80065717401962378679510621072775912147194629802976638407532933107238550767601",
+  "condition_id": "0xca3f4b688bce03a24747d339ff30aa2cf45fff9addfd43ea11e1f20689ae091b",
+  "api_question": "Will Delta Air Lines (DAL) beat quarterly earnings?",
+  "api_created_at": "2025-09-25T23:21:11.956181Z",
+  "api_end_date": "2025-10-09T00:00:00Z",
+  "status": "complete",
+  "row_count": 8973,
+  "first_source_ts_utc": "2025-09-26 14:27:03+00:00",
+  "last_source_ts_utc": "2025-10-02 19:59:02+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\613051.csv",
+  "fragment_sha256": "488c167b12d43701b7de77e906ba58bddafb32328ea48f542bebc2a8425269e2",
+  "question_matches": true,
+  "error": null
+}

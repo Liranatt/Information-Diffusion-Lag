@@ -1,0 +1,331 @@
+
+def _bench_buy_qty(cash_available, price):
+    """Benchmark buy size: fractional shares when enabled, else whole shares."""
+    if not FRACTIONAL_BENCHMARK:
+        return float(_affordable_buy_qty(cash_available, price))
+    if cash_available <= 0 or price <= 0:
+        return 0.0
+    qty = cash_available / price
+    for _ in range(4):
+        qty = max((cash_available - ib_cost(qty, price, False)) / price, 0.0)
+    return qty
+
+
+def port_policy_from_vec(vec):
+    """Clip a CEM sample vector into a valid policy dict."""
+    names = list(PORTFOLIO_BOUNDS.keys())
+    policy = {}
+    for i, name in enumerate(names):
+        lo, hi = PORTFOLIO_BOUNDS[name]
+        policy[name] = float(np.clip(vec[i], lo, hi))
+    policy["hold_days"] = int(round(float(policy["hold_days"])))
+    policy["max_concurrent"] = int(round(float(policy["max_concurrent"])))
+    if float(policy["enter_strong"]) < float(policy["enter_floor"]):
+        policy["enter_strong"] = policy["enter_floor"]
+    return policy
+
+
+def _calc_advanced_metrics(equity_series):
+    if len(equity_series) < 2:
+        return {"sharpe": 0.0, "sortino": 0.0}
+    r = equity_series.pct_change().dropna()
+    mu, sig = r.mean(), r.std()
+    sharpe = (mu / sig * np.sqrt(252)) if sig > 1e-9 else 0.0
+    down = r[r < 0]
+    down_sig = down.std() if len(down) > 0 else 1e-9
+    sortino = (mu / down_sig * np.sqrt(252)) if down_sig > 1e-9 else 0.0
+    return {"sharpe": float(sharpe), "sortino": float(sortino)}
+
+
+def sim_opp_cost(df, prices, probs, policy, *, bench_sym="SPY", initial=INITIAL_CAPITAL,
+                 start_date=None, end_date=None):
+    """Simulate a fully-invested benchmark-rotation portfolio (Baseline / FIFO).
+
+    Capital starts fully in the benchmark; funding an event position sells
+    benchmark shares and closing it re-buys them, so every round trip pays four
+    IB-style cost legs. When `end_date` is supplied, open positions are
+    liquidated at that date's close (leakage-safe train windows). Returns
+    (trade_df, equity_df, stats).
+    """
+    empty_stats = {
+        "initial": initial, "final": initial, "total_return": 0.0, "benchmark_return": 0.0,
+        "excess_return": 0.0, "max_dd": 0.0, "sharpe": 0.0, "sortino": 0.0,
+        "benchmark_sharpe": 0.0, "benchmark_sortino": 0.0, "n_trades": 0, "win_rate": 0.0,
+        "avg_pnl": 0.0, "avg_gross_pnl": 0.0, "gross_trade_pnl": 0.0, "net_trade_pnl": 0.0,
+        "total_txn_cost": 0.0, "trade_txn_cost": 0.0, "avg_position_size": 0.0,
+        "median_position_size": 0.0, "min_position_size": 0.0, "max_position_size": 0.0,
+        "start_date": None, "end_date": None, "n_equity_days": 0,
+        "skip_max_concurrent": 0, "skip_duplicate_symbol": 0, "skip_insufficient_capital": 0,
+    }
+    if df.empty:
+        return pd.DataFrame(), pd.DataFrame(), empty_stats
+
+    sim_prices, sim_probs = truncate_paths(prices, probs, end_date)
+
+    all_trades = []
+    for _, row in df.sort_values("t_theta").iterrows():
+        candidate_theta = as_utc_day(row["t_theta"])
+        trade = simulate_one(row, sim_prices, sim_probs, policy)
+        if trade is None:
+            continue
+        trade = dict(trade)
+        trade["_entry_ts"] = as_utc_day(trade["entry_date"])
+        trade["_exit_ts"] = as_utc_day(trade["exit_date"])
+        if trade["_entry_ts"] < candidate_theta:
+            raise ValueError(f"{trade['symbol']} entered before candidate t_theta.")
+        trade["candidate_t_theta"] = str(candidate_theta.date())
+        trade["candidate_t_e"] = str(as_utc_day(row["t_e"]).date())
+        all_trades.append(trade)
+    all_trades.sort(key=lambda t: t["_entry_ts"])
+
+    candidate_start, candidate_end = _frame_bounds(df)
+    eval_start = as_utc_day(start_date) if start_date is not None else min(
+        (t["_entry_ts"] for t in all_trades), default=candidate_start)
+    eval_end = as_utc_day(end_date) if end_date is not None else max(
+        (t["_exit_ts"] for t in all_trades), default=candidate_end)
+    if end_date is not None and [t for t in all_trades if t["_exit_ts"] > eval_end]:
+        raise ValueError("generated trades exit after evaluation end.")
+
+    if not sim_prices.get(bench_sym, []):
+        raise ValueError(f"No daily bars available for benchmark {bench_sym}.")
+    calendar = _calendar_dates(sim_prices, bench_sym, eval_start, eval_end)
+    if not calendar:
+        raise ValueError("No benchmark bars overlap evaluation range.")
+    first_day, last_day = calendar[0], calendar[-1]
+    first_bench_close = _close_on(sim_prices, bench_sym, first_day)
+    last_bench_close = _close_on(sim_prices, bench_sym, last_day)
+    if first_bench_close is None or last_bench_close is None:
+        raise ValueError(f"Unable to price {bench_sym}.")
+
+    initial_bench_shares = _bench_buy_qty(initial, first_bench_close)
+    initial_cost = ib_cost(initial_bench_shares, first_bench_close, False)
+    initial_cash = initial - initial_bench_shares * first_bench_close - initial_cost
+
+    bench_shares = initial_bench_shares
+    cash = initial_cash
+    total_txn_cost = initial_cost
+    open_positions, completed, equity_rows = [], [], []
+    trade_idx = 0
+    skip_max_concurrent = skip_duplicate_symbol = skip_insufficient_capital = 0
+
+    def close_position(pos, close_day, exit_price, exit_reason):
+        nonlocal cash, bench_shares, total_txn_cost
+        qty = int(pos["_qty"])
+        entry_price = float(pos["entry_price"])
+        asset_sell_cost = ib_cost(qty, exit_price, True)
+        sale_proceeds = qty * exit_price - asset_sell_cost
+        bench_close = float(_close_on(sim_prices, bench_sym, close_day) or 0.0)
+        rebuy_qty = _bench_buy_qty(sale_proceeds, bench_close)
+        rebuy_cost = ib_cost(rebuy_qty, bench_close, False)
+        cash += sale_proceeds - rebuy_qty * bench_close - rebuy_cost
+        bench_shares += rebuy_qty
+        total_txn_cost += asset_sell_cost + rebuy_cost
+        direct_cost = (float(pos["_benchmark_sell_cost"]) + float(pos["_asset_buy_cost"])
+                       + asset_sell_cost + rebuy_cost)
+        gross_pnl = qty * (exit_price - entry_price)
+        net_pnl = gross_pnl - direct_cost
+        exposure = max(float(pos["_asset_entry_notional"]), 1e-12)
+        pos["exit_price"] = round(float(exit_price), 6)
+        pos["exit_date"] = str(close_day.date())
+        pos["realized_exit_reason"] = exit_reason
+        pos["gross_pnl"] = round(gross_pnl, 2)
+        pos["pnl"] = round(net_pnl, 2)
+        pos["pnl_pct"] = round(net_pnl / exposure * 100.0, 4)
+        pos["txn_cost"] = round(direct_cost, 2)
+        pos["exit_value"] = round(qty * exit_price, 2)
+        pos["benchmark_rebuy_qty"] = round(rebuy_qty, 4)
+        completed.append(pos)
+
+    def sweep_idle_cash(bench_close):
+        nonlocal cash, bench_shares, total_txn_cost
+        if not FULLY_INVESTED_SWEEP or bench_close <= 0 or cash < MIN_SWEEP_CASH:
+            return
+        qty = _bench_buy_qty(cash, bench_close)
+        if qty <= 0:
+            return
+        buy_cost = ib_cost(qty, bench_close, False)
+        cash -= qty * bench_close + buy_cost
+        bench_shares += qty
+        total_txn_cost += buy_cost
+
+    def try_open_trade(trade, day, bench_close, *, base_ps, max_concurrent):
+        nonlocal cash, bench_shares, total_txn_cost
+        nonlocal skip_max_concurrent, skip_duplicate_symbol, skip_insufficient_capital
+        if len(open_positions) >= max_concurrent:
+            skip_max_concurrent += 1
+            return False
+        if any(pos["symbol"] == trade["symbol"] for pos in open_positions):
+            skip_duplicate_symbol += 1
+            return False
+        position_size = base_ps
+        marked_open_value = sum(
+            int(pos["_qty"]) * float(_close_on(sim_prices, pos["symbol"], day) or pos["entry_price"])
+            for pos in open_positions)
+        current_equity = bench_shares * bench_close + marked_open_value + cash
+        desired_allocation = current_equity * position_size
+        entry_price = float(trade["entry_price"])
+        if entry_price <= 0 or desired_allocation < entry_price:
+            skip_insufficient_capital += 1
+            return False
+        cash_contribution = min(max(cash, 0.0), desired_allocation)
+        shortfall = desired_allocation - cash_contribution
+        if shortfall > 0:
+            desired_sell = shortfall / bench_close if FRACTIONAL_BENCHMARK else int(shortfall / bench_close)
+            benchmark_sell_qty = min(desired_sell, bench_shares)
+        else:
+            benchmark_sell_qty = 0.0
+        if cash_contribution + benchmark_sell_qty * bench_close < entry_price:
+            skip_insufficient_capital += 1
+            return False
+        benchmark_sell_cost = ib_cost(benchmark_sell_qty, bench_close, True) if benchmark_sell_qty > 0 else 0.0
+        available_for_asset = cash_contribution + benchmark_sell_qty * bench_close - benchmark_sell_cost
+        asset_qty = _affordable_buy_qty(available_for_asset, entry_price)
+        if asset_qty < 1:
+            skip_insufficient_capital += 1
+            return False
+        asset_buy_cost = ib_cost(asset_qty, entry_price, False)
+        asset_cash_needed = asset_qty * entry_price + asset_buy_cost
+        if asset_cash_needed > available_for_asset + 1e-9:
+            skip_insufficient_capital += 1
+            return False
+        bench_shares -= benchmark_sell_qty
+        cash += available_for_asset - asset_cash_needed - cash_contribution
+        total_txn_cost += benchmark_sell_cost + asset_buy_cost
+        open_positions.append({
+            **trade, "_qty": asset_qty, "_position_size_pct": position_size,
+            "_asset_entry_notional": round(asset_qty * entry_price, 2),
+            "_equity_at_entry": round(current_equity, 2),
+            "invested_frac_pct": round(asset_qty * entry_price / max(current_equity, 1e-12) * 100.0, 4),
+            "_benchmark_sell_cost": round(benchmark_sell_cost, 2),
+            "_asset_buy_cost": round(asset_buy_cost, 2),
+            "_entry_ts": trade["_entry_ts"], "_exit_ts": trade["_exit_ts"],
+        })
+        return True
+
+    for day in calendar:
+        base_ps = float(policy.get("position_size_pct", 0.10))
+        max_concurrent = int(policy.get("max_concurrent", 10))
+        bench_close = _close_on(sim_prices, bench_sym, day)
+        if bench_close is None:
+            continue
+        # Close trades whose planned exit is known by the current day.
+        still_open = []
+        for pos in open_positions:
+            if pos["_exit_ts"] <= day:
+                exit_reason = str(pos.get("exit_reason", "strategy_exit"))
+                if end_date is not None and exit_reason == "end_of_window":
+                    exit_reason = "evaluation_end_liquidation"
+                close_position(pos, day, float(pos["exit_price"]), exit_reason)
+            else:
+                still_open.append(pos)
+        open_positions = still_open
+        # Open candidates on/after their entry day (FIFO); >4-day gaps are dropped.
+        while trade_idx < len(all_trades):
+            trade = all_trades[trade_idx]
+            if trade["_entry_ts"] > day:
+                break
+            trade_idx += 1
+            if trade["_entry_ts"] < day:
+                if (day - trade["_entry_ts"]).days > 4:
+                    continue
+                trade["_entry_ts"] = day
+                trade["entry_date"] = str(day.date())
+            try_open_trade(trade, day, float(bench_close), base_ps=base_ps, max_concurrent=max_concurrent)
+        sweep_idle_cash(float(bench_close))
+        open_value = sum(
+            int(pos["_qty"]) * float(_close_on(sim_prices, pos["symbol"], day) or pos["entry_price"])
+            for pos in open_positions)
+        equity = bench_shares * bench_close + open_value + cash
+        passive = initial_bench_shares * bench_close + initial_cash
+        equity_rows.append({
+            "date": str(day.date()), "equity": round(equity, 2),
+            "benchmark_equity": round(passive, 2), "cash": round(cash, 2),
+            "benchmark_shares": round(bench_shares, 4), "open_positions": len(open_positions),
+        })
+
+    # Forced liquidation at the evaluation horizon.
+    if open_positions:
+        for pos in list(open_positions):
+            forced_price = _close_on(sim_prices, pos["symbol"], last_day)
+            if forced_price is None:
+                forced_price = float(pos["entry_price"])
+            close_position(pos, last_day, float(forced_price), "evaluation_end_liquidation")
+        open_positions = []
+
+    final_equity = bench_shares * last_bench_close + cash
+    final_passive = initial_bench_shares * last_bench_close + initial_cash
+    if equity_rows:
+        equity_rows[-1].update({
+            "equity": round(final_equity, 2), "benchmark_equity": round(final_passive, 2),
+            "cash": round(cash, 2), "benchmark_shares": round(bench_shares, 4), "open_positions": 0,
+        })
+    else:
+        equity_rows.append({
+            "date": str(last_day.date()), "equity": round(final_equity, 2),
+            "benchmark_equity": round(final_passive, 2), "cash": round(cash, 2),
+            "benchmark_shares": round(bench_shares, 4), "open_positions": 0,
+        })
+
+    equity_df = pd.DataFrame(equity_rows)
+    trade_df = pd.DataFrame(completed)
+    equity_values = equity_df["equity"].astype(float).to_numpy()
+    peaks = np.maximum.accumulate(equity_values)
+    drawdowns = np.where(peaks > 0, equity_values / peaks - 1.0, 0.0)
+    max_dd = float(np.min(drawdowns) * 100.0) if len(drawdowns) else 0.0
+    adv = _calc_advanced_metrics(equity_df["equity"])
+    bench_adv = _calc_advanced_metrics(equity_df["benchmark_equity"])
+
+    if trade_df.empty:
+        gross_trade_pnl = net_trade_pnl = trade_txn_cost = 0.0
+        win_rate = avg_pnl = avg_gross_pnl = 0.0
+        position_sizes = np.asarray([], dtype=float)
+    else:
+        gross_trade_pnl = float(trade_df["gross_pnl"].sum())
+        net_trade_pnl = float(trade_df["pnl"].sum())
+        trade_txn_cost = float(trade_df["txn_cost"].sum())
+        win_rate = float((trade_df["pnl"] > 0).mean() * 100.0)
+        avg_pnl = float(trade_df["pnl"].mean())
+        avg_gross_pnl = float(trade_df["gross_pnl"].mean())
+        position_sizes = trade_df["_position_size_pct"].astype(float).to_numpy()
+
+    stats = {
+        "initial": round(initial, 2), "final": round(final_equity, 2),
+        "total_return": round((final_equity / initial - 1.0) * 100.0, 4),
+        "benchmark_return": round((final_passive / initial - 1.0) * 100.0, 4),
+        "excess_return": round((final_equity - final_passive) / initial * 100.0, 4),
+        "max_dd": round(max_dd, 4),
+        "sharpe": round(adv["sharpe"], 4), "sortino": round(adv["sortino"], 4),
+        "benchmark_sharpe": round(bench_adv["sharpe"], 4), "benchmark_sortino": round(bench_adv["sortino"], 4),
+        "n_trades": int(len(trade_df)), "win_rate": round(win_rate, 4),
+        "avg_pnl": round(avg_pnl, 4), "avg_gross_pnl": round(avg_gross_pnl, 4),
+        "gross_trade_pnl": round(gross_trade_pnl, 2), "net_trade_pnl": round(net_trade_pnl, 2),
+        "total_txn_cost": round(total_txn_cost, 2), "trade_txn_cost": round(trade_txn_cost, 2),
+        "avg_position_size": round(float(position_sizes.mean() * 100.0), 4) if len(position_sizes) else 0.0,
+        "median_position_size": round(float(np.median(position_sizes) * 100.0), 4) if len(position_sizes) else 0.0,
+        "min_position_size": round(float(position_sizes.min() * 100.0), 4) if len(position_sizes) else 0.0,
+        "max_position_size": round(float(position_sizes.max() * 100.0), 4) if len(position_sizes) else 0.0,
+        "start_date": str(first_day.date()), "end_date": str(last_day.date()),
+        "n_equity_days": int(len(equity_df)),
+        "skip_max_concurrent": skip_max_concurrent, "skip_duplicate_symbol": skip_duplicate_symbol,
+        "skip_insufficient_capital": skip_insufficient_capital,
+    }
+    return trade_df, equity_df, stats
+
+
+def daily_equity_sharpe(equity_df):
+    """Annualized Sharpe from portfolio daily equity returns (CEM objective input)."""
+    if equity_df.empty or len(equity_df) < MIN_DAILY_RETURNS_FOR_SHARPE + 1:
+        return None
+    daily_returns = equity_df["equity"].astype(float).pct_change().dropna()
+    if len(daily_returns) < MIN_DAILY_RETURNS_FOR_SHARPE:
+        return None
+    std = float(daily_returns.std(ddof=1))
+    if not np.isfinite(std) or std <= 1e-12:
+        return 0.0
+    sharpe = float(daily_returns.mean() / std * math.sqrt(252.0))
+    return sharpe if np.isfinite(sharpe) else None
+
+
+def cem_reward(trades, equity_df, stats):
+    """Baseline objective: daily-equity Sharpe − DD_PENALTY·|max drawdown %|."""
+    if trades.empty or stats["n_trades"] < MIN_TRADES_FOR_REWARD:

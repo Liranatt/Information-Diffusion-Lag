@@ -1,0 +1,22 @@
+{
+  "market_id": "642139",
+  "question": "Will Booking Holdings (BKNG) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-21 00:57:22.395028+00:00",
+  "requested_end_utc": "2025-10-21 20:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "6b83a770c903cddf01e977b6",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "74256825450958277793771314094946367497697055698614050303638258973828222692224",
+  "condition_id": "0x574056340b1f6772e51ba86c91f905b6b0e71adde7157c87cdadebf0c69dafce",
+  "api_question": "Will Booking Holdings (BKNG) beat quarterly earnings?",
+  "api_created_at": "2025-10-21T00:57:22.395028Z",
+  "api_end_date": "2025-10-28T21:00:00Z",
+  "status": "complete",
+  "row_count": 1126,
+  "first_source_ts_utc": "2025-10-21 01:14:03+00:00",
+  "last_source_ts_utc": "2025-10-21 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\642139.csv",
+  "fragment_sha256": "da7589ea4e795e1c947f2b159d29794ff29374b66548eadf9a174f5a3487e7e8",
+  "question_matches": true,
+  "error": null
+}

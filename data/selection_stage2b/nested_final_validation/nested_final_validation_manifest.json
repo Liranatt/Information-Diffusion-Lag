@@ -1,0 +1,52 @@
+{
+  "label": "full_nested_chronological_oof_stage2b_final_validation",
+  "candidates_sha256": "96833cd225bf846d7d46a2bb0efa3b8d5f20fffc33e15718cbcb37c6fb121046",
+  "capacity_sha256": "cbc994d59ed72f52eac7c3a4c617b94ef03bbdb0bac2defceebff32e6314ae39",
+  "outer_fold_count": 5,
+  "inner_folds_per_outer_max": 3,
+  "tie_breakers": [
+    "source_order",
+    "expected_slot_days"
+  ],
+  "threshold_grid": [
+    "none",
+    0.9,
+    0.95,
+    0.98,
+    1.0
+  ],
+  "outer_evaluation_split": "train_only_development_rows",
+  "lockbox_opened": false,
+  "lockbox_rows_evaluated": 0,
+  "target_c_primary_training_target": false,
+  "target_c_status": "diagnostic_only_continuation_policy_dependent",
+  "research_frozen_selector": {
+    "label": "research_frozen_selector",
+    "ranker": "connection_strength_descending",
+    "tie_breaker": "expected_slot_days",
+    "admission_threshold": 1.0,
+    "admission_threshold_label": "1.00",
+    "selection_rule": "maximize the minimum of SPY and QQQ outer-fold mean excess; tie-break mean excess, active IR, then less-negative mean active drawdown",
+    "selection_source": "full_nested_chronological_outer_evaluation_on_training_development_data",
+    "outer_fold_count": 5,
+    "mean_excess_return": 0.73573,
+    "min_benchmark_excess_return": 0.70914,
+    "spy_mean_excess_return": 0.70914,
+    "qqq_mean_excess_return": 0.76232,
+    "mean_active_information_ratio": 1.1157268719112428,
+    "mean_active_max_drawdown_pct": -1.2667230367024684,
+    "lockbox_opened": false,
+    "lockbox_reserved_for_final_modular_pipeline_evaluation": true,
+    "do_not_change_during_exit_research": true,
+    "te_is_never_exit": true
+  },
+  "outputs": {
+    "outer_fold_manifest": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\nested_final_validation\\nested_outer_fold_manifest.csv",
+    "inner_choices": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\nested_final_validation\\nested_outer_choices.csv",
+    "outer_decisions": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\nested_final_validation\\nested_outer_decisions.csv",
+    "exact_replay": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\nested_final_validation\\nested_outer_exact_replay_summary.csv",
+    "factorial_summary": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\nested_final_validation\\factorial_ablation_summary.csv",
+    "threshold_stability": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\nested_final_validation\\threshold_stability_summary.csv",
+    "frozen_selector": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\nested_final_validation\\research_frozen_selector.json"
+  }
+}

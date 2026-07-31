@@ -1,0 +1,23 @@
+{
+  "market_id": "637885",
+  "question": "Will Tractor Supply (TSCO) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-13 22:51:41.194738+00:00",
+  "requested_end_utc": "2025-10-16 22:51:41.194738+00:00",
+  "first_candidate_t0_utc": "2025-10-16 22:51:41.194738+00:00",
+  "latest_candidate_decision_utc": "2025-10-20 20:00:00+00:00",
+  "candidate_count": 1,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "74310732563113208448302761225474443091273548529725359883319558358074562088075",
+  "condition_id": "0x7726ceea39c35282fb8563f330e53017415270e275ae63eab62ab7000dc31b67",
+  "api_question": "Will Tractor Supply (TSCO) beat quarterly earnings?",
+  "api_created_at": "2025-10-16T22:51:41.194738Z",
+  "api_end_date": "2025-10-23T13:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\637885.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

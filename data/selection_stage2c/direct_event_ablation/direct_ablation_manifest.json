@@ -1,0 +1,49 @@
+{
+  "label": "nested_chronological_direct_earnings_selector_ablation",
+  "outer_fold_count": 5,
+  "variants": [
+    "A_raw_global_connection_baseline",
+    "B_deterministic_direct_always_fill",
+    "C_deterministic_direct_legacy_proxy_1.00",
+    "D_deterministic_direct_trade_quality"
+  ],
+  "direct_mapping_rule": "all ordinary same-company earnings are equally direct and valid",
+  "outer_selected_quality_rules": [
+    {
+      "outer_fold": 0,
+      "selected_quality_rule": "stock_minus_sector_20d_le_0",
+      "selection_scope": "inner_chronological_exact_replay_only",
+      "selection_objective": "max minimum SPY/QQQ excess, then mean excess, active IR, drawdown and trades; minimum 20% of always-fill trades"
+    },
+    {
+      "outer_fold": 1,
+      "selected_quality_rule": "predicted_target_a_positive",
+      "selection_scope": "inner_chronological_exact_replay_only",
+      "selection_objective": "max minimum SPY/QQQ excess, then mean excess, active IR, drawdown and trades; minimum 20% of always-fill trades"
+    },
+    {
+      "outer_fold": 2,
+      "selected_quality_rule": "predicted_target_a_positive",
+      "selection_scope": "inner_chronological_exact_replay_only",
+      "selection_objective": "max minimum SPY/QQQ excess, then mean excess, active IR, drawdown and trades; minimum 20% of always-fill trades"
+    },
+    {
+      "outer_fold": 3,
+      "selected_quality_rule": "predicted_target_a_positive",
+      "selection_scope": "inner_chronological_exact_replay_only",
+      "selection_objective": "max minimum SPY/QQQ excess, then mean excess, active IR, drawdown and trades; minimum 20% of always-fill trades"
+    },
+    {
+      "outer_fold": 4,
+      "selected_quality_rule": "predicted_target_b_positive",
+      "selection_scope": "inner_chronological_exact_replay_only",
+      "selection_objective": "max minimum SPY/QQQ excess, then mean excess, active IR, drawdown and trades; minimum 20% of always-fill trades"
+    }
+  ],
+  "predeclared_family_quality_rule": "predicted_target_a_positive",
+  "probability_price_disagreement_available": false,
+  "portfolio_capacity_state": "used dynamically by every admission callback and the common exact allocator",
+  "current_2026_exploratory_test_used": false,
+  "lockbox_opened": false,
+  "te_is_never_exit": true
+}

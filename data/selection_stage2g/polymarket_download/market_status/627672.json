@@ -1,0 +1,22 @@
+{
+  "market_id": "627672",
+  "question": "Will Ameriprise Financial (AMP) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-08 18:05:12.049267+00:00",
+  "requested_end_utc": "2025-10-09 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "a70e8de3d35281aa9e922cd2|a7e48e02307e60780138e4a4",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "45518873577041923104701144199214154067496802051079960623058388652748418090436",
+  "condition_id": "0xa3a9fe63f86dcfa7345880580f670398a14af9e796d70229ec993b867e749df6",
+  "api_question": "Will Ameriprise Financial (AMP) beat quarterly earnings?",
+  "api_created_at": "2025-10-08T18:05:12.049267Z",
+  "api_end_date": "2025-10-30T13:00:00Z",
+  "status": "complete",
+  "row_count": 1538,
+  "first_source_ts_utc": "2025-10-08 18:22:05+00:00",
+  "last_source_ts_utc": "2025-10-09 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\627672.csv",
+  "fragment_sha256": "d1a9ff70c4fcf6cadbc28f4e96ff0b3dae9343f9c91bd760b7652d93d5dbc6aa",
+  "question_matches": true,
+  "error": null
+}

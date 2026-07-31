@@ -1,0 +1,26 @@
+\begin{table*}[t]
+\caption{Main portfolio comparison over the single January--June 2026 test period (audit-clean universe, identical costs and mechanics, $6\times20$ CEM budget, seeds 42--51 for stochastic arms; the fixed default policy is deterministic). Excess is percentage points versus buy-and-hold ($+8.52$ SPY, $+17.59$ QQQ). $>0$ counts seeds with positive excess; $>$ref counts seeds beating the fixed default policy. Sharpe, MaxDD, trades, and one-way trade costs (\$) are medians.}
+\label{tab:cemmain}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.4pt}
+\begin{tabular}{llrrrrrrr}
+\toprule
+Benchmark & Configuration & Excess med.\ [IQR] & $>0$ & $>$ref & Sharpe & MaxDD & Trades & Cost \\
+\midrule
+SPY & Fixed default policy (no CEM) & $13.21$\,-- & -- & -- & 2.58 & $-9.37$ & 209 & 5,200 \\
+ & Standard CEM (frozen fit) & $16.50$\,$[14.74,17.84]$ & 10/10 & 8/10 & 2.80 & $-9.10$ & 219 & 5,955 \\
+ & T2 only (walk-forward) & $16.38$\,$[13.57,20.34]$ & 10/10 & 8/10 & 2.79 & $-9.39$ & 211 & 5,622 \\
+ & T1+T2 & $14.83$\,$[13.39,17.89]$ & 10/10 & 8/10 & 2.60 & $-9.49$ & 211 & 5,745 \\
+ & T1+T2+T3 & $9.75$\,$[5.59,12.33]$ & 10/10 & 2/10 & 2.06 & $-9.43$ & 205 & 4,636 \\
+ & T1+T2+T3+T4 & $8.26$\,$[4.31,9.63]$ & 10/10 & 1/10 & 1.88 & $-8.74$ & 197 & 3,891 \\
+\midrule
+QQQ & Fixed default policy (no CEM) & $5.22$\,-- & -- & -- & 2.43 & $-9.23$ & 209 & 5,204 \\
+ & Standard CEM (frozen fit) & $8.62$\,$[7.05,11.85]$ & 9/10 & 8/10 & 2.75 & $-7.61$ & 221 & 5,915 \\
+ & T2 only (walk-forward) & $3.34$\,$[-1.13,5.31]$ & 6/10 & 3/10 & 2.14 & $-8.03$ & 193 & 5,195 \\
+ & T1+T2 & $0.88$\,$[-2.25,6.38]$ & 7/10 & 3/10 & 1.92 & $-7.94$ & 192 & 5,253 \\
+ & T1+T2+T3 & $7.36$\,$[3.09,9.86]$ & 8/10 & 6/10 & 2.39 & $-10.57$ & 199 & 4,764 \\
+ & T1+T2+T3+T4 & $3.89$\,$[2.21,7.25]$ & 8/10 & 4/10 & 2.17 & $-9.26$ & 186 & 4,158 \\
+\bottomrule
+\end{tabular}
+\end{table*}

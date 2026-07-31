@@ -1,0 +1,22 @@
+{
+  "market_id": "658487",
+  "question": "Will Under Armour (UAA) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-31 18:23:22.108484+00:00",
+  "requested_end_utc": "2025-11-03 21:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "8cd44bb08cd99cf5c4f43d0a",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "113518763424261404758232463657243664761812930152548858162554528349454698707555",
+  "condition_id": "0xc96c7c8c9ef06dd9eebbed5369bb1f60db264eb1807e4eab15106f17fabe31b2",
+  "api_question": "Will Under Armour (UAA) beat quarterly earnings?",
+  "api_created_at": "2025-10-31T18:23:22.108484Z",
+  "api_end_date": "2025-11-06T14:00:00Z",
+  "status": "complete",
+  "row_count": 4460,
+  "first_source_ts_utc": "2025-10-31 18:40:07+00:00",
+  "last_source_ts_utc": "2025-11-03 20:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\658487.csv",
+  "fragment_sha256": "805ffc6f431f2eefe5f208ba4b01e1cf5d85e48ba23b7c5f1becadc6f376271b",
+  "question_matches": true,
+  "error": null
+}

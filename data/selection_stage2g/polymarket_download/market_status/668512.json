@@ -1,0 +1,22 @@
+{
+  "market_id": "668512",
+  "question": "Will Gambling.com Group (GAMB) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-06 21:21:20.517885+00:00",
+  "requested_end_utc": "2025-11-10 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "48cba757a97e430339a6e490|5fa68c7e166a10471575152e",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "3279262139478852498867691176830886937366410920296186190158448604442737579265",
+  "condition_id": "0x6d79a0e2153940157b29a02c2bbda2fc432e3c1a89cf16229f216c92f9b6d4eb",
+  "api_question": "Will Gambling.com Group (GAMB) beat quarterly earnings?",
+  "api_created_at": "2025-11-06T21:21:20.517885Z",
+  "api_end_date": "2025-11-13T14:00:00Z",
+  "status": "complete",
+  "row_count": 5680,
+  "first_source_ts_utc": "2025-11-06 22:20:06+00:00",
+  "last_source_ts_utc": "2025-11-10 20:59:05+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\668512.csv",
+  "fragment_sha256": "5897722f00aa085d318da5046a1a905db942d1f8eb74cfb4cf258ae7feca9e82",
+  "question_matches": true,
+  "error": null
+}

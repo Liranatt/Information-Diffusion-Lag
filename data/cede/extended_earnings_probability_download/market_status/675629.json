@@ -1,0 +1,23 @@
+{
+  "market_id": "675629",
+  "question": "Will The J. M. Smucker (SJM) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-07 23:58:22.231210+00:00",
+  "requested_end_utc": "2025-11-10 23:58:22.231210+00:00",
+  "first_candidate_t0_utc": "2025-11-10 23:58:22.231210+00:00",
+  "latest_candidate_decision_utc": "2025-11-17 21:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "7908269671037638624501070955234928285276170223005115982541863568036371319406",
+  "condition_id": "0x72d953acfaf2d2e7c211836a3a02aa73506fcb2da1db2296f356db1efd385421",
+  "api_question": "Will The J. M. Smucker (SJM) beat quarterly earnings?",
+  "api_created_at": "2025-11-10T23:58:22.23121Z",
+  "api_end_date": "2025-11-25T14:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\675629.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

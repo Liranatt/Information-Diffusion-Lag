@@ -1,0 +1,23 @@
+{
+  "market_id": "637859",
+  "question": "Will WD-40 Company (WDFC) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-13 22:00:07.920107+00:00",
+  "requested_end_utc": "2025-10-16 22:00:07.920107+00:00",
+  "first_candidate_t0_utc": "2025-10-16 22:00:07.920107+00:00",
+  "latest_candidate_decision_utc": "2025-10-20 20:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "88985112000126097578486459456169602411880925472878466982916659177659036470647",
+  "condition_id": "0x014d47b7239008d10ff6ffd34702e03999febecd23dd01c6f3dc1ed9cfd8b7e9",
+  "api_question": "Will WD-40 Company (WDFC) beat quarterly earnings?",
+  "api_created_at": "2025-10-16T22:00:07.920107Z",
+  "api_end_date": "2025-10-22T21:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\637859.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

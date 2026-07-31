@@ -1,0 +1,23 @@
+{
+  "market_id": "551650",
+  "question": "US military action against Iran before August?",
+  "requested_start_utc": "2025-06-11 19:25:10.131465+00:00",
+  "requested_end_utc": "2025-06-17 20:00:00+00:00",
+  "candidate_count": 2,
+  "research_families": "geopolitics",
+  "economic_event_ids": "26736",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "90103506197662011219634748463226059016090380420105757763688512558980719289602",
+  "condition_id": "0x5bb02509cac2580d4b13ab17cef450011997faf52882059ca9a9611e374c210a",
+  "api_question": "US military action against Iran before August?",
+  "api_created_at": "2025-06-11T19:25:10.131465Z",
+  "api_end_date": "2025-07-31T00:00:00Z",
+  "status": "complete",
+  "row_count": 8642,
+  "first_source_ts_utc": "2025-06-11 19:49:08+00:00",
+  "last_source_ts_utc": "2025-06-17 19:59:08+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\551650.csv",
+  "fragment_sha256": "be53a33055c03b05f129e2d7b8a84bdd2f5f36aead85576cd0df92551e075752",
+  "question_matches": true,
+  "error": null
+}

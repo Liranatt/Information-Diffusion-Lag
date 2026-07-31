@@ -1,0 +1,23 @@
+{
+  "market_id": "569179",
+  "question": "FDA approves LENZ Therapeutics\u2019 LNZ100 for presbyopia by August 31?",
+  "requested_start_utc": "2025-07-28 13:49:18.777162+00:00",
+  "requested_end_utc": "2025-07-29 20:00:00+00:00",
+  "candidate_count": 2,
+  "research_families": "other",
+  "economic_event_ids": "34547",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "41193387401863684510473689608354395818640779163807004224493207514422228862984",
+  "condition_id": "0xd37923db43e10042a9b43cbba87485ecc09408b713bd52a1cd33305bd836c373",
+  "api_question": "FDA approves LENZ Therapeutics\u2019 LNZ100 for presbyopia by August 31?",
+  "api_created_at": "2025-07-28T13:49:18.777162Z",
+  "api_end_date": "2025-08-08T16:00:00Z",
+  "status": "complete",
+  "row_count": 264,
+  "first_source_ts_utc": "2025-07-29 15:36:09+00:00",
+  "last_source_ts_utc": "2025-07-29 19:59:09+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\569179.csv",
+  "fragment_sha256": "7f88cde82eb98fe693579f7cb4412cae4a6850bdd44b6baa7954449e634f7684",
+  "question_matches": true,
+  "error": null
+}

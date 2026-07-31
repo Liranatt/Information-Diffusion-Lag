@@ -1,0 +1,33 @@
+# Minimal Open-aware patch for the original daily-bar kernel
+#
+# Preserve:
+# - exit priority;
+# - prior-bar peak semantics;
+# - ATR and stop calculations;
+# - strict `<` trigger in the profit-lock branch;
+# - existing transaction-cost accounting.
+
+# Trailing stop
+active_stop = entry_price * (1.0 + peak - stop_dist)
+if ret_l <= peak - stop_dist:
+    if not np.isfinite(open_price):
+        raise ValueError("Missing or incompatible Open on stop-exit bar")
+    if open_price <= active_stop:
+        exit_price = open_price       # overnight gap-through
+    else:
+        exit_price = active_stop      # normal intraday crossing
+
+# Profit lock
+hard_floor_pct = int(peak * 100.0)
+hard_floor = hard_floor_pct / 100.0
+active_floor = entry_price * (1.0 + hard_floor)
+if ret_l < hard_floor:
+    if not np.isfinite(open_price):
+        raise ValueError("Missing or incompatible Open on profit-lock bar")
+    if open_price <= active_floor:
+        exit_price = open_price       # overnight gap-through
+    else:
+        exit_price = active_floor     # normal intraday crossing
+
+# Peak remains updated only after all exit checks:
+# peak = max(peak, current_bar_high_return)

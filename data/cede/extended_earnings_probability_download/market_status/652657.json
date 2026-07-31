@@ -1,0 +1,23 @@
+{
+  "market_id": "652657",
+  "question": "Will Frontdoor (FTDR) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-24 21:49:34.625873+00:00",
+  "requested_end_utc": "2025-10-27 21:49:34.625873+00:00",
+  "first_candidate_t0_utc": "2025-10-27 21:49:34.625873+00:00",
+  "latest_candidate_decision_utc": "2025-10-29 20:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "80297250787986735751806601977034317526875026090750915285326200981657305507396",
+  "condition_id": "0xab8d700fb1a8afc20134af099006b7fa97a2c366e13b2d0a3d2c4d4d9649f209",
+  "api_question": "Will Frontdoor (FTDR) beat quarterly earnings?",
+  "api_created_at": "2025-10-27T21:49:34.625873Z",
+  "api_end_date": "2025-11-05T14:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\652657.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

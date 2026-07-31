@@ -1,0 +1,22 @@
+{
+  "market_id": "657445",
+  "question": "Will Advanced Micro Devices (AMD) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-30 21:52:57.909646+00:00",
+  "requested_end_utc": "2025-10-31 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "596dc0f4113c646a4048650c|a2ad54d11d0a4592a1177d7e",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "104924915364061782307058520356837993937160185725077572951377151813187328065795",
+  "condition_id": "0xa60f72aa1c1b7a2f2cee9823a510e8dd0a6a1f206355794439a31ca9794c1333",
+  "api_question": "Will Advanced Micro Devices (AMD) beat quarterly earnings?",
+  "api_created_at": "2025-10-30T21:52:57.909646Z",
+  "api_end_date": "2025-11-04T22:00:00Z",
+  "status": "complete",
+  "row_count": 1311,
+  "first_source_ts_utc": "2025-10-30 22:09:04+00:00",
+  "last_source_ts_utc": "2025-10-31 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\657445.csv",
+  "fragment_sha256": "9c74f790cec067c1eb8309863f449177bfc17395bfb786ccc430ffde82913348",
+  "question_matches": true,
+  "error": null
+}

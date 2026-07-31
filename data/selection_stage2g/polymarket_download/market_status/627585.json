@@ -1,0 +1,22 @@
+{
+  "market_id": "627585",
+  "question": "Will East West Bancorp (EWBC) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-08 16:20:35.155726+00:00",
+  "requested_end_utc": "2025-10-09 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "9ea0a73c0cb1e6f2898bd3c3|aec6ca5c29d468dabc4c01e1",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "54837712452904698682294728640139361146728265308663896691366457903486038082888",
+  "condition_id": "0x76c6d5063b3d0e1b2392cc3a8a144ea640bc1de59ec8c767b7f6fe4e56fba2d3",
+  "api_question": "Will East West Bancorp (EWBC) beat quarterly earnings?",
+  "api_created_at": "2025-10-08T16:20:35.155726Z",
+  "api_end_date": "2025-10-21T21:00:00Z",
+  "status": "complete",
+  "row_count": 1643,
+  "first_source_ts_utc": "2025-10-08 16:37:04+00:00",
+  "last_source_ts_utc": "2025-10-09 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\627585.csv",
+  "fragment_sha256": "35433e952ed8647d5712f1f449cdb1dfb7b32772b86ace375e5441ff0c27b3ef",
+  "question_matches": true,
+  "error": null
+}

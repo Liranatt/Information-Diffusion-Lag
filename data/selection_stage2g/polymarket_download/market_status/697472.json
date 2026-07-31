@@ -1,0 +1,22 @@
+{
+  "market_id": "697472",
+  "question": "Will Korn Ferry (KFY) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-22 20:42:49.162952+00:00",
+  "requested_end_utc": "2025-12-01 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "baf0b4f999aee7066b4ff2a0|d4ed937fcfd4b3dc3feb83d0",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "47885501159502114601705775815949245693142565195139100638231335145632859251897",
+  "condition_id": "0xebc715f2dd39e126674375f7fe28004d70e4ed166a648988bdd3e9a5f8dae054",
+  "api_question": "Will Korn Ferry (KFY) beat quarterly earnings?",
+  "api_created_at": "2025-11-22T20:42:49.162952Z",
+  "api_end_date": "2025-12-09T14:00:00Z",
+  "status": "complete",
+  "row_count": 12960,
+  "first_source_ts_utc": "2025-11-22 21:00:07+00:00",
+  "last_source_ts_utc": "2025-12-01 20:59:05+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\697472.csv",
+  "fragment_sha256": "96da375107e120b6375d1f2531ed39fc327d59944d99c5dfc5961185d8144a4f",
+  "question_matches": true,
+  "error": null
+}

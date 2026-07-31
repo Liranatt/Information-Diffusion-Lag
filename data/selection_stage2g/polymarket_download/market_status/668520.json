@@ -1,0 +1,22 @@
+{
+  "market_id": "668520",
+  "question": "Will StoneX Group (SNEX) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-06 21:27:14.999836+00:00",
+  "requested_end_utc": "2025-11-18 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "8c36cb37a767a2d8d2a053dc|d15f9b4ea580c169f1db5e8b",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "42414920812668890115400899476791522717282661988292032007763045171121745382056",
+  "condition_id": "0x0abd05861bb16fabd78044f6d583055e05722e2bbacdf50bdb5e86cbae2d6cb5",
+  "api_question": "Will StoneX Group (SNEX) beat quarterly earnings?",
+  "api_created_at": "2025-11-06T21:27:14.999836Z",
+  "api_end_date": "2025-11-24T22:00:00Z",
+  "status": "complete",
+  "row_count": 17191,
+  "first_source_ts_utc": "2025-11-06 22:25:08+00:00",
+  "last_source_ts_utc": "2025-11-18 20:59:08+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\668520.csv",
+  "fragment_sha256": "5bf3f613d03e34969512255c1daf135421cc7708f59d64abcb7d36e8b0233611",
+  "question_matches": true,
+  "error": null
+}

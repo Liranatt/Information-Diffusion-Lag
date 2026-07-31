@@ -1,0 +1,22 @@
+{
+  "market_id": "642125",
+  "question": "Will Piper Sandler Companies (PIPR) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-21 00:31:05.732798+00:00",
+  "requested_end_utc": "2025-10-22 20:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "c69884058420ac8f74b111ed",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "21008502799119892715830026953266028022007637688309825381141453426672228432162",
+  "condition_id": "0x62056f9fc743a5213415ad1ec877894341ef46184d45f5f686d35e91a967bdf7",
+  "api_question": "Will Piper Sandler Companies (PIPR) beat quarterly earnings?",
+  "api_created_at": "2025-10-21T00:31:05.732798Z",
+  "api_end_date": "2025-10-28T13:00:00Z",
+  "status": "complete",
+  "row_count": 2592,
+  "first_source_ts_utc": "2025-10-21 00:48:04+00:00",
+  "last_source_ts_utc": "2025-10-22 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\642125.csv",
+  "fragment_sha256": "329aa215e4ff8a21928cdc767a1afecdde78820f474bbbb76ab93235dbebe773",
+  "question_matches": true,
+  "error": null
+}

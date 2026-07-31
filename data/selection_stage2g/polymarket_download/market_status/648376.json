@@ -1,0 +1,22 @@
+{
+  "market_id": "648376",
+  "question": "Will Colgate-Palmolive (CL) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-24 17:22:58.244521+00:00",
+  "requested_end_utc": "2025-10-27 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "ba3a72489da239109f2434ea|ec4517707e716ea9ca546989",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "2439184327512284445461419265027827178156062575669756705909068378657320311241",
+  "condition_id": "0x65343ce2703761c8448b0d703d3c7c945a7b095f124d074dd87d1f5e4b35fc5f",
+  "api_question": "Will Colgate-Palmolive (CL) beat quarterly earnings?",
+  "api_created_at": "2025-10-24T17:22:58.244521Z",
+  "api_end_date": "2025-10-31T13:00:00Z",
+  "status": "complete",
+  "row_count": 4454,
+  "first_source_ts_utc": "2025-10-24 17:46:05+00:00",
+  "last_source_ts_utc": "2025-10-27 19:59:05+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\648376.csv",
+  "fragment_sha256": "d1810b0587244da3937e45f7da570476d54b99053bf3936040ec7704f449c7ef",
+  "question_matches": true,
+  "error": null
+}

@@ -1,0 +1,22 @@
+{
+  "market_id": "647847",
+  "question": "Will Paramount Group (PSKY) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-24 12:28:41.260545+00:00",
+  "requested_end_utc": "2025-10-24 20:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "e4a0c19110c59bd12de3480d",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "96081327119936898624461987970567126403606547152342476673195761598132857652194",
+  "condition_id": "0x95a145d7d09de74ed82196aa31f2ac21059c92e511baa956f7dfe1eea99018e0",
+  "api_question": "Will Paramount Group (PSKY) beat quarterly earnings?",
+  "api_created_at": "2025-10-24T12:28:41.260545Z",
+  "api_end_date": "2025-11-10T22:00:00Z",
+  "status": "complete",
+  "row_count": 435,
+  "first_source_ts_utc": "2025-10-24 12:45:17+00:00",
+  "last_source_ts_utc": "2025-10-24 19:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\647847.csv",
+  "fragment_sha256": "aed7002e812abf61f2f4eb728df32fcd2d17b56e037567d51df372d56e91c905",
+  "question_matches": true,
+  "error": null
+}

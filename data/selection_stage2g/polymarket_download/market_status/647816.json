@@ -1,0 +1,22 @@
+{
+  "market_id": "647816",
+  "question": "Will Garmin (GRMN) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-24 11:22:51.293101+00:00",
+  "requested_end_utc": "2025-10-24 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "c1dfbb993e69e8f4b72e45a3|f9fb4a0598baa1488116879b",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "96290562540749532455551964958400552128304905364431707585975659866313239594260",
+  "condition_id": "0xe29975752adf840118daf1df6ddf15f0e85bd5b2cc3a79a66ca0189c5d23c9a6",
+  "api_question": "Will Garmin (GRMN) beat quarterly earnings?",
+  "api_created_at": "2025-10-24T11:22:51.293101Z",
+  "api_end_date": "2025-10-29T13:00:00Z",
+  "status": "complete",
+  "row_count": 501,
+  "first_source_ts_utc": "2025-10-24 11:39:06+00:00",
+  "last_source_ts_utc": "2025-10-24 19:59:05+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\647816.csv",
+  "fragment_sha256": "4f7a3004ad94832016a43d04d4ff6af3c8356c35c318e6c6bdd4a785690dbd8b",
+  "question_matches": true,
+  "error": null
+}

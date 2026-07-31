@@ -1,0 +1,22 @@
+{
+  "market_id": "598107",
+  "question": "Will Micron Tech (MU) beat its quarterly EPS estimate?",
+  "requested_start_utc": "2025-09-15 01:54:03.607654+00:00",
+  "requested_end_utc": "2025-09-16 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "4f5a7e2afafdf61a2a0e80c1|99e8c2b117a2d39a0fce9562",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "105556981500021754321510522648314994663909356367779429025444615943913500473420",
+  "condition_id": "0x3e239208880ea9b54399187b5c71cd7c21b4ae80c1ed1693aa2cedaee3823931",
+  "api_question": "Will Micron Tech (MU) beat its quarterly EPS estimate?",
+  "api_created_at": "2025-09-15T01:54:03.607654Z",
+  "api_end_date": "2025-09-30T20:00:00Z",
+  "status": "complete",
+  "row_count": 2510,
+  "first_source_ts_utc": "2025-09-15 02:10:15+00:00",
+  "last_source_ts_utc": "2025-09-16 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\598107.csv",
+  "fragment_sha256": "644f3d2203e64a2c7faedfa816d2ef90b5d57ad5e5d1226722f885210b685429",
+  "question_matches": true,
+  "error": null
+}

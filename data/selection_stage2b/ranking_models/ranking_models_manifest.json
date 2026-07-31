@@ -1,0 +1,26 @@
+{
+  "label": "small_stage2b_ranking_models",
+  "candidate_sha256": "96833cd225bf846d7d46a2bb0efa3b8d5f20fffc33e15718cbcb37c6fb121046",
+  "capacity_sha256": "cbc994d59ed72f52eac7c3a4c617b94ef03bbdb0bac2defceebff32e6314ae39",
+  "target": "te1_active_net_return_pct",
+  "terminal_horizon": "te1_exit_date, strictly before t_e",
+  "te_is_never_exit": true,
+  "test_selection_prohibited": true,
+  "monotonic_model": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\ranking_models\\monotonic_model.json",
+  "pooled_model": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\ranking_models\\pooled_model.json",
+  "outputs": {
+    "monotonic_scores": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\ranking_models\\monotonic_scores.csv",
+    "monotonic_selected": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\ranking_models\\monotonic_selected_rows.csv",
+    "monotonic_oof": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\ranking_models\\monotonic_oof.csv",
+    "monotonic_oof_summary": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\ranking_models\\monotonic_oof_summary.csv",
+    "monotonic_shapes": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\ranking_models\\monotonic_shape_functions.csv",
+    "monotonic_fold_shapes": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\ranking_models\\monotonic_fold_shape_functions.csv",
+    "monotonic_model": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\ranking_models\\monotonic_model.json",
+    "pooled_scores": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\ranking_models\\pooled_scores.csv",
+    "pooled_selected": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\ranking_models\\pooled_selected_rows.csv",
+    "pooled_oof": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\ranking_models\\pooled_oof.csv",
+    "pooled_seed_summary": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\ranking_models\\pooled_seed_summary.csv",
+    "pooled_model": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\ranking_models\\pooled_model.json",
+    "manifest": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\ranking_models\\ranking_models_manifest.json"
+  }
+}

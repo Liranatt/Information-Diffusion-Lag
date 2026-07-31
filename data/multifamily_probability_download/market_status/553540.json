@@ -1,0 +1,23 @@
+{
+  "market_id": "553540",
+  "question": "Will the U.S. strike Fordow nuclear facility before July?",
+  "requested_start_utc": "2025-06-18 18:04:42.953976+00:00",
+  "requested_end_utc": "2025-06-23 20:00:00+00:00",
+  "candidate_count": 4,
+  "research_families": "geopolitics",
+  "economic_event_ids": "27680",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "63450116651009099744714997959901248555846798072921349354287699900982343201421",
+  "condition_id": "0x8e5c55b28793a07f39ab08075ba156d2f9c1639d75dc29a0935093fa1e03d7b8",
+  "api_question": "Will the U.S. strike Fordow nuclear facility before July?",
+  "api_created_at": "2025-06-18T18:04:42.953976Z",
+  "api_end_date": "2025-07-01T00:00:00Z",
+  "status": "complete",
+  "row_count": 4823,
+  "first_source_ts_utc": "2025-06-18 18:42:07+00:00",
+  "last_source_ts_utc": "2025-06-22 03:04:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\553540.csv",
+  "fragment_sha256": "84cdc09f17c68d3f9af73ce8b35b14fb1d2484a26a139f486475e89b6c63b8af",
+  "question_matches": true,
+  "error": null
+}

@@ -1,0 +1,35 @@
+{
+  "experiment": "stage3b_relative_confirmation",
+  "hypothesis": "first-full-session relative confirmation identifies whether a Target-B earnings trade should continue",
+  "entry_selector": "frozen_stage2f_target_b",
+  "entry_execution": "first daily regular-session open strictly after raw probability signal",
+  "confirmation_threshold_active_return_pct": 1.0,
+  "confirmation_fill": "following daily regular-session open",
+  "post_entry_observations_used_for_entry": 0,
+  "arms": [
+    "A_corrected_reference_execution_safe",
+    "C_relative_follow_through_confirmation"
+  ],
+  "decision": "NO_VALIDATED_EARNINGS_ALGORITHM",
+  "gates": {
+    "SPY": {
+      "combined_absolute_excess_pct": -2.5072,
+      "paired_median_excess_delta_c_minus_a_pct": -0.6506000000000001,
+      "positive_improvement_folds": 2,
+      "paired_median_active_drawdown_delta_c_minus_a_pct": 0.17783738691561357,
+      "passed": false
+    },
+    "QQQ": {
+      "combined_absolute_excess_pct": 0.6699,
+      "paired_median_excess_delta_c_minus_a_pct": 0.013800000000000034,
+      "positive_improvement_folds": 3,
+      "paired_median_active_drawdown_delta_c_minus_a_pct": 0.7740446167450621,
+      "passed": true
+    }
+  },
+  "source_hashes": {
+    "stage2f_oof": "bf94b0b4855f4547dfb7bad1f2ea6c1c4c72949d11b39aba4d3276d555e80d7d",
+    "polymarket_history": "f4e075f5a32a3f3aa427c8a2bb8a6b24862bc0cb7f3f1bdcc74f41f7091a4dfe",
+    "daily_prices": "559baa811114d9975d13f96872073d3580bcbe4e9df875eb0d4631c1a0d345dc"
+  }
+}

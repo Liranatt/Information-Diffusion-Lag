@@ -1,0 +1,22 @@
+{
+  "market_id": "657079",
+  "question": "Will Moderna (MRNA) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-30 18:28:20.616752+00:00",
+  "requested_end_utc": "2025-11-03 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "066cc73a5f2eeddc2639bf99|8529b341fbd3c5d09443e7d8",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "63079987050050223624136443927982515649440098882747684843704669258650892012081",
+  "condition_id": "0x540caf896b82e10790059629fb80fcb4bb913476c2dff01d204ff300b0261cb5",
+  "api_question": "Will Moderna (MRNA) beat quarterly earnings?",
+  "api_created_at": "2025-10-30T18:28:20.616752Z",
+  "api_end_date": "2025-11-06T14:00:00Z",
+  "status": "complete",
+  "row_count": 5895,
+  "first_source_ts_utc": "2025-10-30 18:45:06+00:00",
+  "last_source_ts_utc": "2025-11-03 20:59:05+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\657079.csv",
+  "fragment_sha256": "99bd3e6703f5b89fba799327fac2fd01ebf7afcea0f8cfb91e53c57f2f37f3f2",
+  "question_matches": true,
+  "error": null
+}

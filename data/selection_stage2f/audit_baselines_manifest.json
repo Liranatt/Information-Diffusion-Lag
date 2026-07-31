@@ -1,0 +1,24 @@
+{
+  "label": "stage2f_preserved_stage3_audit_baselines",
+  "samples": [
+    {
+      "label": "stage2b_184_trade_sample",
+      "path": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2c\\baselines\\stage3_raw_global_connection_baseline\\stage3_exit_development_trades.csv",
+      "rows": 184,
+      "sha256": "a250b5afe178532540a57a50060fa5af1e9d02177866161b2d43b52f0c28aa02",
+      "role": "audit_baseline_only",
+      "exit_model_training_used": false
+    },
+    {
+      "label": "stage2c_138_trade_sample",
+      "path": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\stage3_exit_research\\stage3_exit_development_trades.csv",
+      "rows": 138,
+      "sha256": "21b65750dc96e42508a15b2beb8a666c39cebdbfa1703efc381c02b28a845242",
+      "role": "audit_baseline_only",
+      "exit_model_training_used": false
+    }
+  ],
+  "samples_overwritten": false,
+  "exit_model_training_performed": false,
+  "lockbox_opened": false
+}

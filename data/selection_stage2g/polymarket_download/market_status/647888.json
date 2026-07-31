@@ -1,0 +1,22 @@
+{
+  "market_id": "647888",
+  "question": "Will Est\u00e9e Lauder Companies (EL) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-24 14:04:21.685409+00:00",
+  "requested_end_utc": "2025-10-27 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "a19ceb4b45e1c574a425b24e|c8957eb21dfaaae734d4d81e",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "4013141125335395091503164156808269908616148655048830356625234223090433612023",
+  "condition_id": "0x32f368cd07ab67ba19e05585e7755e8020babf658e5a4ed6663d853feec805a4",
+  "api_question": "Will Est\u00e9e Lauder Companies (EL) beat quarterly earnings?",
+  "api_created_at": "2025-10-24T14:04:21.685409Z",
+  "api_end_date": "2025-10-30T13:00:00Z",
+  "status": "complete",
+  "row_count": 4603,
+  "first_source_ts_utc": "2025-10-24 15:17:04+00:00",
+  "last_source_ts_utc": "2025-10-27 19:59:03+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\647888.csv",
+  "fragment_sha256": "988c04ee83194fbc057651ebb685ea5b1f0f1683d2bdb1bfbde86bbd72046af5",
+  "question_matches": true,
+  "error": null
+}

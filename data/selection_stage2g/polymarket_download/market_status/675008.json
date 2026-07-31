@@ -1,0 +1,22 @@
+{
+  "market_id": "675008",
+  "question": "Will AECOM (ACM) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-10 20:07:39.096295+00:00",
+  "requested_end_utc": "2025-11-11 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "001360f9433e5f7de8a7554e|f4187b1076c99e4f504b8bd3",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "52324227131601851967051390212855362408152965365660453531390009843361257885212",
+  "condition_id": "0xbba19d6b76282eb50acd3daf141e13d8ee7bda6a246b919904b70ffa52dfa638",
+  "api_question": "Will AECOM (ACM) beat quarterly earnings?",
+  "api_created_at": "2025-11-10T20:07:39.096295Z",
+  "api_end_date": "2025-11-18T14:00:00Z",
+  "status": "complete",
+  "row_count": 1471,
+  "first_source_ts_utc": "2025-11-10 20:29:04+00:00",
+  "last_source_ts_utc": "2025-11-11 20:59:05+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\675008.csv",
+  "fragment_sha256": "34889f3f4ffbb16ba1a6459c9ba58f3fd40fe4397e40531868bd018348b162e6",
+  "question_matches": true,
+  "error": null
+}

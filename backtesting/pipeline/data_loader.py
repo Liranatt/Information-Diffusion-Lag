@@ -26,11 +26,11 @@ from core.features import (
 
 
 async def load_prices_from_db(symbols: list[str]) -> dict[str, list[tuple]]:
-    """Load daily close prices from DB. Returns {symbol: [(ts, close), ...]}."""
+    """Load daily OHLC prices from DB. Returns {symbol: [(ts, o, h, l, c), ...]}."""
     conn = await connect()
     try:
         rows = await conn.fetch(
-            f"SELECT symbol, ts, high, low, close FROM {SCHEMA}.historical_price_bars "
+            f"SELECT symbol, ts, open, high, low, close FROM {SCHEMA}.historical_price_bars "
             f"WHERE resolution='1d' AND symbol=ANY($1::text[]) ORDER BY symbol, ts",
             symbols,
         )
@@ -40,7 +40,7 @@ async def load_prices_from_db(symbols: list[str]) -> dict[str, list[tuple]]:
     for r in rows:
         out.setdefault(r["symbol"], []).append((
             pd.Timestamp(r["ts"]).tz_convert("UTC").normalize(),
-            float(r["close"]),
+            float(r["open"]), float(r["high"]), float(r["low"]), float(r["close"]),
         ))
     return out
 
@@ -205,7 +205,7 @@ async def load_price_prob_paths(df: pd.DataFrame):
         syms = sorted(df["symbol"].unique())
         mkts = sorted(df["market_id"].unique())
         bars = await c.fetch(
-            f"SELECT symbol, ts, high, low, close FROM {SCHEMA}.historical_price_bars "
+            f"SELECT symbol, ts, open, high, low, close FROM {SCHEMA}.historical_price_bars "
             f"WHERE resolution='1d' AND symbol=ANY($1::text[]) ORDER BY symbol, ts",
             syms,
         )
@@ -225,7 +225,7 @@ async def load_price_prob_paths(df: pd.DataFrame):
     for b in bars:
         prices.setdefault(b["symbol"], []).append((
             pd.Timestamp(b["ts"]).tz_convert("UTC").normalize(),
-            float(b["high"]), float(b["low"]), float(b["close"]),
+            float(b["open"]), float(b["high"]), float(b["low"]), float(b["close"]),
         ))
 
     probs: dict[str, list[tuple]] = {}

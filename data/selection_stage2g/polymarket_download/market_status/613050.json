@@ -1,0 +1,22 @@
+{
+  "market_id": "613050",
+  "question": "Will PepsiCo (PEP) beat quarterly earnings?",
+  "requested_start_utc": "2025-09-25 23:20:32.809659+00:00",
+  "requested_end_utc": "2025-09-26 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "c81c1504ee961fff02b8eae8|d1da19aeb03ac1fa318dbb68",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "90396429537936650711394962339316584913038333919022084933134129853130136079801",
+  "condition_id": "0x4a84f18a410227e4579a509b346913dde3664ce5f332d77ab37cab7aca1e35bc",
+  "api_question": "Will PepsiCo (PEP) beat quarterly earnings?",
+  "api_created_at": "2025-09-25T23:20:32.809659Z",
+  "api_end_date": "2025-10-09T00:00:00Z",
+  "status": "complete",
+  "row_count": 333,
+  "first_source_ts_utc": "2025-09-26 14:27:02+00:00",
+  "last_source_ts_utc": "2025-09-26 19:59:03+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\613050.csv",
+  "fragment_sha256": "3ebb12b75e6951f3cd52189c5163efb87575a482aad4b070a4932a4064ec2283",
+  "question_matches": true,
+  "error": null
+}

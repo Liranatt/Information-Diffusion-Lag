@@ -1,0 +1,19 @@
+{
+  "label": "incremental_portfolio_state_ablations",
+  "states": [
+    "state_0_candidate_only",
+    "state_1_free_slots_and_gross_exposure",
+    "state_2_plus_expected_remaining_slot_days",
+    "state_3_plus_sector_and_event_exposure",
+    "state_4_plus_recent_arrival_pressure",
+    "state_5_plus_dispersion_volatility_drawdown"
+  ],
+  "selection_scope": "chronological training OOF only",
+  "raw_symbol_or_event_ids_used": false,
+  "unavailable_state_fields_are_reported_not_fabricated": true,
+  "current_2026_test_is_exploratory": true,
+  "outputs": {
+    "summary": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\state_ablations\\state_ablation_summary.csv",
+    "predictions": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\state_ablations\\state_ablation_oof_predictions.csv"
+  }
+}

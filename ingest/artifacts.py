@@ -1,7 +1,9 @@
 """Rebuild the three committed backtest artifacts from Postgres.
 
-    data/candidates.parquet   (question, symbol) candidates + features + split
-    data/prices.pkl           {symbol: [(ts, high, low, close)]}  incl SPY/QQQ
+    data/candidates.parquet   immutable source candidates + features + split
+    data/candidates_audit_annotated.parquet  deduplicated rows + audit fields
+    data/candidates_audit_clean.parquet      primary-eligible CEM candidates
+    data/prices.pkl           {symbol: [(ts, open, high, low, close)]}  incl SPY/QQQ
     data/probs.pkl            {market_id: [(ts, probability)]}     daily closes
 
 This is the reproducible source of the artifacts the DB-decoupled backtest reads.
@@ -30,6 +32,10 @@ import pandas as pd
 from database.db_connection import connect
 from database.backtesting.schema import SCHEMA
 from backtesting.pipeline.data_loader import build_dataset_from_db
+from ingest.clean_candidates import (
+    DEFAULT_PRIMARY as CLEAN_PARQUET,
+    build_clean_candidate_artifacts,
+)
 from ingest.scanner import MIN_RESOLUTION_DAYS, MAX_RESOLUTION_DAYS
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -47,7 +53,7 @@ async def _load_hlc_paths(symbols: list[str], market_ids: list[str]) -> tuple[di
     conn = await connect()
     try:
         bars = await conn.fetch(
-            f"""SELECT symbol, ts, high, low, close FROM {SCHEMA}.historical_price_bars
+            f"""SELECT symbol, ts, open, high, low, close FROM {SCHEMA}.historical_price_bars
                 WHERE resolution='1d' AND symbol=ANY($1::text[]) ORDER BY symbol, ts""",
             sorted(set(symbols) | {"SPY", "QQQ"}),
         )
@@ -67,7 +73,7 @@ async def _load_hlc_paths(symbols: list[str], market_ids: list[str]) -> tuple[di
     for b in bars:
         prices.setdefault(b["symbol"], []).append((
             pd.Timestamp(b["ts"]).tz_convert("UTC").normalize(),
-            float(b["high"]), float(b["low"]), float(b["close"]),
+            float(b["open"]), float(b["high"]), float(b["low"]), float(b["close"]),
         ))
     probs: dict[str, list[tuple]] = {}
     for p in prob_rows:
@@ -81,7 +87,7 @@ async def _load_hlc_paths(symbols: list[str], market_ids: list[str]) -> tuple[di
 
 
 async def rebuild() -> pd.DataFrame:
-    """Rebuild candidates.parquet + prices.pkl + probs.pkl from the DB."""
+    """Rebuild immutable source, cleaned candidates, prices, and probabilities."""
     df = await build_dataset_from_db(relevance_floor=RELEVANCE_FLOOR, output_path=None)
     if df.empty:
         raise RuntimeError("build_dataset_from_db returned no candidates; nothing to write.")
@@ -107,16 +113,26 @@ async def rebuild() -> pd.DataFrame:
     n_test = int((df["split"] == "test").sum())
     print(f"[artifacts] candidates.parquet: {len(df)} rows (train={n_train}, test={n_test})")
 
+    cleaning_summary = build_clean_candidate_artifacts(input_path=PARQUET)
+    clean_df = pd.read_parquet(CLEAN_PARQUET)
+    print(
+        "[artifacts] audit cleaning: "
+        f"source={cleaning_summary['input_rows']} "
+        f"exact_duplicate_excess={cleaning_summary['exact_duplicate_excess_rows_removed']} "
+        f"primary={cleaning_summary['primary_output_rows']} "
+        f"removed={cleaning_summary['rows_removed_from_primary']}"
+    )
+
     prices, probs = await _load_hlc_paths(
-        df["symbol"].astype(str).unique().tolist(),
-        df["market_id"].astype(str).unique().tolist(),
+        clean_df["symbol"].astype(str).unique().tolist(),
+        clean_df["market_id"].astype(str).unique().tolist(),
     )
     with open(PRICES_PKL, "wb") as f:
         pickle.dump(prices, f)
     with open(PROBS_PKL, "wb") as f:
         pickle.dump(probs, f)
     print(f"[artifacts] prices.pkl: {len(prices)} symbols   probs.pkl: {len(probs)} markets")
-    return df
+    return clean_df
 
 
 if __name__ == "__main__":

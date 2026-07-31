@@ -1,0 +1,22 @@
+{
+  "market_id": "0x0916a8da49aeeecca946d33ce561f1f1f432720d7d2b4b02bd5dbb54da24ea74",
+  "question": "Israel x Iran ceasefire by Friday? ",
+  "requested_start_utc": "2025-06-15 17:26:45.681806+00:00",
+  "requested_end_utc": "2025-06-16 20:00:00+00:00",
+  "candidate_count": 4,
+  "research_families": "geopolitics",
+  "economic_event_ids": "27191",
+  "mapping_source": "clob_condition_id",
+  "yes_token_id": "101217917110943582217669201192525892548920858749130726463646277034476148785498",
+  "condition_id": "0x0916a8da49aeeecca946d33ce561f1f1f432720d7d2b4b02bd5dbb54da24ea74",
+  "api_question": "Israel x Iran ceasefire by Friday?",
+  "api_end_date": "2025-06-20T00:00:00Z",
+  "status": "complete",
+  "row_count": 1518,
+  "first_source_ts_utc": "2025-06-15 18:42:07+00:00",
+  "last_source_ts_utc": "2025-06-16 19:59:07+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\0x0916a8da49aeeecca946d33ce561f1f1f432720d7d2b4b02bd5dbb54da24ea74.csv",
+  "fragment_sha256": "917bf267802f00ffe135d9ca25463cf943fa97f20c0e233c3f45d585467c5c31",
+  "question_matches": true,
+  "error": null
+}

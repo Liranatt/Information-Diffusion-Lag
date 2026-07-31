@@ -1,0 +1,23 @@
+{
+  "market_id": "647819",
+  "question": "Will Meta Platforms (META) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-21 11:30:19.964734+00:00",
+  "requested_end_utc": "2025-10-24 11:30:19.964734+00:00",
+  "first_candidate_t0_utc": "2025-10-24 11:30:19.964734+00:00",
+  "latest_candidate_decision_utc": "2025-10-24 20:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "1208245238222739680161615255137969708745215267774339458608077711053889793087",
+  "condition_id": "0x86d09d45cd3e5b98107f21b2e7aa5660a4bff8c7c3b1eedc66eee64e0d6f285a",
+  "api_question": "Will Meta Platforms (META) beat quarterly earnings?",
+  "api_created_at": "2025-10-24T11:30:19.964734Z",
+  "api_end_date": "2025-10-29T21:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\647819.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

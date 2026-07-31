@@ -1,0 +1,22 @@
+{
+  "market_id": "627652",
+  "question": "Will Mattel (MAT) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-08 17:16:53.635947+00:00",
+  "requested_end_utc": "2025-10-09 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "4518eb8b739db4b0831b1e73|fc66340e24d98f814b7f6a48",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "2911476409371278523452482974897001646987003975371510230510172588550692681199",
+  "condition_id": "0x4eb7f04b1f6b2ca418fc1b088f04ded59a2f10074af56750b699076f3f3b2c5e",
+  "api_question": "Will Mattel (MAT) beat quarterly earnings?",
+  "api_created_at": "2025-10-08T17:16:53.635947Z",
+  "api_end_date": "2025-10-21T21:00:00Z",
+  "status": "complete",
+  "row_count": 1587,
+  "first_source_ts_utc": "2025-10-08 17:33:05+00:00",
+  "last_source_ts_utc": "2025-10-09 19:59:03+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\627652.csv",
+  "fragment_sha256": "26b5e27124bb36865b2f061e7b25c21c0b4a6ad7bf0852494e92b1406f5019df",
+  "question_matches": true,
+  "error": null
+}

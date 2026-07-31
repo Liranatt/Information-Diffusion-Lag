@@ -1,0 +1,23 @@
+{
+  "market_id": "668497",
+  "question": "Will The Walt Disney Company (DIS) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-03 21:14:37.539643+00:00",
+  "requested_end_utc": "2025-11-06 21:14:37.539643+00:00",
+  "first_candidate_t0_utc": "2025-11-06 21:14:37.539643+00:00",
+  "latest_candidate_decision_utc": "2025-11-07 21:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "65969866329948900777904848956696570615621102878611089711688278205380216127990",
+  "condition_id": "0xe4c5595db8dcb010f2ae062111986b4fcffbd36b83b4502c1ce588a8fe80ebd6",
+  "api_question": "Will The Walt Disney Company (DIS) beat quarterly earnings?",
+  "api_created_at": "2025-11-06T21:14:37.539643Z",
+  "api_end_date": "2025-11-13T14:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\668497.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

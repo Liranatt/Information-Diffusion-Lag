@@ -1,0 +1,22 @@
+{
+  "market_id": "655399",
+  "question": "Will Qualcomm (QCOM) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-29 16:16:59.931408+00:00",
+  "requested_end_utc": "2025-10-30 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "1974c9429f7f1230747b3d47|7e5f8b19c01d70e9560289c2",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "87746911760820141074105441218842919403863372787624407705650846531508057553623",
+  "condition_id": "0x4e19bb2282fc34f3ad60595f53dbc49bdce2fae8855ed960d2fdd1749b042c60",
+  "api_question": "Will Qualcomm (QCOM) beat quarterly earnings?",
+  "api_created_at": "2025-10-29T16:16:59.931408Z",
+  "api_end_date": "2025-11-05T22:00:00Z",
+  "status": "complete",
+  "row_count": 1646,
+  "first_source_ts_utc": "2025-10-29 16:34:06+00:00",
+  "last_source_ts_utc": "2025-10-30 19:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\655399.csv",
+  "fragment_sha256": "f261f9396c09cdc7ed4458e7a57c5002fb87bd3c859033548baa5c8e68aab085",
+  "question_matches": true,
+  "error": null
+}

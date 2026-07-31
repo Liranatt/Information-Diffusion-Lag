@@ -1,0 +1,9 @@
+{
+  "inputs": "uploaded local files only",
+  "policy_construction": "componentwise median of four independent training-selected policies",
+  "prob_surge": "removed",
+  "gross_exposure_cap": 0.95,
+  "partial_fill_min": 0.9,
+  "objective": "benchmark-relative active IR/fold robustness/active drawdown/relative terminal return",
+  "oos_selection": "none"
+}

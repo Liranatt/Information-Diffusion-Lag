@@ -1,0 +1,22 @@
+{
+  "market_id": "658493",
+  "question": "Will Papa John\u2019s International (PZZA) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-31 18:35:50.169130+00:00",
+  "requested_end_utc": "2025-11-03 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "94777ce1ed67bf00aed2364b|c23afe922ff38b0d22fd598c",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "42955574274172667708904273879805783226309587954923535803639466423494909561367",
+  "condition_id": "0x47632841906c23b84b1b0008ea8c52dcee340b49d2bd947807fd05741dd1737c",
+  "api_question": "Will Papa John\u2019s International (PZZA) beat quarterly earnings?",
+  "api_created_at": "2025-10-31T18:35:50.16913Z",
+  "api_end_date": "2025-11-06T14:00:00Z",
+  "status": "complete",
+  "row_count": 4447,
+  "first_source_ts_utc": "2025-10-31 18:53:06+00:00",
+  "last_source_ts_utc": "2025-11-03 20:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\658493.csv",
+  "fragment_sha256": "979f32d2abbbd1f29094e41af0d4e535b771f0d7a39bb68b8f54fdaba382e01f",
+  "question_matches": true,
+  "error": null
+}

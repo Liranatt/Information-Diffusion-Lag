@@ -1,0 +1,23 @@
+{
+  "market_id": "552099",
+  "question": "Israel military action against Iran in July?",
+  "requested_start_utc": "2025-06-13 03:46:47.515630+00:00",
+  "requested_end_utc": "2025-06-18 20:00:00+00:00",
+  "candidate_count": 1,
+  "research_families": "geopolitics",
+  "economic_event_ids": "26891",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "43320175842892009180042031190846947465184505117016240999278456085080448424515",
+  "condition_id": "0x30be2fc500027e98ff6995bf1f197484e925674f5ebb69bea4a8ee37db504bd7",
+  "api_question": "Israel military action against Iran in July?",
+  "api_created_at": "2025-06-13T03:46:47.51563Z",
+  "api_end_date": "2025-07-31T00:00:00Z",
+  "status": "complete",
+  "row_count": 8072,
+  "first_source_ts_utc": "2025-06-13 05:19:07+00:00",
+  "last_source_ts_utc": "2025-06-18 19:59:08+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\552099.csv",
+  "fragment_sha256": "3fdb004e69e5abbbdf33235e7682757daca07888f698e8ac9c9e46d63943a201",
+  "question_matches": true,
+  "error": null
+}

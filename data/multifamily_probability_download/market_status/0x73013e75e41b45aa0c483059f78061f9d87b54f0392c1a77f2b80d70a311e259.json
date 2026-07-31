@@ -1,0 +1,22 @@
+{
+  "market_id": "0x73013e75e41b45aa0c483059f78061f9d87b54f0392c1a77f2b80d70a311e259",
+  "question": "Will Trump\u2019s Greenland Tariffs go into effect for Denmark by Feburary 1?",
+  "requested_start_utc": "2026-01-17 22:59:17.592784+00:00",
+  "requested_end_utc": "2026-01-19 21:00:00+00:00",
+  "candidate_count": 1,
+  "research_families": "macro",
+  "economic_event_ids": "171012",
+  "mapping_source": "clob_condition_id",
+  "yes_token_id": "47608914966388069726802890629104282619977114492151381024341410611637968527438",
+  "condition_id": "0x73013e75e41b45aa0c483059f78061f9d87b54f0392c1a77f2b80d70a311e259",
+  "api_question": "Will Trump\u2019s Greenland Tariffs go into effect for Denmark by Feburary 1?",
+  "api_end_date": "2026-02-01T00:00:00Z",
+  "status": "complete",
+  "row_count": 2583,
+  "first_source_ts_utc": "2026-01-18 01:57:14+00:00",
+  "last_source_ts_utc": "2026-01-19 20:59:15+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\0x73013e75e41b45aa0c483059f78061f9d87b54f0392c1a77f2b80d70a311e259.csv",
+  "fragment_sha256": "a165d6467da1854d2e905e8dad5dab9315911c5f979ef7156b7bcfdee03721ac",
+  "question_matches": true,
+  "error": null
+}

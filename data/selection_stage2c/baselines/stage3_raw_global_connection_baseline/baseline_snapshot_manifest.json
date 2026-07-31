@@ -1,0 +1,9 @@
+{
+  "label": "stage3_raw_global_connection_baseline",
+  "development_trade_count": 184,
+  "stage3_manifest_sha256": "2a97eee4cc7944b26bc73db617766b82dc9fcb784f7899000566660310d2bc92",
+  "stage3_trades_sha256": "a250b5afe178532540a57a50060fa5af1e9d02177866161b2d43b52f0c28aa02",
+  "exit_policy_trained_from_sample": false,
+  "stage3_training_status": "paused_until_stage2c_complete",
+  "lockbox_opened": false
+}

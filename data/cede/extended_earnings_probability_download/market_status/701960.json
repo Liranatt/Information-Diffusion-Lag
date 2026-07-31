@@ -1,0 +1,23 @@
+{
+  "market_id": "701960",
+  "question": "Will Chewy (CHWY) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-21 23:03:09.272470+00:00",
+  "requested_end_utc": "2025-11-24 23:03:09.272470+00:00",
+  "first_candidate_t0_utc": "2025-11-24 23:03:09.272470+00:00",
+  "latest_candidate_decision_utc": "2025-12-05 21:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "58339410510548953418070246696630816709497652850293006591331740725387579871373",
+  "condition_id": "0x289fe9339e7d3e69c36fc9d13940cbb97d25d5f50d0bf6da08fecd7575d6f569",
+  "api_question": "Will Chewy (CHWY) beat quarterly earnings?",
+  "api_created_at": "2025-11-24T23:03:09.27247Z",
+  "api_end_date": "2025-12-10T14:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\701960.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

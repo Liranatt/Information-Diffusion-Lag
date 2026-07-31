@@ -1,0 +1,22 @@
+{
+  "market_id": "647818",
+  "question": "Will Kraft Heinz (KHC) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-24 11:26:35.755661+00:00",
+  "requested_end_utc": "2025-10-24 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "6d58bd174e1e4ccf9ed49754|bc0bf4bedc54e06d9f64add7",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "58746892247154202873475537610633236625372903324368736253991947801162455382318",
+  "condition_id": "0xe3eac36ff2839d6583710cd2020e6bb2ef980fd3a5fad2d4e49447550f62459d",
+  "api_question": "Will Kraft Heinz (KHC) beat quarterly earnings?",
+  "api_created_at": "2025-10-24T11:26:35.755661Z",
+  "api_end_date": "2025-10-29T13:00:00Z",
+  "status": "complete",
+  "row_count": 497,
+  "first_source_ts_utc": "2025-10-24 11:43:04+00:00",
+  "last_source_ts_utc": "2025-10-24 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\647818.csv",
+  "fragment_sha256": "cd0033926ebb3abdfbf5f2fd311b18175831c35014ec619ba7ad9b4a7f36b6ef",
+  "question_matches": true,
+  "error": null
+}

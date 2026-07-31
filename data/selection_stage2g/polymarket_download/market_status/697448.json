@@ -1,0 +1,22 @@
+{
+  "market_id": "697448",
+  "question": "Will Dollar Tree (DLTR) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-22 20:20:15.391571+00:00",
+  "requested_end_utc": "2025-11-24 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "1bd91c407f4a440ea4372f6e|a3299d10179eb507cc8d40ea",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "90889462709207065051348954866198202534205698816103768539212507607620990354233",
+  "condition_id": "0x4c7e6762545f14147b2a539f168be8e1234bcf9e76ff793b6f603f63b0baecd3",
+  "api_question": "Will Dollar Tree (DLTR) beat quarterly earnings?",
+  "api_created_at": "2025-11-22T20:20:15.391571Z",
+  "api_end_date": "2025-12-03T14:00:00Z",
+  "status": "complete",
+  "row_count": 2903,
+  "first_source_ts_utc": "2025-11-22 20:37:06+00:00",
+  "last_source_ts_utc": "2025-11-24 20:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\697448.csv",
+  "fragment_sha256": "fb425d53c680a69e0e50b71f166f28188eafee63538207a492e40efd2d07b212",
+  "question_matches": true,
+  "error": null
+}

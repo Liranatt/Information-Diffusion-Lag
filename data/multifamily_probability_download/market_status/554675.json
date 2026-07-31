@@ -1,0 +1,23 @@
+{
+  "market_id": "554675",
+  "question": "Will Iran strike a U.S. facility by Monday June\u202f 23?",
+  "requested_start_utc": "2025-06-22 00:13:34.561656+00:00",
+  "requested_end_utc": "2025-06-25 20:00:00+00:00",
+  "candidate_count": 2,
+  "research_families": "geopolitics",
+  "economic_event_ids": "28206",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "106848438848929056554283500811365106475313258081676442572891380901701782588277",
+  "condition_id": "0x4685c41276496f4f49094cc27abed3f22356851bd53f769c3750fb624adb70cd",
+  "api_question": "Will Iran strike a U.S. facility by Monday June\u202f 23?",
+  "api_created_at": "2025-06-22T00:13:34.561656Z",
+  "api_end_date": "2025-06-30T00:00:00Z",
+  "status": "complete",
+  "row_count": 5473,
+  "first_source_ts_utc": "2025-06-22 00:47:06+00:00",
+  "last_source_ts_utc": "2025-06-25 19:59:08+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\554675.csv",
+  "fragment_sha256": "8b24bf5b16b8005fa3a913ec78114afe2f464774f574f7be0581d86cff7e12c3",
+  "question_matches": true,
+  "error": null
+}

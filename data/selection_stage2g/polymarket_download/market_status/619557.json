@@ -1,0 +1,22 @@
+{
+  "market_id": "619557",
+  "question": "Will Truist Financial (TFC) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-01 23:43:52.160415+00:00",
+  "requested_end_utc": "2025-10-06 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "9983c456812774055408bddb|bff8d6e51bc7047e34dc32d8",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "108566333406730813898779603985545324286951154485668872695413493959006563788379",
+  "condition_id": "0xff3db55dd6ad4dc3938876a6b18812b121556a314309a9e08c870f99f797818f",
+  "api_question": "Will Truist Financial (TFC) beat quarterly earnings?",
+  "api_created_at": "2025-10-01T23:43:52.160415Z",
+  "api_end_date": "2025-10-17T00:00:00Z",
+  "status": "complete",
+  "row_count": 4219,
+  "first_source_ts_utc": "2025-10-03 21:41:06+00:00",
+  "last_source_ts_utc": "2025-10-06 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\619557.csv",
+  "fragment_sha256": "c42f12f64475211785fd1223fd13ce6abf903ba5ed522374d8e955123e415334",
+  "question_matches": true,
+  "error": null
+}

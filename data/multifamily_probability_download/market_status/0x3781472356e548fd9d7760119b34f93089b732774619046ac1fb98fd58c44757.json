@@ -1,0 +1,22 @@
+{
+  "market_id": "0x3781472356e548fd9d7760119b34f93089b732774619046ac1fb98fd58c44757",
+  "question": "Iran x Israel conflict ends before July?",
+  "requested_start_utc": "2025-06-15 22:20:36.124664+00:00",
+  "requested_end_utc": "2025-06-16 20:00:00+00:00",
+  "candidate_count": 6,
+  "research_families": "geopolitics",
+  "economic_event_ids": "27203",
+  "mapping_source": "clob_condition_id",
+  "yes_token_id": "23961632688486597478111314899769658263669360792361072213572409158793334665759",
+  "condition_id": "0x3781472356e548fd9d7760119b34f93089b732774619046ac1fb98fd58c44757",
+  "api_question": "Iran x Israel conflict ends before July?",
+  "api_end_date": "2025-06-30T00:00:00Z",
+  "status": "complete",
+  "row_count": 1257,
+  "first_source_ts_utc": "2025-06-15 23:03:07+00:00",
+  "last_source_ts_utc": "2025-06-16 19:59:07+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\0x3781472356e548fd9d7760119b34f93089b732774619046ac1fb98fd58c44757.csv",
+  "fragment_sha256": "84574ec35514bb14b432f47f2ee5b835d1d195996c4d34a416d7690840f0115d",
+  "question_matches": true,
+  "error": null
+}

@@ -1,0 +1,22 @@
+{
+  "market_id": "703110",
+  "question": "Will Micron Technology (MU) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-25 13:28:02.429371+00:00",
+  "requested_end_utc": "2025-11-26 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "8e12efe0bafdd68eeae23fe6|d23f4da36a960c75a589cdc3",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "45395313457285872084797764765258672985088268611803456214891181133264733637653",
+  "condition_id": "0xcca692af8cf3f70d1cfd1eb363fdde50010c07ab09477e382a3a237d212184cb",
+  "api_question": "Will Micron Technology (MU) beat quarterly earnings?",
+  "api_created_at": "2025-11-25T13:28:02.429371Z",
+  "api_end_date": "2025-12-17T22:00:00Z",
+  "status": "complete",
+  "row_count": 1875,
+  "first_source_ts_utc": "2025-11-25 13:45:07+00:00",
+  "last_source_ts_utc": "2025-11-26 20:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\703110.csv",
+  "fragment_sha256": "c1ad0124511b065f74d2b4fbe3b2f34ef44cc8442df0f92f8ac751fc7b6b3472",
+  "question_matches": true,
+  "error": null
+}

@@ -1,0 +1,14 @@
+{
+  "old_prices_sha256": "64de652ed0617fc70b25a8fd430956faa9c8e7647c855f671d4afe2df891764e",
+  "open_prices_sha256": "6832dbfb2a78019497e178c9dd42e1decb8ade3745992023ba80261e8a39092b",
+  "probs_sha256": "1617876e933f22656ae97ea3c251360b3a1b2e510bba91766a736a1661f8de23",
+  "candidates_sha256": "8a312411745d524a88ac66acac693cdcc51d1a7ada608d7114cb95729586a33b",
+  "policy_sha256": "ead86a45969d6ba168c4e08d930bd8eb52e6c6041570487e474fc4f65332cd74",
+  "old_symbols": 505,
+  "open_symbols": 444,
+  "oos_candidates": 728,
+  "probability_points": 20547,
+  "probability_points_midnight_utc": 20547,
+  "t_theta_rows": 1161,
+  "t_theta_midnight_utc": 1161
+}

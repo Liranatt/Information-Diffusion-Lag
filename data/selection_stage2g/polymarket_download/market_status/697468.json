@@ -1,0 +1,22 @@
+{
+  "market_id": "697468",
+  "question": "Will Samsara (IOT) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-22 20:35:15.399234+00:00",
+  "requested_end_utc": "2025-11-24 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "37d0977d89c19fd4e265e9c1|a90123eaaa18376a022b00fa",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "106963883423578629748665574561872040656819461582448532762417745577816564986068",
+  "condition_id": "0x75c63d40cc5ec31a6bdadde479b14e9f2bae17bc3cd5885ba449f08da84e5c96",
+  "api_question": "Will Samsara (IOT) beat quarterly earnings?",
+  "api_created_at": "2025-11-22T20:35:15.399234Z",
+  "api_end_date": "2025-12-04T22:00:00Z",
+  "status": "complete",
+  "row_count": 2888,
+  "first_source_ts_utc": "2025-11-22 20:52:09+00:00",
+  "last_source_ts_utc": "2025-11-24 20:59:09+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\697468.csv",
+  "fragment_sha256": "f00f518e4f453483e9d7c2c1b1103e1eda4000d8d505c8111afce812610395e3",
+  "question_matches": true,
+  "error": null
+}

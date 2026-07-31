@@ -1,0 +1,22 @@
+{
+  "market_id": "899879",
+  "question": "Will Lennar Corp (LEN) beat quarterly earnings?",
+  "requested_start_utc": "2025-12-09 03:45:43.458442+00:00",
+  "requested_end_utc": "2025-12-10 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "7b944085ad88754ae95cee67|9ef9312611850304ed784e02",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "62791501906023815016143777753078177274606270275729589890978731853513655833626",
+  "condition_id": "0x6017141bd35f0186ef40a79fcd49f938fd4b6f983578dc88e1b4d6bcb77964c3",
+  "api_question": "Will Lennar Corp (LEN) beat quarterly earnings?",
+  "api_created_at": "2025-12-09T03:45:43.458442Z",
+  "api_end_date": "2025-12-16T22:00:00Z",
+  "status": "complete",
+  "row_count": 1793,
+  "first_source_ts_utc": "2025-12-09 15:07:07+00:00",
+  "last_source_ts_utc": "2025-12-10 20:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\899879.csv",
+  "fragment_sha256": "5d9975248ed342cb0c41da600f750c857028311c75408129d915dc53d49408bf",
+  "question_matches": true,
+  "error": null
+}

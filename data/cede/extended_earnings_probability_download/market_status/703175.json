@@ -1,0 +1,23 @@
+{
+  "market_id": "703175",
+  "question": "Will Lamb Weston Holdings (LW) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-22 14:39:15.086301+00:00",
+  "requested_end_utc": "2025-11-25 14:39:15.086301+00:00",
+  "first_candidate_t0_utc": "2025-11-25 14:39:15.086301+00:00",
+  "latest_candidate_decision_utc": "2025-11-28 18:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "60455144821626151335640666799580467316669708706506252853589979173391455109474",
+  "condition_id": "0x7d0fb10621c751e1cd7607fd3054f48a46b87ee482431bc5c659848256ec2130",
+  "api_question": "Will Lamb Weston Holdings (LW) beat quarterly earnings?",
+  "api_created_at": "2025-11-25T14:39:15.086301Z",
+  "api_end_date": "2025-12-19T14:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\703175.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

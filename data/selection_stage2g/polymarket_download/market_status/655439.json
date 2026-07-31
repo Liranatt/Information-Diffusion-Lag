@@ -1,0 +1,22 @@
+{
+  "market_id": "655439",
+  "question": "Will DoorDash (DASH) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-29 16:24:39.677634+00:00",
+  "requested_end_utc": "2025-10-29 20:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "4cd2c0db932be21eec15b970",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "16990810501022328860935773350583410262473855579083887868365658323344027737735",
+  "condition_id": "0xfe50610dbcdfe6b09107a8418d5daa66ceb1b42eabd8abf99d95a4acf55fbff8",
+  "api_question": "Will DoorDash (DASH) beat quarterly earnings?",
+  "api_created_at": "2025-10-29T16:24:39.677634Z",
+  "api_end_date": "2025-11-05T22:00:00Z",
+  "status": "complete",
+  "row_count": 199,
+  "first_source_ts_utc": "2025-10-29 16:41:04+00:00",
+  "last_source_ts_utc": "2025-10-29 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\655439.csv",
+  "fragment_sha256": "f1f70cd6b386695076df48bd16a27b84400556afba72f19dab659dbbcda65fad",
+  "question_matches": true,
+  "error": null
+}

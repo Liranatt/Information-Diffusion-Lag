@@ -1,0 +1,11 @@
+{
+  "scope": "earnings_only",
+  "method": "five_fold_expanding_chronological_oof_fixed_regularized_models",
+  "feature_leakage": "strict_pre_decision_probability_and_prior_session_price_only",
+  "label_use": "full_path_labels_as_train_targets_only",
+  "canonical_events": 293,
+  "label_rows": 415,
+  "selected_rows": 4,
+  "selected_events": 2,
+  "exact_cede_exit_replay": "not_run_by_this_selection_test"
+}

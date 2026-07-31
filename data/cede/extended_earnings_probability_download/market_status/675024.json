@@ -1,0 +1,23 @@
+{
+  "market_id": "675024",
+  "question": "Will Amer Sports (AS) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-07 20:27:27.638782+00:00",
+  "requested_end_utc": "2025-11-10 20:27:27.638782+00:00",
+  "first_candidate_t0_utc": "2025-11-10 20:27:27.638782+00:00",
+  "latest_candidate_decision_utc": "2025-11-11 21:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "106193396011891277333468500783523887370363181443156133364226257659509221104907",
+  "condition_id": "0x15345a05793a27ab7e3070affbf7a47d1f3bd5642bcd1a726fee298944ec04ed",
+  "api_question": "Will Amer Sports (AS) beat quarterly earnings?",
+  "api_created_at": "2025-11-10T20:27:27.638782Z",
+  "api_end_date": "2025-11-18T14:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\675024.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

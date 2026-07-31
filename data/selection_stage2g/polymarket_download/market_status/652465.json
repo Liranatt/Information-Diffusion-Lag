@@ -1,0 +1,22 @@
+{
+  "market_id": "652465",
+  "question": "Will Palantir Technologies (PLTR) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-27 19:58:14.929529+00:00",
+  "requested_end_utc": "2025-10-29 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "24f472f35cf7c52362ceac83|a0de2824394ae0d88c873151",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "5848480169004193771514819577598835011283822645685233369544551681525092455404",
+  "condition_id": "0x1a1a2ee8ad238406bb9de3721db308b79bafd1654da7c504cbdd5ffc22299a79",
+  "api_question": "Will Palantir Technologies (PLTR) beat quarterly earnings?",
+  "api_created_at": "2025-10-27T19:58:14.929529Z",
+  "api_end_date": "2025-11-03T22:00:00Z",
+  "status": "complete",
+  "row_count": 2647,
+  "first_source_ts_utc": "2025-10-27 20:30:13+00:00",
+  "last_source_ts_utc": "2025-10-29 19:59:07+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\652465.csv",
+  "fragment_sha256": "368ee8ef272084def6265c725b3fcfc574d38e41096e0b0683d227ed1ea6964e",
+  "question_matches": true,
+  "error": null
+}

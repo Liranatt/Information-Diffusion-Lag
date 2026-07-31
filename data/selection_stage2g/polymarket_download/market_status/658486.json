@@ -1,0 +1,22 @@
+{
+  "market_id": "658486",
+  "question": "Will Yelp (YELP) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-31 18:20:35.827596+00:00",
+  "requested_end_utc": "2025-11-03 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "3b9c6db8e398d1966f810262|78531865464a318b172bc8ef",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "65745969251804892506378638282363667074232725400601257445198272392010143463366",
+  "condition_id": "0x5710d5832bd1bf3b33dbffad8e614cfa8f6831fe1bb183b9c17b8694912027d8",
+  "api_question": "Will Yelp (YELP) beat quarterly earnings?",
+  "api_created_at": "2025-10-31T18:20:35.827596Z",
+  "api_end_date": "2025-11-06T22:00:00Z",
+  "status": "complete",
+  "row_count": 4463,
+  "first_source_ts_utc": "2025-10-31 18:37:08+00:00",
+  "last_source_ts_utc": "2025-11-03 20:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\658486.csv",
+  "fragment_sha256": "d469b4bb8eec642a398f810249f7981b6f3a8bc41601b091c07000422a38a7a0",
+  "question_matches": true,
+  "error": null
+}

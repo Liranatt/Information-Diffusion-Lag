@@ -1,0 +1,22 @@
+{
+  "market_id": "701993",
+  "question": "Will GameStop (GME) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-24 23:20:21.860863+00:00",
+  "requested_end_utc": "2025-11-25 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "483733444dbabb0085f08e32|55edd54cfe83489187bba52f",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "25894713162771381984925010391705890106654985838086811607519924196170114374479",
+  "condition_id": "0x4ccc66e9c03261a867dfc47c48a66cbe558e7efc369314a5b0c5e35e31aa2c8f",
+  "api_question": "Will GameStop (GME) beat quarterly earnings?",
+  "api_created_at": "2025-11-24T23:20:21.860863Z",
+  "api_end_date": "2025-12-09T22:00:00Z",
+  "status": "complete",
+  "row_count": 1272,
+  "first_source_ts_utc": "2025-11-24 23:48:21+00:00",
+  "last_source_ts_utc": "2025-11-25 20:59:08+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\701993.csv",
+  "fragment_sha256": "fe1c9995a10a35f0355b6e15ceeab45010e83d817e7ddaa21387b53a4ae0d7b4",
+  "question_matches": true,
+  "error": null
+}

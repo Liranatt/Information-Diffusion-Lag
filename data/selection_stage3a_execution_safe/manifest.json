@@ -1,0 +1,32 @@
+{
+  "experiment": "stage3a_execution_safe",
+  "oof_rows": 415,
+  "usable_entries": 414,
+  "entry_threshold": 0.7,
+  "entry_execution": "first daily regular-session open strictly after raw signal",
+  "post_entry_observations_used_for_entry": 0,
+  "arms": [
+    "A_corrected_reference_execution_safe",
+    "B_volatility_scaled_stop_execution_safe"
+  ],
+  "final_exit_algorithm": "A_corrected_reference_execution_safe",
+  "gates": {
+    "SPY": {
+      "paired_median_excess_delta_b_minus_a_pct": -0.4881,
+      "positive_improvement_folds": 2,
+      "paired_median_active_drawdown_delta_b_minus_a_pct": -0.0016276868593623206,
+      "passed": false
+    },
+    "QQQ": {
+      "paired_median_excess_delta_b_minus_a_pct": 0.7337000000000002,
+      "positive_improvement_folds": 3,
+      "paired_median_active_drawdown_delta_b_minus_a_pct": 0.005555078643437739,
+      "passed": true
+    }
+  },
+  "source_hashes": {
+    "stage2f_oof": "bf94b0b4855f4547dfb7bad1f2ea6c1c4c72949d11b39aba4d3276d555e80d7d",
+    "polymarket_history": "f4e075f5a32a3f3aa427c8a2bb8a6b24862bc0cb7f3f1bdcc74f41f7091a4dfe",
+    "daily_prices": "559baa811114d9975d13f96872073d3580bcbe4e9df875eb0d4631c1a0d345dc"
+  }
+}

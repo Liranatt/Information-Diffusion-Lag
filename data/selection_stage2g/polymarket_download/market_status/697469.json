@@ -1,0 +1,22 @@
+{
+  "market_id": "697469",
+  "question": "Will Rubrik (RBRK) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-22 20:35:18.970633+00:00",
+  "requested_end_utc": "2025-11-24 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "0daaf65d457b4877dee3e9d8|57cd2b885347d0b1f18e0382",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "48818699131378507950471703395774924761660961602969736286898445814361547100232",
+  "condition_id": "0x5066929058d9e416ec61d945ec9603c0d3eaf98df01ea0907658d7399225cf94",
+  "api_question": "Will Rubrik (RBRK) beat quarterly earnings?",
+  "api_created_at": "2025-11-22T20:35:18.970633Z",
+  "api_end_date": "2025-12-04T22:00:00Z",
+  "status": "complete",
+  "row_count": 2888,
+  "first_source_ts_utc": "2025-11-22 20:52:05+00:00",
+  "last_source_ts_utc": "2025-11-24 20:59:05+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\697469.csv",
+  "fragment_sha256": "4dba700a84f516cdecca367fd92ba993ec11cf0ab4f577838220681cb79e229d",
+  "question_matches": true,
+  "error": null
+}

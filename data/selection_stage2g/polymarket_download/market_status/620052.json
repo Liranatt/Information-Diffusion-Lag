@@ -1,0 +1,22 @@
+{
+  "market_id": "620052",
+  "question": "Will ServisFirst Bancshares (SFBS) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-02 18:28:24.823112+00:00",
+  "requested_end_utc": "2025-10-07 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "344a2b118afd919dee79cfa6|fa9928b57c0f60d65f348a12",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "54632396797299782633329120708072039383491248244637817144372970401967589664607",
+  "condition_id": "0x499806221a598eeb2761549f5f50cb2a32198b9e3c3342ad8eb09eb015bf008d",
+  "api_question": "Will ServisFirst Bancshares (SFBS) beat quarterly earnings?",
+  "api_created_at": "2025-10-02T18:28:24.823112Z",
+  "api_end_date": "2025-10-20T00:00:00Z",
+  "status": "complete",
+  "row_count": 5661,
+  "first_source_ts_utc": "2025-10-03 21:39:02+00:00",
+  "last_source_ts_utc": "2025-10-07 19:59:02+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\620052.csv",
+  "fragment_sha256": "872e317e15bc6ccf5160efa6a60173cba8ee7d59e895911a7d0bb877177aaa02",
+  "question_matches": true,
+  "error": null
+}

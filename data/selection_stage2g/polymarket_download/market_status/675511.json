@@ -1,0 +1,22 @@
+{
+  "market_id": "675511",
+  "question": "Will Walmart (WMT) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-10 22:43:58.595014+00:00",
+  "requested_end_utc": "2025-11-11 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "36b71b30342468299872d5ce|cf8bc420d8aadb0556d06a49",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "104075759853016105872204644222690011313680717329095117469696165563760439041943",
+  "condition_id": "0x37ecaec524dfa449405d15ea13102316601816b616fec6b6d2b8911dc53b56e1",
+  "api_question": "Will Walmart (WMT) beat quarterly earnings?",
+  "api_created_at": "2025-11-10T22:43:58.595014Z",
+  "api_end_date": "2025-11-20T14:00:00Z",
+  "status": "complete",
+  "row_count": 1233,
+  "first_source_ts_utc": "2025-11-11 00:27:05+00:00",
+  "last_source_ts_utc": "2025-11-11 20:59:05+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\675511.csv",
+  "fragment_sha256": "4e3f99babb285bb59fa593738494b060ab6f348ba01c4f2820a985fb8c0516da",
+  "question_matches": true,
+  "error": null
+}

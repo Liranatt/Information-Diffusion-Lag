@@ -1,0 +1,22 @@
+{
+  "market_id": "655449",
+  "question": "Will Fidelity National Information Services (FIS) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-29 16:35:48.002030+00:00",
+  "requested_end_utc": "2025-11-03 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "2131dc79c86b6a536b465201|59ececd5563d08456a0ff7c5",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "85667675242810343723323402205055246713107953114321842096119951893318455918716",
+  "condition_id": "0xcb5bc87893fe2469451d7376362ed4099705322095c5d81fcca8f9005896043c",
+  "api_question": "Will Fidelity National Information Services (FIS) beat quarterly earnings?",
+  "api_created_at": "2025-10-29T16:35:48.00203Z",
+  "api_end_date": "2025-11-05T14:00:00Z",
+  "status": "complete",
+  "row_count": 7447,
+  "first_source_ts_utc": "2025-10-29 16:53:04+00:00",
+  "last_source_ts_utc": "2025-11-03 20:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\655449.csv",
+  "fragment_sha256": "5845828b7cc0cf39d16511a6c98539048b9c5db617c26127dfae754497e4385b",
+  "question_matches": true,
+  "error": null
+}

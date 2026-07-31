@@ -1,0 +1,22 @@
+{
+  "market_id": "637871",
+  "question": "Will Ford Motor (F) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-16 22:26:16.857070+00:00",
+  "requested_end_utc": "2025-10-17 20:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "9a06c8476bbe3c803d3e34b2",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "23438829612767944788966425778611539957618806197629755388617047406953520284982",
+  "condition_id": "0xd609798eeb72710841a77d2007d8a8434e43b3a6419a1241eecc468ab0d98778",
+  "api_question": "Will Ford Motor (F) beat quarterly earnings?",
+  "api_created_at": "2025-10-16T22:26:16.85707Z",
+  "api_end_date": "2025-10-24T21:00:00Z",
+  "status": "complete",
+  "row_count": 1274,
+  "first_source_ts_utc": "2025-10-16 22:46:04+00:00",
+  "last_source_ts_utc": "2025-10-17 19:59:05+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\637871.csv",
+  "fragment_sha256": "cd2c2a326a43619ac5d9032ee217c0512626c2890b9772b3e3d91032b8503dba",
+  "question_matches": true,
+  "error": null
+}

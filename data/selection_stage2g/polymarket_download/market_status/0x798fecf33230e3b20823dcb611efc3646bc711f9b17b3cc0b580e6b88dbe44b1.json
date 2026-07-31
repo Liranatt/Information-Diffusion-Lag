@@ -1,0 +1,21 @@
+{
+  "market_id": "0x798fecf33230e3b20823dcb611efc3646bc711f9b17b3cc0b580e6b88dbe44b1",
+  "question": "Will PJT Partners (PJT) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-30 14:03:33.889151+00:00",
+  "requested_end_utc": "2025-10-31 20:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "82c1e1750c249e69946c082f",
+  "mapping_source": "clob_condition_id",
+  "yes_token_id": "107314023378997654967362501385591281980055420081058280111886412670323531239621",
+  "condition_id": "0x798fecf33230e3b20823dcb611efc3646bc711f9b17b3cc0b580e6b88dbe44b1",
+  "api_question": "Will PJT Partners (PJT) beat quarterly earnings?",
+  "api_end_date": "2025-11-04T00:00:00Z",
+  "status": "complete",
+  "row_count": 1780,
+  "first_source_ts_utc": "2025-10-30 14:20:07+00:00",
+  "last_source_ts_utc": "2025-10-31 19:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\0x798fecf33230e3b20823dcb611efc3646bc711f9b17b3cc0b580e6b88dbe44b1.csv",
+  "fragment_sha256": "988e0e3206e73f9618fe98728542e16acec76a19626fec82dbddd5caeeeb1fd1",
+  "question_matches": true,
+  "error": null
+}

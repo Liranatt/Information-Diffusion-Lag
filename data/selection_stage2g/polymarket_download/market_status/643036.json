@@ -1,0 +1,22 @@
+{
+  "market_id": "643036",
+  "question": "Will PayPal Holdings (PYPL) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-21 22:02:26.274746+00:00",
+  "requested_end_utc": "2025-10-24 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "570458f529bc7f7efc17164d|82fed7789e09b401d82ce698",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "28085588552630073268231195885967869547656255335563583909425355982236140245110",
+  "condition_id": "0xe4180735b2b0f5c83751da4a2a3adae259e29fd9212d771cf564636522a4bbca",
+  "api_question": "Will PayPal Holdings (PYPL) beat quarterly earnings?",
+  "api_created_at": "2025-10-21T22:02:26.274746Z",
+  "api_end_date": "2025-10-28T13:00:00Z",
+  "status": "complete",
+  "row_count": 4181,
+  "first_source_ts_utc": "2025-10-21 22:19:05+00:00",
+  "last_source_ts_utc": "2025-10-24 19:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\643036.csv",
+  "fragment_sha256": "5ac8d6a928dcca66c462d5e28f7b5f3f173a4afcb667e7f74bafc0b506421740",
+  "question_matches": true,
+  "error": null
+}

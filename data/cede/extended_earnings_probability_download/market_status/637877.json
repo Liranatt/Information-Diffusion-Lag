@@ -1,0 +1,23 @@
+{
+  "market_id": "637877",
+  "question": "Will Honeywell International (HON) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-13 22:38:59.293391+00:00",
+  "requested_end_utc": "2025-10-16 22:38:59.293391+00:00",
+  "first_candidate_t0_utc": "2025-10-16 22:38:59.293391+00:00",
+  "latest_candidate_decision_utc": "2025-10-20 20:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "8883296960621881823047475300381502856118302663612471512672827375058969620764",
+  "condition_id": "0xedfed5786411127b0e0537514fd3b5f82f670b4e0a25555732bc4760cfc02538",
+  "api_question": "Will Honeywell International (HON) beat quarterly earnings?",
+  "api_created_at": "2025-10-16T22:38:59.293391Z",
+  "api_end_date": "2025-10-23T13:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\637877.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

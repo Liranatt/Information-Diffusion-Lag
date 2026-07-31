@@ -1,0 +1,22 @@
+{
+  "market_id": "0x3d0e08e326fc030d9ec6880b1893038320cf20dbe129a9720c8b0e0dbb70abcf",
+  "question": "Will Trump\u2019s Greenland Tariffs go into effect for Finland by Feburary 1?",
+  "requested_start_utc": "2026-01-17 22:59:21.068095+00:00",
+  "requested_end_utc": "2026-01-19 21:00:00+00:00",
+  "candidate_count": 1,
+  "research_families": "macro",
+  "economic_event_ids": "171012",
+  "mapping_source": "clob_condition_id",
+  "yes_token_id": "43506104810952828029350451965068014927600021820676911344374579181605501253109",
+  "condition_id": "0x3d0e08e326fc030d9ec6880b1893038320cf20dbe129a9720c8b0e0dbb70abcf",
+  "api_question": "Will Trump\u2019s Greenland Tariffs go into effect for Finland by Feburary 1?",
+  "api_end_date": "2026-02-01T00:00:00Z",
+  "status": "complete",
+  "row_count": 2582,
+  "first_source_ts_utc": "2026-01-18 01:58:11+00:00",
+  "last_source_ts_utc": "2026-01-19 20:59:12+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\0x3d0e08e326fc030d9ec6880b1893038320cf20dbe129a9720c8b0e0dbb70abcf.csv",
+  "fragment_sha256": "7584c8370fb94d03bad079d527f861d449fda806c3e1cc5674e0deb21869ec4b",
+  "question_matches": true,
+  "error": null
+}

@@ -60,15 +60,17 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stdout, "reconfigure"):  # absent under Jupyter's OutStream
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 from core.policy import DEFAULT_POLICY
 from core.kernel import (
     clear_kernel_caches,
+    _bar_ohlc,
     simulate_one,
     entry_day,
 )
-from core.polarity import effective_prob_path, effective_prob_surge, resolve_polarity
+from core.polarity import effective_prob_path, resolve_polarity
 from backtesting.pipeline.trade_forensics import combine_forensic_csvs, write_trade_forensics
 
 
@@ -83,6 +85,9 @@ FORENSIC_LOG_DIR = PROJECT / "data" / "experiment_forensics_clean"
 WF_FOLD_AUDIT_CSV = PROJECT / "data" / "experiment_walkforward_folds_clean.csv"
 DISPOSITION_DIR = PROJECT / "output"
 CEM_POPULATION_CSV = PROJECT / "output" / "cem_population.csv"
+DEFAULT_CANDIDATES_PATH = PROJECT / "data" / "candidates_audit_clean.parquet"
+_OPEN_PRICE_ARTIFACT = PROJECT / "assistant_generated_all_artifacts" / "assistant_generated_research_large_supplements" / "prices_open_merged.pkl"
+DEFAULT_PRICES_PATH = _OPEN_PRICE_ARTIFACT if _OPEN_PRICE_ARTIFACT.exists() else PROJECT / "data" / "prices.pkl"
 
 
 @dataclass(frozen=True)
@@ -184,12 +189,19 @@ PORTFOLIO_BOUNDS = dict(
     enter_strong=(0.60, 0.85),
     enter_floor=(0.55, 0.80),
     hold_days=(1, 5),
-    max_prob_surge=(0.20, 0.80),
     max_price_runup=(0.02, 0.20),
-    position_size_pct=(0.06, 0.12),
+    gross_event_exposure=(0.50, 0.95),
     max_concurrent=(8, 12),
 )
-PORT_DEFAULT = {**DEFAULT_POLICY, "position_size_pct": 0.10, "max_concurrent": 10}
+PORT_DEFAULT = {
+    **DEFAULT_POLICY,
+    "gross_event_exposure": 0.90,
+    "position_size_pct": 0.09,
+    "max_concurrent": 10,
+}
+
+MAX_GROSS_EVENT_EXPOSURE = 0.95
+MIN_TARGET_FILL = 0.90
 
 # ── Experiment controls ──────────────────────────────────────────────────────
 
@@ -420,6 +432,29 @@ def _safe_float(value: Any, default: float = 0.0) -> float:
     return out if np.isfinite(out) else default
 
 
+def _resolve_exposure_policy(policy: dict[str, Any]) -> tuple[float, float, int]:
+    """Return feasible ``(position_size, gross_exposure, max_concurrent)``.
+
+    New policies specify gross event exposure and derive per-position size.
+    Legacy policies are normalized conservatively so old fitted parameters
+    cannot request more than the portfolio limit.
+    """
+    max_concurrent = max(1, int(round(float(policy.get("max_concurrent", 10)))))
+    raw_position = policy.get("position_size_pct")
+    raw_gross = policy.get("gross_event_exposure")
+    if raw_gross is None:
+        raw_gross = (
+            float(raw_position) * max_concurrent
+            if raw_position is not None
+            else 0.90
+        )
+    gross = float(np.clip(float(raw_gross), 0.0, MAX_GROSS_EVENT_EXPOSURE))
+    limit = gross / max_concurrent
+    position = float(raw_position) if raw_position is not None else limit
+    position = float(np.clip(position, 0.0, limit))
+    return position, gross, max_concurrent
+
+
 def _allocation_rank_tuple(trade: dict) -> tuple:
     """Live-safe rank: event family, entry probability, clipped runup, stable order."""
     priority = int(trade.get("event_priority", EVENT_PRIORITY_ORDER["other"]))
@@ -498,7 +533,7 @@ def _diagnose_candidate_rejection(
         return diag
 
     closes = prices.get(sym, [])
-    win = [(t, h, l, c) for t, h, l, c in closes if t_theta - pd.Timedelta(days=30) <= t <= t_e]
+    win = [bar for bar in closes if t_theta - pd.Timedelta(days=30) <= bar[0] <= t_e]
     if len(win) < 2:
         diag["disposition"] = "insufficient_price_window"
         return diag
@@ -515,11 +550,6 @@ def _diagnose_candidate_rejection(
 
     diag["entry_prob"] = round(ent[1], 3)
 
-    p_surge = effective_prob_surge(row, polarity)
-    if p_surge is not None and p_surge > policy.get("max_prob_surge", 999.0):
-        diag["disposition"] = "prob_surge_exceeded"
-        return diag
-        
     r_surge = row.get("feat_runup_since_t0")
     if r_surge is not None and r_surge > policy.get("max_price_runup", 999.0):
         diag["disposition"] = "price_runup_exceeded"
@@ -535,7 +565,7 @@ def _diagnose_candidate_rejection(
         diag["disposition"] = "entry_bar_unavailable"
         return diag
         
-    entry_price = path[0][3]
+    entry_price = _bar_ohlc(path[0])[3]
     if entry_price == 0:
         diag["disposition"] = "zero_atr_or_price"
         return diag
@@ -637,6 +667,12 @@ def port_policy_from_vec(vec: np.ndarray) -> dict[str, float | int]:
     policy["max_concurrent"] = int(round(float(policy["max_concurrent"])))
     if float(policy["enter_strong"]) < float(policy["enter_floor"]):
         policy["enter_strong"] = policy["enter_floor"]
+    policy["gross_event_exposure"] = float(
+        np.clip(float(policy["gross_event_exposure"]), 0.0, MAX_GROSS_EVENT_EXPOSURE)
+    )
+    policy["position_size_pct"] = policy["gross_event_exposure"] / max(
+        int(policy["max_concurrent"]), 1
+    )
     return policy
 
 
@@ -862,6 +898,8 @@ def sim_opp_cost(
     initial_kelly_history: list[dict] | None = None,
     allocation_mode: str = ALLOCATION_FIFO,
     collect_allocation_log: bool = False,
+    admission_policy: Callable[[dict, pd.Timestamp, dict[str, Any]], str] | None = None,
+    exit_plan_columns: tuple[str, str, str] | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame, dict[str, Any], dict, pd.DataFrame, pd.DataFrame]:
     """
     Simulate a benchmark-rotation portfolio.
@@ -872,12 +910,21 @@ def sim_opp_cost(
 
     The returned per-trade `pnl` is fully net of all modeled costs associated
     with rotating benchmark capital into and out of the asset.
+
+    ``exit_plan_columns`` is an opt-in research hook containing candidate-row
+    columns for planned exit date, price, and reason.  It is deliberately off
+    by default, so all existing callers retain the corrected reference kernel
+    exit.  When supplied, the override is validated against the kernel's
+    actual entry and the candidate's legal ``T_e - 1`` boundary before the
+    portfolio allocator sees the trade.
     """
     if allocation_mode not in {ALLOCATION_FIFO, ALLOCATION_EVENT_PRIORITY}:
         raise ValueError(f"Unsupported allocation_mode={allocation_mode!r}.")
 
-    base_ps_static = float(policy.get("position_size_pct", 0.10)) if isinstance(policy, dict) else 0.10
-    max_concurrent_static = int(policy.get("max_concurrent", 10)) if isinstance(policy, dict) else 10
+    if isinstance(policy, dict):
+        base_ps_static, gross_static, max_concurrent_static = _resolve_exposure_policy(policy)
+    else:
+        base_ps_static, gross_static, max_concurrent_static = 0.09, 0.90, 10
 
     empty_stats: dict[str, Any] = {
         "initial": initial,
@@ -896,6 +943,7 @@ def sim_opp_cost(
         "trade_txn_cost": 0.0,
         "friction_fail_rate": 0.0,
         "avg_position_size": 0.0,
+        "gross_event_exposure": round(gross_static, 6),
         "median_position_size": 0.0,
         "min_position_size": 0.0,
         "max_position_size": 0.0,
@@ -945,6 +993,88 @@ def sim_opp_cost(
                 candidate_disposition_rows.append(_make_disposition_row(diag, current_policy, "", allocation_mode))
             continue
         trade = dict(trade)
+        if exit_plan_columns is not None:
+            exit_date_column, exit_price_column, exit_reason_column = exit_plan_columns
+            planned_date = row.get(exit_date_column)
+            planned_price = row.get(exit_price_column)
+            planned_reason = row.get(exit_reason_column)
+            if pd.isna(planned_date) or pd.isna(planned_price):
+                if collect_allocation_log:
+                    diag = _diagnose_candidate_rejection(row, current_policy, sim_prices, sim_probs, candidate_order)
+                    diag["skip_reason"] = "missing_exit_plan"
+                    candidate_disposition_rows.append(_make_disposition_row(diag, current_policy, "", allocation_mode))
+                continue
+            planned_exit = as_utc_day(planned_date)
+            actual_entry = as_utc_day(trade["entry_date"])
+            candidate_te = as_utc_day(row["t_e"])
+            if planned_exit < actual_entry:
+                raise AssertionError(
+                    f"Planned exit {planned_exit.date()} precedes actual entry "
+                    f"{actual_entry.date()} for {trade.get('symbol', '')}."
+                )
+            if planned_exit >= candidate_te:
+                raise AssertionError(
+                    f"Planned exit {planned_exit.date()} is not strictly before "
+                    f"T_e {candidate_te.date()} for {trade.get('symbol', '')}."
+                )
+            trade["exit_date"] = str(planned_exit.date())
+            trade["exit_price"] = round(float(planned_price), 6)
+            trade["exit_reason"] = str(planned_reason or "stage2e_planned_exit")
+        # Preserve selector-specific diagnostics for sequential admission
+        # policies.  The kernel intentionally returns only execution fields,
+        # so these values must be copied from the candidate row here.
+        admission_score = row.get("_admission_score", None)
+        if admission_score is not None and pd.notna(admission_score):
+            trade["_admission_score"] = float(admission_score)
+        if "_admission_target" in row and pd.notna(row.get("_admission_target")):
+            trade["_admission_target"] = float(row.get("_admission_target"))
+        for metadata_column in (
+            "feat_sector",
+            "economic_event_group_clean",
+            "economic_event_id",
+            "same_day_candidate_count",
+            "recent_5d_candidate_count",
+            "event_family",
+            "entry_prob",
+            "feat_time_to_resolution_days",
+            # Stage 2C semantic/admission metadata. These fields are copied
+            # verbatim from the candidate row so an engine-compatible
+            # admission callback can separate mapping eligibility from trade
+            # attractiveness. Their presence does not change execution or any
+            # legacy Stage 2B policy.
+            "legacy_gemini_relevance_score",
+            "mapping_type",
+            "mapping_valid",
+            "mapping_confidence",
+            "impact_materiality",
+            "direction_confidence",
+            "exposure_purity",
+            "semantic_event_rank",
+            "expected_slot_days",
+            "predicted_target_a",
+            "predicted_target_b_slot",
+            "stock_minus_sector_20d",
+            "candidates_seen_previous_5_trading_days",
+            "event_candidates_seen_previous_5_days",
+            "economic_path_explanation",
+            "stage2c_oof_panel",
+            "stage2c_oof_family",
+            "stage2c_direct_quality_accept",
+            "stage2e_candidate_id",
+            "stage2e_selector",
+            "stage2e_exit_policy",
+            "stage2f_policy",
+            "stage2f_policy_accept",
+            "stage2f_family_model_status",
+            "stage2f_opportunity_probability",
+            "stage2f_expected_best_legal_return",
+            "stage2f_expected_time_to_opportunity",
+            "stage2f_never_profitable_probability",
+            "stage2f_persistent_loss_probability",
+            "stage2f_severe_adverse_probability",
+        ):
+            if metadata_column in row and metadata_column not in trade and pd.notna(row.get(metadata_column)):
+                trade[metadata_column] = row.get(metadata_column)
         trade["_entry_ts"] = as_utc_day(trade["entry_date"])
         trade["_exit_ts"] = as_utc_day(trade["exit_date"])
         if trade["_entry_ts"] < candidate_theta:
@@ -954,10 +1084,32 @@ def sim_opp_cost(
             )
         trade["candidate_t_theta"] = str(candidate_theta.date())
         trade["candidate_t_e"] = str(as_utc_day(row["t_e"]).date())
+        selector_rank = row.get("_selector_rank", None)
+        if selector_rank is not None and pd.notna(selector_rank):
+            # Selector-specific replay supplies a precomputed within-entry
+            # rank.  Stable source identifiers remain the final tie-breaker,
+            # so replay is independent of dataframe/CSV row order.
+            trade["_stable_candidate_key"] = (
+                0,
+                int(selector_rank),
+                str(row.get("event_id", "")),
+                str(row.get("market_id", "")),
+                str(row.get("symbol", "")),
+            )
+        else:
+            trade["_stable_candidate_key"] = (
+                1,
+                str(row.get("event_id", "")),
+                str(row.get("market_id", "")),
+                str(row.get("symbol", "")),
+            )
         if allocation_mode == ALLOCATION_EVENT_PRIORITY:
             _annotate_allocation_fields(trade, row, candidate_order)
         all_trades.append(trade)
-    all_trades.sort(key=lambda trade: trade["_entry_ts"])
+    # Actual equity entry date is the primary clock.  The stable key is an
+    # explicit deterministic tie-breaker and does not depend on input row order
+    # or t_theta when candidates enter on the same day.
+    all_trades.sort(key=lambda trade: (trade["_entry_ts"], trade.get("_stable_candidate_key", ())))
 
     candidate_start, candidate_end = _frame_bounds(df)
     eval_start = as_utc_day(start_date) if start_date is not None else (
@@ -1083,6 +1235,10 @@ def sim_opp_cost(
         open_after: int | None = None,
         current_equity: float | None = None,
         max_concurrent: int | None = None,
+        requested_allocation: float | None = None,
+        realized_allocation: float | None = None,
+        gross_event_exposure: float | None = None,
+        remaining_benchmark_exposure: float | None = None,
     ) -> None:
         if not collect_allocation_log:
             return
@@ -1117,6 +1273,10 @@ def sim_opp_cost(
                 "open_positions_after": open_after,
                 "max_concurrent": max_concurrent if max_concurrent is not None else max_concurrent_static,
                 "current_equity": round(current_equity, 2) if current_equity is not None else "",
+                "requested_allocation": round(requested_allocation, 2) if requested_allocation is not None else trade.get("requested_allocation", ""),
+                "realized_allocation": round(realized_allocation, 2) if realized_allocation is not None else trade.get("realized_allocation", ""),
+                "gross_event_exposure": round(gross_event_exposure, 6) if gross_event_exposure is not None else trade.get("gross_event_exposure", ""),
+                "remaining_benchmark_exposure": round(remaining_benchmark_exposure, 6) if remaining_benchmark_exposure is not None else trade.get("remaining_benchmark_exposure", ""),
             }
         )
         pol = policy(as_utc_day(trade.get("candidate_t_theta", day))) if callable(policy) else policy
@@ -1234,14 +1394,29 @@ def sim_opp_cost(
             return False
 
         position_size = kelly_size(kelly_history, base_ps) if use_kelly else base_ps
+        # Kelly may request a larger fraction, but it may never exceed the
+        # feasible per-position limit implied by the gross exposure cap.
+        position_size = min(float(position_size), float(base_ps))
         marked_open_value = sum(
             int(pos["_qty"]) * float(_close_on(sim_prices, pos["symbol"], day) or pos["entry_price"])
             for pos in open_positions
         )
         current_equity = bench_shares * bench_close + marked_open_value + cash
         desired_allocation = current_equity * position_size
+        gross_event_exposure = float(position_size * max_concurrent)
+        remaining_benchmark_exposure = (
+            bench_shares * bench_close / max(current_equity, 1e-12)
+        )
+        trade["requested_allocation"] = desired_allocation
+        trade["gross_event_exposure"] = gross_event_exposure
+        trade["remaining_benchmark_exposure"] = remaining_benchmark_exposure
+        available_capital = max(current_equity - marked_open_value, 0.0)
         entry_price = float(trade["entry_price"])
-        if entry_price <= 0 or desired_allocation < entry_price:
+        if (
+            entry_price <= 0
+            or desired_allocation < entry_price
+            or available_capital < MIN_TARGET_FILL * desired_allocation
+        ):
             skip_insufficient_capital += 1
             trade["skip_reason"] = "insufficient_capital"
             record_allocation_decision(
@@ -1304,6 +1479,23 @@ def sim_opp_cost(
             )
             return False
 
+        realized_allocation = float(asset_qty * entry_price)
+        trade["realized_allocation"] = realized_allocation
+        if realized_allocation < MIN_TARGET_FILL * desired_allocation:
+            skip_insufficient_capital += 1
+            trade["skip_reason"] = "insufficient_target_fill"
+            record_allocation_decision(
+                trade,
+                day,
+                decision="skipped",
+                skip_reason="insufficient_target_fill",
+                open_before=open_before,
+                open_after=len(open_positions),
+                current_equity=current_equity,
+                max_concurrent=max_concurrent,
+            )
+            return False
+
         asset_buy_cost = ib_cost(asset_qty, entry_price, False)
         asset_cash_needed = asset_qty * entry_price + asset_buy_cost
         if asset_cash_needed > available_for_asset + 1e-9:
@@ -1331,6 +1523,10 @@ def sim_opp_cost(
             "_position_size_pct": position_size,
             "_asset_entry_notional": round(asset_qty * entry_price, 2),
             "_equity_at_entry": round(current_equity, 2),
+            "requested_allocation": round(desired_allocation, 2),
+            "realized_allocation": round(realized_allocation, 2),
+            "gross_event_exposure": round(gross_event_exposure, 6),
+            "remaining_benchmark_exposure": round(remaining_benchmark_exposure, 6),
             "invested_frac_pct": round(
                 asset_qty * entry_price / max(current_equity, 1e-12) * 100.0, 4
             ),
@@ -1361,8 +1557,7 @@ def sim_opp_cost(
 
     for day in calendar:
         current_policy = policy(day) if callable(policy) else policy
-        base_ps = float(current_policy.get("position_size_pct", 0.10))
-        max_concurrent = int(current_policy.get("max_concurrent", 10))
+        base_ps, gross_event_exposure, max_concurrent = _resolve_exposure_policy(current_policy)
 
         bench_close = _close_on(sim_prices, bench_sym, day)
         if bench_close is None:
@@ -1385,77 +1580,125 @@ def sim_opp_cost(
                 still_open.append(pos)
         open_positions = still_open
 
-        # Open candidates exactly on their configured entry day.
-        if allocation_mode == ALLOCATION_FIFO:
-            while trade_idx < len(all_trades):
-                trade = all_trades[trade_idx]
-                if trade["_entry_ts"] > day:
-                    break
-                trade_idx += 1
+        # Collect the full actual-entry-date batch before allocating any slot.
+        # This keeps same-day allocation independent of source row order and
+        # makes rankers explicit rather than an accidental t_theta FIFO.
+        daily_trades: list[dict] = []
+        while trade_idx < len(all_trades):
+            trade = all_trades[trade_idx]
+            if trade["_entry_ts"] > day:
+                break
+            trade_idx += 1
 
-                if trade["_entry_ts"] < day:
-                    gap_days = (day - trade["_entry_ts"]).days
-                    trade["calendar_gap_days"] = gap_days
-                    if gap_days > 4:
-                        if collect_allocation_log:
-                            trade["skip_reason"] = "excessive_calendar_gap"
-                            record_allocation_decision(
-                                trade, day, decision="skipped", skip_reason="excessive_calendar_gap",
-                                open_before=len(open_positions), open_after=len(open_positions), max_concurrent=max_concurrent
-                            )
-                        continue
-                    trade["_entry_ts"] = day
-                    trade["entry_date"] = str(day.date())
-                try_open_trade(
-                    trade,
-                    day,
-                    float(bench_close),
-                    base_ps=base_ps,
-                    max_concurrent=max_concurrent,
-                )
-        else:
-            daily_trades: list[dict] = []
-            while trade_idx < len(all_trades):
-                trade = all_trades[trade_idx]
-                if trade["_entry_ts"] > day:
-                    break
-                trade_idx += 1
+            if trade["_entry_ts"] < day:
+                gap_days = (day - trade["_entry_ts"]).days
+                trade["calendar_gap_days"] = gap_days
+                if gap_days > 4:
+                    if collect_allocation_log:
+                        trade["skip_reason"] = "excessive_calendar_gap"
+                        record_allocation_decision(
+                            trade, day, decision="skipped", skip_reason="excessive_calendar_gap",
+                            open_before=len(open_positions), open_after=len(open_positions), max_concurrent=max_concurrent
+                        )
+                    continue
+                trade["_entry_ts"] = day
+                trade["entry_date"] = str(day.date())
+            daily_trades.append(trade)
 
-                if trade["_entry_ts"] < day:
-                    gap_days = (day - trade["_entry_ts"]).days
-                    trade["calendar_gap_days"] = gap_days
-                    if gap_days > 4:
-                        if collect_allocation_log:
-                            trade["skip_reason"] = "excessive_calendar_gap"
-                            record_allocation_decision(
-                                trade, day, decision="skipped", skip_reason="excessive_calendar_gap",
-                                open_before=len(open_positions), open_after=len(open_positions), max_concurrent=max_concurrent
-                            )
-                        continue
-                    trade["_entry_ts"] = day
-                    trade["entry_date"] = str(day.date())
-                daily_trades.append(trade)
-
+        if allocation_mode == ALLOCATION_EVENT_PRIORITY:
             ranked_trades, collapsed_trades = _prepare_event_priority_batch(daily_trades)
-            for collapsed in collapsed_trades:
-                skip_same_day_symbol_collapsed += 1
-                record_allocation_decision(
-                    collapsed,
-                    day,
-                    decision="skipped",
-                    skip_reason="same_day_symbol_collapsed",
-                    open_before=len(open_positions),
-                    open_after=len(open_positions),
-                    max_concurrent=max_concurrent,
+        else:
+            ranked_trades = sorted(
+                daily_trades,
+                key=lambda trade: trade.get("_stable_candidate_key", ()),
+            )
+            collapsed_trades = []
+        for collapsed in collapsed_trades:
+            skip_same_day_symbol_collapsed += 1
+            record_allocation_decision(
+                collapsed,
+                day,
+                decision="skipped",
+                skip_reason="same_day_symbol_collapsed",
+                open_before=len(open_positions),
+                open_after=len(open_positions),
+                max_concurrent=max_concurrent,
+            )
+        for trade_index, trade in enumerate(ranked_trades):
+            if admission_policy is not None:
+                marked_open_value = sum(
+                    int(pos["_qty"]) * float(_close_on(sim_prices, pos["symbol"], day) or pos["entry_price"])
+                    for pos in open_positions
                 )
-            for trade in ranked_trades:
-                try_open_trade(
-                    trade,
-                    day,
-                    float(bench_close),
-                    base_ps=base_ps,
-                    max_concurrent=max_concurrent,
-                )
+                current_equity_for_admission = bench_shares * float(bench_close) + marked_open_value + cash
+                prior_equities = [float(item.get("equity", current_equity_for_admission)) for item in equity_rows]
+                peak_equity = max([float(initial), *prior_equities, current_equity_for_admission])
+                sector_values: dict[str, float] = {}
+                event_values: dict[str, float] = {}
+                for position in open_positions:
+                    position_value = int(position["_qty"]) * float(
+                        _close_on(sim_prices, position["symbol"], day) or position["entry_price"]
+                    )
+                    sector_key = str(position.get("feat_sector", "unknown"))
+                    event_key = str(position.get("economic_event_group_clean", position.get("economic_event_id", "unknown")))
+                    sector_values[sector_key] = sector_values.get(sector_key, 0.0) + position_value
+                    event_values[event_key] = event_values.get(event_key, 0.0) + position_value
+                context = {
+                    "free_slots": max(int(max_concurrent) - len(open_positions), 0),
+                    "open_positions": len(open_positions),
+                    "current_equity": current_equity_for_admission,
+                    "gross_exposure": marked_open_value / max(current_equity_for_admission, 1e-12),
+                    "benchmark_exposure": bench_shares * float(bench_close) / max(current_equity_for_admission, 1e-12),
+                    "sector_exposure": {key: value / max(current_equity_for_admission, 1e-12) for key, value in sector_values.items()},
+                    "event_family_exposure": {key: value / max(current_equity_for_admission, 1e-12) for key, value in event_values.items()},
+                    "expected_remaining_slot_days": max(
+                        float(pd.to_numeric(trade.get("feat_time_to_resolution_days", np.nan), errors="coerce")), 0.0
+                    ),
+                    "same_day_candidate_count": trade.get("same_day_candidate_count", np.nan),
+                    "recent_5d_candidate_count": trade.get("recent_5d_candidate_count", np.nan),
+                    "current_drawdown": current_equity_for_admission / max(peak_equity, 1e-12) - 1.0,
+                    "same_day_rank": trade_index + 1,
+                    "remaining_candidates": len(ranked_trades) - trade_index - 1,
+                }
+                admission_decision = str(admission_policy(trade, day, context)).lower().strip()
+                if admission_decision not in {"accept", "reject", "stop"}:
+                    raise ValueError(
+                        "admission_policy must return one of 'accept', 'reject', or 'stop'"
+                    )
+                if admission_decision == "stop":
+                    for remaining_trade in ranked_trades[trade_index:]:
+                        remaining_trade["skip_reason"] = "admission_stop"
+                        record_allocation_decision(
+                            remaining_trade,
+                            day,
+                            decision="skipped",
+                            skip_reason="admission_stop",
+                            open_before=len(open_positions),
+                            open_after=len(open_positions),
+                            current_equity=current_equity_for_admission,
+                            max_concurrent=max_concurrent,
+                        )
+                    break
+                if admission_decision == "reject":
+                    trade["skip_reason"] = "admission_reject"
+                    record_allocation_decision(
+                        trade,
+                        day,
+                        decision="skipped",
+                        skip_reason="admission_reject",
+                        open_before=len(open_positions),
+                        open_after=len(open_positions),
+                        current_equity=current_equity_for_admission,
+                        max_concurrent=max_concurrent,
+                    )
+                    continue
+            try_open_trade(
+                trade,
+                day,
+                float(bench_close),
+                base_ps=base_ps,
+                max_concurrent=max_concurrent,
+            )
 
         sweep_idle_cash(float(bench_close))
 
@@ -1611,6 +1854,12 @@ def sim_opp_cost(
         "total_txn_cost": round(total_txn_cost, 2),
         "trade_txn_cost": round(trade_txn_cost, 2),
         "friction_fail_rate": round(friction_fail_rate, 4),
+        "gross_event_exposure": round(
+            float(trade_df["gross_event_exposure"].max())
+            if not trade_df.empty and "gross_event_exposure" in trade_df.columns
+            else gross_static,
+            6,
+        ),
         "avg_position_size": round(float(position_sizes.mean() * 100.0), 4) if len(position_sizes) else 0.0,
         "median_position_size": round(float(np.median(position_sizes) * 100.0), 4) if len(position_sizes) else 0.0,
         "min_position_size": round(float(position_sizes.min() * 100.0), 4) if len(position_sizes) else 0.0,
@@ -1938,11 +2187,15 @@ def cem_search(
 
 # ── Database loading ─────────────────────────────────────────────────────────
 
-async def load_paths(df: pd.DataFrame) -> tuple[dict, dict]:
+async def load_paths(
+    df: pd.DataFrame,
+    prices_path: Path | str | None = None,
+    probs_path: Path | str | None = None,
+) -> tuple[dict, dict]:
     """Load price/probability paths from the prebuilt pkl artifacts ONLY.
 
     The backtest is deliberately decoupled from Postgres: it reads exactly the
-    three committed artifacts (candidates.parquet + prices.pkl + probs.pkl) and
+    three committed artifacts (candidates_audit_clean.parquet + prices.pkl + probs.pkl) and
     nothing else. The nightly `python -m ingest --rebuild` job regenerates them
     from the DB and pushes them. If they are missing we fail loudly rather than
     silently reaching for a live database that may have drifted.
@@ -1950,19 +2203,29 @@ async def load_paths(df: pd.DataFrame) -> tuple[dict, dict]:
     import pickle
     from pathlib import Path
     data_dir = Path("data")
-    prices_path = data_dir / "prices.pkl"
-    probs_path = data_dir / "probs.pkl"
+    prices_path = Path(prices_path) if prices_path is not None else data_dir / "prices.pkl"
+    probs_path = Path(probs_path) if probs_path is not None else data_dir / "probs.pkl"
     if not (prices_path.exists() and probs_path.exists()):
         raise FileNotFoundError(
             f"Backtest requires prebuilt {prices_path} and {probs_path}. "
             "Regenerate them with `python -m ingest --rebuild`; the optimizer no "
             "longer reads Postgres directly."
         )
-    print("  [Data] Loading cached prices and probabilities from data/*.pkl", flush=True)
+    print(f"  [Data] Loading prices from {prices_path} and probabilities from {probs_path}", flush=True)
     with open(prices_path, "rb") as f:
         prices = pickle.load(f)
     with open(probs_path, "rb") as f:
         probs = pickle.load(f)
+
+    missing_open = [
+        symbol for symbol, bars in prices.items()
+        if bars and len(bars[0]) < 5
+    ]
+    if missing_open:
+        raise ValueError(
+            "Corrected execution requires (timestamp, Open, High, Low, Close) "
+            f"bars; missing Open for {len(missing_open)} symbols, e.g. {missing_open[:5]}."
+        )
 
     _CLOSE_CACHE.clear()
     _PATH_CUTOFF_CACHE.clear()
@@ -2254,6 +2517,18 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--cem-iters",
+        type=int,
+        default=CEM_ITERS,
+        help=f"CEM iterations per fit (default {CEM_ITERS}).",
+    )
+    parser.add_argument(
+        "--cem-pop",
+        type=int,
+        default=CEM_POP,
+        help=f"CEM population per iteration (default {CEM_POP}).",
+    )
+    parser.add_argument(
         "--run-id",
         default=None,
         help=(
@@ -2275,7 +2550,36 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="Skip per-candidate allocation/disposition logging (faster, smaller output).",
     )
+    parser.add_argument(
+        "--candidates-path",
+        type=Path,
+        default=DEFAULT_CANDIDATES_PATH,
+        help=(
+            "Candidate parquet to evaluate. Defaults to the audit-cleaned, "
+            "primary-eligible artifact. Pass data/candidates.parquet only for an "
+            "explicit legacy comparison."
+        ),
+    )
+    parser.add_argument(
+        "--prices-path",
+        type=Path,
+        default=DEFAULT_PRICES_PATH,
+        help="Price pickle. Corrected execution requires five-field (timestamp, Open, High, Low, Close) bars.",
+    )
+    parser.add_argument(
+        "--probs-path",
+        type=Path,
+        default=Path("data/probs.pkl"),
+        help="Probability pickle.",
+    )
+    parser.add_argument(
+        "--no-forensics-log",
+        action="store_true",
+        help="Skip the derived trade-forensics CSV (faster, smaller output).",
+    )
     args = parser.parse_args(argv)
+    if args.cem_iters < 1 or args.cem_pop < 2:
+        raise SystemExit("--cem-iters must be >= 1 and --cem-pop must be >= 2.")
     args.benchmarks = [b.upper() for b in args.benchmarks]
     unknown_bench = [b for b in args.benchmarks if b not in BENCHMARK_SEED_OFFSET]
     if unknown_bench:
@@ -2294,6 +2598,7 @@ def main(argv: list[str] | None = None) -> None:
     benchmarks = tuple(args.benchmarks)
     paths = resolve_output_paths(args.run_id)
     collect_allocation_log = not args.no_allocation_log
+    collect_forensic_log = not args.no_forensics_log
 
     started = time.time()
 
@@ -2301,11 +2606,20 @@ def main(argv: list[str] | None = None) -> None:
     print(f"  CLEAN {len(experiments)}-EXPERIMENT COMPARISON x {len(benchmarks)} BENCHMARK(S)")
     print("  Label-complete CEM | Expanding walk-forward T2 | Fully net trade costs")
     print(f"  seed={args.seed}  run_id={args.run_id or '<in-place>'}  "
+          f"cem_iters={args.cem_iters}  cem_pop={args.cem_pop}  "
           f"allocation_log={'on' if collect_allocation_log else 'off'}  "
+          f"forensics_log={'on' if collect_forensic_log else 'off'}  "
           f"dd_penalty={DD_PENALTY:g}")
     print("=" * 78)
 
-    candidates_path = PROJECT / "data" / "candidates.parquet"
+    candidates_path = args.candidates_path
+    if not candidates_path.is_absolute():
+        candidates_path = PROJECT / candidates_path
+    if not candidates_path.exists():
+        raise FileNotFoundError(
+            f"Candidate artifact not found: {candidates_path}. "
+            "Run `python -m ingest.clean_candidates` first."
+        )
     df = pd.read_parquet(candidates_path)
 
     required_columns = {"symbol", "market_id", "t_theta", "t_e", "split", REL_COL}
@@ -2313,6 +2627,15 @@ def main(argv: list[str] | None = None) -> None:
     if missing:
         raise ValueError(f"{candidates_path} is missing required columns: {missing}")
 
+    if "cem_eligible" in df.columns:
+        ineligible = ~df["cem_eligible"].fillna(False).astype(bool)
+        if ineligible.any():
+            print(
+                f"  [Data cleaning] filtering {int(ineligible.sum())} non-primary rows "
+                f"from {candidates_path.name}",
+                flush=True,
+            )
+            df = df.loc[~ineligible].copy()
     df = df[df[REL_COL].astype(float) > 0.5].copy()
 
     # `val` is not used for any CEM/model selection in this pipeline (the OOS set
@@ -2335,7 +2658,10 @@ def main(argv: list[str] | None = None) -> None:
             f"label-complete walk-forward training. Examples:\n{sample.to_string(index=False)}"
         )
 
-    print(f"\n  {len(df)} relevance-filtered candidates loaded", flush=True)
+    print(
+        f"\n  {len(df)} relevance-filtered candidates loaded from {candidates_path.name}",
+        flush=True,
+    )
     max_t = as_utc_day(df["t_theta"].max()) + pd.Timedelta(days=1)
     preview_folds = create_expanding_wf_folds(df, max_t)
     if not preview_folds:
@@ -2361,7 +2687,9 @@ def main(argv: list[str] | None = None) -> None:
         flush=True,
     )
 
-    prices, probs = asyncio.run(load_paths(df))
+    prices_path = args.prices_path if args.prices_path.is_absolute() else PROJECT / args.prices_path
+    probs_path = args.probs_path if args.probs_path.is_absolute() else PROJECT / args.probs_path
+    prices, probs = asyncio.run(load_paths(df, prices_path=prices_path, probs_path=probs_path))
     print(f"  {len(prices)} symbols, {len(probs)} markets loaded", flush=True)
 
     _print_folds(preview_folds)
@@ -2403,13 +2731,20 @@ def main(argv: list[str] | None = None) -> None:
                 use_kelly=use_kelly,
                 allocation_mode=allocation_mode,
                 train_fit_cutoff=oos_start,
-                n_iter=CEM_ITERS,
-                pop=CEM_POP,
+                n_iter=args.cem_iters,
+                pop=args.cem_pop,
                 seed=args.seed + BENCHMARK_SEED_OFFSET[benchmark],
             )
             for population_row in cem_population:
                 cem_population_rows.append(
-                    {"experiment": label, "allocation_mode": allocation_mode, **population_row}
+                    {
+                        "experiment": label,
+                        "allocation_mode": allocation_mode,
+                        "base_seed": args.seed,
+                        "cem_iters": args.cem_iters,
+                        "cem_pop": args.cem_pop,
+                        **population_row,
+                    }
                 )
             for fold_audit in fold_audits:
                 fold_audit_rows.append(
@@ -2482,7 +2817,7 @@ def main(argv: list[str] | None = None) -> None:
                 equity_df=oos_equity,
                 allocation_df=oos_allocation,
                 disposition_df=oos_disposition,
-                candidate_df=oos_df,
+                candidate_df=oos_df if collect_forensic_log else None,
                 prices=prices,
                 probs=probs,
                 policy=dynamic_policy,
@@ -2506,6 +2841,9 @@ def main(argv: list[str] | None = None) -> None:
                 "kelly": use_kelly,
                 "allocation_mode": allocation_mode,
                 "dd_penalty": DD_PENALTY,
+                "base_seed": args.seed,
+                "cem_iters": args.cem_iters,
+                "cem_pop": args.cem_pop,
                 "cem_objective": round(objective, 6),
                 "cem_objective_scope": "online_refit" if use_wf else "train_fit",
                 "policy_scope": policy_scope,

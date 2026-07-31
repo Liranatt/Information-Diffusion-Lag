@@ -1,0 +1,82 @@
+{
+  "label": "exact_dynamic_selector_replay",
+  "universe_sha256": "58dc6f7ca7c02dd1cf7679d8948f8d14deef40d1abf70e81528213ab049bb068",
+  "source_sha256": "7e9c822a27684f0ca852006121452ed67fb1265d0f430d446e55776194386de5",
+  "prices_sha256": "559baa811114d9975d13f96872073d3580bcbe4e9df875eb0d4631c1a0d345dc",
+  "probs_sha256": "ec3bd7eb08ecc31986e01e37c0cd84338732f0a2807c7e6edd86a9630d3fe347",
+  "selectors": [
+    {
+      "selector": "legacy",
+      "admission_policy": "always_fill",
+      "threshold": null
+    },
+    {
+      "selector": "connection_source_order",
+      "admission_policy": "always_fill",
+      "threshold": null
+    },
+    {
+      "selector": "connection_oof_tiebreaker",
+      "admission_policy": "always_fill",
+      "threshold": null
+    },
+    {
+      "selector": "connection_random_median",
+      "admission_policy": "always_fill",
+      "threshold": null
+    },
+    {
+      "selector": "fixed_monotonic",
+      "admission_policy": "always_fill",
+      "threshold": null
+    },
+    {
+      "selector": "pairwise_v1",
+      "admission_policy": "always_fill",
+      "threshold": null
+    },
+    {
+      "selector": "pairwise_v2",
+      "admission_policy": "always_fill",
+      "threshold": null
+    },
+    {
+      "selector": "monotonic_additive",
+      "admission_policy": "always_fill",
+      "threshold": null
+    },
+    {
+      "selector": "pooled_set",
+      "admission_policy": "always_fill",
+      "threshold": null
+    },
+    {
+      "selector": "connection_oof_tiebreaker",
+      "admission_policy": "min_connection_strength",
+      "threshold": 1.0
+    }
+  ],
+  "connection_oof_tiebreaker": "expected_slot_days",
+  "random_median_seed": 306,
+  "execution_engine": "backtesting.optimize_cem.sim_opp_cost",
+  "frozen_policy": {
+    "atr_mult": 3.65,
+    "lock_activate": 0.03,
+    "theta_out": 0.55,
+    "enter_strong": 0.75,
+    "enter_floor": 0.7,
+    "hold_days": 1,
+    "max_price_runup": 0.1,
+    "gross_event_exposure": 0.9,
+    "position_size_pct": 0.09,
+    "max_concurrent": 10
+  },
+  "frozen_sizing_costs_execution": true,
+  "terminal_horizon": "kernel closes no later than t_e - 1; assertion exit_date < candidate_t_e",
+  "te_is_never_exit": true,
+  "current_2026_test_is_exploratory": true,
+  "admission_thresholds_selected_on_training_oof_only": true,
+  "outputs": {
+    "summary": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\dynamic_replay\\exact_replay_summary.csv"
+  }
+}

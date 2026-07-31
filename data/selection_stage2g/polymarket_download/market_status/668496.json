@@ -1,0 +1,22 @@
+{
+  "market_id": "668496",
+  "question": "Will Cisco Systems (CSCO) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-06 21:12:25.621716+00:00",
+  "requested_end_utc": "2025-11-07 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "a3b634c30865ff5ca8b42f30|d5d2fb3a78074ee9c735dc3c",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "71994436642534259508752055649143830897622340616774514815018764622097321276293",
+  "condition_id": "0x11afdbf49a0d97d6dc3175a17523e2f1eb54521552f5528899378e2d54e717ab",
+  "api_question": "Will Cisco Systems (CSCO) beat quarterly earnings?",
+  "api_created_at": "2025-11-06T21:12:25.621716Z",
+  "api_end_date": "2025-11-12T22:00:00Z",
+  "status": "complete",
+  "row_count": 1366,
+  "first_source_ts_utc": "2025-11-06 22:14:06+00:00",
+  "last_source_ts_utc": "2025-11-07 20:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\668496.csv",
+  "fragment_sha256": "12b441c9174b3e8e1329b8d082dfcd5648df8cd92a71869b114bad2a61fc7882",
+  "question_matches": true,
+  "error": null
+}

@@ -33,6 +33,9 @@ scratch*.py
 # ── Data, Logs, and Experiment Results ───────────────────────────
 *.csv
 *.log
+# Frozen semantic treatment input; unlike generated experiment CSVs, this is
+# required to reproduce candidates_audit_clean.parquet.
+!data/candidate_treatment_audit.csv
 data/experiment_*
 data/rf_experiment_*
 data/opp_cost_trades.csv

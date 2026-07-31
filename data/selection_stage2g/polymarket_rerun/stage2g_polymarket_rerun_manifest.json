@@ -1,0 +1,87 @@
+{
+  "stage": "2G",
+  "experiment": "fresh_polymarket_minute_trajectory_vs_target_b",
+  "development_earnings_candidates": 492,
+  "oof_candidates": 415,
+  "outer_folds": 5,
+  "trajectory_features": [
+    "traj_log_observation_count",
+    "traj_log_span_hours",
+    "traj_probability_latest",
+    "traj_slope_full_per_day",
+    "traj_slope_24h_per_day",
+    "traj_acceleration_24h_per_day2",
+    "traj_persistence_above_threshold_full",
+    "traj_persistence_above_threshold_24h",
+    "traj_upward_crossings",
+    "traj_downward_recrossings",
+    "traj_log_hours_since_first_crossing",
+    "traj_log_hours_since_last_crossing",
+    "traj_recent_peak_24h",
+    "traj_drawdown_from_peak_24h",
+    "traj_recovery_from_trough_24h",
+    "traj_probability_volatility_24h",
+    "traj_update_frequency_per_hour_24h",
+    "traj_probability_change_6h",
+    "traj_probability_change_24h",
+    "traj_change_24h_minus_stock_1d",
+    "traj_change_24h_minus_sector_1d",
+    "traj_change_24h_minus_benchmark_1d"
+  ],
+  "models": [
+    "A_target_b_baseline",
+    "B_target_b_plus_trajectory",
+    "C_probability_trajectory_only_diagnostic"
+  ],
+  "exit_policies": [
+    "hold_to_te1",
+    "fixed_2_day",
+    "fixed_4_day",
+    "fixed_8_day",
+    "corrected_reference_exit",
+    "volatility_scaled_stop",
+    "time_underwater_exit",
+    "trailing_profit_giveback_exit"
+  ],
+  "combined_exact_replays": 48,
+  "outer_fold_exact_replays": 240,
+  "post_entry_observations_used": 0,
+  "lockbox_opened": false,
+  "final_decision": {
+    "final_decision": "close_earnings_selection_and_proceed_to_exits",
+    "promoted": false,
+    "selected_operational_selector": "A_target_b_baseline",
+    "coverage_sufficient": true,
+    "paired_median_fold_excess_improvement": -0.11919999999999997,
+    "positive_folds": 1,
+    "benchmark_mean_excess_improvement": {
+      "QQQ": -2.5197125000000002,
+      "SPY": -0.7268749999999999
+    },
+    "worse_exit_policy_count": 8,
+    "mean_drawdown_change_by_benchmark": {
+      "QQQ": 0.10435920214240946,
+      "SPY": 0.761068946236855
+    },
+    "lockbox_opened": false,
+    "geo_and_other_included": false
+  },
+  "source_hashes": {
+    "downloaded_history": "f4e075f5a32a3f3aa427c8a2bb8a6b24862bc0cb7f3f1bdcc74f41f7091a4dfe",
+    "download_manifest": "df51f3e034a71522edc8a7045ded645f97cc2b2ab4b785b45bf41d4d6e21b3fb",
+    "stage2f_oracle_labels": "194e7b635018e97e14c655310d973ef60666f7e069e52260556f4347cfe80ed8",
+    "stage2f_oof_assignments": "bf94b0b4855f4547dfb7bad1f2ea6c1c4c72949d11b39aba4d3276d555e80d7d",
+    "prices": "559baa811114d9975d13f96872073d3580bcbe4e9df875eb0d4631c1a0d345dc",
+    "execution_probabilities": "ec3bd7eb08ecc31986e01e37c0cd84338732f0a2807c7e6edd86a9630d3fe347"
+  },
+  "outputs": {
+    "report": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_rerun\\stage2g_polymarket_trajectory_rerun_report.md",
+    "oof_predictions": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_rerun\\nested_oof_models\\stage2g_oof_predictions.csv",
+    "prediction_metrics": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_rerun\\prediction\\oof_prediction_metrics.csv",
+    "same_day_summary": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_rerun\\same_day_selection\\same_day_selection_summary.csv",
+    "combined_exact_replay": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_rerun\\exact_replay\\selector_exit_combined_exact_results.csv",
+    "fold_exact_replay": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_rerun\\exact_replay\\selector_exit_outer_fold_exact_results.csv",
+    "promotion_gates": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_rerun\\decision\\promotion_gates.csv",
+    "final_decision": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_rerun\\decision\\final_decision.json"
+  }
+}

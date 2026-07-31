@@ -1,0 +1,22 @@
+{
+  "market_id": "598105",
+  "question": "Will Factset Research (FDS) beat its quarterly EPS estimate?",
+  "requested_start_utc": "2025-09-15 01:54:00.393785+00:00",
+  "requested_end_utc": "2025-09-17 20:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "0e38606c4efe9f0f7ef3293e",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "65117997926338660550823541454747266315883653557059798559901840489059408578394",
+  "condition_id": "0xd10fcc3d3f8c1143e26b12ff6c5c317e191f758ec8020f0f6959e5f884c1cd7e",
+  "api_question": "Will Factset Research (FDS) beat its quarterly EPS estimate?",
+  "api_created_at": "2025-09-15T01:54:00.393785Z",
+  "api_end_date": "2025-09-25T11:00:00Z",
+  "status": "complete",
+  "row_count": 3941,
+  "first_source_ts_utc": "2025-09-15 02:10:03+00:00",
+  "last_source_ts_utc": "2025-09-17 19:59:03+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\598105.csv",
+  "fragment_sha256": "bdaa38eba7bcce80b350fd95c1aa3790c9de50bb075eba6742338ae84297d5b0",
+  "question_matches": true,
+  "error": null
+}

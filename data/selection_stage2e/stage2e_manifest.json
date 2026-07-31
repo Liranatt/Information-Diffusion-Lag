@@ -1,0 +1,114 @@
+{
+  "label": "stage2e_path_aware_selection_exit_interaction",
+  "development_only": true,
+  "semantic_stage2c_conclusions_frozen": true,
+  "stage2c_performance_selector_reopened": true,
+  "all_development_candidates": 580,
+  "oof_matrix_candidates": 496,
+  "legal_path_rows": 4074,
+  "kernel_executable_oof_candidates": 483,
+  "selectors": [
+    "direct_always_fill",
+    "predicted_target_a_positive",
+    "target_b_per_slot_day",
+    "expected_slot_days_ranking",
+    "corrected_reference_selector"
+  ],
+  "exit_policies": [
+    "hold_to_te1",
+    "fixed_2_day",
+    "fixed_4_day",
+    "fixed_8_day",
+    "corrected_reference_exit",
+    "volatility_scaled_stop",
+    "time_underwater_exit",
+    "trailing_profit_giveback_exit"
+  ],
+  "path_class_rules": {
+    "early_winner_with_giveback": "first-four-day active MFE >= 2%; terminal active return <= 0 or <= 25% of that early MFE",
+    "early_loser_with_recovery": "first-four-day active MAE <= -2%; terminal is positive or recovers at least 75% of the early trough",
+    "immediate_winner": "day-2 active return >= 2%, terminal active return > 0, and no early-winner giveback classification",
+    "delayed_winner": "terminal active return >= 1%, day-2 active return <= 0, and time to MFE is after day 2",
+    "persistent_loser": "terminal active return <= -1% and no more than 25% of legal holding days have positive active return",
+    "flat_nonresponsive": "terminal absolute active return < 0.75% and full-path active range < 2%",
+    "volatile_oscillation": "full-path active range >= 4% and at least two active-return sign changes",
+    "unclassified_mixed": "path does not satisfy any predeclared diagnostic class"
+  },
+  "exit_policy_rules": {
+    "hold_to_te1": "close on the final observed session strictly before T_e",
+    "fixed_2_day": "close on legal holding day 2, or T_e-1 when fewer than two sessions exist",
+    "fixed_4_day": "close on legal holding day 4, or T_e-1 when fewer than four sessions exist",
+    "fixed_8_day": "close on legal holding day 8, or T_e-1 when fewer than eight sessions exist",
+    "corrected_reference_exit": "preserve the corrected kernel exit exactly",
+    "volatility_scaled_stop": "from day 2, close when stock close return breaches max(2%, 2x pre-entry ATR20), capped at 8%; otherwise T_e-1",
+    "time_underwater_exit": "from day 4, close after four consecutive sessions with negative active return; otherwise T_e-1",
+    "trailing_profit_giveback_exit": "after active close return reaches 3%, close on giveback of max(1.5 points, 50% of peak); otherwise T_e-1"
+  },
+  "combined_exact_replays": 80,
+  "fold_exact_replays": 880,
+  "research_frozen_selector": {
+    "label": "research_frozen_selector_stage2e",
+    "selected_performance_selector": "target_b_per_slot_day",
+    "direct_ranking": "OOF predicted active return per slot-day descending then expected slot days",
+    "direct_admission": "OOF predicted Target B per slot-day > 0",
+    "selection_rule": "minimum 50% median plus 50% 75th-percentile composite rank across all eight predeclared exits and both benchmarks; composite equally ranks excess return, active IR, and less-negative active drawdown",
+    "semantic_stage2c_conclusions_frozen": true,
+    "direct_mapping_eligibility": "mapping_valid direct_issuer",
+    "indirect_mapping_eligibility_and_ranking": "unchanged Stage 2C semantic lane: mapping confidence >=3, event-relative semantic rank, novelty/repricing guard",
+    "selector_changes_materially_across_exit_policies": true,
+    "dominant_exit_policy_winner_share": 0.5,
+    "median_pairwise_exit_policy_selector_rank_spearman": 0.6155870112510925,
+    "alternating_pass_performed": true,
+    "alternating_pass_final_diagnostic_selector": "target_b_per_slot_day",
+    "alternating_pass_final_diagnostic_exit": "hold_to_te1",
+    "exit_policy_frozen_for_learned_exit_research": false,
+    "selected_target_label_is_terminal_derived": true,
+    "terminal_label_caveat": "Target B remains T_e-1 active return divided by slot days; it is frozen only because its OOF selector survived the cross-exit matrix, not because the training label became path-aware",
+    "predicted_target_a_positive_stage2c_freeze_superseded": true,
+    "exit_model_training_performed": false,
+    "lockbox_opened": false,
+    "lockbox_reserved_for_final_modular_pipeline_evaluation": true,
+    "te_is_never_exit": true,
+    "latest_legal_exit_horizon": "T_e - 1",
+    "path": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2e\\research_frozen_selector_stage2e.json"
+  },
+  "exit_model_training_performed": false,
+  "preserved_audit_samples": [
+    {
+      "label": "stage2b_184_trade_sample",
+      "path": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2c\\baselines\\stage3_raw_global_connection_baseline\\stage3_exit_development_trades.csv",
+      "rows": 184,
+      "sha256": "a250b5afe178532540a57a50060fa5af1e9d02177866161b2d43b52f0c28aa02",
+      "role": "audit_baseline_only",
+      "exit_model_training_used": false
+    },
+    {
+      "label": "stage2c_138_trade_sample",
+      "path": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\stage3_exit_research\\stage3_exit_development_trades.csv",
+      "rows": 138,
+      "sha256": "21b65750dc96e42508a15b2beb8a666c39cebdbfa1703efc381c02b28a845242",
+      "role": "audit_baseline_only",
+      "exit_model_training_used": false
+    }
+  ],
+  "source_hashes": {
+    "semantic_candidates": "4fdcee3573ed8c575257a2db248fe094a6c5873c89fd742aa5caf576d20a1be0",
+    "oof_stream": "776078455c6a9acf62bf7aefc9161694e640a064969f48c4b18571dfea71af7f",
+    "prices": "559baa811114d9975d13f96872073d3580bcbe4e9df875eb0d4631c1a0d345dc",
+    "probs": "ec3bd7eb08ecc31986e01e37c0cd84338732f0a2807c7e6edd86a9630d3fe347"
+  },
+  "test_rows_read": 0,
+  "lockbox_opened": false,
+  "te_is_never_exit": true,
+  "latest_legal_exit_horizon": "T_e - 1",
+  "outputs": {
+    "report": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2e\\stage2e_path_aware_selection_exit_report.md",
+    "frozen_selector": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2e\\research_frozen_selector_stage2e.json",
+    "path_table": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2e\\legal_paths\\candidate_legal_path_table.csv",
+    "path_summary": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2e\\legal_paths\\candidate_path_summary.csv",
+    "exit_plans": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2e\\legal_paths\\candidate_exit_plans.csv",
+    "combined_matrix": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2e\\selector_exit_matrix\\selector_exit_combined_exact_results.csv",
+    "fold_matrix": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2e\\selector_exit_matrix\\selector_exit_fold_exact_results.csv",
+    "stage3_manifest": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\stage3_exit_research\\stage3_exit_manifest.json"
+  }
+}

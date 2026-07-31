@@ -1,0 +1,22 @@
+{
+  "market_id": "0x62777fa95acbc41a7c66df01f5db2e01d51f82b6916ec4257bd63b14e1690bbe",
+  "question": "Will Trump increase tariffs on China by Friday?",
+  "requested_start_utc": "2025-04-09 18:28:26.095851+00:00",
+  "requested_end_utc": "2025-04-10 20:00:00+00:00",
+  "candidate_count": 2,
+  "research_families": "macro",
+  "economic_event_ids": "22524",
+  "mapping_source": "clob_condition_id",
+  "yes_token_id": "68091119300254218387424632884108822913497509579205252407524242580704321272029",
+  "condition_id": "0x62777fa95acbc41a7c66df01f5db2e01d51f82b6916ec4257bd63b14e1690bbe",
+  "api_question": "Will Trump increase tariffs on China by Friday?",
+  "api_end_date": "2025-04-11T00:00:00Z",
+  "status": "complete",
+  "row_count": 1504,
+  "first_source_ts_utc": "2025-04-09 18:56:05+00:00",
+  "last_source_ts_utc": "2025-04-10 19:59:05+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\0x62777fa95acbc41a7c66df01f5db2e01d51f82b6916ec4257bd63b14e1690bbe.csv",
+  "fragment_sha256": "534200afb963e879a51d23e19fdb2e9953f58910fc84ec1966a75f734876d772",
+  "question_matches": true,
+  "error": null
+}

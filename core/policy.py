@@ -23,7 +23,6 @@ DEFAULT_POLICY = dict(
     enter_strong=0.75,
     enter_floor=0.70,
     hold_days=1,
-    max_prob_surge=0.40,
     max_price_runup=0.10,
 )
 
@@ -37,7 +36,6 @@ CEM_BOUNDS = dict(
     enter_strong=(0.60, 0.85),
     enter_floor=(0.55, 0.80),
     hold_days=(1, 5),
-    max_prob_surge=(0.20, 0.80),
     max_price_runup=(0.02, 0.20),
 )
 

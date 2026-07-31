@@ -1,0 +1,22 @@
+{
+  "market_id": "697447",
+  "question": "Will Snowflake (SNOW) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-22 20:20:12.832507+00:00",
+  "requested_end_utc": "2025-11-24 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "4baf95aac88b3f9c762b651f|5b0f971fb5e44f8e7982c3d2",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "1552913594698577807820957749555716049569199009530798974011817278888944619027",
+  "condition_id": "0xaf26bfb76e1f2925408f22f15749f815c78e873b773e516dfdef335d54188758",
+  "api_question": "Will Snowflake (SNOW) beat quarterly earnings?",
+  "api_created_at": "2025-11-22T20:20:12.832507Z",
+  "api_end_date": "2025-12-03T22:00:00Z",
+  "status": "complete",
+  "row_count": 2903,
+  "first_source_ts_utc": "2025-11-22 20:37:06+00:00",
+  "last_source_ts_utc": "2025-11-24 20:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\697447.csv",
+  "fragment_sha256": "cefc69f702d74b79e5bd61695aefc5080d8ba7ddf718ae91fa5772bc910c8c58",
+  "question_matches": true,
+  "error": null
+}

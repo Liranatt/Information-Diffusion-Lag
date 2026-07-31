@@ -1,0 +1,19 @@
+\begin{table*}[t]
+\caption{Audit-cleaned CEM test matrix over the single January--June 2026 test period (seed 42, six CEM iterations, population 20). Returns and excess are percentage points; benchmark buy-and-hold returned $+8.52$ (SPY) and $+17.59$ (QQQ) points.}
+\label{tab:cemmatrix}
+\centering
+\small
+\begin{tabular}{lrrrrrrrrrr}
+\toprule
+& \multicolumn{5}{c}{SPY benchmark} & \multicolumn{5}{c}{QQQ benchmark} \\
+\cmidrule(lr){2-6}\cmidrule(lr){7-11}
+Configuration & Return & Excess & MaxDD & Sharpe & Trades & Return & Excess & MaxDD & Sharpe & Trades \\
+\midrule
+Baseline & 30.27 & 21.75 & $-6.67$ & 3.30 & 225 & 27.36 & 9.77 & $-6.36$ & 2.93 & 223 \\
+T1+T2 & 30.87 & 22.35 & $-9.52$ & 3.41 & 191 & 24.63 & 7.03 & $-7.51$ & 2.52 & 189 \\
+T1+T2+T3 & 25.50 & 16.98 & $-7.76$ & 2.99 & 197 & 22.57 & 4.98 & $-11.43$ & 2.10 & 181 \\
+T4 GeoPriority & 27.27 & 18.75 & $-8.33$ & 2.89 & 197 & 23.58 & 5.99 & $-6.74$ & 2.54 & 211 \\
+T1+T2+T3+T4 & 28.49 & 19.97 & $-8.72$ & 3.22 & 184 & 24.61 & 7.02 & $-10.38$ & 2.20 & 185 \\
+\bottomrule
+\end{tabular}
+\end{table*}

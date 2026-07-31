@@ -1,0 +1,22 @@
+{
+  "market_id": "619852",
+  "question": "Will Unity Bancorp (UNTY) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-02 15:20:34.886670+00:00",
+  "requested_end_utc": "2025-10-06 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "2c31fb942bcd12b94f18a84a|852b979b5e4379c249d02269",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "40200913228891513316709582884707676821056070942029234705719226758333843407501",
+  "condition_id": "0x5a58ac95347476118d188fc1b3651ec5a603a505abb673b6fefa677cd11686d5",
+  "api_question": "Will Unity Bancorp (UNTY) beat quarterly earnings?",
+  "api_created_at": "2025-10-02T15:20:34.88667Z",
+  "api_end_date": "2025-10-10T00:00:00Z",
+  "status": "complete",
+  "row_count": 4198,
+  "first_source_ts_utc": "2025-10-03 22:02:03+00:00",
+  "last_source_ts_utc": "2025-10-06 19:59:03+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\619852.csv",
+  "fragment_sha256": "d69fa80d02bef83bf81fbcfe712ce7182169ebf0f7e2881570368913cb02d51d",
+  "question_matches": true,
+  "error": null
+}

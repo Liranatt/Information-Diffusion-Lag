@@ -1,0 +1,22 @@
+{
+  "market_id": "696257",
+  "question": "Will Okta (OKTA) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-22 00:03:58.316267+00:00",
+  "requested_end_utc": "2025-11-24 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "2a46b68a2cc9c61e8b1aca07|6163eabf03f083bcdb96969d",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "111709616531765502080276172529507630829707499538090693538401355846274912165670",
+  "condition_id": "0xf83337525e09673acd4babdccbcae8dcc8e6b5db8d92886491dd21049ff1c169",
+  "api_question": "Will Okta (OKTA) beat quarterly earnings?",
+  "api_created_at": "2025-11-22T00:03:58.316267Z",
+  "api_end_date": "2025-12-02T22:00:00Z",
+  "status": "complete",
+  "row_count": 4118,
+  "first_source_ts_utc": "2025-11-22 00:22:09+00:00",
+  "last_source_ts_utc": "2025-11-24 20:59:07+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\696257.csv",
+  "fragment_sha256": "6b6a5a27fddf99c555ee89af340569ba740fe41404c2940eabba403019fefd03",
+  "question_matches": true,
+  "error": null
+}

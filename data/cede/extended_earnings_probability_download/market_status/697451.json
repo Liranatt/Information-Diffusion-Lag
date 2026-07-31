@@ -1,0 +1,23 @@
+{
+  "market_id": "697451",
+  "question": "Will Macy's (M) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-19 20:26:10.840582+00:00",
+  "requested_end_utc": "2025-11-22 20:26:10.840582+00:00",
+  "first_candidate_t0_utc": "2025-11-22 20:26:10.840582+00:00",
+  "latest_candidate_decision_utc": "2025-11-24 21:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "72747628787524427924655347526604075472517365663000618484104593717654740270812",
+  "condition_id": "0x20a31eacfa76cfc6a43d9a4c974bff8e6f9903ad7b881bdb54c0341d666ab006",
+  "api_question": "Will Macy's (M) beat quarterly earnings?",
+  "api_created_at": "2025-11-22T20:26:10.840582Z",
+  "api_end_date": "2025-12-03T14:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\697451.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

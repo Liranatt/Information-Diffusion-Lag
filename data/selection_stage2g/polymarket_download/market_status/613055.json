@@ -1,0 +1,22 @@
+{
+  "market_id": "613055",
+  "question": "Will Wells Fargo (WFC) beat quarterly earnings?",
+  "requested_start_utc": "2025-09-25 23:36:42.314525+00:00",
+  "requested_end_utc": "2025-09-26 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "53dfe1bc4ab570902706f37e|c513315c6123e6c53f86afb4",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "104392027147118759854225063915560484597219533136200865422241081253138245897764",
+  "condition_id": "0x3abde55383b9a88c77ad2c6f51ffa96631c40a56134d117901e690d667daf5d4",
+  "api_question": "Will Wells Fargo (WFC) beat quarterly earnings?",
+  "api_created_at": "2025-09-25T23:36:42.314525Z",
+  "api_end_date": "2025-10-14T00:00:00Z",
+  "status": "complete",
+  "row_count": 333,
+  "first_source_ts_utc": "2025-09-26 14:27:03+00:00",
+  "last_source_ts_utc": "2025-09-26 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\613055.csv",
+  "fragment_sha256": "a86284ab7650fcb4ae642d57530bdba9d39f4fe5c1c75345328b9924ee6a68bf",
+  "question_matches": true,
+  "error": null
+}

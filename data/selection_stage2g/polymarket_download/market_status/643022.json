@@ -1,0 +1,22 @@
+{
+  "market_id": "643022",
+  "question": "Will JetBlue Airways (JBLU) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-21 21:48:28.174125+00:00",
+  "requested_end_utc": "2025-10-22 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "05ed265b131c628c05760496|cc53520ea23739c5636a9e4d",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "88828194822637052027966560372745594035631115878407114858568074589476398344252",
+  "condition_id": "0xb12731622cf0421e8bc161cff97bd7d006380aa3a4f87c1444b2d58ad8b91a7d",
+  "api_question": "Will JetBlue Airways (JBLU) beat quarterly earnings?",
+  "api_created_at": "2025-10-21T21:48:28.174125Z",
+  "api_end_date": "2025-10-28T13:00:00Z",
+  "status": "complete",
+  "row_count": 1315,
+  "first_source_ts_utc": "2025-10-21 22:05:06+00:00",
+  "last_source_ts_utc": "2025-10-22 19:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\643022.csv",
+  "fragment_sha256": "3f7bfaaefffca4b5c0c7c189c94ea5c448b4a0d98bd086c23a17b4dea4093e17",
+  "question_matches": true,
+  "error": null
+}

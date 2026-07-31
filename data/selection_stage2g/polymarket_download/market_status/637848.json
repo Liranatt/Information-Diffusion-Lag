@@ -1,0 +1,22 @@
+{
+  "market_id": "637848",
+  "question": "Will SEI Investments (SEIC) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-16 21:57:45.300166+00:00",
+  "requested_end_utc": "2025-10-20 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "1b1a76af3814b6aada31797b|7aefebb4464fa293ae6409f5",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "54888404109556950554064356808695413268034460436140000092911530598771370750257",
+  "condition_id": "0x5761d1a44078bef148178af906a2f83075489b81a1342790f7fcee41b3ad3be2",
+  "api_question": "Will SEI Investments (SEIC) beat quarterly earnings?",
+  "api_created_at": "2025-10-16T21:57:45.300166Z",
+  "api_end_date": "2025-10-22T21:00:00Z",
+  "status": "complete",
+  "row_count": 5625,
+  "first_source_ts_utc": "2025-10-16 22:15:16+00:00",
+  "last_source_ts_utc": "2025-10-20 19:59:03+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\637848.csv",
+  "fragment_sha256": "15c89ceef9d78549a920ec323d8bf484ff2b9752984da595d68520f1d64fa556",
+  "question_matches": true,
+  "error": null
+}

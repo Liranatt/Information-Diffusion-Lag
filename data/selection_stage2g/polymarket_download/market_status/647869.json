@@ -1,0 +1,22 @@
+{
+  "market_id": "647869",
+  "question": "Will Coinbase Global (COIN) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-24 13:53:05.992166+00:00",
+  "requested_end_utc": "2025-10-24 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "3d258bda281a42098f9fc24d|70395efd1455bf264371d58c",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "38690306734700401170068417280026751793675431671458722782843173576682269313461",
+  "condition_id": "0xba17d9b3086864ee6c44bf475a9f2ec97459c0602d469e3fa8ae34db82f413c6",
+  "api_question": "Will Coinbase Global (COIN) beat quarterly earnings?",
+  "api_created_at": "2025-10-24T13:53:05.992166Z",
+  "api_end_date": "2025-11-03T22:00:00Z",
+  "status": "complete",
+  "row_count": 350,
+  "first_source_ts_utc": "2025-10-24 14:10:24+00:00",
+  "last_source_ts_utc": "2025-10-24 19:59:07+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\647869.csv",
+  "fragment_sha256": "943873a7c2df7dab5d4a9a369f8e238b1469ec437cec76fad7662af622982839",
+  "question_matches": true,
+  "error": null
+}

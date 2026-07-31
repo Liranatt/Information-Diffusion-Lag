@@ -1,0 +1,22 @@
+{
+  "market_id": "637847",
+  "question": "Will Raymond James Financial (RJF) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-16 21:54:50.017662+00:00",
+  "requested_end_utc": "2025-10-17 20:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "df96f82037ed87ece2cbfe3b",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "114223370136979230634417245655948381960380795655699281184557520904124212117519",
+  "condition_id": "0xa9014b5e76aadc7108dd6ea4f6d3b213e42ce823d7299f1072b51b9b5ad3e67d",
+  "api_question": "Will Raymond James Financial (RJF) beat quarterly earnings?",
+  "api_created_at": "2025-10-16T21:54:50.017662Z",
+  "api_end_date": "2025-10-22T21:00:00Z",
+  "status": "complete",
+  "row_count": 1308,
+  "first_source_ts_utc": "2025-10-16 22:12:06+00:00",
+  "last_source_ts_utc": "2025-10-17 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\637847.csv",
+  "fragment_sha256": "234c52b72f378d341a34b8fb6e36bfcc7e9a0eee59d71ab859b4f12b0a3c546d",
+  "question_matches": true,
+  "error": null
+}

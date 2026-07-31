@@ -1,0 +1,22 @@
+{
+  "market_id": "675508",
+  "question": "Will Viking Holdings (VIK) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-10 22:38:40.082447+00:00",
+  "requested_end_utc": "2025-11-12 21:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "feacfd6d466f4867d24d9309",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "22751076221453425522718447188492623241934721297759807017540394023259838062551",
+  "condition_id": "0x7e9aa1645743b31f41138f9a52efdcbf6b42385fa01ea9ec148dbea2109b2ebd",
+  "api_question": "Will Viking Holdings (VIK) beat quarterly earnings?",
+  "api_created_at": "2025-11-10T22:38:40.082447Z",
+  "api_end_date": "2025-11-19T14:00:00Z",
+  "status": "complete",
+  "row_count": 2677,
+  "first_source_ts_utc": "2025-11-11 00:23:05+00:00",
+  "last_source_ts_utc": "2025-11-12 20:59:05+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\675508.csv",
+  "fragment_sha256": "b0ba444b412927a94a8f586a0f56634d3e7acb8b6cc110ea550bc1485e6f5af5",
+  "question_matches": true,
+  "error": null
+}

@@ -1,0 +1,95 @@
+{
+  "target_a_model": {
+    "target": "te1_active_net_return_pct",
+    "intercept": -0.7546450401977831,
+    "coefficients": [
+      -1.7420688509166498,
+      -4.539559417138825,
+      0.6131443715377982,
+      0.0,
+      2.176722618477895,
+      -0.5757972480126706
+    ],
+    "medians": [
+      18.0,
+      0.0120501186825322,
+      0.775,
+      0.0,
+      0.020525958415151146,
+      15.0
+    ],
+    "means": [
+      17.145370370370372,
+      0.00669690286898319,
+      0.7555555555555555,
+      0.0,
+      0.013320001321590776,
+      13.977777777777778
+    ],
+    "scales": [
+      5.270562481858218,
+      0.08654244751718367,
+      0.062095108254481717,
+      1.0,
+      0.08177313678650823,
+      5.763829316961227
+    ],
+    "features": [
+      "expected_slot_days",
+      "stock_minus_sector_20d",
+      "feat_prob_at_trigger",
+      "feat_prob_surge_since_t0",
+      "feat_asset_2w_trend",
+      "candidates_seen_previous_5_trading_days"
+    ],
+    "ridge_penalty": 5.0,
+    "training_rows": 45
+  },
+  "target_b_model": {
+    "target": "active_return_per_slot_day_pct",
+    "intercept": 0.015240804112217106,
+    "coefficients": [
+      -0.17269518400647427,
+      -0.5734994981350897,
+      0.10136667558155008,
+      0.0,
+      0.2380208250759462,
+      -0.052200960542375975
+    ],
+    "medians": [
+      18.0,
+      0.0120501186825322,
+      0.775,
+      0.0,
+      0.020525958415151146,
+      15.0
+    ],
+    "means": [
+      17.145370370370372,
+      0.00669690286898319,
+      0.7555555555555555,
+      0.0,
+      0.013320001321590776,
+      13.977777777777778
+    ],
+    "scales": [
+      5.270562481858218,
+      0.08654244751718367,
+      0.062095108254481717,
+      1.0,
+      0.08177313678650823,
+      5.763829316961227
+    ],
+    "features": [
+      "expected_slot_days",
+      "stock_minus_sector_20d",
+      "feat_prob_at_trigger",
+      "feat_prob_surge_since_t0",
+      "feat_asset_2w_trend",
+      "candidates_seen_previous_5_trading_days"
+    ],
+    "ridge_penalty": 5.0,
+    "training_rows": 45
+  },
+  "arrival_training_median": 15.0
+}

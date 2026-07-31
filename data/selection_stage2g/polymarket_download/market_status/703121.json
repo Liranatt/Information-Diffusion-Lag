@@ -1,0 +1,22 @@
+{
+  "market_id": "703121",
+  "question": "Will NIKE (NKE) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-25 13:52:29.805749+00:00",
+  "requested_end_utc": "2025-12-04 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "13ff33b6e2898641f5864c3a|a1d895a0bc65230d83c3a1f9",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "78280942695237665984381826147483624552959750094987001751755383401313451401568",
+  "condition_id": "0x6fb70a04fdb518b14dd8ebc8e9101b07671dbc499eac1d72627fe877cdce0f81",
+  "api_question": "Will NIKE (NKE) beat quarterly earnings?",
+  "api_created_at": "2025-11-25T13:52:29.805749Z",
+  "api_end_date": "2025-12-18T22:00:00Z",
+  "status": "complete",
+  "row_count": 13370,
+  "first_source_ts_utc": "2025-11-25 14:10:10+00:00",
+  "last_source_ts_utc": "2025-12-04 20:59:09+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\703121.csv",
+  "fragment_sha256": "b2be9905b2f7bb655b1ede48e5271fda4d0c5928ab6b6e92f5fdc1a6c52fff86",
+  "question_matches": true,
+  "error": null
+}

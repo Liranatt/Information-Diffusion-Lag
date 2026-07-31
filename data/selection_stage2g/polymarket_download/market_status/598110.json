@@ -1,0 +1,22 @@
+{
+  "market_id": "598110",
+  "question": "Will Accenture (ACN) beat its quarterly EPS estimate?",
+  "requested_start_utc": "2025-09-15 01:54:08.588055+00:00",
+  "requested_end_utc": "2025-09-22 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "b0a7b29f699be3c8a4096bc5|f9a4f544b83dc7705ef2e9cd",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "23712185141993589922081478904245996950845927201318982389588684270728452902173",
+  "condition_id": "0xe45d221e88fdad50b78507ff1ccdd4ca25c441f1940796871fdbdb96cbc0a621",
+  "api_question": "Will Accenture (ACN) beat its quarterly EPS estimate?",
+  "api_created_at": "2025-09-15T01:54:08.588055Z",
+  "api_end_date": "2025-10-02T11:00:00Z",
+  "status": "complete",
+  "row_count": 11141,
+  "first_source_ts_utc": "2025-09-15 02:10:12+00:00",
+  "last_source_ts_utc": "2025-09-22 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\598110.csv",
+  "fragment_sha256": "5d217b21be6a2647e4228d45cbb39e2dfeb08f11e0adb0184357e171486f5ea1",
+  "question_matches": true,
+  "error": null
+}

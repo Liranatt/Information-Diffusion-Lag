@@ -1,0 +1,22 @@
+{
+  "market_id": "642128",
+  "question": "Will Royal Caribbean Cruises (RCL) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-21 00:32:43.864951+00:00",
+  "requested_end_utc": "2025-10-24 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "1921a25d2e9f795fb7350e1d|4620d61174c2e0788801a3f1",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "25801572097341493761588988053075962601132734609419414027090096998744653483771",
+  "condition_id": "0x0cd49ce7923605eef1e0fee776973ce9d0fe20d2393f745dae57858b99a8949a",
+  "api_question": "Will Royal Caribbean Cruises (RCL) beat quarterly earnings?",
+  "api_created_at": "2025-10-21T00:32:43.864951Z",
+  "api_end_date": "2025-10-28T13:00:00Z",
+  "status": "complete",
+  "row_count": 5471,
+  "first_source_ts_utc": "2025-10-21 00:49:03+00:00",
+  "last_source_ts_utc": "2025-10-24 19:59:07+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\642128.csv",
+  "fragment_sha256": "caa8a57fbff4a7abed8658fb8bee565083219066532be7eeb757b9baa4d5d02a",
+  "question_matches": true,
+  "error": null
+}

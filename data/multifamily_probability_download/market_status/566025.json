@@ -1,0 +1,23 @@
+{
+  "market_id": "566025",
+  "question": "Will the FDA approve TransCon hGH sBLA?",
+  "requested_start_utc": "2025-07-21 16:39:47.912637+00:00",
+  "requested_end_utc": "2025-07-28 20:00:00+00:00",
+  "candidate_count": 2,
+  "research_families": "other",
+  "economic_event_ids": "33476",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "29695022045850225358926108215639415694282476311980028294594935429430604462684",
+  "condition_id": "0x7d5c3b567256cad1502d1d84c632cfcc15fcf8e453419bef86d0fc92007c817e",
+  "api_question": "Will the FDA approve TransCon hGH sBLA?",
+  "api_created_at": "2025-07-21T16:39:47.912637Z",
+  "api_end_date": "2025-07-31T23:55:00Z",
+  "status": "complete",
+  "row_count": 9843,
+  "first_source_ts_utc": "2025-07-21 23:57:08+00:00",
+  "last_source_ts_utc": "2025-07-28 19:59:09+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\566025.csv",
+  "fragment_sha256": "de65c6f2ce5f1d0c39f8e20ff76e35da9e1c36efacde1cb7d1fdf1a64bc60547",
+  "question_matches": true,
+  "error": null
+}

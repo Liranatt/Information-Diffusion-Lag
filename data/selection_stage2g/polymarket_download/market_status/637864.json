@@ -1,0 +1,22 @@
+{
+  "market_id": "637864",
+  "question": "Will AllianceBernstein (AB) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-16 22:10:17.045373+00:00",
+  "requested_end_utc": "2025-10-20 20:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "a91cc729c4cb5fa227e00d33",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "50953641843615682370538720984515352134725965827512207809317454851122045985752",
+  "condition_id": "0x007d65646597bc96544a2ae6eb308816167dc16e6e803332ed3787bbcc5601fc",
+  "api_question": "Will AllianceBernstein (AB) beat quarterly earnings?",
+  "api_created_at": "2025-10-16T22:10:17.045373Z",
+  "api_end_date": "2025-10-23T13:00:00Z",
+  "status": "complete",
+  "row_count": 5594,
+  "first_source_ts_utc": "2025-10-16 22:46:05+00:00",
+  "last_source_ts_utc": "2025-10-20 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\637864.csv",
+  "fragment_sha256": "3ad6c7d9515c3b25df2d4bd46c44beffe8d94d84952f29bf234754b080de451c",
+  "question_matches": true,
+  "error": null
+}

@@ -53,7 +53,7 @@ WF_SLUGS = {"t2_trainwindows", "t1_t2", "t2_t3", "t1_t2_t3", "t1_t2_t3_t4"}
 def load_benchmark_closes() -> dict[str, dict[str, float]]:
     with open(PRICES_PATH, "rb") as f:
         prices = pickle.load(f)
-    return {sym: {str(t.date()): c for t, h, l, c in prices[sym]}
+    return {sym: {str(t.date()): c for t, o, h, l, c in prices[sym]}
             for sym in ("SPY", "QQQ")}
 
 

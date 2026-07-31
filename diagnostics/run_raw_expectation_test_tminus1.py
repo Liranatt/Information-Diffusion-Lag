@@ -11,6 +11,7 @@ Uses fold-specific CEM policies from T1+T2+T3+T4 SPY walk-forward folds.
 """
 from __future__ import annotations
 
+import argparse
 import json
 import math
 import os
@@ -36,20 +37,22 @@ from backtesting.optimize_cem import (
     EVENT_PRIORITY_ORDER,
     RANK_RUNUP_CLIP,
 )
+from analysis.h1_expectation_protocol import run_expectation_protocol
 
 PROJECT = Path(__file__).resolve().parent.parent
-CANDIDATES_PATH = PROJECT / "data" / "candidates.parquet"
+CANDIDATES_PATH = PROJECT / "data" / "candidates_audit_clean.parquet"
 PRICES_PATH = PROJECT / "data" / "prices.pkl"
 PROBS_PATH = PROJECT / "data" / "probs.pkl"
 WF_FOLDS_CSV = PROJECT / "data" / "experiment_walkforward_folds_clean.csv"
-OUTPUT_DIR = PROJECT / "output" / "raw_expectation_tminus1"
-ZIP_PATH = PROJECT / "output" / "raw_expectation_tminus1.zip"
+OUTPUT_DIR = PROJECT / "output" / "raw_expectation_tminus1_audit_clean"
+ZIP_PATH = PROJECT / "output" / "raw_expectation_tminus1_audit_clean.zip"
 
 NOTIONAL = 10_000.0
 RNG_SEED = 42
 N_BOOTSTRAP = 10_000
 FOLD_EXPERIMENT = "T1+T2+T3+T4"
 FOLD_BENCHMARK = "SPY"
+POLARITY_MODE = "resolved"
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -149,7 +152,10 @@ def process_candidate(row, prices, probs, fold_windows):
     if not policy:
         return _invalid("no_policy_available", "No fold policy", sched_res=sched_res)
 
-    polarity, polarity_source = resolve_polarity(question, sym)
+    if POLARITY_MODE == "raw_yes":
+        polarity, polarity_source = 1, "raw_yes_ablation"
+    else:
+        polarity, polarity_source = resolve_polarity(question, sym)
     if polarity == 0:
         return _invalid(
             "no_clean_signal_side",
@@ -203,7 +209,7 @@ def process_candidate(row, prices, probs, fold_windows):
 
     entry_norm = entry_ts.normalize()
     entry_bar = None
-    for t, h, l, c in closes_raw:
+    for t, o, h, l, c in closes_raw:
         if t.normalize() >= entry_norm:
             entry_bar = (t.normalize(), c)
             break
@@ -217,7 +223,7 @@ def process_candidate(row, prices, probs, fold_windows):
 
     t_e_norm = t_e.normalize()
     exit_bar = None
-    for t, h, l, c in closes_raw:
+    for t, o, h, l, c in closes_raw:
         if t.normalize() < t_e_norm:
             exit_bar = (t.normalize(), c)
 
@@ -888,9 +894,34 @@ def print_validation_checks(df, trades, invalids):
 # Main
 # ═══════════════════════════════════════════════════════════════════════════
 
-def main():
+def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Run the H1 T-1 expectation test on an explicit candidate parquet."
+    )
+    parser.add_argument("--candidates-path", type=Path, default=CANDIDATES_PATH)
+    parser.add_argument("--output-dir", type=Path, default=OUTPUT_DIR)
+    parser.add_argument("--zip-path", type=Path, default=ZIP_PATH)
+    parser.add_argument(
+        "--polarity-mode",
+        choices=("resolved", "raw_yes"),
+        default="resolved",
+        help="Use resolved economic polarity or treat every YES path as bullish.",
+    )
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None):
+    global CANDIDATES_PATH, OUTPUT_DIR, ZIP_PATH, POLARITY_MODE
+    args = _parse_args(argv)
+    CANDIDATES_PATH = args.candidates_path.resolve()
+    OUTPUT_DIR = args.output_dir.resolve()
+    ZIP_PATH = args.zip_path.resolve()
+    POLARITY_MODE = args.polarity_mode
+
     print("=" * 70)
     print("RAW EXPECTATION TEST: T-1 EXIT")
+    print(f"  Candidates: {CANDIDATES_PATH}")
+    print(f"  Polarity mode: {POLARITY_MODE}")
     print(f"  Fold source: {FOLD_EXPERIMENT} / {FOLD_BENCHMARK}")
     print(f"  Notional: ${NOTIONAL:,.0f} per trade")
     print("=" * 70)
@@ -933,14 +964,23 @@ def main():
               f"  t-test p={r.get('one_sample_ttest_p_value_mean_net_return_gt_0', 'N/A')}"
               f"  cluster p={r.get('event_cluster_bootstrap_p_value', 'N/A')}")
 
-    print("\n[6/7] Writing output...")
+    print("\n[6/8] Writing base H1 output...")
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     write_csvs(trades, collapsed, invalids, event_level, monthly, robustness)
     write_markdown(trades, collapsed, invalids, event_level, monthly, robustness,
                    df, fold_windows)
     print(f"  CSVs and report written to: {OUTPUT_DIR}")
 
-    print("\n[7/7] Creating zip...")
+    print("\n[7/8] Running expectation-first robustness protocol...")
+    protocol_outputs = run_expectation_protocol(
+        PROJECT,
+        OUTPUT_DIR,
+        candidates_path=CANDIDATES_PATH,
+    )
+    print(f"  Protocol report: {protocol_outputs['report']}")
+    print(f"  Immutable manifest: {protocol_outputs['manifest']}")
+
+    print("\n[8/8] Creating zip...")
     create_zip()
     print(f"  Zip: {ZIP_PATH}")
 

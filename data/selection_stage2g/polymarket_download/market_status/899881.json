@@ -1,0 +1,22 @@
+{
+  "market_id": "899881",
+  "question": "Will Conagra Brands (CAG) beat quarterly earnings?",
+  "requested_start_utc": "2025-12-09 03:45:48.792958+00:00",
+  "requested_end_utc": "2025-12-11 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "91e62cd5bc2c993722ac9abb|e97be5b377d82d05210d6a06",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "53144445676740583896709693783740528111289197175414611790092300547622487456096",
+  "condition_id": "0x8568563368bd614e55d979add2245a284e7d3e8ea4f280af29beed8be4c7cb95",
+  "api_question": "Will Conagra Brands (CAG) beat quarterly earnings?",
+  "api_created_at": "2025-12-09T03:45:48.792958Z",
+  "api_end_date": "2025-12-19T14:00:00Z",
+  "status": "complete",
+  "row_count": 3235,
+  "first_source_ts_utc": "2025-12-09 15:05:09+00:00",
+  "last_source_ts_utc": "2025-12-11 20:59:09+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\899881.csv",
+  "fragment_sha256": "4a28bd27f8d9370622359968fd3efaa60f69aa6f3935531a48b12fce49e62b21",
+  "question_matches": true,
+  "error": null
+}

@@ -1,0 +1,30 @@
+{
+  "annotated_rows_after_exact_deduplication": 1257,
+  "audit_version": "polymarket-treatment-audit-2026-07-13",
+  "audited_rows_after_deduplication": 109,
+  "audited_verdict_counts": {
+    "Data repair, then keep": 10,
+    "Exclude from primary": 9,
+    "Incorrect endpoint": 1,
+    "Mostly correct": 17,
+    "Mostly correct after controls": 7,
+    "Needs redesign": 31,
+    "Partly correct": 23,
+    "Secondary only": 11
+  },
+  "economic_events_after_deduplication": 1010,
+  "exact_duplicate_excess_rows_removed": 36,
+  "input_rows": 1293,
+  "primary_economic_events": 972,
+  "primary_output_rows": 1182,
+  "rows_removed_from_primary": 75,
+  "treatment_action_counts": {
+    "exclude": 10,
+    "primary": 27,
+    "primary_controlled": 7,
+    "quarantine": 54,
+    "secondary": 11,
+    "unreviewed_passthrough": 1148
+  },
+  "unreviewed_passthrough_rows": 1148
+}

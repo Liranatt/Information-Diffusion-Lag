@@ -1,0 +1,22 @@
+{
+  "market_id": "643048",
+  "question": "Will United Parcel Service (UPS) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-21 22:16:05.434595+00:00",
+  "requested_end_utc": "2025-10-22 20:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "99143efea34b338f988c2ad6",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "32592232251699927495480350896918133197295279408773079664632752613415604665902",
+  "condition_id": "0xe014d2989a339f86a41ce3eb0b87a8f0a15d4506740462c8a83e6d06c6e58330",
+  "api_question": "Will United Parcel Service (UPS) beat quarterly earnings?",
+  "api_created_at": "2025-10-21T22:16:05.434595Z",
+  "api_end_date": "2025-10-28T13:00:00Z",
+  "status": "complete",
+  "row_count": 1287,
+  "first_source_ts_utc": "2025-10-21 22:33:04+00:00",
+  "last_source_ts_utc": "2025-10-22 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\643048.csv",
+  "fragment_sha256": "375f1ca60ea8489a4d3792444e74613cc7d6a49e26a1a4a2ac6f1087c781ccc7",
+  "question_matches": true,
+  "error": null
+}

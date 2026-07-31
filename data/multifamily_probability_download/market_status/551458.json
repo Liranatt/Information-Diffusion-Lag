@@ -1,0 +1,23 @@
+{
+  "market_id": "551458",
+  "question": "Iran strike on Israel in June?",
+  "requested_start_utc": "2025-06-10 20:37:13.460171+00:00",
+  "requested_end_utc": "2025-06-13 20:00:00+00:00",
+  "candidate_count": 1,
+  "research_families": "geopolitics",
+  "economic_event_ids": "26671",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "88052052043979100337158336101202135164717634915166708959127722363565168662720",
+  "condition_id": "0xb0ede82fa0c5604bf0dccd32d8ba909f5cebe1c594357754cb18a74d365f6e5b",
+  "api_question": "Iran strike on Israel in June?",
+  "api_created_at": "2025-06-10T20:37:13.460171Z",
+  "api_end_date": "2025-06-30T00:00:00Z",
+  "status": "complete",
+  "row_count": 3101,
+  "first_source_ts_utc": "2025-06-11 16:10:07+00:00",
+  "last_source_ts_utc": "2025-06-13 19:59:08+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\551458.csv",
+  "fragment_sha256": "dd8f0dfb017bf37fe9e5bfeacb1ae53c1050a2defb8bedb72617fa13f2508b89",
+  "question_matches": true,
+  "error": null
+}

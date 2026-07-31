@@ -88,7 +88,7 @@ def clear_caches() -> None:
 
 
 def _symbol_arrays(prices: dict, sym: str) -> tuple:
-    """Return cached ``(value, norm, high, low, close, bars)`` arrays for sym.
+    """Return cached ``(value, norm, open, high, low, close, bars)`` arrays.
 
     ``value`` is each bar's epoch-ns (``Timestamp.value`` is tz-independent, so
     chronological comparisons match the original Timestamp comparisons). ``norm``
@@ -105,6 +105,7 @@ def _symbol_arrays(prices: dict, sym: str) -> tuple:
     n = len(bars)
     value = np.empty(n, dtype=np.int64)
     norm = np.empty(n, dtype=np.int64)
+    opn = np.empty(n, dtype=np.float64)
     high = np.empty(n, dtype=np.float64)
     low = np.empty(n, dtype=np.float64)
     close = np.empty(n, dtype=np.float64)
@@ -115,11 +116,25 @@ def _symbol_arrays(prices: dict, sym: str) -> tuple:
             ts = pd.Timestamp(ts)
         value[i] = ts.value
         norm[i] = ts.normalize().value
-        high[i] = bar[1]
-        low[i] = bar[2]
-        close[i] = bar[3]
+        if len(bar) >= 5:
+            opn[i] = bar[1]
+            high[i] = bar[2]
+            low[i] = bar[3]
+            close[i] = bar[4]
+        elif len(bar) == 4:
+            # Legacy HLC artifacts have no executable Open.  NaN forces the
+            # conservative Low fallback when a stop is crossed.
+            opn[i] = np.nan
+            high[i] = bar[1]
+            low[i] = bar[2]
+            close[i] = bar[3]
+        else:
+            opn[i] = np.nan
+            high[i] = np.nan
+            low[i] = np.nan
+            close[i] = bar[1]
 
-    cached = (value, norm, high, low, close, bars)
+    cached = (value, norm, opn, high, low, close, bars)
     _SYM_CACHE[key] = cached
     return cached
 
@@ -199,6 +214,7 @@ def _bisect_right(a, x):
 def _scan(
     bar_value,
     bar_norm,
+    bar_open,
     bar_high,
     bar_low,
     bar_close,
@@ -217,8 +233,6 @@ def _scan(
     atr_mult,
     lock_activate,
     theta_out,
-    p_surge,
-    max_prob_surge,
     r_surge,
     max_price_runup,
 ):
@@ -264,9 +278,8 @@ def _scan(
         return none
     entry_ts_value = pt_value[entry_pt_index]
 
-    # Prob-surge / price-runup gates (NaN means "field absent" -> skip).
-    if (p_surge == p_surge) and (p_surge > max_prob_surge):
-        return none
+    # Price-runup gate (NaN means "field absent" -> skip). Probability surge
+    # is intentionally not an eligibility or policy dimension.
     if (r_surge == r_surge) and (r_surge > max_price_runup):
         return none
 
@@ -336,26 +349,38 @@ def _scan(
         hard_floor_pct = 0
         if i_rel > 0:
             stop_dist = atr_mult * atr_pct
-
-            pv = 1.0
-            idx = _bisect_left(day_uni, bar_norm[gj])
-            if idx < day_uni.shape[0] and day_uni[idx] == bar_norm[gj]:
-                pv = pval_uni[idx]
-            if pv < theta_out:
-                reason = 3
-            elif ret_l <= peak - stop_dist:
-                reason = 1
-                cand = entry_price * (1.0 + peak - stop_dist)
-                cc = ll if ll > cand else cand
-                ret_c = cc / entry_price - 1.0
-            elif peak >= lock_activate:
+            active_stop = entry_price * (1.0 + peak - stop_dist)
+            stop_reason = 1
+            if peak >= lock_activate:
                 hard_floor_pct = int(peak * 100.0)
                 hard_floor = hard_floor_pct / 100.0
-                if ret_l < hard_floor:
-                    reason = 2
-                    cand = entry_price * (1.0 + hard_floor)
-                    cc = ll if ll > cand else cand
-                    ret_c = cc / entry_price - 1.0
+                lock_stop = entry_price * (1.0 + hard_floor)
+                if lock_stop >= active_stop:
+                    active_stop = lock_stop
+                    stop_reason = 2
+
+            # Protective stops are evaluated before close-based exits.  The
+            # Open is the executable price for an overnight gap; otherwise a
+            # Low crossing fills at the standing stop.  Missing Open falls back
+            # to Low and never to the favorable stop price.
+            if ll <= active_stop:
+                reason = stop_reason
+                if bar_open[gj] == bar_open[gj]:
+                    # A gap through the stop fills at the Open; an intraday
+                    # touch fills at the standing stop itself.
+                    cc = bar_open[gj] if bar_open[gj] <= active_stop else active_stop
+                else:
+                    # A legacy HLC bar has no Open.  Use the conservative Low
+                    # rather than inventing a favorable stop fill.
+                    cc = ll
+                ret_c = cc / entry_price - 1.0
+            else:
+                pv = 1.0
+                idx = _bisect_left(day_uni, bar_norm[gj])
+                if idx < day_uni.shape[0] and day_uni[idx] == bar_norm[gj]:
+                    pv = pval_uni[idx]
+                if pv < theta_out:
+                    reason = 3
             if reason == 0:
                 if gj == hold_end - 1:
                     reason = 4
@@ -440,7 +465,7 @@ def scan_candidate(
     hard_floor_pct, peak, trough, ret_c)`` where ``entry_ts``/``exit_ts`` are the
     original tz-aware Timestamps (so the caller formats dates identically).
     """
-    bar_value, bar_norm, bar_high, bar_low, bar_close, bars = _symbol_arrays(prices, sym)
+    bar_value, bar_norm, bar_open, bar_high, bar_low, bar_close, bars = _symbol_arrays(prices, sym)
     if bar_value.shape[0] < 2:
         return None
     pt_value, pval_raw, day_uni, pval_uni, points = _market_arrays(probs, mkt)
@@ -458,6 +483,7 @@ def scan_candidate(
     result = _scan(
         bar_value,
         bar_norm,
+        bar_open,
         bar_high,
         bar_low,
         bar_close,
@@ -476,8 +502,6 @@ def scan_candidate(
         float(policy["atr_mult"]),
         float(policy["lock_activate"]),
         float(policy["theta_out"]),
-        surge,
-        float(policy.get("max_prob_surge", 999.0)),
         runup,
         float(policy.get("max_price_runup", 999.0)),
     )
@@ -521,16 +545,37 @@ def scan_candidate(
 
 
 def calc_atr(bars: list[tuple]) -> float:
-    """Average True Range from (t, h, l, c) bars."""
+    """Average True Range from legacy HLC or executable OHLC bars."""
     if len(bars) < 2:
         return 0.0
     trs = []
     for i in range(1, len(bars)):
-        h, l, c = bars[i][1], bars[i][2], bars[i][3]
-        pc = bars[i - 1][3]
+        _, h, l, c = _bar_ohlc(bars[i])
+        pc = _bar_ohlc(bars[i - 1])[3]
         tr = max(h - l, abs(h - pc), abs(l - pc))
         trs.append(tr)
     return sum(trs) / len(trs)
+
+
+def _bar_ohlc(bar: tuple) -> tuple[float, float, float, float]:
+    """Normalize a price bar to ``(open, high, low, close)``.
+
+    Four-field HLC bars are retained for backward compatibility, but their
+    Open is NaN so corrected stop semantics use the conservative Low fallback.
+    """
+    if len(bar) >= 5:
+        return float(bar[1]), float(bar[2]), float(bar[3]), float(bar[4])
+    if len(bar) == 4:
+        return float("nan"), float(bar[1]), float(bar[2]), float(bar[3])
+    if len(bar) >= 2:
+        return float("nan"), float("nan"), float("nan"), float(bar[1])
+    raise ValueError("price bar must contain a timestamp and close")
+
+
+def _normalize_bar(bar: tuple) -> tuple:
+    """Return a five-field ``(timestamp, open, high, low, close)`` bar."""
+    o, h, l, c = _bar_ohlc(bar)
+    return bar[0], o, h, l, c
 
 
 def entry_day(
@@ -598,8 +643,8 @@ def _simulate_one_py(
     is_earnings = "earnings" in str(row.get("feat_archetype", "")).lower()
     closes = prices.get(sym, [])
 
-    win = [(t, h, l, c) for t, h, l, c in closes
-           if t_theta - pd.Timedelta(days=30) <= t <= t_e]
+    win = [_normalize_bar(bar) for bar in closes
+           if t_theta - pd.Timedelta(days=30) <= bar[0] <= t_e]
     if len(win) < 2:
         return None
 
@@ -608,10 +653,7 @@ def _simulate_one_py(
         return None
     entry_ts = ent[0]
 
-    p_surge = effective_prob_surge(row, polarity)
     r_surge = row.get("feat_runup_since_t0")
-    if p_surge is not None and p_surge > policy.get("max_prob_surge", 999.0):
-        return None
     if r_surge is not None and r_surge > policy.get("max_price_runup", 999.0):
         return None
 
@@ -629,7 +671,7 @@ def _simulate_one_py(
     hist_bars = win[max(0, entry_idx - 15):entry_idx + 1]
     atr = calc_atr(hist_bars)
 
-    entry_price = path[0][3]
+    entry_price = path[0][4]
     if atr == 0 or entry_price == 0:
         return None
     atr_pct = atr / entry_price
@@ -641,7 +683,7 @@ def _simulate_one_py(
     theta_out = policy["theta_out"]
     peak = 0.0
 
-    for i, (t, h, l, c) in enumerate(path):
+    for i, (t, o, h, l, c) in enumerate(path):
         ret_c = c / entry_price - 1.0
         ret_h = h / entry_price - 1.0
         ret_l = l / entry_price - 1.0
@@ -649,26 +691,33 @@ def _simulate_one_py(
         reason = None
         if i > 0:
             stop_dist = atr_mult * atr_pct
-
-            if prob_path.get(t.normalize(), 1.0) < theta_out:
-                reason = f"poly<{theta_out}"
-            elif ret_l <= peak - stop_dist:
-                reason = f"trailing_{atr_mult:.1f}ATR"
-                c = max(l, entry_price * (1.0 + peak - stop_dist))
-                ret_c = c / entry_price - 1.0
-            elif peak >= lock_activate:
+            active_stop = entry_price * (1.0 + peak - stop_dist)
+            stop_reason = f"trailing_{atr_mult:.1f}ATR"
+            if peak >= lock_activate:
                 hard_floor_pct = int(peak * 100)
                 hard_floor = hard_floor_pct / 100.0
-                if ret_l < hard_floor:
-                    reason = f"profit_lock_{hard_floor_pct}%"
-                    c = max(l, entry_price * (1.0 + hard_floor))
-                    ret_c = c / entry_price - 1.0
+                lock_stop = entry_price * (1.0 + hard_floor)
+                if lock_stop >= active_stop:
+                    active_stop = lock_stop
+                    stop_reason = f"profit_lock_{hard_floor_pct}%"
+
+            if l <= active_stop:
+                reason = stop_reason
+                if np.isfinite(o):
+                    # A gap through the stop fills at the Open; an intraday
+                    # touch fills at the standing stop itself.
+                    c = o if o <= active_stop else active_stop
+                else:
+                    c = l
+                ret_c = c / entry_price - 1.0
+            elif prob_path.get(t.normalize(), 1.0) < theta_out:
+                reason = f"poly<{theta_out}"
 
             if reason is None and i == len(path) - 1:
                 reason = "resolution-1d"
 
         if reason:
-            lo = min(ll / entry_price - 1.0 for _, _, ll, _ in path[:i + 1])
+            lo = min(bar[3] / entry_price - 1.0 for bar in path[:i + 1])
             # `probs` is the polarity-corrected view, so `converged` reports
             # whether the bullish thesis resolved true -- not raw YES.
             mkt_probs = probs.get(mkt, [])
@@ -698,9 +747,9 @@ def _simulate_one_py(
         else:
             peak = max(peak, ret_h)
 
-    t, h, l, c = path[-1]
+    t, o, h, l, c = path[-1]
     ret_c = c / entry_price - 1.0
-    lo = min(ll / entry_price - 1.0 for _, _, ll, _ in path)
+    lo = min(bar[3] / entry_price - 1.0 for bar in path)
     mkt_probs = probs.get(mkt, [])
     converged = "YES" if mkt_probs and mkt_probs[-1][1] >= 0.5 else "NO" if mkt_probs else "UNKNOWN"
     return dict(

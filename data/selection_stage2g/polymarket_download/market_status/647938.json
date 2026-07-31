@@ -1,0 +1,22 @@
+{
+  "market_id": "647938",
+  "question": "Will Mastercard (MA) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-24 14:36:30.862639+00:00",
+  "requested_end_utc": "2025-10-24 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "1c01b54bdaa4872e718ba015|8a3c1e60122881c43d47da5d",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "46307823371749488452852226193800520788572413171536153371008419860404474455562",
+  "condition_id": "0x2def86f0dd8833060353d0462072444a0b515d4f5ffc49d84506cfa12f25bdaf",
+  "api_question": "Will Mastercard (MA) beat quarterly earnings?",
+  "api_created_at": "2025-10-24T14:36:30.862639Z",
+  "api_end_date": "2025-10-30T13:00:00Z",
+  "status": "complete",
+  "row_count": 307,
+  "first_source_ts_utc": "2025-10-24 14:53:05+00:00",
+  "last_source_ts_utc": "2025-10-24 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\647938.csv",
+  "fragment_sha256": "3c291c151d9a5bfd48e81ad2da6b8e17952cefe6a4ffd6689135965dca672ad6",
+  "question_matches": true,
+  "error": null
+}

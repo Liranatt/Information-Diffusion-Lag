@@ -1,0 +1,22 @@
+{
+  "market_id": "613052",
+  "question": "Will JPMorgan Chase (JPM) beat quarterly earnings?",
+  "requested_start_utc": "2025-09-25 23:23:24.765409+00:00",
+  "requested_end_utc": "2025-09-29 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "0f4ce42fc396a2bb0ba010de|bbaf3354e799ca3ecd8416f1",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "98754763979476913749836485421798738455699730534068631092993638179387710889684",
+  "condition_id": "0x47380287d3a4337ac7c6104284c17f3edaed87d5f8a3dbbe2eb4c12e055eb644",
+  "api_question": "Will JPMorgan Chase (JPM) beat quarterly earnings?",
+  "api_created_at": "2025-09-25T23:23:24.765409Z",
+  "api_end_date": "2025-10-14T00:00:00Z",
+  "status": "complete",
+  "row_count": 4653,
+  "first_source_ts_utc": "2025-09-26 14:27:03+00:00",
+  "last_source_ts_utc": "2025-09-29 19:59:02+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\613052.csv",
+  "fragment_sha256": "928acb1397e5facb4f3f1c8a930dc4b02c531adde94f7372eb3c6b0005d56544",
+  "question_matches": true,
+  "error": null
+}

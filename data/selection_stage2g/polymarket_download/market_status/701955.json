@@ -1,0 +1,22 @@
+{
+  "market_id": "701955",
+  "question": "Will Casey's General Stores (CASY) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-24 23:01:07.662862+00:00",
+  "requested_end_utc": "2025-11-26 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "15f5e5d74a53ac17f58df448|52c1b1cc7e47a691a70e0e46",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "13698626683054112030368460254408434324707680604956356885298767706127561194501",
+  "condition_id": "0x59326d68ec624aa2e19132b40dc7a6da2da850b83274d6cb751dd441bb286340",
+  "api_question": "Will Casey's General Stores (CASY) beat quarterly earnings?",
+  "api_created_at": "2025-11-24T23:01:07.662862Z",
+  "api_end_date": "2025-12-09T22:00:00Z",
+  "status": "complete",
+  "row_count": 2715,
+  "first_source_ts_utc": "2025-11-24 23:45:09+00:00",
+  "last_source_ts_utc": "2025-11-26 20:59:09+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\701955.csv",
+  "fragment_sha256": "90a781a17871ac0881e3802837c3d7fd45112181f1ddb25015521f96fba62437",
+  "question_matches": true,
+  "error": null
+}

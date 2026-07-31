@@ -1,0 +1,22 @@
+{
+  "market_id": "657073",
+  "question": "Will Akamai Technologies (AKAM) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-30 18:24:35.208538+00:00",
+  "requested_end_utc": "2025-10-31 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "2ddbc21a184d74680835e877|4e361355005ec5f744b884b3",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "112866438419966953921729282466579673533359993060798957742453694206814941823755",
+  "condition_id": "0x68aebfc344401afe8c729bdfa3d5ffdc451d941985a79439a8db9fbc8425d996",
+  "api_question": "Will Akamai Technologies (AKAM) beat quarterly earnings?",
+  "api_created_at": "2025-10-30T18:24:35.208538Z",
+  "api_end_date": "2025-11-06T22:00:00Z",
+  "status": "complete",
+  "row_count": 1519,
+  "first_source_ts_utc": "2025-10-30 18:41:07+00:00",
+  "last_source_ts_utc": "2025-10-31 19:59:07+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\657073.csv",
+  "fragment_sha256": "d65abcffeddbfdb7f33ea7271428716b9a3ffd4d5e712eabf123e39987914dae",
+  "question_matches": true,
+  "error": null
+}

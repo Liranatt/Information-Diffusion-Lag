@@ -60,11 +60,22 @@ def _safe_div(a, b) -> float | None:
     return float(a) / float(b)
 
 
+def _bar_close(bar) -> float:
+    """Return the close from a legacy close, HLC, or OHLC bar."""
+    if len(bar) >= 5:
+        return float(bar[4])
+    if len(bar) == 4:
+        return float(bar[3])
+    if len(bar) >= 2:
+        return float(bar[1])
+    raise ValueError("price bar must contain a timestamp and close")
+
+
 def _trend(bars: list[tuple], t: pd.Timestamp, days: int) -> float | None:
     """Return % change in close price over `days` ending at `t`."""
     start = t - pd.Timedelta(days=days)
-    c_end = next((c for ts, c in reversed(bars) if ts <= t), None)
-    c_start = next((c for ts, c in reversed(bars) if ts <= start), None)
+    c_end = next((_bar_close(bar) for bar in reversed(bars) if bar[0] <= t), None)
+    c_start = next((_bar_close(bar) for bar in reversed(bars) if bar[0] <= start), None)
     if c_end and c_start and c_start > 0:
         return c_end / c_start - 1.0
     return None
@@ -121,14 +132,14 @@ def compute_features(
     p_t0 = probs[0][1] if probs else 0.5
     p_theta = next((p for t, p in probs if t >= t_theta), 0.55)
 
-    bar_theta = next((c for t, c in reversed(prices) if t <= t_theta), None)
+    bar_theta = next((_bar_close(bar) for bar in reversed(prices) if bar[0] <= t_theta), None)
     if not bar_theta:
         return None
     # Baseline close at T0 (= market creation) for the genuine since-T0 run-up.
-    bar_t0 = next((c for t, c in reversed(prices) if t <= t0), None) or bar_theta
+    bar_t0 = next((_bar_close(bar) for bar in reversed(prices) if bar[0] <= t0), None) or bar_theta
 
     # Compute asset_return: close at t_e / close at t_theta - 1
-    bar_end = next((c for t, c in reversed(prices) if t <= t_e), None)
+    bar_end = next((_bar_close(bar) for bar in reversed(prices) if bar[0] <= t_e), None)
     asset_return = (bar_end / bar_theta - 1.0) * 100 if bar_end and bar_theta else 0.0
 
     rec = {

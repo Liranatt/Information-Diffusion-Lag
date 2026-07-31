@@ -1,0 +1,16 @@
+{
+  "label": "development_only_raw_gemini_score_semantic_audit",
+  "direct_earnings_rows": 492,
+  "unique_question_symbol_date_mappings": 353,
+  "exact_question_symbol_pairs_with_score_variation": 0,
+  "generation_batch_status": "no verified prompt/model batch ID; inferred as UTC t0 calendar date and labeled accordingly",
+  "controlled_binary_score_advantage_stable": false,
+  "stable_by_benchmark": {
+    "SPY": false,
+    "QQQ": false
+  },
+  "temporal_calibration_drift_flag": false,
+  "economic_interpretation_if_predictive": "possible LLM confidence / data-quality proxy; not economic directness",
+  "lockbox_opened": false,
+  "test_rows_read": 0
+}

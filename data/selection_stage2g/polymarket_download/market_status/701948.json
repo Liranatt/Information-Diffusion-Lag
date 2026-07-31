@@ -1,0 +1,22 @@
+{
+  "market_id": "701948",
+  "question": "Will Oracle (ORCL) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-24 22:56:12.229760+00:00",
+  "requested_end_utc": "2025-12-02 21:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "460a84a8c4647d2822f48542",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "97537118540221875348319481740286935565220077047612494324842299539638592514493",
+  "condition_id": "0xbbc9ed14f290660be9a45f73f2de8feb2b71a864df7ea2d858c456a194353ca7",
+  "api_question": "Will Oracle (ORCL) beat quarterly earnings?",
+  "api_created_at": "2025-11-24T22:56:12.22976Z",
+  "api_end_date": "2025-12-08T22:00:00Z",
+  "status": "complete",
+  "row_count": 11356,
+  "first_source_ts_utc": "2025-11-24 23:44:07+00:00",
+  "last_source_ts_utc": "2025-12-02 20:59:07+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\701948.csv",
+  "fragment_sha256": "fe320fd430e46ed2892eb3b3ea8acdedbc2aad3e16da1e070254bbf1313a01c2",
+  "question_matches": true,
+  "error": null
+}

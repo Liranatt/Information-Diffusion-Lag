@@ -1,0 +1,22 @@
+{
+  "market_id": "648379",
+  "question": "Will Reddit (RDDT) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-24 17:30:28.312304+00:00",
+  "requested_end_utc": "2025-10-27 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "0f938cd304700461d8ec64ef|902952d2a2a570cca19a207d",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "23726785964014113172472825929359440267879281191969179176776787369467820285270",
+  "condition_id": "0x2e71d4add7c90b367bff34c28e1f8d089b5492739e9aa35423d4d6d6c0083bcf",
+  "api_question": "Will Reddit (RDDT) beat quarterly earnings?",
+  "api_created_at": "2025-10-24T17:30:28.312304Z",
+  "api_end_date": "2025-10-30T21:00:00Z",
+  "status": "complete",
+  "row_count": 4451,
+  "first_source_ts_utc": "2025-10-24 17:49:07+00:00",
+  "last_source_ts_utc": "2025-10-27 19:59:07+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\648379.csv",
+  "fragment_sha256": "c3dbf497414d0dba8d01ab9a921ce8f2bf1f5a937171cd874a4d762a06b05dde",
+  "question_matches": true,
+  "error": null
+}

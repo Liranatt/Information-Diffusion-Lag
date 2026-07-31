@@ -1,0 +1,22 @@
+{
+  "market_id": "674923",
+  "question": "Will Burlington Stores (BURL) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-10 19:02:54.204119+00:00",
+  "requested_end_utc": "2025-11-12 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "3acd4155caac67137e0dce12|d57fb6073250c5d99788644e",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "111385041876541024735423499614596573141082509716141826614560239287785761479633",
+  "condition_id": "0x2bff131205f2e13d24e53fd1258e10bf0e1e41064f5dc25dd23f34f0797490e0",
+  "api_question": "Will Burlington Stores (BURL) beat quarterly earnings?",
+  "api_created_at": "2025-11-10T19:02:54.204119Z",
+  "api_end_date": "2025-11-25T14:00:00Z",
+  "status": "complete",
+  "row_count": 2942,
+  "first_source_ts_utc": "2025-11-10 19:58:06+00:00",
+  "last_source_ts_utc": "2025-11-12 20:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\674923.csv",
+  "fragment_sha256": "d3b820cf3a67d2b39d6d6721094e4d4f9b0c4461c0b3e2e1e7afb0e3f3d86ab6",
+  "question_matches": true,
+  "error": null
+}

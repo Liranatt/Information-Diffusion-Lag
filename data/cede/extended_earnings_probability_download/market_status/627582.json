@@ -1,0 +1,23 @@
+{
+  "market_id": "627582",
+  "question": "Will Coca-Cola (KO) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-05 16:05:29.037282+00:00",
+  "requested_end_utc": "2025-10-08 16:05:29.037282+00:00",
+  "first_candidate_t0_utc": "2025-10-08 16:05:29.037282+00:00",
+  "latest_candidate_decision_utc": "2025-10-08 20:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "8248119824003981191986839285388016197692047820571869496839187744338591792948",
+  "condition_id": "0x3ab00b6c2fbfcd78e455c135b1b57e2089bc2c3a9d28ee3905c411d2a5804067",
+  "api_question": "Will Coca-Cola (KO) beat quarterly earnings?",
+  "api_created_at": "2025-10-08T16:05:29.037282Z",
+  "api_end_date": "2025-10-21T13:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\627582.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

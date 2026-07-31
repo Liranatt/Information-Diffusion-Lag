@@ -1,0 +1,42 @@
+{
+  "architecture": "candidate compact vector plus same-day mean/max pooling plus capacity/arrival state",
+  "hidden_layer_sizes": [
+    16,
+    8
+  ],
+  "seeds": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "selected_seed_by_train_grouped_oof": 0,
+  "features": [
+    "feat_connection_strength",
+    "entry_prob",
+    "connection_rank_pct",
+    "feat_time_to_resolution_days",
+    "feat_asset_2w_trend",
+    "feat_sector_1m_trend",
+    "stock_sector_extension",
+    "same_day_mean_feat_connection_strength",
+    "same_day_mean_entry_prob",
+    "same_day_mean_connection_rank_pct",
+    "same_day_mean_feat_time_to_resolution_days",
+    "same_day_mean_feat_asset_2w_trend",
+    "same_day_mean_feat_sector_1m_trend",
+    "same_day_mean_stock_sector_extension",
+    "same_day_max_feat_connection_strength",
+    "same_day_max_entry_prob",
+    "same_day_max_connection_rank_pct",
+    "same_day_max_feat_time_to_resolution_days",
+    "same_day_max_feat_asset_2w_trend",
+    "same_day_max_feat_sector_1m_trend",
+    "same_day_max_stock_sector_extension",
+    "free_slots",
+    "same_day_candidate_count",
+    "recent_5d_candidate_count"
+  ],
+  "raw_identifiers_used_as_features": false,
+  "target": "te1_active_net_return_pct"
+}

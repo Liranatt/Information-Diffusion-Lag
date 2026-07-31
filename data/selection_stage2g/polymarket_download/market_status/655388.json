@@ -1,0 +1,22 @@
+{
+  "market_id": "655388",
+  "question": "Will Arm Holdings (ARM) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-29 16:13:23.075594+00:00",
+  "requested_end_utc": "2025-10-31 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "489f1bcb63aee5972fe3459a|59e1b8bc0731720cc0e7b73a",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "33755801738535229899013113094408113645892602291764185504027690663120250917708",
+  "condition_id": "0x39760d0c47c6f5709da825cb4cb4c95e9e4db021b4845419cf7feace69f53c54",
+  "api_question": "Will Arm Holdings (ARM) beat quarterly earnings?",
+  "api_created_at": "2025-10-29T16:13:23.075594Z",
+  "api_end_date": "2025-11-05T22:00:00Z",
+  "status": "complete",
+  "row_count": 3090,
+  "first_source_ts_utc": "2025-10-29 16:30:04+00:00",
+  "last_source_ts_utc": "2025-10-31 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\655388.csv",
+  "fragment_sha256": "5d6a42067bdeaf74851fe39ada26d6bd85bbe809bdea0a9c48eae646612d7e69",
+  "question_matches": true,
+  "error": null
+}

@@ -1,0 +1,22 @@
+{
+  "market_id": "652577",
+  "question": "Will Charles River Laboratories (CRL) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-27 20:52:12.209164+00:00",
+  "requested_end_utc": "2025-10-28 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "92dfc40b94947d8ef7c0986d|e845cdc09d4edc048d35b051",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "82328866632746965490476668495147285522596998308008032826897863619529848966674",
+  "condition_id": "0xdd4129a0dec786aff9511bcf98627556ddc26873d83296de8c18151805f9f3ff",
+  "api_question": "Will Charles River Laboratories (CRL) beat quarterly earnings?",
+  "api_created_at": "2025-10-27T20:52:12.209164Z",
+  "api_end_date": "2025-11-05T14:00:00Z",
+  "status": "complete",
+  "row_count": 1371,
+  "first_source_ts_utc": "2025-10-27 21:09:05+00:00",
+  "last_source_ts_utc": "2025-10-28 19:59:05+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\652577.csv",
+  "fragment_sha256": "97547fcde64491d3bc82cc0bf2babcb0692ee68420b150df8cf2080578824e6a",
+  "question_matches": true,
+  "error": null
+}

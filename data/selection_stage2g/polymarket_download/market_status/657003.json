@@ -1,0 +1,22 @@
+{
+  "market_id": "657003",
+  "question": "Will Warner Bros. Discovery (WBD) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-30 16:17:38.227491+00:00",
+  "requested_end_utc": "2025-11-03 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "8c370dea461e30b49c35ba7d|c55502309b95031da285c968",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "8787496194191959214069074313629944506452970041839960791513706621030598520379",
+  "condition_id": "0x2db309d12abf862f911a49880cd384e44c764aaf14f69eb92577c68a1647e1c8",
+  "api_question": "Will Warner Bros. Discovery (WBD) beat quarterly earnings?",
+  "api_created_at": "2025-10-30T16:17:38.227491Z",
+  "api_end_date": "2025-11-06T14:00:00Z",
+  "status": "complete",
+  "row_count": 6026,
+  "first_source_ts_utc": "2025-10-30 16:34:08+00:00",
+  "last_source_ts_utc": "2025-11-03 20:59:07+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\657003.csv",
+  "fragment_sha256": "9e0a5d857efe48fad3e70f6befa850aba6e62b8c12a7801bcd2802097b844caf",
+  "question_matches": true,
+  "error": null
+}

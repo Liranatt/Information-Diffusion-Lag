@@ -1,0 +1,10 @@
+{
+  "requested_symbols": 505,
+  "successful_symbols": 505,
+  "failed_symbols": 0,
+  "rows": 560851,
+  "start": "2021-12-20",
+  "end_exclusive": "2026-07-06",
+  "yfinance_version": "1.5.1",
+  "pandas_version": "3.0.3"
+}

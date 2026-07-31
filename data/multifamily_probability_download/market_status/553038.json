@@ -1,0 +1,23 @@
+{
+  "market_id": "553038",
+  "question": "FDA approves Unicycive\u2019s Oxylanthanum Carbonate (OLC)?",
+  "requested_start_utc": "2025-06-16 19:15:53.753334+00:00",
+  "requested_end_utc": "2025-06-18 20:00:00+00:00",
+  "candidate_count": 1,
+  "research_families": "other",
+  "economic_event_ids": "27388",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "90140632606532291798028550064951179378171078197356535523151182406547898494537",
+  "condition_id": "0x5131c98cc047dbac6e1ddff731a4a93eb324d6e53af50e0666cbb8577796b373",
+  "api_question": "FDA approves Unicycive\u2019s Oxylanthanum Carbonate (OLC)?",
+  "api_created_at": "2025-06-16T19:15:53.753334Z",
+  "api_end_date": "2025-06-28T00:00:00Z",
+  "status": "complete",
+  "row_count": 1471,
+  "first_source_ts_utc": "2025-06-17 19:29:08+00:00",
+  "last_source_ts_utc": "2025-06-18 19:59:08+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\553038.csv",
+  "fragment_sha256": "ca4feecf4eb8752da22812b46a5d5c282f2e6ab1d5d963e27a4a8371d5fc9a3b",
+  "question_matches": true,
+  "error": null
+}

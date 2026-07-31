@@ -1,0 +1,22 @@
+{
+  "market_id": "0xc9f62dd1c79f1878801718ad14b6751f48dbab9ddee6f24f722ff95c74982f6a",
+  "question": "Will Trump\u2019s Greenland Tariffs go into effect for The United Kingdom by Feburary 1?",
+  "requested_start_utc": "2026-01-17 22:59:20.067419+00:00",
+  "requested_end_utc": "2026-01-19 21:00:00+00:00",
+  "candidate_count": 1,
+  "research_families": "macro",
+  "economic_event_ids": "171012",
+  "mapping_source": "clob_condition_id",
+  "yes_token_id": "55604645554165004383704128866484836487921388335434146053437366190399251550402",
+  "condition_id": "0xc9f62dd1c79f1878801718ad14b6751f48dbab9ddee6f24f722ff95c74982f6a",
+  "api_question": "Will Trump\u2019s Greenland Tariffs go into effect for The United Kingdom by Feburary 1?",
+  "api_end_date": "2026-02-01T00:00:00Z",
+  "status": "complete",
+  "row_count": 2583,
+  "first_source_ts_utc": "2026-01-18 01:57:12+00:00",
+  "last_source_ts_utc": "2026-01-19 20:59:12+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\0xc9f62dd1c79f1878801718ad14b6751f48dbab9ddee6f24f722ff95c74982f6a.csv",
+  "fragment_sha256": "1807ec16643c250f94e529ebbacbac9422db5682ca6486bee4b28ce00c32eb5b",
+  "question_matches": true,
+  "error": null
+}

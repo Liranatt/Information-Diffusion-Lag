@@ -1,0 +1,23 @@
+{
+  "market_id": "696263",
+  "question": "Will United Natural Foods (UNFI) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-19 00:11:48.758826+00:00",
+  "requested_end_utc": "2025-11-22 00:11:48.758826+00:00",
+  "first_candidate_t0_utc": "2025-11-22 00:11:48.758826+00:00",
+  "latest_candidate_decision_utc": "2025-11-24 21:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "56507631820075957348449326529792517108251810852048693868958176653710807625164",
+  "condition_id": "0x16319c2cb245207804b4481ffe84a3837676b3da0289f411f6811da00a1bc600",
+  "api_question": "Will United Natural Foods (UNFI) beat quarterly earnings?",
+  "api_created_at": "2025-11-22T00:11:48.758826Z",
+  "api_end_date": "2025-12-02T14:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\696263.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

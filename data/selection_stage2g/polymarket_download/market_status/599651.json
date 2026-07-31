@@ -1,0 +1,22 @@
+{
+  "market_id": "599651",
+  "question": "Will MillerKnoll (MLKN) beat its quarterly EPS estimate?",
+  "requested_start_utc": "2025-09-16 00:24:02.409649+00:00",
+  "requested_end_utc": "2025-09-24 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "059d7c3b328fa12096bac1a5|5e2c5c1edcb9b3bc2762950c",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "58517319108659271702967211288764405492204329503905114229863912404791379953622",
+  "condition_id": "0x5eeb84c257e7d455b0dd6f32109c9b591682b693e1665f313ea839daf60df380",
+  "api_question": "Will MillerKnoll (MLKN) beat its quarterly EPS estimate?",
+  "api_created_at": "2025-09-16T00:24:02.409649Z",
+  "api_end_date": "2025-09-30T20:00:00Z",
+  "status": "complete",
+  "row_count": 12669,
+  "first_source_ts_utc": "2025-09-16 00:40:05+00:00",
+  "last_source_ts_utc": "2025-09-24 19:59:02+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\599651.csv",
+  "fragment_sha256": "42e4143fcf0961a6d73243b98d8c86bb15f0c8e23f3f17da078ac79c594d899f",
+  "question_matches": true,
+  "error": null
+}

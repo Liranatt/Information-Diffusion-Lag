@@ -1,0 +1,22 @@
+{
+  "market_id": "619541",
+  "question": "Will State Street (STT) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-01 22:39:45.577461+00:00",
+  "requested_end_utc": "2025-10-06 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "291b375a93df8bc6bda4cc33|fd8eed4d6985606ffb03cdb9",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "4305309925690860739303312399731024689108419294625372795199214775764098235970",
+  "condition_id": "0x0cf7d752a5ab03ebb18d46d3924a652dfa6b6d63c03cc2367444fcad1a3fad7d",
+  "api_question": "Will State Street (STT) beat quarterly earnings?",
+  "api_created_at": "2025-10-01T22:39:45.577461Z",
+  "api_end_date": "2025-10-17T00:00:00Z",
+  "status": "complete",
+  "row_count": 4218,
+  "first_source_ts_utc": "2025-10-03 21:42:04+00:00",
+  "last_source_ts_utc": "2025-10-06 19:59:03+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\619541.csv",
+  "fragment_sha256": "03b5937aa4a9202396401abcb6c87bb1d023666d612f6ec5952e1e6faf56f94a",
+  "question_matches": true,
+  "error": null
+}

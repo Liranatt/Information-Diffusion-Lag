@@ -1,0 +1,72 @@
+[
+  {
+    "run_id": "icaif_ladder_seed44",
+    "returncode": 0,
+    "status": "completed",
+    "elapsed_sec": 319.5,
+    "finished_at": "2026-07-14T22:22:23.809401+00:00"
+  },
+  {
+    "run_id": "icaif_ladder_seed46",
+    "returncode": 0,
+    "status": "completed",
+    "elapsed_sec": 320.4,
+    "finished_at": "2026-07-14T22:22:24.725540+00:00"
+  },
+  {
+    "run_id": "icaif_ladder_seed42",
+    "returncode": 0,
+    "status": "completed",
+    "elapsed_sec": 322.4,
+    "finished_at": "2026-07-14T22:22:26.790969+00:00"
+  },
+  {
+    "run_id": "icaif_ladder_seed43",
+    "returncode": 0,
+    "status": "completed",
+    "elapsed_sec": 322.6,
+    "finished_at": "2026-07-14T22:22:26.948928+00:00"
+  },
+  {
+    "run_id": "icaif_ladder_seed45",
+    "returncode": 0,
+    "status": "completed",
+    "elapsed_sec": 331.2,
+    "finished_at": "2026-07-14T22:22:35.585158+00:00"
+  },
+  {
+    "run_id": "icaif_ladder_seed47",
+    "returncode": 0,
+    "status": "completed",
+    "elapsed_sec": 572.1,
+    "finished_at": "2026-07-14T22:31:55.884295+00:00"
+  },
+  {
+    "run_id": "icaif_ladder_seed49",
+    "returncode": 0,
+    "status": "completed",
+    "elapsed_sec": 579.0,
+    "finished_at": "2026-07-14T22:32:05.804480+00:00"
+  },
+  {
+    "run_id": "icaif_ladder_seed48",
+    "returncode": 0,
+    "status": "completed",
+    "elapsed_sec": 595.7,
+    "finished_at": "2026-07-14T22:32:20.409390+00:00"
+  },
+  {
+    "run_id": "icaif_ladder_seed50",
+    "returncode": 0,
+    "status": "completed",
+    "elapsed_sec": 594.7,
+    "finished_at": "2026-07-14T22:32:21.674806+00:00"
+  },
+  {
+    "run_id": "icaif_ladder_seed51",
+    "returncode": 0,
+    "status": "completed",
+    "elapsed_sec": 589.2,
+    "finished_at": "2026-07-14T22:32:24.811349+00:00"
+  }
+]

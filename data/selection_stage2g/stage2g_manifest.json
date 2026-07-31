@@ -1,0 +1,25 @@
+{
+  "stage": "2G",
+  "experiment": "timestamp_safe_pre_entry_polymarket_probability_trajectory",
+  "candidate_scope": "415 earnings chronological OOF candidates only",
+  "source_hashes": {
+    "stage2f_oof_candidates": "bf94b0b4855f4547dfb7bad1f2ea6c1c4c72949d11b39aba4d3276d555e80d7d",
+    "probabilities": "ec3bd7eb08ecc31986e01e37c0cd84338732f0a2807c7e6edd86a9630d3fe347"
+  },
+  "coverage_gate_passed": false,
+  "models_fitted": false,
+  "post_entry_observations_used": 0,
+  "lockbox_opened": false,
+  "outputs": {
+    "report": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\stage2g_probability_trajectory_coverage_report.md",
+    "candidate_audit": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\coverage\\probability_trajectory_candidate_audit.csv",
+    "observation_audit": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\coverage\\probability_trajectory_observation_audit.csv",
+    "fold_summary": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\coverage\\probability_trajectory_fold_summary.csv",
+    "coverage_gates": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\coverage\\probability_trajectory_coverage_gates.csv",
+    "leakage_audit": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\coverage\\probability_trajectory_leakage_audit.json",
+    "prediction_status": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\oof_prediction_and_same_day_selection\\comparison_status.csv",
+    "exact_replay_status": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\exact_replay\\selector_exit_exact_replay_status.csv",
+    "paired_fold_status": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\paired_folds\\paired_fold_comparison_status.csv",
+    "final_decision": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\decision\\final_decision.json"
+  }
+}

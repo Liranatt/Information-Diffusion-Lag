@@ -1,0 +1,22 @@
+{
+  "market_id": "620038",
+  "question": "Will Byrna Technologies (BYRN) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-02 17:45:08.291961+00:00",
+  "requested_end_utc": "2025-10-06 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "09151bdf5da3ec773cd7d009|c06674cf62aabbc75486df9b",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "34052625302660668065282320732091519566746651927210893168935336662978452882968",
+  "condition_id": "0x371ab1ff57e500d605ac27a481e35b53ff12067c7c39492bd97ea06bc7d5316a",
+  "api_question": "Will Byrna Technologies (BYRN) beat quarterly earnings?",
+  "api_created_at": "2025-10-02T17:45:08.291961Z",
+  "api_end_date": "2025-10-09T00:00:00Z",
+  "status": "complete",
+  "row_count": 4198,
+  "first_source_ts_utc": "2025-10-03 22:02:03+00:00",
+  "last_source_ts_utc": "2025-10-06 19:59:03+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\620038.csv",
+  "fragment_sha256": "ca8184994259c95a39c815c4c3accbc9df0f733f7ed9e0894bce4cf8a8cb36f9",
+  "question_matches": true,
+  "error": null
+}

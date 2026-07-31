@@ -1,0 +1,23 @@
+{
+  "market_id": "647853",
+  "question": "Will Apple (AAPL) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-21 12:55:14.602141+00:00",
+  "requested_end_utc": "2025-10-24 12:55:14.602141+00:00",
+  "first_candidate_t0_utc": "2025-10-24 12:55:14.602141+00:00",
+  "latest_candidate_decision_utc": "2025-10-24 20:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "27927179820306543896941081346313324118923188684521110990120473272659585325015",
+  "condition_id": "0xd945f174433f4bd99050fc692d710ebc3c9d8e55997b4a38a9039630da3cce43",
+  "api_question": "Will Apple (AAPL) beat quarterly earnings?",
+  "api_created_at": "2025-10-24T12:55:14.602141Z",
+  "api_end_date": "2025-10-30T21:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\647853.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

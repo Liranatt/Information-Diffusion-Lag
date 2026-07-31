@@ -1,0 +1,12 @@
+{
+  "label": "raw_global_connection_baseline",
+  "source_label": "research_frozen_selector",
+  "ranker": "legacy_gemini_relevance_score_descending",
+  "backward_compatible_source_field": "feat_connection_strength",
+  "tie_breaker": "expected_slot_days",
+  "admission_threshold": 1.0,
+  "semantic_interpretation": "legacy diagnostic score; not a universally calibrated economic connection strength",
+  "stage2b_selector_sha256": "879664768990c3440a1cdc9a392d1c57e434920fd56f6cc8030b88466b90f798",
+  "stage2b_manifest_sha256": "6de3253f763a3ab57a252429051d726a14cec6310c1a03ce63c4a7c7763da697",
+  "lockbox_opened": false
+}

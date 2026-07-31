@@ -1,0 +1,99 @@
+{
+  "label": "stage3_exit_research_paused_after_stage2f",
+  "performance_selector_status": "research_frozen_after_stage2f; exit training remains paused",
+  "research_frozen_selector_stage2f": {
+    "label": "research_frozen_selector_stage2f",
+    "selected_stage2f_policy": "A_target_b_baseline",
+    "selected_performance_selector": "target_b_per_slot_day",
+    "learned_stage2f_selector_established": false,
+    "decision_reason": "no learned Stage 2F selector passed every predeclared gate; retain the simplest valid Stage 2E Target B baseline",
+    "opportunity_and_failure_targets_kept_separate": true,
+    "family_specific_fit_policy": {
+      "earnings": "fit only when each outer training fold has >=25 independent events, >=40 rows, and adequate binary classes",
+      "geo": "exploratory transparent fallback when support gate is not met",
+      "other": "exploratory transparent fallback when support gate is not met"
+    },
+    "selected_policy_gate_record": [
+      {
+        "selector_policy": "A_target_b_baseline",
+        "gate_role": "retained_baseline_after_no_learned_challenger_passed_all_predeclared_gates"
+      }
+    ],
+    "selected_policy_robust_record": [
+      {
+        "selector_policy": "A_target_b_baseline",
+        "median_composite_rank": 1.0,
+        "q75_composite_rank": 1.0,
+        "worst_composite_rank": 1.3333333333333333,
+        "mean_excess_return": 2.31788125,
+        "median_excess_return": 2.8461499999999997,
+        "mean_active_ir": 1.2422510595746985,
+        "mean_active_drawdown_pct": -2.314687070430278,
+        "mean_event_cluster_concentration_pct": 9.330158877321564,
+        "max_event_cluster_concentration_pct": 11.77307041391473,
+        "robust_rank_score": 1.0,
+        "robust_order": 1
+      }
+    ],
+    "selected_policy_without_other_record": [
+      {
+        "selector_policy": "A_target_b_baseline",
+        "median_composite_rank": 1.0,
+        "q75_composite_rank": 1.0,
+        "worst_composite_rank": 1.3333333333333333,
+        "mean_excess_return": 2.31788125,
+        "median_excess_return": 2.8461499999999997,
+        "mean_active_ir": 1.2422510595746985,
+        "mean_active_drawdown_pct": -2.314687070430278,
+        "mean_event_cluster_concentration_pct": 9.330158877321564,
+        "max_event_cluster_concentration_pct": 11.77307041391473,
+        "robust_rank_score": 1.0,
+        "robust_order": 1
+      }
+    ],
+    "oof_validation_family_composition": {
+      "earnings": 415
+    },
+    "family_predictive_validation_scope": "earnings_only",
+    "without_other_replay_interpretation": "identical by construction because the globally chronological OOF validation stream contains earnings only; this rules out other-family result concentration but does not validate geo/other predictive models",
+    "oracle_labels_live_feature_eligible": false,
+    "exit_policy_frozen": false,
+    "exit_model_training_performed": false,
+    "selector_changes_allowed_during_exit_research": false,
+    "semantic_stage2c_conclusions_frozen": true,
+    "lockbox_opened": false,
+    "lockbox_reserved_for_final_modular_pipeline_evaluation": true,
+    "te_is_never_exit": true,
+    "latest_legal_exit_horizon": "T_e - 1",
+    "path": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2f\\research_frozen_selector_stage2f.json"
+  },
+  "preserved_audit_baselines": [
+    {
+      "label": "stage2b_184_trade_sample",
+      "path": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2c\\baselines\\stage3_raw_global_connection_baseline\\stage3_exit_development_trades.csv",
+      "rows": 184,
+      "sha256": "a250b5afe178532540a57a50060fa5af1e9d02177866161b2d43b52f0c28aa02",
+      "role": "audit_baseline_only",
+      "exit_model_training_used": false
+    },
+    {
+      "label": "stage2c_138_trade_sample",
+      "path": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\stage3_exit_research\\stage3_exit_development_trades.csv",
+      "rows": 138,
+      "sha256": "21b65750dc96e42508a15b2beb8a666c39cebdbfa1703efc381c02b28a845242",
+      "role": "audit_baseline_only",
+      "exit_model_training_used": false
+    }
+  ],
+  "current_138_trade_file": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\stage3_exit_research\\stage3_exit_development_trades.csv",
+  "current_138_trade_file_role": "audit_baseline_only",
+  "current_138_trade_file_sha256": "21b65750dc96e42508a15b2beb8a666c39cebdbfa1703efc381c02b28a845242",
+  "stage2f_report": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2f\\stage2f_family_specific_selection_report.md",
+  "exit_policy_trained": false,
+  "exit_model_selection_performed": false,
+  "exit_model_training_status": "paused",
+  "lockbox_opened": false,
+  "lockbox_reserved_for_final_modular_pipeline_evaluation": true,
+  "te_is_never_exit": true,
+  "latest_legal_exit_horizon": "T_e - 1"
+}

@@ -1,0 +1,22 @@
+{
+  "market_id": "674909",
+  "question": "Will Williams-Sonoma (WSM) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-10 18:56:05.402060+00:00",
+  "requested_end_utc": "2025-11-11 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "4fc99872c15df3c85f8552ce|dabfb985f9ea31e16f5e5453",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "95664527482744708158326055812102629129686420101615287454930821282571627528562",
+  "condition_id": "0xb595bc3b1b4698125fd9c804e6414477890d8f291f33c3d582b401792bb404ed",
+  "api_question": "Will Williams-Sonoma (WSM) beat quarterly earnings?",
+  "api_created_at": "2025-11-10T18:56:05.40206Z",
+  "api_end_date": "2025-11-19T14:00:00Z",
+  "status": "complete",
+  "row_count": 1514,
+  "first_source_ts_utc": "2025-11-10 19:46:05+00:00",
+  "last_source_ts_utc": "2025-11-11 20:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\674909.csv",
+  "fragment_sha256": "314b63dcd79a79a2a3486c897ce966abcc054f4d2153eed504201ecfcd670ecd",
+  "question_matches": true,
+  "error": null
+}

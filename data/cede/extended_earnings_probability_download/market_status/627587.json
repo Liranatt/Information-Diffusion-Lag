@@ -1,0 +1,23 @@
+{
+  "market_id": "627587",
+  "question": "Will General Motors (GM) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-05 16:26:21.940611+00:00",
+  "requested_end_utc": "2025-10-08 16:26:21.940611+00:00",
+  "first_candidate_t0_utc": "2025-10-08 16:26:21.940611+00:00",
+  "latest_candidate_decision_utc": "2025-10-08 20:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "75051907470540616876000361393976071278584192786369249879300662579582887054846",
+  "condition_id": "0x55ff4c7d4bcfbc76164c59fb3953401630acbf18ac6bdcae10bcb1159c5f010e",
+  "api_question": "Will General Motors (GM) beat quarterly earnings?",
+  "api_created_at": "2025-10-08T16:26:21.940611Z",
+  "api_end_date": "2025-10-21T13:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\627587.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

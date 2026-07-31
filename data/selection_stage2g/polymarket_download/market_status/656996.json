@@ -1,0 +1,22 @@
+{
+  "market_id": "656996",
+  "question": "Will Datadog (DDOG) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-30 16:14:23.168703+00:00",
+  "requested_end_utc": "2025-10-31 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "28c04db81b07b1350b54a5fc|6221ce975480938d0a833212",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "19738325333257844973026173932289353001770874061019781100602932430123409141074",
+  "condition_id": "0x1b794b9ee72a50e51870648a0763ee050f51f6f672664f2087ce645932976862",
+  "api_question": "Will Datadog (DDOG) beat quarterly earnings?",
+  "api_created_at": "2025-10-30T16:14:23.168703Z",
+  "api_end_date": "2025-11-06T14:00:00Z",
+  "status": "complete",
+  "row_count": 1649,
+  "first_source_ts_utc": "2025-10-30 16:31:08+00:00",
+  "last_source_ts_utc": "2025-10-31 19:59:07+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\656996.csv",
+  "fragment_sha256": "a924a020b39988cc3e4e100ba3a574d3d5cc18a4b7d7914639d38abda0fb66e6",
+  "question_matches": true,
+  "error": null
+}

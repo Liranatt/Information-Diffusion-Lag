@@ -1,0 +1,22 @@
+{
+  "market_id": "697470",
+  "question": "Will DocuSign (DOCU) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-22 20:35:21.643066+00:00",
+  "requested_end_utc": "2025-11-24 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "201c1ba4cbbd39c683585621|d5a054e028d6b740d4a470b4",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "115413633710575502519367318116538049518595922997278547284253016277106746063198",
+  "condition_id": "0x0ad6aa4e0be83ac0885c95cad5d55be31cdb8e80e2946202e17b3c8f7c4e9b98",
+  "api_question": "Will DocuSign (DOCU) beat quarterly earnings?",
+  "api_created_at": "2025-11-22T20:35:21.643066Z",
+  "api_end_date": "2025-12-04T22:00:00Z",
+  "status": "complete",
+  "row_count": 2888,
+  "first_source_ts_utc": "2025-11-22 20:52:07+00:00",
+  "last_source_ts_utc": "2025-11-24 20:59:07+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\697470.csv",
+  "fragment_sha256": "032b4b8185f97efa264205c76e419f65d54fb3af070f7572103de4ba0ac96921",
+  "question_matches": true,
+  "error": null
+}

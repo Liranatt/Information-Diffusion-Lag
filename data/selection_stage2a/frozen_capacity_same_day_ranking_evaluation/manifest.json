@@ -1,0 +1,52 @@
+{
+  "input_path": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\assistant_generated_all_artifacts\\assistant_generated_research_core\\trade_opportunity_research\\symbol_day_current_priority.csv",
+  "input_sha256": "7e9c822a27684f0ca852006121452ed67fb1265d0f430d446e55776194386de5",
+  "output_dir": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage1",
+  "terminal_horizon": "te1_exit_date_dt, strictly before t_e",
+  "te_is_never_exit": true,
+  "decision_time_known": false,
+  "timestamp_resolution": "daily",
+  "supporting_market_features_included": false,
+  "raw_feature_columns": [
+    "feat_connection_strength",
+    "entry_prob",
+    "feat_prob_at_trigger",
+    "feat_prob_slope_24h",
+    "feat_prob_volatility",
+    "feat_prob_surge_since_t0",
+    "feat_time_to_resolution_days",
+    "feat_crossing_latency_days",
+    "feat_pre_entry_volume_log",
+    "feat_runup_since_t0",
+    "feat_asset_2w_trend",
+    "feat_sector_1m_trend",
+    "feat_spy_2w_trend",
+    "feat_ytd_change",
+    "feat_beta",
+    "feat_profit_margin",
+    "feat_log_market_cap"
+  ],
+  "categorical_features": [
+    "benchmark",
+    "feat_archetype",
+    "feat_sector",
+    "event_family"
+  ],
+  "outcome_columns": [
+    "te1_exit_date",
+    "te1_net_return_pct",
+    "te1_active_net_return_pct",
+    "te1_active_gross_return_pct",
+    "slot_days",
+    "active_return_per_slot_day_pct"
+  ],
+  "counts": {
+    "raw_rows": 1436,
+    "valid_te1_rows": 1436,
+    "invalid_te1_rows": 0,
+    "invalid_hardcap_rows": 0,
+    "duplicate_rows_checked": 0
+  },
+  "competition_pair_rows": 2015,
+  "competition_source": "same_day_capacity_summary when same_day_choice_exists is true"
+}

@@ -1,0 +1,17 @@
+{
+  "label": "stage2f_full_path_historical_oracle_labels",
+  "candidate_rows": 580,
+  "path_rows": 4074,
+  "standard_label_notional": 10000.0,
+  "costs": "asset buy/sell plus benchmark sell/rebuy under the corrected IB cost and slippage model",
+  "opportunity_thresholds_pct": {
+    "profitable": 0.0,
+    "meaningful": 1.0,
+    "primary_opportunity": 2.0
+  },
+  "persistent_loser_rule": "best net active <1%, terminal <=-1%, and <=25% positive net-active days",
+  "severe_adverse_rule": "net active MAE <=-3% before first +1% opportunity, or over the full path when +1% is never reached",
+  "live_feature_eligible": false,
+  "te_is_never_exit": true,
+  "lockbox_opened": false
+}

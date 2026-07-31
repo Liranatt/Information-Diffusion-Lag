@@ -1,0 +1,22 @@
+{
+  "market_id": "637863",
+  "question": "Will Southwest Airlines (LUV) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-16 22:08:00.117396+00:00",
+  "requested_end_utc": "2025-10-20 20:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "3095bf586458fc9931c8b70e",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "90300044398679869790456207936097452041841570497332446197958342154471556882478",
+  "condition_id": "0x7f1e04c3f6915844b782d3191ab4e85be11f022fdc946fdd78535a39cec30ea5",
+  "api_question": "Will Southwest Airlines (LUV) beat quarterly earnings?",
+  "api_created_at": "2025-10-16T22:08:00.117396Z",
+  "api_end_date": "2025-10-22T21:00:00Z",
+  "status": "complete",
+  "row_count": 5594,
+  "first_source_ts_utc": "2025-10-16 22:46:04+00:00",
+  "last_source_ts_utc": "2025-10-20 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\637863.csv",
+  "fragment_sha256": "cf8a4350f30df914befb0b96f41628de570b9555c1fc0bd3551099663df4a5f5",
+  "question_matches": true,
+  "error": null
+}

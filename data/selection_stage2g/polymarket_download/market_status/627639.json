@@ -1,0 +1,22 @@
+{
+  "market_id": "627639",
+  "question": "Will Halliburton (HAL) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-08 16:55:04.280736+00:00",
+  "requested_end_utc": "2025-10-08 20:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "6762adb0cf8ab8e51abd70b8",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "87897081208248334902054152952749203433769107181889407304581185102889731816666",
+  "condition_id": "0x98fb73073cc1b11e6a0502e8286954a8e0f5ed33c1ec47e1d63f233564c533f2",
+  "api_question": "Will Halliburton (HAL) beat quarterly earnings?",
+  "api_created_at": "2025-10-08T16:55:04.280736Z",
+  "api_end_date": "2025-10-21T13:00:00Z",
+  "status": "complete",
+  "row_count": 169,
+  "first_source_ts_utc": "2025-10-08 17:11:03+00:00",
+  "last_source_ts_utc": "2025-10-08 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\627639.csv",
+  "fragment_sha256": "2e5c391f7acc468f212856e9a0a5b79d0185135c6c8a2463923e8a26ebd206a9",
+  "question_matches": true,
+  "error": null
+}

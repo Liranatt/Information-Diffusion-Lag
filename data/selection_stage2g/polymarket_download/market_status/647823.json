@@ -1,0 +1,22 @@
+{
+  "market_id": "647823",
+  "question": "Will Oatly Group (OTLY) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-24 11:41:51.873141+00:00",
+  "requested_end_utc": "2025-10-24 20:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "2f02e2b0ba5ce3b34877bbd2",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "32569862251745858992976319011315727225470342767842180804759186612085393884740",
+  "condition_id": "0xe5fdc59e7eda9e7ad5b36efd57bfdf5fd8fd2d93626de432e32cf7e205c6e3eb",
+  "api_question": "Will Oatly Group (OTLY) beat quarterly earnings?",
+  "api_created_at": "2025-10-24T11:41:51.873141Z",
+  "api_end_date": "2025-10-29T13:00:00Z",
+  "status": "complete",
+  "row_count": 482,
+  "first_source_ts_utc": "2025-10-24 11:58:06+00:00",
+  "last_source_ts_utc": "2025-10-24 19:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\647823.csv",
+  "fragment_sha256": "ddc80ae33b9c460a0cf55a35943eb1db43ea94acb616d38b8407471a460d79ad",
+  "question_matches": true,
+  "error": null
+}

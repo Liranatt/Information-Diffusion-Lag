@@ -1,0 +1,22 @@
+{
+  "market_id": "648038",
+  "question": "Will Teleflex (TFX) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-24 15:57:54.351401+00:00",
+  "requested_end_utc": "2025-10-27 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "5fb2bfabc3bae68a4c178c14|df2fa7f2045e1d8391d4d49a",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "40347018976569285973519270240151425457691786853528457682341671998327363599049",
+  "condition_id": "0x76cf72845f1998e557b529b2208683ecbe6a4ba3654ef22efba6b129e514e27e",
+  "api_question": "Will Teleflex (TFX) beat quarterly earnings?",
+  "api_created_at": "2025-10-24T15:57:54.351401Z",
+  "api_end_date": "2025-11-06T14:00:00Z",
+  "status": "complete",
+  "row_count": 4464,
+  "first_source_ts_utc": "2025-10-24 17:36:07+00:00",
+  "last_source_ts_utc": "2025-10-27 19:59:07+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\648038.csv",
+  "fragment_sha256": "f9b4950f19792748a7f0849b455d80a9d19f717ba2db03cc18aa7724e88ebd53",
+  "question_matches": true,
+  "error": null
+}

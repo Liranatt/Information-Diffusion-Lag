@@ -1,0 +1,22 @@
+{
+  "market_id": "675510",
+  "question": "Will Wix.Com (WIX) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-10 22:41:01.703870+00:00",
+  "requested_end_utc": "2025-11-11 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "47d19630a3952d53346fd77e|541c9be7319fcc6b358e1354",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "24131655268577896648172657478263674344571410945546965543494293904593501499032",
+  "condition_id": "0x7e5bba81e8fe9f2f1c440808d1714a72633b17ae86b54c338144c7974385ff41",
+  "api_question": "Will Wix.Com (WIX) beat quarterly earnings?",
+  "api_created_at": "2025-11-10T22:41:01.70387Z",
+  "api_end_date": "2025-11-19T14:00:00Z",
+  "status": "complete",
+  "row_count": 1235,
+  "first_source_ts_utc": "2025-11-11 00:25:07+00:00",
+  "last_source_ts_utc": "2025-11-11 20:59:07+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\675510.csv",
+  "fragment_sha256": "585bbdfaf44bc6c713e61262bf85c47074d20e0d1361060cd7cae35f4b611fb0",
+  "question_matches": true,
+  "error": null
+}

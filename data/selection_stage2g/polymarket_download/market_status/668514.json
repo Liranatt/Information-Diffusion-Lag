@@ -1,0 +1,22 @@
+{
+  "market_id": "668514",
+  "question": "Will Virgin Galactic Holdings (SPCE) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-06 21:23:25.137765+00:00",
+  "requested_end_utc": "2025-11-10 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "4a7156b2c830c8bd24b9695c|a17608bea6478c4132a75c71",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "92989931568167774117809170483063338138464304261897058466440313577052437807824",
+  "condition_id": "0x9c7eda4f825a7d4910fe6af23432c44a2f23064a865540fbb9022c7bb0d0ecba",
+  "api_question": "Will Virgin Galactic Holdings (SPCE) beat quarterly earnings?",
+  "api_created_at": "2025-11-06T21:23:25.137765Z",
+  "api_end_date": "2025-11-13T22:00:00Z",
+  "status": "complete",
+  "row_count": 5679,
+  "first_source_ts_utc": "2025-11-06 22:21:05+00:00",
+  "last_source_ts_utc": "2025-11-10 20:59:05+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\668514.csv",
+  "fragment_sha256": "3815e1f108ae142e35326d514c0b54d8158f978e6d74706d2144717c6e1888eb",
+  "question_matches": true,
+  "error": null
+}

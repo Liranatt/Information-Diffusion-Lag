@@ -1,0 +1,63 @@
+{
+  "algorithm_id": "earnings_target_b_qqq_v1",
+  "status": "paper_or_micro_only",
+  "scope": {
+    "event_family": "earnings",
+    "mapping_type": "direct_issuer",
+    "benchmark": "QQQ",
+    "spy_branch": "no_trade: Stage 3A did not show positive aggregate active return after timestamp-safe entry"
+  },
+  "entry": {
+    "effective_polymarket_probability_minimum": 0.7,
+    "clock": "use only a raw Polymarket observation available strictly before the fill; fill at the next regular-session open",
+    "target_b_score": "strictly_positive",
+    "max_price_runup_since_event_t0": 0.1,
+    "minimum_legal_sessions_before_resolution": 2,
+    "exclude": [
+      "ambiguous_polarity",
+      "invalid_mapping",
+      "missing_price_or_probability_history",
+      "geo",
+      "macro",
+      "indirect_mapping"
+    ],
+    "rank": [
+      "target_b_score_descending",
+      "expected_slot_days_ascending",
+      "source_order_ascending",
+      "symbol_ascending"
+    ]
+  },
+  "positioning": {
+    "max_concurrent_positions": 10,
+    "max_position_size_pct": 0.09,
+    "max_gross_event_exposure": 0.9
+  },
+  "exit": {
+    "name": "volatility_scaled_stop_execution_safe",
+    "from_session": 2,
+    "standing_stop_loss_pct": "min(max(2%, 2 * pre_entry_ATR20_pct), 8%)",
+    "gap_fill": "if opening price is below the stop, exit at the opening price; otherwise exit at the stop when touched",
+    "take_profit": "none; do not sell merely because an absolute profit percentage is reached",
+    "time_exit": "market-on-close of the final legal session before T_e"
+  },
+  "measurement": {
+    "success": "net active return versus QQQ over the exact same entry-to-exit interval",
+    "costs": "include benchmark rotation and asset transaction costs",
+    "forbidden_live_features": [
+      "future_probability_observations",
+      "post_entry_path_labels",
+      "probability_trajectory_features",
+      "YTD_or_3m_6m_12m_filters"
+    ]
+  },
+  "model_artifact": "target_b_ridge_model.json",
+  "source_oof_rows": 415,
+  "source_oof_sha256": "bf94b0b4855f4547dfb7bad1f2ea6c1c4c72949d11b39aba4d3276d555e80d7d",
+  "stage3a_decision": {
+    "qqq_volatility_stop_combined_excess_return_pct": 3.4724,
+    "qqq_volatility_stop_paired_median_fold_improvement_pct": 0.7337,
+    "qqq_volatility_stop_positive_improvement_folds": 3,
+    "spy_status": "not_deployed"
+  }
+}

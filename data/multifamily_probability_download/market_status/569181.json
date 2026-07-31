@@ -1,0 +1,23 @@
+{
+  "market_id": "569181",
+  "question": "FDA approves Insmed\u2019s Brensocatib for bronchiectasis?",
+  "requested_start_utc": "2025-07-28 13:56:04.884827+00:00",
+  "requested_end_utc": "2025-07-29 20:00:00+00:00",
+  "candidate_count": 2,
+  "research_families": "other",
+  "economic_event_ids": "34549",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "26113043283557318483122134496165485549290307169614775819960973654150293464539",
+  "condition_id": "0xcbfdb4244b408a9b37bfdfb1b1489ca1a4e7901ee21d178beccfc6de2a11698c",
+  "api_question": "FDA approves Insmed\u2019s Brensocatib for bronchiectasis?",
+  "api_created_at": "2025-07-28T13:56:04.884827Z",
+  "api_end_date": "2025-08-12T16:00:00Z",
+  "status": "complete",
+  "row_count": 264,
+  "first_source_ts_utc": "2025-07-29 15:36:09+00:00",
+  "last_source_ts_utc": "2025-07-29 19:59:09+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\569181.csv",
+  "fragment_sha256": "b389223a8afcb788d1273b06e4a23fc5fd2f4f273f8d72b151e773875a16bdf0",
+  "question_matches": true,
+  "error": null
+}

@@ -1,0 +1,22 @@
+{
+  "market_id": "627454",
+  "question": "Will Chubb (CB) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-08 15:58:31.774436+00:00",
+  "requested_end_utc": "2025-10-08 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "1c8faf5d0e6398599cc879a0|9cf331289c2e52e0c65553b8",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "15682006973809542047308703678356751542265344889895048219736652469284483901689",
+  "condition_id": "0x51b35684d2937730df80e0e55c13451c85bfecbd58dcb509720b71d24001c6db",
+  "api_question": "Will Chubb (CB) beat quarterly earnings?",
+  "api_created_at": "2025-10-08T15:58:31.774436Z",
+  "api_end_date": "2025-10-21T21:00:00Z",
+  "status": "complete",
+  "row_count": 225,
+  "first_source_ts_utc": "2025-10-08 16:15:12+00:00",
+  "last_source_ts_utc": "2025-10-08 19:59:03+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\627454.csv",
+  "fragment_sha256": "78155639adb644e6e18a93cc86856efee280419aa87062ed21fd769a03a9181b",
+  "question_matches": true,
+  "error": null
+}

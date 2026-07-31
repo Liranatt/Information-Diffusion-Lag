@@ -1,0 +1,64 @@
+{
+  "label": "stage3_exit_research_stage2c_development_only",
+  "frozen_selector_path": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2c\\research_frozen_selector_stage2c.json",
+  "frozen_selector": {
+    "label": "research_frozen_selector_stage2c",
+    "decision_case": "Case C",
+    "selected_global_replay_selector": "family_aware_selector",
+    "direct_issuer_lane": {
+      "eligibility": "deterministic mapping_valid direct_issuer",
+      "ranking": "predeclared trade-quality prediction then expected_slot_days and source order",
+      "admission": "predicted_target_a_positive",
+      "raw_connection_threshold": null
+    },
+    "indirect_event_lane": {
+      "eligibility": "mapping_valid and mapping_confidence >= 3",
+      "within_event_ranking": [
+        "mapping_type",
+        "exposure_purity",
+        "impact_materiality",
+        "direction_confidence",
+        "expected_slot_days"
+      ],
+      "admission": "event novelty or absolute stock-minus-sector 20d repricing <= 10%; dynamic portfolio capacity enforced",
+      "hard_geo_quota": false,
+      "unconditional_geo_priority": false
+    },
+    "shared_allocator": "one corrected capacity-constrained exact portfolio allocator after lane-specific semantic checks",
+    "legacy_gemini_relevance_score_role": "diagnostic_only",
+    "decision_interpretation": "the raw score advantage was not stable after deterministic directness normalization and controls; it is removed from direct-event admission",
+    "predeclared_preservation_tolerance_percentage_points": 0.25,
+    "direct_performance_preserved": false,
+    "global_performance_preserved": false,
+    "valid_geo_macro_eligibility_restored": true,
+    "raw_score_adjusted_oof_stable": false,
+    "probability_price_disagreement_available": false,
+    "supporting_market_snapshot_available": false,
+    "selector_changes_allowed_during_exit_research": false,
+    "lockbox_opened": false,
+    "lockbox_reserved_for_final_full_pipeline_evaluation": true,
+    "te_is_never_exit": true,
+    "latest_legal_exit_horizon": "T_e - 1",
+    "path": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2c\\research_frozen_selector_stage2c.json"
+  },
+  "preserved_raw_global_baseline_trade_count": 184,
+  "development_outer_fold_count": 11,
+  "development_trade_count": 138,
+  "terminal_te1_label_coverage": 1.0,
+  "legal_te1_date_coverage": 1.0,
+  "all_legal_te1_dates_before_te": true,
+  "all_development_exits_before_te": true,
+  "te_is_never_exit": true,
+  "latest_legal_exit_horizon": "T_e - 1",
+  "exit_policy_trained": false,
+  "exit_model_selection_performed": false,
+  "exit_research_status": "ready_to_continue_after_stage2c_freeze",
+  "selector_changes_allowed": false,
+  "lockbox_opened": false,
+  "lockbox_reserved_for_final_modular_pipeline_evaluation": true,
+  "outputs": {
+    "trades": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\stage3_exit_research\\stage3_exit_development_trades.csv",
+    "folds": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\stage3_exit_research\\stage3_development_folds.csv",
+    "plan": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\stage3_exit_research\\stage3_exit_research_plan.md"
+  }
+}

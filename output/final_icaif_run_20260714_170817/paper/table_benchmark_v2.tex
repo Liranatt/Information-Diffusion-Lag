@@ -1,0 +1,21 @@
+\begin{table}[t]
+\caption{Benchmark-relative H1 inference. Each stock trade is matched to an equal-notional benchmark trade over the identical entry and exit dates, with costs modeled independently on both legs. No interval excludes zero.}
+\label{tab:benchmark}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{2.6pt}
+\begin{tabular}{llrrrr}
+\toprule
+Benchmark & Level / unit & $N$ & Mean (\%) & 95\% CI (\%) & $p$ \\
+\midrule
+SPY & Cand.\ / event & 887 & $+0.91$ & $[-0.12,+2.01]$ & 0.051 \\
+SPY & Cand.\ / month & 887 & $+0.91$ & $[-0.90,+3.40]$ & 0.204 \\
+SPY & Sym.-day / event & 786 & $+0.22$ & $[-0.45,+0.98]$ & 0.264 \\
+SPY & Equal-event & 750 & $+0.43$ & $[-0.22,+1.17]$ & 0.114 \\
+Sector ETF & Cand.\ / event & 680 & $+0.19$ & $[-0.39,+0.90]$ & 0.264 \\
+Sector ETF & Cand.\ / month & 680 & $+0.19$ & $[-0.43,+1.46]$ & 0.308 \\
+Sector ETF & Sym.-day / event & 680 & $+0.19$ & $[-0.39,+0.91]$ & 0.266 \\
+Sector ETF & Equal-event & 678 & $+0.18$ & $[-0.40,+0.91]$ & 0.273 \\
+\bottomrule
+\end{tabular}
+\end{table}

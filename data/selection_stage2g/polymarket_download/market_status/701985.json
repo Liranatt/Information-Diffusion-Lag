@@ -1,0 +1,22 @@
+{
+  "market_id": "701985",
+  "question": "Will Campbell's (CPB) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-24 23:16:04.901288+00:00",
+  "requested_end_utc": "2025-11-25 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "ab1cc26542ad6e24c5bfa52b|aeec41b9c1afe221c745b8ac",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "25515196967266999061378571729915136530971223862086739628456981455574498435851",
+  "condition_id": "0x6e90b9f10d7349fd6e50692c92ed9d0c9f27e633341f60981695c432ea61b22f",
+  "api_question": "Will Campbell's (CPB) beat quarterly earnings?",
+  "api_created_at": "2025-11-24T23:16:04.901288Z",
+  "api_end_date": "2025-12-09T14:00:00Z",
+  "status": "complete",
+  "row_count": 1273,
+  "first_source_ts_utc": "2025-11-24 23:47:07+00:00",
+  "last_source_ts_utc": "2025-11-25 20:59:07+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\701985.csv",
+  "fragment_sha256": "7f6c77ec6455d10c6569c9b272152eb15b59301f0652525ae9f0d405b996952e",
+  "question_matches": true,
+  "error": null
+}

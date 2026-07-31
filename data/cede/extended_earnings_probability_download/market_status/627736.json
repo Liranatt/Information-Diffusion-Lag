@@ -1,0 +1,23 @@
+{
+  "market_id": "627736",
+  "question": "Will International Business Machines (IBM) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-05 18:43:30.020787+00:00",
+  "requested_end_utc": "2025-10-08 18:43:30.020787+00:00",
+  "first_candidate_t0_utc": "2025-10-08 18:43:30.020787+00:00",
+  "latest_candidate_decision_utc": "2025-10-09 20:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "67629868953966123263139563032466485190565527980819176687999911552955385458425",
+  "condition_id": "0x0869c3b2f29775e02f21395f5841926bb4218e6bd4a8256b2e1106d45835ad06",
+  "api_question": "Will International Business Machines (IBM) beat quarterly earnings?",
+  "api_created_at": "2025-10-08T18:43:30.020787Z",
+  "api_end_date": "2025-10-22T21:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\627736.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

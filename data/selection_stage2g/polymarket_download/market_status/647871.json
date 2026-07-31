@@ -1,0 +1,22 @@
+{
+  "market_id": "647871",
+  "question": "Will Eli Lilly and Company (LLY) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-24 13:58:13.367500+00:00",
+  "requested_end_utc": "2025-10-27 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "cb35104938b468626475c68f|e2dea26f93927d890324acdb",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "12082189255388188893461007461351111801104197558579743488741445816079576039819",
+  "condition_id": "0x4ca5a26a4ca4c4ba1fb0dbae14d630e1e67246d23e451e9a4fde8221f1f84bab",
+  "api_question": "Will Eli Lilly and Company (LLY) beat quarterly earnings?",
+  "api_created_at": "2025-10-24T13:58:13.3675Z",
+  "api_end_date": "2025-10-30T13:00:00Z",
+  "status": "complete",
+  "row_count": 4666,
+  "first_source_ts_utc": "2025-10-24 14:14:06+00:00",
+  "last_source_ts_utc": "2025-10-27 19:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\647871.csv",
+  "fragment_sha256": "987d042e8c2a086c0b359cd16fa01c275ec0a90b93b97e5561ba1b0ef7fa1357",
+  "question_matches": true,
+  "error": null
+}

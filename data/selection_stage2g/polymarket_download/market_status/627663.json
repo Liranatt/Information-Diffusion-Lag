@@ -1,0 +1,22 @@
+{
+  "market_id": "627663",
+  "question": "Will Texas Instruments (TXN) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-08 17:54:29.189797+00:00",
+  "requested_end_utc": "2025-10-09 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "9c44eeacc58c1217eb09351b|dd4cba3e25b569e30cf4938f",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "109071406739892517444235501252002190038273179835209054774842801487428339295765",
+  "condition_id": "0x89a173d1eaccd405324ba8319d351cee132b2e47cf10964a6421fcc21d09320a",
+  "api_question": "Will Texas Instruments (TXN) beat quarterly earnings?",
+  "api_created_at": "2025-10-08T17:54:29.189797Z",
+  "api_end_date": "2025-10-21T21:00:00Z",
+  "status": "complete",
+  "row_count": 1548,
+  "first_source_ts_utc": "2025-10-08 18:12:04+00:00",
+  "last_source_ts_utc": "2025-10-09 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\627663.csv",
+  "fragment_sha256": "fd8991bcad26357fade9a683a39b0198195c9d4fab5e07b9b0605a63d649c5cb",
+  "question_matches": true,
+  "error": null
+}

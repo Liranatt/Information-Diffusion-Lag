@@ -67,7 +67,7 @@ for sym, bars in PRICES.items():
     for bar in bars:
         ts = bar[0]
         ds = ts.date().isoformat() if hasattr(ts, "date") else str(ts)[:10]
-        d[ds] = float(bar[3])  # close
+        d[ds] = float(bar[4])  # close
     CLOSE[sym] = d
 
 def close_on(sym, date_str):

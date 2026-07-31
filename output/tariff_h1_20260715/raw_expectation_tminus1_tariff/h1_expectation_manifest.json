@@ -1,0 +1,65 @@
+{
+  "analysis_run_id": "h1run:69bc9af213d6c553",
+  "dataset_version_id": "dataset:c2f24dd859e9265f",
+  "file_sha256": {
+    "candidates.parquet": "6a66f5583feb44919075753d2cb629ee08124e8da03da6ac9554e86458d949d1",
+    "experiment_walkforward_folds_clean.csv": null,
+    "h1_expectation_protocol.py": "1031db7df7c6af2f84274968369a8ed0165870cbe6df69ee1f7dce83829be60c",
+    "polarity_labels.json": "34620a5e3957d9f0d66018a18a5a93bfc29defd052c71f501825487092848684",
+    "prices.pkl": "52a72abde625144525f12de9e77144ac02eacad5692af717142228ac1d66a3f0",
+    "probs.pkl": "ec3bd7eb08ecc31986e01e37c0cd84338732f0a2807c7e6edd86a9630d3fe347",
+    "raw_expectation_trades_candidate_level.csv": "6d7079d120aa4a62e5a5fc811c980a53eb737bb418e9e5a17b6ff6bba437904f"
+  },
+  "generated_at_utc": "2026-07-15T16:01:02.251794+00:00",
+  "git": {
+    "commit": "80c4408657bb77b77e217976f002c96234686718",
+    "dirty_worktree": true
+  },
+  "implementation_version_id": "implementation:9855b005845f9e5c",
+  "input_paths": {
+    "candidates": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\tariff_run\\tariff_candidates.parquet",
+    "folds": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\experiment_walkforward_folds_clean.csv",
+    "polarity": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\polarity_labels.json",
+    "prices": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\prices.pkl",
+    "probabilities": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\probs.pkl"
+  },
+  "limitations_that_block_confirmatory_status": [
+    "same-session signal-to-close ordering is not recoverable from date-normalized artifacts",
+    "original scheduled-end snapshots are not versioned at the signal timestamp",
+    "actual public outcome timestamps are absent",
+    "the retrospective holdout period has already influenced project development"
+  ],
+  "mapping_version_id": "mapping:4c5f242a558d750e",
+  "observation_output_version_id": "observations:6866bf8f07f04d8b",
+  "polarity_version_id": "polarity:fcaa9411dd18eb28",
+  "policy_version_id": "policy:43edcc4e3291b49c",
+  "protocol": {
+    "actual_public_outcome_timestamp_available": false,
+    "benchmark_adjusted_returns_are_primary": false,
+    "entry_conservative_sensitivity": "next stored trading close",
+    "entry_primary_in_current_history": "reported same-session close, timing unverifiable",
+    "exit_rule": "last stored trading close before current-artifact t_e",
+    "genuine_untouched_holdout_available": false,
+    "n_bootstrap": 20000,
+    "primary_estimand": "raw_net_return",
+    "primary_hypothesis": "E[observed net equity return from T_theta to the last eligible pre-event close | frozen Polymarket-identified stock-event observation] > 0",
+    "primary_inference_unit": "economic_event_id",
+    "primary_observation_unit": "candidate_observation",
+    "protocol_version": "h1-empirical-net-expectation-v2",
+    "scheduled_end_snapshot_at_signal_available": false,
+    "seed": 42,
+    "stage_boundaries": {
+      "discovery_end_exclusive": "2025-07-29",
+      "model_selection_end_exclusive": "2026-01-01",
+      "validation_end_exclusive": "2026-04-01"
+    }
+  },
+  "protocol_config_id": "protocol:27d2e1dfd3cb6939",
+  "row_counts": {
+    "candidate_observations": 7,
+    "candidates": 13,
+    "unique_event_ids": 1,
+    "unique_market_ids": 7,
+    "unique_symbols": 7
+  }
+}

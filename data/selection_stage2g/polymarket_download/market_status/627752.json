@@ -1,0 +1,22 @@
+{
+  "market_id": "627752",
+  "question": "Will 3M (MMM) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-08 19:17:36.740055+00:00",
+  "requested_end_utc": "2025-10-09 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "03bed3b21afb737d9e321857|d4a8b9f1eec8a6bbc8755132",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "89428978375620428762987524848663002205715511345061511132601005558953886844493",
+  "condition_id": "0xb1ee462d0f3863d30badc5cdd1c6d22fa941a883463f4610173501bbe94f1dda",
+  "api_question": "Will 3M (MMM) beat quarterly earnings?",
+  "api_created_at": "2025-10-08T19:17:36.740055Z",
+  "api_end_date": "2025-10-21T13:00:00Z",
+  "status": "complete",
+  "row_count": 1466,
+  "first_source_ts_utc": "2025-10-08 19:34:04+00:00",
+  "last_source_ts_utc": "2025-10-09 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\627752.csv",
+  "fragment_sha256": "6f8a781700df7e4af9de4e1a0291739db29b84bcc079e44f01b704a84f985391",
+  "question_matches": true,
+  "error": null
+}

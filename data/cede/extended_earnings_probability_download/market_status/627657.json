@@ -1,0 +1,23 @@
+{
+  "market_id": "627657",
+  "question": "Will Northrop Grumman (NOC) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-05 17:35:07.143068+00:00",
+  "requested_end_utc": "2025-10-08 17:35:07.143068+00:00",
+  "first_candidate_t0_utc": "2025-10-08 17:35:07.143068+00:00",
+  "latest_candidate_decision_utc": "2025-10-09 20:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "72251099772438829986385503995857109920760266649297911953167785179188852623468",
+  "condition_id": "0xf087b321286ec43be60d9e2cee908bc39002360896a86122ccb20d86dbdeb69e",
+  "api_question": "Will Northrop Grumman (NOC) beat quarterly earnings?",
+  "api_created_at": "2025-10-08T17:35:07.143068Z",
+  "api_end_date": "2025-10-21T13:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\627657.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

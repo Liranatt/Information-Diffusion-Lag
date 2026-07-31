@@ -1,0 +1,17 @@
+{
+  "label": "exact_dynamic_oof_selector_replay",
+  "validation_scope": "intersection of chronological training OOF validation keys",
+  "selectors": [
+    "connection_oof_tiebreaker",
+    "connection_oof_tiebreaker",
+    "monotonic_additive",
+    "pooled_set"
+  ],
+  "admission_choice_source": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\admission\\admission_choices.json",
+  "current_2026_test_used": false,
+  "terminal_horizon": "exit_date < candidate_t_e asserted",
+  "te_is_never_exit": true,
+  "outputs": {
+    "summary": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\dynamic_replay_oof\\exact_oof_replay_summary.csv"
+  }
+}

@@ -1,0 +1,24 @@
+\begin{table*}[t]
+\caption{Walk-forward folds of the T2-only arm (seed 42). Each fold fits only on candidates whose outcomes completed before the fold start and is evaluated on the next block; folds 4--5 lie inside the 2026 test period. Returns are percentage points over the fold window; costs are dollars.}
+\label{tab:folds}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\begin{tabular}{lrllrrrrrrrr}
+\toprule
+Bench. & Fold & Fit cutoff & Eval window & Fit $n$ & Eval $n$ & Trades & Return & Bench. & Excess & Sharpe & MaxDD \\
+\midrule
+SPY & 1 & 2025-05-01 & 2025-05-01--07-31 & 14 & 78 & 26 & $12.48$ & $13.12$ & $-0.65$ & 3.65 & $-3.85$ \\
+ & 2 & 2025-08-01 & 2025-08-01--10-31 & 81 & 214 & 83 & $6.72$ & $9.65$ & $-2.93$ & 2.05 & $-4.53$ \\
+ & 3 & 2025-11-01 & 2025-11-01--01-31 & 247 & 242 & 96 & $6.97$ & $1.21$ & $5.76$ & 1.89 & $-4.04$ \\
+ & 4 & 2026-02-01 & 2026-02-01--04-30 & 477 & 527 & 115 & $14.90$ & $3.29$ & $11.61$ & 3.19 & $-5.46$ \\
+ & 5 & 2026-05-01 & 2026-05-01--06-13 & 981 & 73 & 48 & $14.04$ & $2.88$ & $11.17$ & 5.45 & $-3.94$ \\
+\midrule
+QQQ & 1 & 2025-05-01 & 2025-05-01--07-31 & 14 & 78 & 24 & $17.56$ & $17.24$ & $0.32$ & 4.59 & $-3.46$ \\
+ & 2 & 2025-08-01 & 2025-08-01--10-31 & 81 & 214 & 59 & $10.27$ & $13.52$ & $-3.25$ & 2.54 & $-4.68$ \\
+ & 3 & 2025-11-01 & 2025-11-01--01-31 & 247 & 242 & 83 & $3.96$ & $-1.67$ & $5.63$ & 1.04 & $-5.35$ \\
+ & 4 & 2026-02-01 & 2026-02-01--04-30 & 477 & 527 & 117 & $3.07$ & $6.59$ & $-3.52$ & 0.74 & $-8.68$ \\
+ & 5 & 2026-05-01 & 2026-05-01--06-13 & 981 & 73 & 34 & $16.25$ & $6.95$ & $9.31$ & 5.05 & $-7.03$ \\
+\bottomrule
+\end{tabular}
+\end{table*}

@@ -1,0 +1,22 @@
+{
+  "market_id": "0x6ef8ef55a05e303a09b6fa1f2c00d18d4c98eb3d829b44db82a03be665ab901c",
+  "question": "Russia x Ukraine Ceasefire by Friday? ",
+  "requested_start_utc": "2025-03-13 05:07:44.110950+00:00",
+  "requested_end_utc": "2025-03-14 20:00:00+00:00",
+  "candidate_count": 6,
+  "research_families": "geopolitics",
+  "economic_event_ids": "20824",
+  "mapping_source": "clob_condition_id",
+  "yes_token_id": "66407228542871929890379791698200930818258253108861102711116317425776318466759",
+  "condition_id": "0x6ef8ef55a05e303a09b6fa1f2c00d18d4c98eb3d829b44db82a03be665ab901c",
+  "api_question": "Russia x Ukraine Ceasefire by Friday?",
+  "api_end_date": "2025-03-21T00:00:00Z",
+  "status": "complete",
+  "row_count": 1366,
+  "first_source_ts_utc": "2025-03-13 21:14:05+00:00",
+  "last_source_ts_utc": "2025-03-14 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\0x6ef8ef55a05e303a09b6fa1f2c00d18d4c98eb3d829b44db82a03be665ab901c.csv",
+  "fragment_sha256": "d6f0d7166b67eae3184d23b43d73d46dbbe41af137dc53840524a2629b11be53",
+  "question_matches": true,
+  "error": null
+}

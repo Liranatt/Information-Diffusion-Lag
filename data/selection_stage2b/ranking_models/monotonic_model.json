@@ -1,0 +1,25 @@
+{
+  "features": [
+    "feat_connection_strength",
+    "entry_prob",
+    "connection_rank_pct",
+    "feat_time_to_resolution_days",
+    "feat_asset_2w_trend",
+    "feat_sector_1m_trend",
+    "stock_sector_extension"
+  ],
+  "monotonic_directions": {
+    "feat_connection_strength": 1,
+    "feat_time_to_resolution_days": -1
+  },
+  "unconstrained_features": [
+    "entry_prob",
+    "connection_rank_pct",
+    "feat_asset_2w_trend",
+    "feat_sector_1m_trend",
+    "stock_sector_extension"
+  ],
+  "iterations": 4,
+  "target": "te1_active_net_return_pct",
+  "train_only_feature_preprocessing": true
+}

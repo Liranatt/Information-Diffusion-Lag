@@ -1,0 +1,22 @@
+{
+  "market_id": "643033",
+  "question": "Will MSCI (MSCI) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-21 22:00:51.701488+00:00",
+  "requested_end_utc": "2025-10-23 20:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "547b610a2ec54b59cb5b4bbb",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "75519347664699897341332800565354811233829780893275784493875003206872622663102",
+  "condition_id": "0x5d78fe2fca350d6d6eba09f243bc24907e5daebe93e429e5f7e9cb70fd3ddebc",
+  "api_question": "Will MSCI (MSCI) beat quarterly earnings?",
+  "api_created_at": "2025-10-21T22:00:51.701488Z",
+  "api_end_date": "2025-10-28T13:00:00Z",
+  "status": "complete",
+  "row_count": 2742,
+  "first_source_ts_utc": "2025-10-21 22:18:05+00:00",
+  "last_source_ts_utc": "2025-10-23 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\643033.csv",
+  "fragment_sha256": "e051ac813e74c7e97868a5fd84d59d17790f4543a27d5aee1b772384f5397a89",
+  "question_matches": true,
+  "error": null
+}

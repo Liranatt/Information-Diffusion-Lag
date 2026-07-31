@@ -1,0 +1,22 @@
+{
+  "market_id": "0x0141bc972b2f4a4591e471742426c99da055fa513f41de9dfdc449fdfc60747f",
+  "question": "US x Iran ceasefire before July? ",
+  "requested_start_utc": "2025-06-22 01:30:16.900200+00:00",
+  "requested_end_utc": "2025-06-23 20:00:00+00:00",
+  "candidate_count": 4,
+  "research_families": "geopolitics",
+  "economic_event_ids": "28219",
+  "mapping_source": "clob_condition_id",
+  "yes_token_id": "15343010080747686166787552577922644761357322031339487653625851301958002620723",
+  "condition_id": "0x0141bc972b2f4a4591e471742426c99da055fa513f41de9dfdc449fdfc60747f",
+  "api_question": "US x Iran ceasefire before July?",
+  "api_end_date": "2025-06-30T00:00:00Z",
+  "status": "complete",
+  "row_count": 2487,
+  "first_source_ts_utc": "2025-06-22 02:33:06+00:00",
+  "last_source_ts_utc": "2025-06-23 19:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\0x0141bc972b2f4a4591e471742426c99da055fa513f41de9dfdc449fdfc60747f.csv",
+  "fragment_sha256": "6f3439287759b8662677393be69bb8f5d286991a38b6feb618a048be3f49a703",
+  "question_matches": true,
+  "error": null
+}

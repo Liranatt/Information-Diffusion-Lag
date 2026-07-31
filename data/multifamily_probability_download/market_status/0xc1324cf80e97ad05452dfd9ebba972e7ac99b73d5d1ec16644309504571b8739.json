@@ -1,0 +1,22 @@
+{
+  "market_id": "0xc1324cf80e97ad05452dfd9ebba972e7ac99b73d5d1ec16644309504571b8739",
+  "question": "Will Trump\u2019s Greenland Tariffs go into effect for France by Feburary 1?",
+  "requested_start_utc": "2026-01-17 22:59:19.097715+00:00",
+  "requested_end_utc": "2026-01-19 21:00:00+00:00",
+  "candidate_count": 1,
+  "research_families": "macro",
+  "economic_event_ids": "171012",
+  "mapping_source": "clob_condition_id",
+  "yes_token_id": "70921705564354215019035479835288544076348673872814820359711987128730057218034",
+  "condition_id": "0xc1324cf80e97ad05452dfd9ebba972e7ac99b73d5d1ec16644309504571b8739",
+  "api_question": "Will Trump\u2019s Greenland Tariffs go into effect for France by Feburary 1?",
+  "api_end_date": "2026-02-01T00:00:00Z",
+  "status": "complete",
+  "row_count": 2583,
+  "first_source_ts_utc": "2026-01-18 01:57:10+00:00",
+  "last_source_ts_utc": "2026-01-19 20:59:11+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\0xc1324cf80e97ad05452dfd9ebba972e7ac99b73d5d1ec16644309504571b8739.csv",
+  "fragment_sha256": "1179090adba401af4c7105e7b47321f706456b36504998a0a63460471c1de363",
+  "question_matches": true,
+  "error": null
+}

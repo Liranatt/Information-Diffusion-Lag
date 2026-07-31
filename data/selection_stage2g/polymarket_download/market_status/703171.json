@@ -1,0 +1,22 @@
+{
+  "market_id": "703171",
+  "question": "Will FactSet Research Systems (FDS) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-25 14:39:05.190937+00:00",
+  "requested_end_utc": "2025-12-08 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "0ea8c99ab71e6e63c12630b1|92c5bcb6a36cb06f121aec71",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "24409374039711276859861806609522744146977565729468343288278303472782717360783",
+  "condition_id": "0x6dc2882e61c4e57574f96c2dd88f3133619ea0327a146492e3957185c4aa9adc",
+  "api_question": "Will FactSet Research Systems (FDS) beat quarterly earnings?",
+  "api_created_at": "2025-11-25T14:39:05.190937Z",
+  "api_end_date": "2025-12-18T14:00:00Z",
+  "status": "complete",
+  "row_count": 19079,
+  "first_source_ts_utc": "2025-11-25 15:01:09+00:00",
+  "last_source_ts_utc": "2025-12-08 20:59:08+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\703171.csv",
+  "fragment_sha256": "55a6e845db55a7df3d9088e2109181f4963a9f9cc468ff19c6ab46a9a26e0c02",
+  "question_matches": true,
+  "error": null
+}

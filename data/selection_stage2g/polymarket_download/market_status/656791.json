@@ -1,0 +1,22 @@
+{
+  "market_id": "656791",
+  "question": "Will Amplitude (AMPL) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-30 14:17:36.620524+00:00",
+  "requested_end_utc": "2025-10-31 20:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "6c27990665cb057b75ee4021",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "4662886473068257307918043402492203363871115733885919899409749642374168316891",
+  "condition_id": "0x098905fd3251ecbcf6f9b3d5925e54ded294f5f2a86fcb37c9580dab20a2a115",
+  "api_question": "Will Amplitude (AMPL) beat quarterly earnings?",
+  "api_created_at": "2025-10-30T14:17:36.620524Z",
+  "api_end_date": "2025-11-05T22:00:00Z",
+  "status": "complete",
+  "row_count": 1764,
+  "first_source_ts_utc": "2025-10-30 14:36:05+00:00",
+  "last_source_ts_utc": "2025-10-31 19:59:05+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\656791.csv",
+  "fragment_sha256": "994a047e0b274a2e62d491a4a5416140f6e058a86a0d97a44c28ec47ea2227d8",
+  "question_matches": true,
+  "error": null
+}

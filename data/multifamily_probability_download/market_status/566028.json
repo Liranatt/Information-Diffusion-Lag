@@ -1,0 +1,23 @@
+{
+  "market_id": "566028",
+  "question": "Will the FDA approve Sepiapterin NDA?",
+  "requested_start_utc": "2025-07-21 16:39:49.303508+00:00",
+  "requested_end_utc": "2025-07-28 20:00:00+00:00",
+  "candidate_count": 2,
+  "research_families": "other",
+  "economic_event_ids": "33476",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "1176415125822307170082198831596888165046421936621002607184670008626631669079",
+  "condition_id": "0x72f1d0c4a1d5bbde00401ea0a616045e1e288981f81031b27e6404341c9d572a",
+  "api_question": "Will the FDA approve Sepiapterin NDA?",
+  "api_created_at": "2025-07-21T16:39:49.303508Z",
+  "api_end_date": "2025-07-31T23:55:00Z",
+  "status": "complete",
+  "row_count": 9843,
+  "first_source_ts_utc": "2025-07-21 23:57:08+00:00",
+  "last_source_ts_utc": "2025-07-28 19:59:09+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\566028.csv",
+  "fragment_sha256": "1d26757608509555aa1940c50c903c51a2ee28fad03cbcc5c6eb46d6f43d5de0",
+  "question_matches": true,
+  "error": null
+}

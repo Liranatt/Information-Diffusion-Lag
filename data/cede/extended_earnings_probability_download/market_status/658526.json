@@ -1,0 +1,23 @@
+{
+  "market_id": "658526",
+  "question": "Will Allbirds (BIRD) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-28 19:51:35.515713+00:00",
+  "requested_end_utc": "2025-10-31 19:51:35.515713+00:00",
+  "first_candidate_t0_utc": "2025-10-31 19:51:35.515713+00:00",
+  "latest_candidate_decision_utc": "2025-11-04 21:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "16830612286436995194624016055948145898888249190245275874798230140111112190609",
+  "condition_id": "0x983ed3d4c663ac3447a0ed1bd43bdebaeffe4c375d8e80c05c86348a23773f0f",
+  "api_question": "Will Allbirds (BIRD) beat quarterly earnings?",
+  "api_created_at": "2025-10-31T19:51:35.515713Z",
+  "api_end_date": "2025-11-06T22:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\658526.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

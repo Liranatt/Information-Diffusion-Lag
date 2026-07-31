@@ -1,0 +1,23 @@
+{
+  "market_id": "569186",
+  "question": "FDA approves Telix Pharmaceuticals\u2019 TLX250-CDx for kidney cancer imaging?",
+  "requested_start_utc": "2025-07-28 14:07:15.189642+00:00",
+  "requested_end_utc": "2025-07-29 20:00:00+00:00",
+  "candidate_count": 2,
+  "research_families": "other",
+  "economic_event_ids": "34554",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "31133474803023318034433204158301355071457962043890831522038862081957753230567",
+  "condition_id": "0xc1f2b6c96319e7b8a45d1c01d94dbb194d522494c70b29f94c465f96929955dc",
+  "api_question": "FDA approves Telix Pharmaceuticals\u2019 TLX250-CDx for kidney cancer imaging?",
+  "api_created_at": "2025-07-28T14:07:15.189642Z",
+  "api_end_date": "2025-08-27T16:00:00Z",
+  "status": "complete",
+  "row_count": 260,
+  "first_source_ts_utc": "2025-07-29 15:40:09+00:00",
+  "last_source_ts_utc": "2025-07-29 19:59:09+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\569186.csv",
+  "fragment_sha256": "ce92374aeb173a3b9c987624827e059a3b14ef3a1be0a230f7ac3be75eae6cdf",
+  "question_matches": true,
+  "error": null
+}

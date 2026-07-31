@@ -1,0 +1,22 @@
+{
+  "market_id": "652567",
+  "question": "Will Hims & Hers Health (HIMS) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-27 20:22:39.702448+00:00",
+  "requested_end_utc": "2025-10-30 20:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "84f416331bb0c42d06a7c469",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "73839412668206739225251558917985021339342160358033632610569421157635107491515",
+  "condition_id": "0xd4927dc96febd8adaf3a42df07bad00990fe928418c889ff12ea23c622e9af43",
+  "api_question": "Will Hims & Hers Health (HIMS) beat quarterly earnings?",
+  "api_created_at": "2025-10-27T20:22:39.702448Z",
+  "api_end_date": "2025-11-03T22:00:00Z",
+  "status": "complete",
+  "row_count": 4079,
+  "first_source_ts_utc": "2025-10-27 20:39:06+00:00",
+  "last_source_ts_utc": "2025-10-30 19:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\652567.csv",
+  "fragment_sha256": "213c290b3bd9dc4a2dbe0c43dfdd157b55b4d394e476e06e3fc9ead826262a9f",
+  "question_matches": true,
+  "error": null
+}

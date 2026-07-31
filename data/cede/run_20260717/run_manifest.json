@@ -1,0 +1,19 @@
+{
+  "mode": "research_only_no_meta_predictions",
+  "policy_version": "2026-07-17.1",
+  "raw_candidates": 321,
+  "canonical_events": 292,
+  "canonical_legs": 298,
+  "mapping_rejections": 2,
+  "event_candidates": 292,
+  "admissions": 0,
+  "allocated_components": 0,
+  "meta_predictions": null,
+  "data_sources": {
+    "semantic": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2c\\semantics\\semantic_development_candidates.csv",
+    "tariff": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\tariff_run\\tariff_candidates.parquet",
+    "earnings_history": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\polymarket_probability_history.csv",
+    "multifamily_history": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\polymarket_probability_history.csv",
+    "prices": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\assistant_generated_all_artifacts\\assistant_generated_research_large_supplements\\prices_open_merged.pkl"
+  }
+}

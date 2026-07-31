@@ -1,0 +1,23 @@
+{
+  "market_id": "627753",
+  "question": "Will Las Vegas Sands (LVS) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-05 19:24:59.644268+00:00",
+  "requested_end_utc": "2025-10-08 19:24:59.644268+00:00",
+  "first_candidate_t0_utc": "2025-10-08 19:24:59.644268+00:00",
+  "latest_candidate_decision_utc": "2025-10-13 20:00:00+00:00",
+  "candidate_count": 1,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "69315975293501821129032965793385003581526638245289074585570052773836407662073",
+  "condition_id": "0x65e1b00fec4a5aeea88a634a8cbd6c6212031a9563280da17906d0c8effb39e9",
+  "api_question": "Will Las Vegas Sands (LVS) beat quarterly earnings?",
+  "api_created_at": "2025-10-08T19:24:59.644268Z",
+  "api_end_date": "2025-10-22T21:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\627753.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

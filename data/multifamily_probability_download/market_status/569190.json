@@ -1,0 +1,23 @@
+{
+  "market_id": "569190",
+  "question": "FDA approves Sanofi\u2019s Rilzabrutinib for immune thrombocytopenia?",
+  "requested_start_utc": "2025-07-28 14:15:55.113168+00:00",
+  "requested_end_utc": "2025-08-04 20:00:00+00:00",
+  "candidate_count": 2,
+  "research_families": "other",
+  "economic_event_ids": "34558",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "86004379767740111850094216304146907339776946612989113918655830339256820823576",
+  "condition_id": "0x5c6f49bbe93a7f2ca9aacd817a70ed39c7922f3f4e3f811dbd7d09101bb9a8e1",
+  "api_question": "FDA approves Sanofi\u2019s Rilzabrutinib for immune thrombocytopenia?",
+  "api_created_at": "2025-07-28T14:15:55.113168Z",
+  "api_end_date": "2025-08-29T16:00:00Z",
+  "status": "complete",
+  "row_count": 8876,
+  "first_source_ts_utc": "2025-07-29 15:41:08+00:00",
+  "last_source_ts_utc": "2025-08-04 19:59:10+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\569190.csv",
+  "fragment_sha256": "5131ea0825a3a554d1bce0c234a237d9b78ef98e52b58cfe37eaf085ffa40aea",
+  "question_matches": true,
+  "error": null
+}

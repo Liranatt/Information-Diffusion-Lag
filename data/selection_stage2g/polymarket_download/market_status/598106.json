@@ -1,0 +1,22 @@
+{
+  "market_id": "598106",
+  "question": "Will Fedex (FDX) beat its quarterly EPS estimate?",
+  "requested_start_utc": "2025-09-15 01:54:02.067700+00:00",
+  "requested_end_utc": "2025-09-19 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "24bcd14bf172cfdd017de0eb|e270b1a6d914bf1623a80946",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "84388150352578106506668610467258394711186407451981263501047004342334475779682",
+  "condition_id": "0x0f84778f8e5251b4d1b96583923fcc501afd7d7f21a63da633ddf9ff8373a461",
+  "api_question": "Will Fedex (FDX) beat its quarterly EPS estimate?",
+  "api_created_at": "2025-09-15T01:54:02.0677Z",
+  "api_end_date": "2025-09-25T20:00:00Z",
+  "status": "complete",
+  "row_count": 5967,
+  "first_source_ts_utc": "2025-09-15 02:10:09+00:00",
+  "last_source_ts_utc": "2025-09-19 05:45:03+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\598106.csv",
+  "fragment_sha256": "c50d29a83b961b0de0063b104c745be4d0ead8cf98388c9e354b1b26545eb56c",
+  "question_matches": true,
+  "error": null
+}

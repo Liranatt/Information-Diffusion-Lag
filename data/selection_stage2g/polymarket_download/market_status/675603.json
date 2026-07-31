@@ -1,0 +1,22 @@
+{
+  "market_id": "675603",
+  "question": "Will Zoom Communications (ZM) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-10 23:38:35.296220+00:00",
+  "requested_end_utc": "2025-11-11 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "125220bb10027285de137e8e|443f161df667c3f5030fad19",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "14740759162453500197570107123333349046948933737887728659424381191174895205438",
+  "condition_id": "0xbc5d2d71124d51e24abe89b98f7d668c71906724dd3f557a1dbe401152fa86fc",
+  "api_question": "Will Zoom Communications (ZM) beat quarterly earnings?",
+  "api_created_at": "2025-11-10T23:38:35.29622Z",
+  "api_end_date": "2025-11-24T22:00:00Z",
+  "status": "complete",
+  "row_count": 1227,
+  "first_source_ts_utc": "2025-11-11 00:33:04+00:00",
+  "last_source_ts_utc": "2025-11-11 20:59:05+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\675603.csv",
+  "fragment_sha256": "ba349109f79c8cb400ae4023955bb890a71f98341caf7a87fbaad55ab7e59766",
+  "question_matches": true,
+  "error": null
+}

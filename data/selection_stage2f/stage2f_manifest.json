@@ -1,0 +1,123 @@
+{
+  "label": "stage2f_family_specific_trade_opportunity_selection",
+  "development_only": true,
+  "development_candidates": 580,
+  "oof_candidates": 415,
+  "outer_folds": 5,
+  "oracle_path_rows": 4074,
+  "policies": [
+    "A_target_b_baseline",
+    "B_opportunity_ranking_only",
+    "C_failure_filter_only",
+    "D_failure_then_opportunity",
+    "E_family_specific_shared_allocator"
+  ],
+  "exit_policies": [
+    "hold_to_te1",
+    "fixed_2_day",
+    "fixed_4_day",
+    "fixed_8_day",
+    "corrected_reference_exit",
+    "volatility_scaled_stop",
+    "time_underwater_exit",
+    "trailing_profit_giveback_exit"
+  ],
+  "combined_exact_replays": 80,
+  "outer_fold_exact_replays": 400,
+  "without_other_exact_replays": 80,
+  "oof_validation_family_composition": {
+    "earnings": 415
+  },
+  "family_predictive_validation_scope": "earnings_only",
+  "without_other_replay_is_distinct": false,
+  "research_frozen_selector": {
+    "label": "research_frozen_selector_stage2f",
+    "selected_stage2f_policy": "A_target_b_baseline",
+    "selected_performance_selector": "target_b_per_slot_day",
+    "learned_stage2f_selector_established": false,
+    "decision_reason": "no learned Stage 2F selector passed every predeclared gate; retain the simplest valid Stage 2E Target B baseline",
+    "opportunity_and_failure_targets_kept_separate": true,
+    "family_specific_fit_policy": {
+      "earnings": "fit only when each outer training fold has >=25 independent events, >=40 rows, and adequate binary classes",
+      "geo": "exploratory transparent fallback when support gate is not met",
+      "other": "exploratory transparent fallback when support gate is not met"
+    },
+    "selected_policy_gate_record": [
+      {
+        "selector_policy": "A_target_b_baseline",
+        "gate_role": "retained_baseline_after_no_learned_challenger_passed_all_predeclared_gates"
+      }
+    ],
+    "selected_policy_robust_record": [
+      {
+        "selector_policy": "A_target_b_baseline",
+        "median_composite_rank": 1.0,
+        "q75_composite_rank": 1.0,
+        "worst_composite_rank": 1.3333333333333333,
+        "mean_excess_return": 2.31788125,
+        "median_excess_return": 2.8461499999999997,
+        "mean_active_ir": 1.2422510595746985,
+        "mean_active_drawdown_pct": -2.314687070430278,
+        "mean_event_cluster_concentration_pct": 9.330158877321564,
+        "max_event_cluster_concentration_pct": 11.77307041391473,
+        "robust_rank_score": 1.0,
+        "robust_order": 1
+      }
+    ],
+    "selected_policy_without_other_record": [
+      {
+        "selector_policy": "A_target_b_baseline",
+        "median_composite_rank": 1.0,
+        "q75_composite_rank": 1.0,
+        "worst_composite_rank": 1.3333333333333333,
+        "mean_excess_return": 2.31788125,
+        "median_excess_return": 2.8461499999999997,
+        "mean_active_ir": 1.2422510595746985,
+        "mean_active_drawdown_pct": -2.314687070430278,
+        "mean_event_cluster_concentration_pct": 9.330158877321564,
+        "max_event_cluster_concentration_pct": 11.77307041391473,
+        "robust_rank_score": 1.0,
+        "robust_order": 1
+      }
+    ],
+    "oof_validation_family_composition": {
+      "earnings": 415
+    },
+    "family_predictive_validation_scope": "earnings_only",
+    "without_other_replay_interpretation": "identical by construction because the globally chronological OOF validation stream contains earnings only; this rules out other-family result concentration but does not validate geo/other predictive models",
+    "oracle_labels_live_feature_eligible": false,
+    "exit_policy_frozen": false,
+    "exit_model_training_performed": false,
+    "selector_changes_allowed_during_exit_research": false,
+    "semantic_stage2c_conclusions_frozen": true,
+    "lockbox_opened": false,
+    "lockbox_reserved_for_final_modular_pipeline_evaluation": true,
+    "te_is_never_exit": true,
+    "latest_legal_exit_horizon": "T_e - 1",
+    "path": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2f\\research_frozen_selector_stage2f.json"
+  },
+  "oracle_labels_live_feature_eligible": false,
+  "exit_model_training_performed": false,
+  "test_rows_read": 0,
+  "lockbox_opened": false,
+  "te_is_never_exit": true,
+  "latest_legal_exit_horizon": "T_e - 1",
+  "source_hashes": {
+    "semantic_candidates": "4fdcee3573ed8c575257a2db248fe094a6c5873c89fd742aa5caf576d20a1be0",
+    "stage2e_paths": "aa7d2530a112e7aa9cc75b3d8a03c5e458521e86e91e9fdc3aaed46074ac4eff",
+    "stage2e_path_summary": "c8a622de3fd4fc5f653c9823549fc20cf76945f807b2ffb752c3267fa06e891d",
+    "prices": "559baa811114d9975d13f96872073d3580bcbe4e9df875eb0d4631c1a0d345dc",
+    "probs": "ec3bd7eb08ecc31986e01e37c0cd84338732f0a2807c7e6edd86a9630d3fe347"
+  },
+  "outputs": {
+    "report": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2f\\stage2f_family_specific_selection_report.md",
+    "frozen_selector": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2f\\research_frozen_selector_stage2f.json",
+    "oracle_labels": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2f\\oracle_labels\\full_path_oracle_labels.csv",
+    "oof_predictions": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2f\\nested_oof_models\\stage2f_oof_predictions.csv",
+    "same_day_summary": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2f\\same_day_selection\\same_day_selection_summary.csv",
+    "combined_matrix": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2f\\exact_replay\\selector_exit_combined_exact_results.csv",
+    "fold_matrix": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2f\\exact_replay\\selector_exit_outer_fold_exact_results.csv",
+    "decision_gates": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2f\\decision\\selector_freeze_gates.csv",
+    "stage3_manifest": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\stage3_exit_research\\stage3_exit_manifest.json"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "market_id": "627660",
+  "question": "Will Quest Diagnostics (DGX) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-05 17:43:57.152295+00:00",
+  "requested_end_utc": "2025-10-08 17:43:57.152295+00:00",
+  "first_candidate_t0_utc": "2025-10-08 17:43:57.152295+00:00",
+  "latest_candidate_decision_utc": "2025-10-08 20:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "7118227962558258679229033143268160169228267500034890227224194699915071385201",
+  "condition_id": "0x9849b5eb1d6c6b79589b1890c7ea3764ff4bba56c63e07ac9134c2799a1f4e24",
+  "api_question": "Will Quest Diagnostics (DGX) beat quarterly earnings?",
+  "api_created_at": "2025-10-08T17:43:57.152295Z",
+  "api_end_date": "2025-10-21T13:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\627660.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

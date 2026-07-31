@@ -1,0 +1,1022 @@
+[
+ {
+  "market_id": "0xc2977e9fb0745aca8fd1f6b8a30f57acde9bb1b1e1b9e51d2556a096e52a04e6",
+  "question_relevance": 0.85,
+  "positive_sentiment": true,
+  "reason": "US government action on tariffs with a major trading partner directly impacts US corporate earnings, supply chains, and consumer prices across multiple sectors."
+ },
+ {
+  "market_id": "0x219c11d6f896e92af5f5947f8bebb41952cc55d9b764ee4a3171c4803203ec2b",
+  "question_relevance": 0.9,
+  "positive_sentiment": true,
+  "reason": "US government action on tariffs with its largest trading partner directly impacts US corporate earnings, supply chains, and consumer prices across numerous sectors."
+ },
+ {
+  "market_id": "0x53a5acfebe01d8a2dd73693dc7646e8144a6c611cac2a438b69c700dd979a911",
+  "question_relevance": 0.95,
+  "positive_sentiment": true,
+  "reason": "US government action on tariffs with China, a global economic power, has a broad, direct impact on US corporate earnings, inflation, and global trade sentiment."
+ },
+ {
+  "market_id": "0x849134233b3e56ac04b6babf4117ad2398ebc1121c12dedabd30a12915ca7b92",
+  "question_relevance": 0.75,
+  "positive_sentiment": true,
+  "reason": "Action by a major US ally to remove retaliatory tariffs directly impacts US exports, affecting US corporate revenues in various sectors."
+ },
+ {
+  "market_id": "0x78e9d8bbef9010b1af25b77cc6fc84aaf7ae845367adb6699770df847ae1cf6a",
+  "question_relevance": 0.8,
+  "positive_sentiment": false,
+  "reason": "US government action imposing tariffs on a major industry like European cars directly impacts US consumer spending, inflation, and the auto sector's earnings."
+ },
+ {
+  "market_id": "0xce6b35fbb92a12a166a60ba5ad7b5cc5f17c8d0933e52b0f7fa9b9855e3e76db",
+  "question_relevance": 0.65,
+  "positive_sentiment": false,
+  "reason": "US government action imposing tariffs on EU alcohol directly impacts US importers, distributors, and consumer prices in a specific industry sector."
+ },
+ {
+  "market_id": "0xb3d517559b545c25b445e274cb53d5f24f1759d804f9adeec89f26c02dcf44e2",
+  "question_relevance": 0.9,
+  "positive_sentiment": true,
+  "reason": "US government action removing a 'blanket tariff' implies a broad, market-wide impact on US corporate earnings, inflation, and economic activity."
+ },
+ {
+  "market_id": "0xc94d1d7d260e2d8f0e46e39f0a400aefc70414291e25f42cf349cd5ed50fd1f8",
+  "question_relevance": 0.85,
+  "positive_sentiment": true,
+  "reason": "US government action lowering tariffs on the EU, a major trading bloc, directly impacts US corporate earnings, inflation, and trade relations across many sectors."
+ },
+ {
+  "market_id": "0xbe5219d1c82daaa110a20c0b50dae77f681f05eb43094e05ea24fe833c5ec47f",
+  "question_relevance": 0.85,
+  "positive_sentiment": true,
+  "reason": "Direct US government action on tariffs with China, a major trading partner, would significantly impact US company costs and trade across broad sectors."
+ },
+ {
+  "market_id": "0xf1cd536d805a98563a4c7221fd088dabdebdba500f32505b646a440c0a044e77",
+  "question_relevance": 0.9,
+  "positive_sentiment": true,
+  "reason": "Direct US government action to reduce a majority of tariffs would be a broad, market-wide policy shift, significantly impacting US company costs and trade across many sectors."
+ },
+ {
+  "market_id": "0xb7ad06db4383aeccf99329bc835ccd87cb9cde8b1107727e9376a03a99185ac2",
+  "question_relevance": 0.7,
+  "positive_sentiment": true,
+  "reason": "Direct US government action on tariffs with Vietnam, a significant manufacturing hub, would impact US company supply chains and costs in relevant sectors."
+ },
+ {
+  "market_id": "0xd3eab5cbba17e23590d8268f539660832e314880fa61eb5ce05f090ddc115938",
+  "question_relevance": 0.55,
+  "positive_sentiment": true,
+  "reason": "Direct US government action on tariffs with Cambodia would impact US companies in specific sectors like apparel, though with less broad market impact than major partners."
+ },
+ {
+  "market_id": "0x837999ac0f7b37d3ebe8fb17fee9f5876648b43ffd0ce2067aeba138496b40fc",
+  "question_relevance": 0.35,
+  "positive_sentiment": true,
+  "reason": "Direct US government action on tariffs with Laos would have a limited impact on US equities due to Laos's relatively small trade volume with the US."
+ },
+ {
+  "market_id": "0xa4a9e7e3fe8d845e25449e9fd7ce4b3e31b4479298e5fb47e0bfa725470a21d5",
+  "question_relevance": 0.85,
+  "positive_sentiment": true,
+  "reason": "Direct US government action on tariffs with China, a major trading partner, would significantly impact US company costs and trade across broad sectors."
+ },
+ {
+  "market_id": "0x6219a8271764af7c7297ecd8379478f86fbb25e1ab6a3f92d78e66c2013a6ab5",
+  "question_relevance": 0.8,
+  "positive_sentiment": true,
+  "reason": "Direct US government action on tariffs with Taiwan, a critical tech supply chain partner, would significantly impact US technology and manufacturing sectors."
+ },
+ {
+  "market_id": "0x9e0d7d67a964c30c598770af8111e547bbbc50fc079de4edf3a9aee62166bf40",
+  "question_relevance": 0.85,
+  "positive_sentiment": true,
+  "reason": "Direct US government action on tariffs with the European Union, a major trading bloc, would significantly impact US company costs and trade across broad sectors."
+ },
+ {
+  "market_id": "0x33085df7b4c5b27cea680625ed033192fc72c31065b038a87432cd37b65c2688",
+  "question_relevance": 0.75,
+  "positive_sentiment": true,
+  "reason": "Direct US government action on tariffs with Japan, a major trading partner, would significantly impact US companies in sectors like automotive and electronics."
+ },
+ {
+  "market_id": "0xfe3d831e7c0f6f9b14e54e01260a1be22e24aa8f8ddce487534a5d8fc48e1613",
+  "question_relevance": 0.75,
+  "positive_sentiment": true,
+  "reason": "Direct US government action on tariffs with South Korea, a major trading partner, would significantly impact US companies in sectors like electronics and automotive."
+ },
+ {
+  "market_id": "0xf1a63de027b2b62552a9ddae358ccf01542ac0bb71294f1f94f1665cc26e5402",
+  "question_relevance": 0.6,
+  "positive_sentiment": true,
+  "reason": "Direct US government action on tariffs with India, a growing trading partner, would impact US companies in specific sectors like IT services and pharmaceuticals."
+ },
+ {
+  "market_id": "0xad900367d22293246f9bc19949304b47ebb2dc7718ea9a6f3e5d642ca572d884",
+  "question_relevance": 0.45,
+  "positive_sentiment": true,
+  "reason": "Direct US government action on tariffs with Indonesia, a smaller but direct trading partner, would have a moderate impact on US companies involved in specific goods."
+ },
+ {
+  "market_id": "0xafa071681d587c17290fd143cf4e1764eb22be2a1831adb0572a313b26df5d0a",
+  "question_relevance": 0.6,
+  "positive_sentiment": true,
+  "reason": "Direct US government action on tariffs with Switzerland, a high-value trading partner, would impact US companies in sectors like pharmaceuticals and medical devices."
+ },
+ {
+  "market_id": "0xbd044d36e858baef2fc7d809acc0c38109dc8e12a7b519e15ee18c8c5b55b938",
+  "question_relevance": 0.45,
+  "positive_sentiment": true,
+  "reason": "Direct US government action on tariffs with South Africa, a smaller but direct trading partner, would have a moderate impact on US companies involved in specific commodities."
+ },
+ {
+  "market_id": "0xc98ddbc7a1e0250b2b67a0c932f709c1e4e7bddaef2347bccc6df4d46445464a",
+  "question_relevance": 0.35,
+  "positive_sentiment": true,
+  "reason": "Direct US government action on tariffs with Pakistan, a relatively minor trading partner, would have a limited impact on broad US equities."
+ },
+ {
+  "market_id": "0x3716257ffa7dc4723273ed2b5326e42a67b38c0b7160ce0e8256c4e52904376b",
+  "question_relevance": 0.35,
+  "positive_sentiment": true,
+  "reason": "Direct US government action on tariffs with Bangladesh, a relatively minor trading partner, would have a limited impact on broad US equities."
+ },
+ {
+  "market_id": "0xa757b564604c0abb02fcaf167d93130fe635c223021bfe9d6b95433ab8347d55",
+  "question_relevance": 0.85,
+  "positive_sentiment": true,
+  "reason": "A US-China trade deal directly impacts a broad range of US companies' revenues and supply chains, representing a significant, market-moving US government action."
+ },
+ {
+  "market_id": "0x0728f2000745d1a51c73223095eab42ca7737bd33f9288d78b36b2aa73c1b24f",
+  "question_relevance": 0.65,
+  "positive_sentiment": true,
+  "reason": "Direct US government action on tariffs for Vietnam would impact specific US sectors and companies, representing a moderate but direct channel."
+ },
+ {
+  "market_id": "0x7f0a359fb77e8e016155d8e1bd6c75d06359f761fca0ba2586ecd688dbbc9c79",
+  "question_relevance": 0.75,
+  "positive_sentiment": true,
+  "reason": "Direct US government action on tariffs for South Korea, a major trading partner, would impact significant US sectors like automotive and electronics."
+ },
+ {
+  "market_id": "0x80c235da21d3c64d05c8fdeff36f384b0f661850325d45b75b0be6f273018e58",
+  "question_relevance": 0.75,
+  "positive_sentiment": true,
+  "reason": "Direct US government action on tariffs for Japan, a major trading partner, would impact significant US sectors like automotive and machinery."
+ },
+ {
+  "market_id": "0xc3ad8026d7dbbad93b96ffd93b37bf6d7b2005c9ec1df5aae9090f96d5ecc7bc",
+  "question_relevance": 0.55,
+  "positive_sentiment": true,
+  "reason": "Direct US government action on tariffs for Cambodia would impact a narrower range of US companies and sectors due to its smaller trade volume."
+ },
+ {
+  "market_id": "0xdc0a9ceee611571059d73072bc3a9ccd9550a8437cf197516d2d8112fe47543f",
+  "question_relevance": 0.8,
+  "positive_sentiment": true,
+  "reason": "Direct US government action on tariffs for Taiwan, a critical tech trading partner, would significantly impact US semiconductor and electronics sectors."
+ },
+ {
+  "market_id": "0xac382e0efb781abf66cc234015cc79fbd5cabfc9d730db296dcd34dae5de587b",
+  "question_relevance": 0.65,
+  "positive_sentiment": true,
+  "reason": "Direct US government action on tariffs for Indonesia would impact specific US sectors and companies, representing a moderate but direct channel."
+ },
+ {
+  "market_id": "0x075735f1775908870f8c6a9f1ddb1b5c4547506b8fddbfb5820a5ce062e5ad35",
+  "question_relevance": 0.6,
+  "positive_sentiment": true,
+  "reason": "Direct US government action on tariffs for Switzerland would impact specific US sectors, particularly those involved in specialized goods."
+ },
+ {
+  "market_id": "0x8fb6531d2874a37e58c7810a41e909d31f7181cff3d05b461cb59e88178d1b44",
+  "question_relevance": 0.05,
+  "positive_sentiment": true,
+  "reason": "Tariff changes on Laos by the US government would have negligible impact on US-listed equities due to minimal trade volume."
+ },
+ {
+  "market_id": "0xbfd4016fd63a2aad121829ab5a63ba4caa35e649b107145caf88d7fe6719ff6e",
+  "question_relevance": 0.5,
+  "positive_sentiment": true,
+  "reason": "A reduction or pause in US tariffs on India would directly impact specific US sectors and companies with significant trade ties, but not the entire market."
+ },
+ {
+  "market_id": "0xd7a488f12497203df12bb14ce1080861601aca56b592a4f64dfc812e79f4fe3e",
+  "question_relevance": 0.7,
+  "positive_sentiment": true,
+  "reason": "A reduction or pause in US tariffs on the EU would directly impact many US companies across broad sectors due to the significant trade volume between the two economies."
+ },
+ {
+  "market_id": "0xa25c50909648567ac57f84f1145a9da33d2baad30f7b54e29fd7ab11e66d7c2b",
+  "question_relevance": 0.2,
+  "positive_sentiment": true,
+  "reason": "Tariff changes on Bangladesh by the US government would primarily affect the US apparel sector, with limited broader market impact."
+ },
+ {
+  "market_id": "0x58eac425dc1f760a00a563573902649f8c6008cd3e45540735be6433efcc2518",
+  "question_relevance": 0.3,
+  "positive_sentiment": true,
+  "reason": "A reduction or pause in US tariffs on South Africa could impact specific US industries tied to commodities or regional trade, but not broadly."
+ },
+ {
+  "market_id": "0x68b9fe809c01ecd05e9a5c677a013abadf77016584864ac69e3d52d4d488f8d2",
+  "question_relevance": 0.8,
+  "positive_sentiment": true,
+  "reason": "A reduction or pause in US tariffs on China would have a direct and broad impact across numerous US sectors and the overall market due to the massive trade relationship."
+ },
+ {
+  "market_id": "0xaba550f8e8f26177d391d7e67c0277d3ca601c32d7eedc8c62521b67f917bdbc",
+  "question_relevance": 0.2,
+  "positive_sentiment": true,
+  "reason": "Tariff changes on Pakistan by the US government would primarily affect the US textile sector, with limited broader market impact."
+ },
+ {
+  "market_id": "0xf69184816dad0403cb113dbf45496882056bb66b5bf059d56c9dd5fc9a6cd09d",
+  "question_relevance": 0.05,
+  "positive_sentiment": true,
+  "reason": "Tariff changes on Syria by the US government would have negligible impact on US-listed equities due to minimal trade and existing sanctions."
+ },
+ {
+  "market_id": "0xbd18f7ae313a99de2a1886a66117dc33e33764da35da00b6437da3959544e34d",
+  "question_relevance": 0.2,
+  "positive_sentiment": true,
+  "reason": "Tariff changes with Sri Lanka, a minor US trading partner, would have negligible direct impact on US-listed equities or broad economic sectors."
+ },
+ {
+  "market_id": "0x4b78f8b6648d53af3f68d088220e847a5e54776736d9baf4deb0677a8e10771c",
+  "question_relevance": 0.9,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with China, a major US trading partner, would directly and broadly impact US corporate earnings, supply chains, and overall market sentiment."
+ },
+ {
+  "market_id": "0xf3714b6a1b25b3bcbf2bee6fa820b018bec57bd006fdb8459a5e6f5bd97749a9",
+  "question_relevance": 0.8,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with Canada, a major US trading partner and neighbor, would directly impact US industries, supply chains, and cross-border trade."
+ },
+ {
+  "market_id": "0x3eb1809c02cb66ca3d49857d47c50b8ccea26a0be970fa7af880a0d0ea08ca62",
+  "question_relevance": 0.7,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with South Korea, a significant US trading partner, would directly impact specific US sectors like automotive and electronics."
+ },
+ {
+  "market_id": "0x0481aee42d7679f91071834a4c001b79e28c26d6ecf0b0ff14444aad3f38cc2c",
+  "question_relevance": 0.8,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with Germany, a major US trading partner within the EU, would directly impact significant US industries and transatlantic trade relations."
+ },
+ {
+  "market_id": "0x7f99d8d0221a775ca04249b00d86c02da178a897c7847c1c50972895758fcb8c",
+  "question_relevance": 0.6,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with Brazil, a notable US trading partner, would directly impact specific US sectors like agriculture and raw materials."
+ },
+ {
+  "market_id": "0x97c739bed00d60ed192e70500491d1a485c7c808d65cb131dd95a5d0b9d1f31c",
+  "question_relevance": 0.4,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with Israel, while an ally, would have limited direct impact on broad US equities due to its smaller trade volume, affecting only niche sectors."
+ },
+ {
+  "market_id": "0xc05ab11d9d653f2a29310e6b6d7af2ed25f5437439ad7cd43eeadcc74f617758",
+  "question_relevance": 0.6,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with India, a significant and growing US trading partner, would directly impact specific US sectors and bilateral trade relations."
+ },
+ {
+  "market_id": "0x0366d1248b7414f3c0c59eb87eb2cc91ef4a5ff193c1c8513e4a07c9b46b76d2",
+  "question_relevance": 0.85,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with Mexico, a major US trading partner, would directly impact US companies' supply chains and profitability, easing trade tensions across multiple sectors."
+ },
+ {
+  "market_id": "0x3b842c0c208f135cc349c5e1e5ed9ecc788e3e032783b10dcae5b4304182b516",
+  "question_relevance": 0.65,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with Australia would directly impact specific US sectors involved in trade, easing potential trade friction, though with less broad market impact than major partners."
+ },
+ {
+  "market_id": "0x6de0ec6754431d05b6743998cd4698071b19167cbe1980c91591851ae5daea55",
+  "question_relevance": 0.65,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with France would directly impact US companies trading with a major European economy, easing specific trade tensions in relevant sectors."
+ },
+ {
+  "market_id": "0xbd54d0ffce432ea816e0d359cea8bad132434db1f95ec6cf2379f98002b75e1b",
+  "question_relevance": 0.45,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with Argentina would directly affect US companies involved in specific trade sectors, but its overall market impact would be limited due to smaller trade volume."
+ },
+ {
+  "market_id": "0x38ffbed82a0509c2b3b56135274f01c94ee2531d82104652efed754a613b31a3",
+  "question_relevance": 0.45,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with Switzerland would directly affect US companies in specialized trade sectors, but its overall market impact would be limited due to smaller trade volume."
+ },
+ {
+  "market_id": "0x9c75d239061dc9b370cb4f6239e7960ae0ef29416b24bc920787f96023411998",
+  "question_relevance": 0.95,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with China, a critical global trading partner, would have a direct, broad, and significant impact on US corporate supply chains, profitability, and overall market sentiment."
+ },
+ {
+  "market_id": "0x031309633aec94c2975eb19f460d990271c6d22e60ee1031962b15e3c2c0d437",
+  "question_relevance": 0.85,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with Canada, a major US trading partner, would directly impact US companies' supply chains and profitability, easing trade tensions across multiple sectors."
+ },
+ {
+  "market_id": "0xa6836247e67848c45574717fadc54185cb1784d9d0ed86e8d6f459b0be7d0105",
+  "question_relevance": 0.65,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with South Korea would directly impact US companies in key sectors like automotive and electronics, easing specific trade tensions."
+ },
+ {
+  "market_id": "0x93d2e07f954250296019471c8732a1ed8e2c77e14982816ab4b8ff3cae5af41d",
+  "question_relevance": 0.75,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with Germany, a major US trading partner, would directly impact US companies involved in transatlantic trade, affecting various sectors."
+ },
+ {
+  "market_id": "0x9212a79001e12288eb93d975f691265eea95e4d192f0a874e04b02d7dd587698",
+  "question_relevance": 0.65,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with Brazil, a significant US trading partner, would directly impact US companies in relevant sectors like agriculture and manufacturing."
+ },
+ {
+  "market_id": "0xb062856c372be52fc467891f890f515a3e38155f2322d706521ae8a72597a28a",
+  "question_relevance": 0.45,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with Israel would have a direct but relatively smaller impact on overall US equities due to lower trade volume compared to major partners."
+ },
+ {
+  "market_id": "0x770059279b0e2cdf0e50a1f6c624368521ff0574219c506af3f737b1162a4912",
+  "question_relevance": 0.6,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with India, a growing US trading partner, would directly impact US companies seeking to expand trade and investment in the region."
+ },
+ {
+  "market_id": "0x863a698cc59a3fa77f3e17fc0d60ae4c32369055bb8181004154182bab5830c3",
+  "question_relevance": 0.8,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with Mexico, a critical US trading partner with integrated supply chains, would have a very direct and broad impact on numerous US industries."
+ },
+ {
+  "market_id": "0x0b8e31839eea511a479a7c5a36de37bab8a18836a034176780ab7a5548f27c42",
+  "question_relevance": 0.5,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with Australia would have a direct impact on specific US sectors, but a more moderate effect on overall US equities due to trade volume."
+ },
+ {
+  "market_id": "0xe50cb9137eda089a6d2486974840788cf8aebca348049bc3fba8f70827b7a97c",
+  "question_relevance": 0.7,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with France, a major European economy and US trading partner, would directly impact US companies involved in transatlantic trade."
+ },
+ {
+  "market_id": "0x6e7eb5b82b4c25c2fd999c345e7f6b80a6488eaf5e453540a6379c6c5e277f2b",
+  "question_relevance": 0.35,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with Argentina would have a direct but relatively low impact on broad US equities due to its smaller trade volume with the US."
+ },
+ {
+  "market_id": "0x26c759b38d7e4256a1ce639a4033819ac203571aadd6161c3cdfb4550ae6f093",
+  "question_relevance": 0.4,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with Switzerland, a developed but moderate US trade partner, would have a modest, sector-specific impact on US equities."
+ },
+ {
+  "market_id": "0x07a0819d15876d8566e6e252f8c74fa7a71d7baa6024cac65e572b82ef32f3df",
+  "question_relevance": 0.9,
+  "positive_sentiment": true,
+  "reason": "Direct US fiscal policy (stimulus checks) would broadly impact US consumer spending and the overall economy, making it a significant market mover."
+ },
+ {
+  "market_id": "0x8205c44d36105c796e3ff64139a8e0991c4a3a2ea7e853363e7ac29666d0ec95",
+  "question_relevance": 0.6,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with India, a large and growing economy, would impact specific US sectors involved in US-India trade, with broader reach than smaller partners."
+ },
+ {
+  "market_id": "0x6a1d24b1256c9e78a590f7a524a982d0ccf8d5b0100c4bf96590bba0c9384eb0",
+  "question_relevance": 0.8,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with Mexico, a top-tier US trade partner with deeply integrated supply chains, would significantly impact multiple US sectors and the broader market."
+ },
+ {
+  "market_id": "0xa7ccc51f92e39d269f66d7e8cbbbfba740b3968a15af64c330d1dea9f0ea768d",
+  "question_relevance": 0.9,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with China, a primary US trade partner and global economic power, would be a major market-moving event impacting a vast array of US sectors."
+ },
+ {
+  "market_id": "0x8bdf386505cf47594428bbc35878c6ca51bd27f83899aa0dc24de86e06700380",
+  "question_relevance": 0.3,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with Australia, a developed but smaller US trade partner, would have a limited, niche impact on US equities."
+ },
+ {
+  "market_id": "0x33b5112f7773f7d85611e8f412748e5100f3c3597f27f6111aae4a91b7e75406",
+  "question_relevance": 0.2,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with Israel, a developed but relatively small US trade partner, would have a very limited, niche impact on US equities."
+ },
+ {
+  "market_id": "0x0e566fde797e07bcc3808d89dc4a5c5c56f73bfe149d863547a9fcd7e913f24f",
+  "question_relevance": 0.8,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with Canada, a top-tier US trade partner with deeply integrated supply chains, would significantly impact multiple US sectors and the broader market."
+ },
+ {
+  "market_id": "0x9dcd97bd5da9af936d153284223ec823bb99cbdef6343548daccd477d8326a8d",
+  "question_relevance": 0.65,
+  "positive_sentiment": false,
+  "reason": "US tariffs on European countries, even if framed around Greenland, would escalate trade tensions, impacting US multinational companies and trade-exposed sectors."
+ },
+ {
+  "market_id": "0x75ac86feeeda6cc683af948c4bda7b7d2579c2de8ae5a1f9a9773bdf161970ad",
+  "question_relevance": 0.65,
+  "positive_sentiment": false,
+  "reason": "US tariffs on European countries, even if framed around Greenland, would escalate trade tensions, impacting US multinational companies and trade-exposed sectors."
+ },
+ {
+  "market_id": "0x73013e75e41b45aa0c483059f78061f9d87b54f0392c1a77f2b80d70a311e259",
+  "question_relevance": 0.65,
+  "positive_sentiment": false,
+  "reason": "US tariffs on Denmark, framed around Greenland, would escalate trade tensions, impacting US multinational companies and trade-exposed sectors."
+ },
+ {
+  "market_id": "0x4ca8a590e2de2eb8994dca0020dbed5163d3ca71308f4234ff41e2a1bdde03a5",
+  "question_relevance": 0.65,
+  "positive_sentiment": false,
+  "reason": "US tariffs on Norway, framed around Greenland, would escalate trade tensions, impacting US multinational companies and trade-exposed sectors."
+ },
+ {
+  "market_id": "0xfb0cdc4353dbfe9c6c111ff0907ab0eb81ad8194a3ad156c1bbfabddcade6cb6",
+  "question_relevance": 0.65,
+  "positive_sentiment": false,
+  "reason": "US tariffs on Sweden, framed around Greenland, would escalate trade tensions, impacting US multinational companies and trade-exposed sectors."
+ },
+ {
+  "market_id": "0xc1324cf80e97ad05452dfd9ebba972e7ac99b73d5d1ec16644309504571b8739",
+  "question_relevance": 0.65,
+  "positive_sentiment": false,
+  "reason": "US tariffs on France, framed around Greenland, would escalate trade tensions, impacting US multinational companies and trade-exposed sectors."
+ },
+ {
+  "market_id": "0x9999af27f191a5a8d142e9d7276a02915325c8b2545308cc928574122000fdec",
+  "question_relevance": 0.65,
+  "positive_sentiment": false,
+  "reason": "US tariffs on Germany, framed around Greenland, would escalate trade tensions, impacting US multinational companies and trade-exposed sectors."
+ },
+ {
+  "market_id": "0xc9f62dd1c79f1878801718ad14b6751f48dbab9ddee6f24f722ff95c74982f6a",
+  "question_relevance": 0.65,
+  "positive_sentiment": false,
+  "reason": "US tariffs on the United Kingdom, framed around Greenland, would escalate trade tensions, impacting US multinational companies and trade-exposed sectors."
+ },
+ {
+  "market_id": "0xb8a9a44a11b90fa26e85980d0450e6738796d71ea11bdd637d920fbdf36c9ac8",
+  "question_relevance": 0.75,
+  "positive_sentiment": false,
+  "reason": "Direct US government action (tariffs) on a major European trading partner (Netherlands) would impact US companies' supply chains and profitability."
+ },
+ {
+  "market_id": "0x3d0e08e326fc030d9ec6880b1893038320cf20dbe129a9720c8b0e0dbb70abcf",
+  "question_relevance": 0.65,
+  "positive_sentiment": false,
+  "reason": "Direct US government action (tariffs) on a European trading partner (Finland) would impact US companies, though likely less broadly than the Netherlands."
+ },
+ {
+  "market_id": "0x87f69e732ec786ddf90df72bad9184af94769a12fb617ba076552445528ce7e9",
+  "question_relevance": 0.8,
+  "positive_sentiment": false,
+  "reason": "Direct US legislative action (Congress passing tariffs) would directly impact US trade policy, affecting US companies' costs and revenues across sectors."
+ },
+ {
+  "market_id": "0x76ccc95393f89f2af45f7391661be540833d61da56a02a5bc36d561743fe486e",
+  "question_relevance": 0.95,
+  "positive_sentiment": false,
+  "reason": "A new 10% US blanket tariff is a major, broad US policy action with direct and widespread negative economic consequences for US companies and consumers."
+ },
+ {
+  "market_id": "0x5ed2d5142cb7bfdcb1ecdec342d73697d5d61b3ed5ab21c52cb34ed41b9b0a41",
+  "question_relevance": 0.85,
+  "positive_sentiment": false,
+  "reason": "Direct US government action (tariffs) on Canada, the US's largest trading partner, would significantly impact US companies across various sectors."
+ },
+ {
+  "market_id": "0x5b00ddea88e4ac439113b2f937f9f6ac93473f6fe946acd1af27295dcec0080c",
+  "question_relevance": 0.75,
+  "positive_sentiment": false,
+  "reason": "New US tariffs announced by the Trump administration would be a direct US policy action impacting trade, with potential for broad economic effects."
+ },
+ {
+  "market_id": "0x26fd85f0907ff72bba2adefa47c9ab827ec51d7336f10021a46094c5413b6394",
+  "question_relevance": 0.85,
+  "positive_sentiment": true,
+  "reason": "Direct US government action to reduce tariffs on major trading partners (Mexico/Canada) would positively impact US companies' costs, revenues, and trade flows."
+ },
+ {
+  "market_id": "0x63b445bd487e7c388a8c9b69606ae389547ae980adb3cb6efe3657e87e4c3820",
+  "question_relevance": 0.7,
+  "positive_sentiment": false,
+  "reason": "Direct US government action (tariffs) on India, a significant emerging market, would impact US companies involved in trade with India."
+ },
+ {
+  "market_id": "0x8e12d56624f1161c0dd86a149e235ff5e62addc1ea384b34f8c7ec91e47a0511",
+  "question_relevance": 0.9,
+  "positive_sentiment": false,
+  "reason": "Direct US government policy (tariffs) on China, a major trading partner, would significantly impact broad US sectors and corporate earnings."
+ },
+ {
+  "market_id": "0x3bd1994962e1192d97480ff92d44692876471f6fdd8337f084cbda83dc15ab5f",
+  "question_relevance": 0.8,
+  "positive_sentiment": false,
+  "reason": "Direct US government policy (tariffs) on Canada, a major trading partner, would significantly impact US cross-border trade and corporate earnings."
+ },
+ {
+  "market_id": "0xd101273544277e19e469ad447032433dfc0a93d216a6a47994b7273cd1706e5d",
+  "question_relevance": 0.8,
+  "positive_sentiment": false,
+  "reason": "Direct US government policy (tariffs) on Mexico, a major trading partner, would significantly impact US cross-border trade and corporate earnings."
+ },
+ {
+  "market_id": "0x4ee267cf2ea1509dd6a7e39a0eb167ef721cc62fe1f586d4f7f50c5b62021e3e",
+  "question_relevance": 0.4,
+  "positive_sentiment": false,
+  "reason": "Direct US government policy (tariffs) on Venezuela would have a limited impact on broad US equities due to already strained trade relations and smaller trade volume."
+ },
+ {
+  "market_id": "0x49f6d75de66f9aa522d4a69f71d5f1cd80bc78e6434f22102f2ccdc3f39a3576",
+  "question_relevance": 0.6,
+  "positive_sentiment": false,
+  "reason": "Direct US government policy (tariffs) on Australia, a significant but not top-tier trading partner, would impact specific US sectors and corporate earnings."
+ },
+ {
+  "market_id": "0xc0d1bfa75a233deaaebfaf6440b70b148343469ad28ed817253b1e0239fd99db",
+  "question_relevance": 0.6,
+  "positive_sentiment": false,
+  "reason": "Direct US government policy (tariffs) on Brazil, a significant but not top-tier trading partner, would impact specific US sectors and corporate earnings."
+ },
+ {
+  "market_id": "0x776915f341a490466533b609107dc7b696f134180f5b1ba34f789aaa380b070c",
+  "question_relevance": 0.8,
+  "positive_sentiment": false,
+  "reason": "Direct US government policy (tariffs) on Japan, a major trading partner, would significantly impact US sectors like automotive and electronics, affecting corporate earnings."
+ },
+ {
+  "market_id": "0x64a4e508cc47b98475094691382277424dfcb3a98bf4492c22c92c4767596d0f",
+  "question_relevance": 0.8,
+  "positive_sentiment": false,
+  "reason": "Direct US government policy (tariffs) on South Korea, a major trading partner, would significantly impact US sectors like technology and automotive, affecting corporate earnings."
+ },
+ {
+  "market_id": "0x530ec9ba2fab8e6130677e101be8bbdfcb59b255732f9cd3730860717509d47d",
+  "question_relevance": 0.75,
+  "positive_sentiment": false,
+  "reason": "Direct US government action (tariffs) on a major global economy (Russia) would impact US companies' trade flows and potentially commodity markets, creating a significant market event."
+ },
+ {
+  "market_id": "0xfd52e19b299a869bf5bb36a9cbc29fefbdf2160e3acf56480d1c059ce42c1abf",
+  "question_relevance": 0.75,
+  "positive_sentiment": false,
+  "reason": "Direct US government action (tariffs) on a significant manufacturing hub (Vietnam) would impact US companies' supply chains and trade costs, affecting specific sectors and potentially broader markets."
+ },
+ {
+  "market_id": "0x2e28c5bb005502bde4d12029c2cc12537d70d8a2411dda2ad202544abf048574",
+  "question_relevance": 0.75,
+  "positive_sentiment": false,
+  "reason": "Direct US government action (tariffs) on a major European economy (France) would impact US companies' trade and could lead to broader EU-US trade tensions, affecting multiple sectors."
+ },
+ {
+  "market_id": "0x03af958c2cc5095fe82d8840389177e72de113b97f7f67ea278dd20ed3be4c5b",
+  "question_relevance": 0.8,
+  "positive_sentiment": false,
+  "reason": "Direct US government action (tariffs) on Germany, the largest European economy, would significantly impact US industries like automotive and machinery, and could escalate broader trade wars."
+ },
+ {
+  "market_id": "0xa9570d097774e14c2ba95eac90077b41309ba10c01a7d0be1bcb81c892bfaaa7",
+  "question_relevance": 1.0,
+  "positive_sentiment": false,
+  "reason": "A general tariff on all imports is a direct, economy-wide US government action that would fundamentally alter costs for virtually all US companies, causing a massive market shock."
+ },
+ {
+  "market_id": "0x66d418945091d2f4e3a517906ea6a8670abef60b71c33140de75314a20e46f9b",
+  "question_relevance": 0.95,
+  "positive_sentiment": false,
+  "reason": "A 54% tariff on China is a direct, extremely high-magnitude US government action on a critical trading partner, profoundly impacting US supply chains, consumer prices, and corporate earnings across many sectors."
+ },
+ {
+  "market_id": "0xb6e892114540dad45ad54826b63f8c0e7523a52e017ba1355acc7462c3377cb6",
+  "question_relevance": 0.8,
+  "positive_sentiment": false,
+  "reason": "Increasing tariffs on China is a direct US government action impacting trade with a critical partner, affecting US companies' costs, supply chains, and potentially leading to broader market uncertainty."
+ },
+ {
+  "market_id": "0xdbe0d0e7c1f0dcb8cbfb20c88ddd9f75d109748f4258f59609d124940c4adc57",
+  "question_relevance": 0.8,
+  "positive_sentiment": true,
+  "reason": "Pausing reciprocal tariffs on the EU is a direct US government action that would ease trade tensions, reduce costs for US businesses, and positively impact affected sectors and market sentiment."
+ },
+ {
+  "market_id": "0x9c0376d7567e477376b557c4cf94a165c5bb6fb41439bac94d26339979e8f00b",
+  "question_relevance": 0.9,
+  "positive_sentiment": true,
+  "reason": "Direct US government action removing a blanket tariff would broadly lower costs for US businesses and consumers, impacting multiple sectors."
+ },
+ {
+  "market_id": "0x19fabfe0526a4897c5da146c3f258cdc4d9219faffc276a7a4dcfb9567745922",
+  "question_relevance": 0.85,
+  "positive_sentiment": true,
+  "reason": "Direct US government action lowering tariffs on the EU would reduce costs for US companies trading with a major partner, impacting several sectors."
+ },
+ {
+  "market_id": "0x246847d434dc502a05f64eb0b7c828cc2ed4dcb28e62383b9f288f66aab6b06c",
+  "question_relevance": 0.85,
+  "positive_sentiment": true,
+  "reason": "US court action blocking tariffs would directly prevent or reverse increased costs for US businesses, impacting various sectors."
+ },
+ {
+  "market_id": "0x62777fa95acbc41a7c66df01f5db2e01d51f82b6916ec4257bd63b14e1690bbe",
+  "question_relevance": 0.9,
+  "positive_sentiment": false,
+  "reason": "Direct US government action increasing tariffs on China would broadly raise costs for US businesses, impacting multiple sectors and supply chains."
+ },
+ {
+  "market_id": "0x6d2b502ec35cbd35c891def7e2ee1a2515a47ef0a16b0517e37f2eaad88a9c0f",
+  "question_relevance": 0.8,
+  "positive_sentiment": false,
+  "reason": "Foreign government action increasing tariffs on US goods would directly reduce revenue and market access for US exporters, impacting specific sectors."
+ },
+ {
+  "market_id": "0x0966d71b03a061516eb2f6566d7f70d94add56d1fb6a5b5d1e68d3d59fcb6322",
+  "question_relevance": 0.9,
+  "positive_sentiment": false,
+  "reason": "Direct US government action imposing large tariffs would broadly raise costs for US businesses, impacting multiple sectors and supply chains."
+ },
+ {
+  "market_id": "0xb78982c5836f531ac38f6c5e9da073844864d2e4d7350156226145f3983dfb82",
+  "question_relevance": 0.85,
+  "positive_sentiment": true,
+  "reason": "Direct US government action removing a majority of reciprocal tariffs would broadly lower costs for US businesses, impacting multiple sectors."
+ },
+ {
+  "market_id": "0x2f91477e922e33aa5a6b15ed24bbb42d9bd17662c23674f133d3b200372ff7dc",
+  "question_relevance": 0.95,
+  "positive_sentiment": true,
+  "reason": "A US-China trade deal would directly improve market access and reduce costs for numerous US companies, broadly impacting the economy and equity markets."
+ },
+ {
+  "market_id": "0x8143ff1a26fbd70e7ff1dcd68da2bf2cef327a1be279a8f192a8e079902822aa",
+  "question_relevance": 0.85,
+  "positive_sentiment": true,
+  "reason": "A change in US tariff rates on China directly impacts a broad range of US companies' costs and revenues, making it a significant market-moving event."
+ },
+ {
+  "market_id": "0x5a079f12d8375090ce002481c4b96e03bc3f9765fe334366460a0874752808c7",
+  "question_relevance": 0.95,
+  "positive_sentiment": false,
+  "reason": "Tariffs on Apple would directly impact a mega-cap US company's earnings and supply chain, with potential ripple effects across the tech sector and broader market sentiment."
+ },
+ {
+  "market_id": "0xe16ea0533ad398a6a54ef4350852bd67748f0cd18b4a0ed5a785914d344b396b",
+  "question_relevance": 0.85,
+  "positive_sentiment": true,
+  "reason": "A major US trade deal would directly impact a broad range of US companies through changes in tariffs, market access, and economic certainty, making it highly relevant."
+ },
+ {
+  "market_id": "0x43e11860c7c7a8c229975f678c1cfa0ae9521540f613229e22e82ee16681ab40",
+  "question_relevance": 0.85,
+  "positive_sentiment": true,
+  "reason": "A major US trade deal would directly impact a broad range of US companies through changes in tariffs, market access, and economic certainty, making it highly relevant."
+ },
+ {
+  "market_id": "0x661bd338d7caca6d0701360c27d4b43c832eba3856a8006640815273f1257140",
+  "question_relevance": 0.88,
+  "positive_sentiment": true,
+  "reason": "A new US-EU trade deal would directly impact a very broad range of US companies across multiple sectors due to the significant economic ties between the blocs."
+ },
+ {
+  "market_id": "0x5a3cd3fd25c29bace5628e71c958eab33f7ef2956e96fbbadd03b2083834fd3f",
+  "question_relevance": 0.75,
+  "positive_sentiment": true,
+  "reason": "A new US-India trade deal would directly impact US companies with exposure to the Indian market, affecting specific sectors like agriculture, tech, and manufacturing."
+ },
+ {
+  "market_id": "0x9143e4e4a449229e3d63711df9ebc06c88993a402cea98cc0542197678250d43",
+  "question_relevance": 0.98,
+  "positive_sentiment": true,
+  "reason": "A new US-Canada trade deal would have an extremely broad and deep impact on US equities due to the highly integrated economies and extensive cross-border trade."
+ },
+ {
+  "market_id": "0xf852ac4eeabed4f456a2805e5198bc944951f9a15ff6c9733f0cf5454fa33999",
+  "question_relevance": 0.75,
+  "positive_sentiment": true,
+  "reason": "A new US-Brazil trade deal would directly impact US companies with exposure to the Brazilian market, particularly in sectors like agriculture and manufacturing."
+ },
+ {
+  "market_id": "0x3eff746919b5a4f793ba1da1f87107b5d6478de91c3cd76ab2f839325050b4b6",
+  "question_relevance": 0.75,
+  "positive_sentiment": true,
+  "reason": "A new trade deal with Japan, a major US trading partner, would directly impact US companies in key sectors like automotive and agriculture."
+ },
+ {
+  "market_id": "0x282401d13e5bd089e789f23e36acd2f460b64ac04d64623180d80e1d59a2efa6",
+  "question_relevance": 0.45,
+  "positive_sentiment": true,
+  "reason": "A new trade deal with Indonesia, a significant emerging market, would directly impact US companies involved in trade, though less broadly than major partners."
+ },
+ {
+  "market_id": "0x7c9de7c10f6c844116abe7b47bd7c5dc4ca1c3da710813c02d3d388bc227f964",
+  "question_relevance": 0.35,
+  "positive_sentiment": true,
+  "reason": "A new trade deal with Argentina would have a direct but relatively limited impact on US companies due to smaller trade volumes compared to major partners."
+ },
+ {
+  "market_id": "0xdf0ee8c9f6e12c8438128c757199b3c2ac21954e6c00c0f19bac9bc030d40aa2",
+  "question_relevance": 0.55,
+  "positive_sentiment": true,
+  "reason": "A new trade deal with Vietnam, a growing manufacturing hub, would directly impact US companies with supply chain interests in Southeast Asia."
+ },
+ {
+  "market_id": "0x81be9005a562b527a227e92defdcb87e138b6d1a603343cf097c53afbc06dba2",
+  "question_relevance": 0.6,
+  "positive_sentiment": true,
+  "reason": "A new trade deal with Australia, a close US ally with an existing FTA, would still enhance trade and directly impact US companies."
+ },
+ {
+  "market_id": "0xf7cbc94517b4b8a334aa4962dc8927157c00468b157043ba3d85effe60679a9e",
+  "question_relevance": 0.75,
+  "positive_sentiment": true,
+  "reason": "A new trade deal with Mexico, a major US trading partner with deeply integrated supply chains, would have a direct and broad impact on US companies."
+ },
+ {
+  "market_id": "0x64ba1578a1351ede65fd74d8ad1ab7503da8b67f1bcf6f1a8068d86b1f40425b",
+  "question_relevance": 0.65,
+  "positive_sentiment": true,
+  "reason": "A new trade deal with South Korea, a major US ally and trading partner with an existing FTA, would directly impact US companies in key sectors."
+ },
+ {
+  "market_id": "0x80b383b22f2177f5b3a1f8ecdd451789b77c0e0bae223055e3c489095a98f5ca",
+  "question_relevance": 0.4,
+  "positive_sentiment": true,
+  "reason": "A new trade deal with Israel, a close US ally with an existing FTA, would directly impact US companies, likely concentrated in specific sectors."
+ },
+ {
+  "market_id": "0x3b265abb3a519f178e98913156b8da1af7c93a53ba2f9bdf8b96bf042b5ba356",
+  "question_relevance": 0.25,
+  "positive_sentiment": true,
+  "reason": "A trade deal with Pakistan, a minor US trading partner, would have limited direct impact on broad US equities."
+ },
+ {
+  "market_id": "0x1dffcb382c0b47154705f073cfea22f43c61a95d93d0d002a4e022600f9092dc",
+  "question_relevance": 0.75,
+  "positive_sentiment": true,
+  "reason": "A new trade deal with the United Kingdom, a major US ally and trading partner, would directly impact many US sectors."
+ },
+ {
+  "market_id": "0xb577481ebe9339dae28b07fab30a0d2cf8cae6e26dbe524871d7ea5cff4f5a19",
+  "question_relevance": 0.95,
+  "positive_sentiment": true,
+  "reason": "A trade deal with Russia would signify a massive geopolitical shift, profoundly impacting US energy, defense, and tech sectors due to eased sanctions."
+ },
+ {
+  "market_id": "0xd0278c6f7fa4dd0e0bd070e467407bc378d36e682d4e12f2cf903339966da066",
+  "question_relevance": 0.45,
+  "positive_sentiment": true,
+  "reason": "A trade deal with South Africa would affect specific US companies and sectors but is unlikely to broadly move the US market."
+ },
+ {
+  "market_id": "0x517d97c0e577d07f9ae2fd32e8d2b67a9dbfb9c9c13b64d60284fc002abb717f",
+  "question_relevance": 0.9,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with China, a major US trading partner, would directly impact many US sectors and global supply chains, easing trade tensions."
+ },
+ {
+  "market_id": "0x7d7bd88b69fe605b4fd19f24ee631caf1bf605e650ad4435ead349fbef523c54",
+  "question_relevance": 0.55,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with India would positively affect specific US sectors but would not have the broad market impact of a China deal."
+ },
+ {
+  "market_id": "0xd854644bc73383a2737771b8c2b55aa43ac53c375b32ea7ff70fe17e8fc187da",
+  "question_relevance": 0.7,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with Canada, a top US trading partner, would directly benefit many integrated US industries like automotive and agriculture."
+ },
+ {
+  "market_id": "0x531a5df549bc8ad4af764658d47a4a828d357a55621dda7e2af4101d485f0142",
+  "question_relevance": 0.7,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with Mexico, a top US trading partner, would directly benefit many integrated US industries like automotive and agriculture."
+ },
+ {
+  "market_id": "0xfb436051396382846c7b8bc14f8dd2f0e107c579f597f08f00f83fe7891a54d6",
+  "question_relevance": 0.75,
+  "positive_sentiment": true,
+  "reason": "A US tariff agreement with South Korea, a significant trading partner, directly impacts US companies' trade, supply chains, and profitability, easing trade uncertainty."
+ },
+ {
+  "market_id": "0x5ba55bd98c73ba1deeaa5d6026a9061fe836a7b91063dded0d778382c83e6d2f",
+  "question_relevance": 0.65,
+  "positive_sentiment": true,
+  "reason": "A US tariff agreement with Australia directly impacts US companies' trade and supply chains, easing trade uncertainty and potentially benefiting specific sectors."
+ },
+ {
+  "market_id": "0xd43da03631521d9553dd156b726591b5d10a2a765c6df79356d42e250ba160b6",
+  "question_relevance": 0.85,
+  "positive_sentiment": true,
+  "reason": "A US tariff agreement with Germany, a major global economy and trading partner, would directly impact US companies' trade, supply chains, and profitability, easing trade uncertainty."
+ },
+ {
+  "market_id": "0x5512f314f0292126038fb26e1fe93b8695f8d183e2b0608d9afec144f76fbd40",
+  "question_relevance": 0.85,
+  "positive_sentiment": true,
+  "reason": "A US tariff agreement with France, a major European economy and trading partner, would directly impact US companies' trade, supply chains, and profitability, easing trade uncertainty."
+ },
+ {
+  "market_id": "0xa1feeb2bb297314356299bacc411a5d1174d4e4df4ba8d408529f377f590f779",
+  "question_relevance": 0.65,
+  "positive_sentiment": true,
+  "reason": "A US tariff agreement with Brazil directly impacts US companies' trade, especially in agriculture and raw materials, easing trade uncertainty."
+ },
+ {
+  "market_id": "0xba564ae78bf4ee1cac74a75ceb4fd626eaa63fb20e83c186e405c6750228abb0",
+  "question_relevance": 0.55,
+  "positive_sentiment": true,
+  "reason": "A US tariff agreement with Argentina directly impacts US companies' trade, particularly in agriculture, easing trade uncertainty."
+ },
+ {
+  "market_id": "0x21f5c5fafd85053ba0aa144ea080ae89465fe2d42af3dab801b7c42e4afc056d",
+  "question_relevance": 0.55,
+  "positive_sentiment": true,
+  "reason": "A US tariff agreement with Israel directly impacts US companies' trade, particularly in technology and defense, easing trade uncertainty."
+ },
+ {
+  "market_id": "0x5a348e5d07ae3601a84ff33acd8e90b7c3e368c22736fac1430641c88c488f87",
+  "question_relevance": 0.65,
+  "positive_sentiment": true,
+  "reason": "A US tariff agreement with Switzerland directly impacts US companies' trade, particularly in specialized sectors like pharma and finance, easing trade uncertainty."
+ },
+ {
+  "market_id": "0x742a4343d891c74d092bcf7c5cd51aac2e7149045d0ea5edc84e52d49a135218",
+  "question_relevance": 0.7,
+  "positive_sentiment": false,
+  "reason": "US government imposing high tariffs on a major trading partner would disrupt supply chains and increase costs for US companies."
+ },
+ {
+  "market_id": "0x6ba01b84505b019e8c3ace62e85916535bdd950c0f7d78a6c1c6077fcb9b625c",
+  "question_relevance": 0.9,
+  "positive_sentiment": true,
+  "reason": "US agreement on tariffs with China would significantly impact trade, supply chains, and profitability for a wide range of US companies."
+ },
+ {
+  "market_id": "0x97dc62e0f3e72004bdd0c9fca9e7fb91a5b8cac56d57c5400b81a299b59593a7",
+  "question_relevance": 0.65,
+  "positive_sentiment": true,
+  "reason": "US agreement on tariffs with India would positively impact trade and supply chains for US companies involved in bilateral commerce."
+ },
+ {
+  "market_id": "0x4f3bc6070b0e07f7fc9ba113da1fbee6b8206bbe3c1e4c96eff69b53071ce458",
+  "question_relevance": 0.8,
+  "positive_sentiment": true,
+  "reason": "US agreement on tariffs with Canada would significantly impact highly integrated supply chains and trade for numerous US companies."
+ },
+ {
+  "market_id": "0x39b4785798a25fa33ed9ce1cabfeb330f83afc8eb6a4d5f3ea8aff7c2e848b39",
+  "question_relevance": 0.8,
+  "positive_sentiment": true,
+  "reason": "US agreement on tariffs with Mexico would significantly impact highly integrated supply chains and trade for numerous US companies."
+ },
+ {
+  "market_id": "0xf10a8e8bfbf162b4f4fc5a7cd990254785654b8c75b707db2d0f66a72a954855",
+  "question_relevance": 0.6,
+  "positive_sentiment": true,
+  "reason": "US agreement on tariffs with South Korea would positively impact trade and supply chains for US companies involved in bilateral commerce."
+ },
+ {
+  "market_id": "0xe19c24c34f67e4c83398971c1f9f9a10fa7b30ddc0aca00da16c43d124ef2761",
+  "question_relevance": 0.5,
+  "positive_sentiment": true,
+  "reason": "US agreement on tariffs with Australia would positively impact trade for US companies, though with a more limited overall breadth."
+ },
+ {
+  "market_id": "0x3369c5c9bebc94b52d13743898ee1a977dd89f9e818975092c3bc4e6796ebffd",
+  "question_relevance": 0.75,
+  "positive_sentiment": true,
+  "reason": "US agreement on tariffs with Germany would significantly impact trade for US companies in key industrial sectors and broader EU-US relations."
+ },
+ {
+  "market_id": "0xe2a6c2e96d69394414534151b5e3a03cc0ff63788f00b3a99f0922c4b44f8a43",
+  "question_relevance": 0.8,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with France, a major US trading partner, would directly impact US companies' trade flows and broad economic sentiment."
+ },
+ {
+  "market_id": "0x648e3a8492cf009a8499b3e6beee6898006b5ae9caddebb1fcf7707c298d5eb0",
+  "question_relevance": 0.75,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with Brazil, a significant US trading partner, would directly impact US companies' trade flows, especially in agriculture and commodities."
+ },
+ {
+  "market_id": "0x3d4e35148cab511772ddb246a602ed406b0bdb211f2a58a697ff934693b572ae",
+  "question_relevance": 0.65,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with Argentina would directly impact US companies' trade flows, particularly in agricultural sectors, though with a smaller overall market breadth."
+ },
+ {
+  "market_id": "0x899f3365b0ada5261985904cb2a7353258ced367c94156a3f90d65d1b13db9a0",
+  "question_relevance": 0.65,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with Israel would directly impact US companies' trade flows in specific sectors like technology and defense, as a key US ally."
+ },
+ {
+  "market_id": "0xbc2e621b54d0c3ef0303f80705c0e4ae1e4c584cfefb3d0eb53c555b3c92a311",
+  "question_relevance": 0.65,
+  "positive_sentiment": true,
+  "reason": "A tariff agreement with Switzerland would directly impact US companies' trade flows in high-value sectors like pharmaceuticals and finance, as a developed economy."
+ },
+ {
+  "market_id": "0x1077393906f25eb78b4fe469d8840c7950d0176ee05412b02a9e3df033a01b8b",
+  "question_relevance": 0.5,
+  "positive_sentiment": false,
+  "reason": "Announcing tariffs on Iran for military cooperation would primarily impact through geopolitical risk and potential oil market reactions, with limited direct US trade impact."
+ },
+ {
+  "market_id": "0x7decaf7834aa2fda896c60d72b0b41f487b34f04c4cd341e39a27402338585cd",
+  "question_relevance": 0.95,
+  "positive_sentiment": false,
+  "reason": "Imposing 25% tariffs on Canada and Mexico, top US trading partners, would have a massive, direct, and broad negative impact on US companies and the economy."
+ },
+ {
+  "market_id": "0x759b1952d45228a6292726d5fdf628e3b7fa833151cd89e6ecbfbb0b1cfd96c5",
+  "question_relevance": 0.9,
+  "positive_sentiment": false,
+  "reason": "Imposing tariffs on Mexico, a top US trading partner, would have a significant, direct, and broad negative impact on US companies and supply chains."
+ },
+ {
+  "market_id": "0xa85516717dd49a6f88cb3364a1d272b47b952885a69721e647e116a44b7497a5",
+  "question_relevance": 0.9,
+  "positive_sentiment": false,
+  "reason": "Direct US government action imposing tariffs on oil from major trading partners would significantly impact US energy companies and commodity prices, a major market surprise early in an administration."
+ },
+ {
+  "market_id": "0xcf8f5f0cb770c56eba2d5c86500c4589b9177f41eee944dc8c231d1f8384e946",
+  "question_relevance": 0.9,
+  "positive_sentiment": false,
+  "reason": "EU tariffs on US goods directly impact US export-oriented companies and sectors, representing a significant negative development in trade relations with a major economic bloc."
+ },
+ {
+  "market_id": "0x404737e79dbf827931f6c1c551c657431196c2d34b409938d00dea62417a0ef8",
+  "question_relevance": 0.95,
+  "positive_sentiment": false,
+  "reason": "Direct US government action imposing tariffs on China in the first week of a new administration would be an extremely surprising and broad market-moving event, impacting numerous US sectors."
+ },
+ {
+  "market_id": "0xc9724206fca7531faadd496d10721ef69d4c6bcd5007dbb5ca44eb795d4b9707",
+  "question_relevance": 0.95,
+  "positive_sentiment": false,
+  "reason": "Direct US government action imposing tariffs on Canada in the first week of a new administration would be an extremely surprising and broad market-moving event, impacting numerous US sectors."
+ },
+ {
+  "market_id": "0xf281672b936cd0302b59fed987a5a5ddf5d85fc38a0d5e534578c85dee01a2b4",
+  "question_relevance": 0.95,
+  "positive_sentiment": false,
+  "reason": "Direct US government action imposing tariffs on Mexico in the first week of a new administration would be an extremely surprising and broad market-moving event, impacting numerous US sectors."
+ },
+ {
+  "market_id": "0x64a52387ff320e58165b8b8092fbe4ba418a19549d902fd7a938a50f2fbdfae3",
+  "question_relevance": 0.95,
+  "positive_sentiment": false,
+  "reason": "Direct US government action imposing tariffs on the EU in the first week of a new administration would be an extremely surprising and broad market-moving event, impacting numerous US sectors."
+ },
+ {
+  "market_id": "0xb2f5ef6a61b6dbc25602b09384d734c1a811086ed6d9a979ec13d4458999840b",
+  "question_relevance": 0.95,
+  "positive_sentiment": false,
+  "reason": "Direct US government action imposing tariffs on Japan in the first week of a new administration would be an extremely surprising and broad market-moving event, impacting numerous US sectors."
+ },
+ {
+  "market_id": "0xa2c684ca2658fc7adf1e7b4fbae6e3e36836cfcc00dbeeb691b802c3fc0f6251",
+  "question_relevance": 0.95,
+  "positive_sentiment": false,
+  "reason": "Direct US government action imposing tariffs on the UK in the first week of a new administration would be an extremely surprising and broad market-moving event, impacting numerous US sectors."
+ },
+ {
+  "market_id": "0x1cf86e182d130ad9a730307fe919bcb18cd59c5bdad21bbdba6469d84e5cb242",
+  "question_relevance": 0.85,
+  "positive_sentiment": false,
+  "reason": "Direct US government action (tariffs) on China would broadly impact US corporate earnings and supply chains, historically a significant market mover."
+ },
+ {
+  "market_id": "0x0cfac875e3fa84e292a97256b74432c236904d1a3e46fe8b489978122bdc663b",
+  "question_relevance": 0.85,
+  "positive_sentiment": true,
+  "reason": "Direct US government action (tariff reduction) on China would broadly benefit US corporate earnings and supply chains, historically a significant market mover."
+ }
+]

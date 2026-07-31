@@ -1,0 +1,23 @@
+{
+  "market_id": "647504",
+  "question": "Will Allstate (ALL) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-20 21:39:39.545544+00:00",
+  "requested_end_utc": "2025-10-23 21:39:39.545544+00:00",
+  "first_candidate_t0_utc": "2025-10-23 21:39:39.545544+00:00",
+  "latest_candidate_decision_utc": "2025-10-24 20:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "22530735968216521236707971587165891963204642957555145650376495410911527190511",
+  "condition_id": "0xecfa8e8a51a7961761be09355bacc9aa3210bf80236da3a3e79bc06e9c794462",
+  "api_question": "Will Allstate (ALL) beat quarterly earnings?",
+  "api_created_at": "2025-10-23T21:39:39.545544Z",
+  "api_end_date": "2025-11-05T22:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\647504.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

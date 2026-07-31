@@ -1,0 +1,21 @@
+{
+  "source": "public Polymarket Gamma and CLOB APIs",
+  "fidelity_minutes": 1,
+  "availability_assumption": "CLOB history source timestamp equals public availability timestamp",
+  "decision_cutoff": "source_ts strictly before scheduled NYSE entry close; 2025-11-28 uses 13:00 America/New_York",
+  "requested_markets": 273,
+  "development_earnings_candidates": 492,
+  "oof_earnings_candidates": 415,
+  "complete_markets": 273,
+  "failed_markets": 0,
+  "combined_rows": 1018412,
+  "downloaded_at_utc": "2026-07-17 15:30:29.153995+00:00",
+  "oof_sha256": "bf94b0b4855f4547dfb7bad1f2ea6c1c4c72949d11b39aba4d3276d555e80d7d",
+  "semantic_candidates_sha256": "4fdcee3573ed8c575257a2db248fe094a6c5873c89fd742aa5caf576d20a1be0",
+  "combined_csv_sha256": "f4e075f5a32a3f3aa427c8a2bb8a6b24862bc0cb7f3f1bdcc74f41f7091a4dfe",
+  "outputs": {
+    "history": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\polymarket_probability_history.csv",
+    "metadata": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\polymarket_market_metadata.csv",
+    "failures": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\polymarket_download_failures.csv"
+  }
+}

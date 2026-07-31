@@ -1,0 +1,26 @@
+{
+  "QQQ": {
+    "atr_mult": 4.0,
+    "enter_floor": 0.6905327714979713,
+    "enter_strong": 0.7463341074288937,
+    "hold_days": 1,
+    "lock_activate": 0.02,
+    "max_concurrent": 10,
+    "max_price_runup": 0.09275078642197837,
+    "max_prob_surge": 0.2,
+    "position_size_pct": 0.11121516533817725,
+    "theta_out": 0.5714363252523733
+  },
+  "SPY": {
+    "atr_mult": 3.640392597510977,
+    "enter_floor": 0.6931002672987427,
+    "enter_strong": 0.8285181167510085,
+    "hold_days": 1,
+    "lock_activate": 0.021818344779695093,
+    "max_concurrent": 11,
+    "max_price_runup": 0.08986923377413528,
+    "max_prob_surge": 0.2656005847496746,
+    "position_size_pct": 0.11445928398810606,
+    "theta_out": 0.5156497676539971
+  }
+}

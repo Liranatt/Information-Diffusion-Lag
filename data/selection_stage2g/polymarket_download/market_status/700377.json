@@ -1,0 +1,22 @@
+{
+  "market_id": "700377",
+  "question": "Will Five Below (FIVE) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-24 13:00:32.717810+00:00",
+  "requested_end_utc": "2025-11-25 21:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "e1b45476a87a3ca57a8f12ba",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "27005160765536009525411342204324622307096627277249153596339213914350557729418",
+  "condition_id": "0x913ae1bf13cafc0332cbb4385bcdda27f4097a546406b937b9ede670c85f5a9f",
+  "api_question": "Will Five Below (FIVE) beat quarterly earnings?",
+  "api_created_at": "2025-11-24T13:00:32.71781Z",
+  "api_end_date": "2025-12-03T22:00:00Z",
+  "status": "complete",
+  "row_count": 1871,
+  "first_source_ts_utc": "2025-11-24 13:49:07+00:00",
+  "last_source_ts_utc": "2025-11-25 20:59:08+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\700377.csv",
+  "fragment_sha256": "0c334104662426aa555021823e327f0d08d0294baf2fdbb953c3ccca5a8ca1d0",
+  "question_matches": true,
+  "error": null
+}

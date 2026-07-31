@@ -1,0 +1,13 @@
+{
+  "source": "public Polymarket Gamma and CLOB APIs",
+  "fidelity_minutes": 1,
+  "coverage_extension": "three_days_before_each_market_first_candidate_t0",
+  "requested_markets": 231,
+  "complete_markets": 231,
+  "failed_markets": 0,
+  "pre_t0_rows": 0,
+  "merged_rows": 1018412,
+  "downloaded_at_utc": "2026-07-17 18:58:49.467417+00:00",
+  "original_history_sha256": "f4e075f5a32a3f3aa427c8a2bb8a6b24862bc0cb7f3f1bdcc74f41f7091a4dfe",
+  "oof_sha256": "bf94b0b4855f4547dfb7bad1f2ea6c1c4c72949d11b39aba4d3276d555e80d7d"
+}

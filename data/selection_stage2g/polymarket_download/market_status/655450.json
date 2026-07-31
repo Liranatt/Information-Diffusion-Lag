@@ -1,0 +1,22 @@
+{
+  "market_id": "655450",
+  "question": "Will Humana (HUM) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-29 16:40:48.209146+00:00",
+  "requested_end_utc": "2025-10-31 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "0fd02fde28bc0768de32a16a|1059144f30905af2407a34d9",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "105328135851530827878056449071391106841408268903176577036500933515793117765480",
+  "condition_id": "0xf038834aef22cb3c63cb17785202f3a1dfacb9a4fc6df631d36812bb67928fcc",
+  "api_question": "Will Humana (HUM) beat quarterly earnings?",
+  "api_created_at": "2025-10-29T16:40:48.209146Z",
+  "api_end_date": "2025-11-05T14:00:00Z",
+  "status": "complete",
+  "row_count": 3063,
+  "first_source_ts_utc": "2025-10-29 16:57:04+00:00",
+  "last_source_ts_utc": "2025-10-31 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\655450.csv",
+  "fragment_sha256": "682edcb40ac8dc9553bbc8f9552b9b62e48281a2474e717824492675f7fc373f",
+  "question_matches": true,
+  "error": null
+}

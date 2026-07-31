@@ -1,0 +1,22 @@
+{
+  "market_id": "614615",
+  "question": "Will Tesla (TSLA) beat quarterly earnings?",
+  "requested_start_utc": "2025-09-26 18:28:08.464685+00:00",
+  "requested_end_utc": "2025-10-08 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "1b385c54565f3758eca337a2|8a074fc8e32426642df6286c",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "37685800668457844386765803839320595988837106080582104665596998819815810884299",
+  "condition_id": "0x0aaf73677aeda3cda88c7337343177267011f1d6d08fbdc83174e5bee6a48edc",
+  "api_question": "Will Tesla (TSLA) beat quarterly earnings?",
+  "api_created_at": "2025-09-26T18:28:08.464685Z",
+  "api_end_date": "2025-10-22T00:00:00Z",
+  "status": "complete",
+  "row_count": 17292,
+  "first_source_ts_utc": "2025-09-26 19:48:02+00:00",
+  "last_source_ts_utc": "2025-10-08 19:59:02+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\614615.csv",
+  "fragment_sha256": "c5d2231b3a4e540e25dc181cf4bd002b885f512dc58c222281989970af6299fa",
+  "question_matches": true,
+  "error": null
+}

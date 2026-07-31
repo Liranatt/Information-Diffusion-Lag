@@ -1,0 +1,22 @@
+{
+  "market_id": "614636",
+  "question": "Will Constellation Brands (STZ) beat quarterly earnings?",
+  "requested_start_utc": "2025-09-26 18:49:38.298458+00:00",
+  "requested_end_utc": "2025-10-01 20:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "ba5eb85b0620f4a9ffc6916a",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "8211134675341088151654666235042439067570826816129367358808765974245224731369",
+  "condition_id": "0xfdd616cb8e7dca0de4541be7476a6a6a7b6a007a3856bb07f6d4cc1a1b930367",
+  "api_question": "Will Constellation Brands (STZ) beat quarterly earnings?",
+  "api_created_at": "2025-09-26T18:49:38.298458Z",
+  "api_end_date": "2025-10-06T00:00:00Z",
+  "status": "complete",
+  "row_count": 7217,
+  "first_source_ts_utc": "2025-09-26 19:43:03+00:00",
+  "last_source_ts_utc": "2025-10-01 19:59:03+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\614636.csv",
+  "fragment_sha256": "00d606c80425ded4ea94e1665c7f33521dba3aae1736ba1698adc09cc7273cf2",
+  "question_matches": true,
+  "error": null
+}

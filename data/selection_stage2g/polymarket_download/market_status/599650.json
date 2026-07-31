@@ -1,0 +1,22 @@
+{
+  "market_id": "599650",
+  "question": "Will Pathward Financial (CASH) beat its quarterly EPS estimate?",
+  "requested_start_utc": "2025-09-16 00:24:00.561142+00:00",
+  "requested_end_utc": "2025-09-16 20:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "26224d6341cb3e21bee67b41",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "45225674090836074875140217972366545098053279992483138970451721690641542643157",
+  "condition_id": "0x98db4dbbbb9fb6ab06522d7481c9fec51436df198afe78768a2e3e4787cb6c2e",
+  "api_question": "Will Pathward Financial (CASH) beat its quarterly EPS estimate?",
+  "api_created_at": "2025-09-16T00:24:00.561142Z",
+  "api_end_date": "2025-10-22T20:00:00Z",
+  "status": "complete",
+  "row_count": 1160,
+  "first_source_ts_utc": "2025-09-16 00:40:02+00:00",
+  "last_source_ts_utc": "2025-09-16 19:59:03+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\599650.csv",
+  "fragment_sha256": "e688e78b83d191c967fac2da24599365607be45f6de3a34b565b26facafa6c74",
+  "question_matches": true,
+  "error": null
+}

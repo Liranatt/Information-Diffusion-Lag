@@ -1,0 +1,30 @@
+{
+  "coverage_sufficient": false,
+  "decision": "insufficient_data",
+  "hypothesis_testable_reliably": false,
+  "candidate_rows": 415,
+  "independent_events": 231,
+  "chronological_folds": 5,
+  "strict_pre_entry_observations_total": 610,
+  "no_strict_pre_entry_history_count": 198,
+  "fewer_than_three_count": 319,
+  "fewer_than_five_count": 385,
+  "same_entry_day_ambiguous_count": 415,
+  "exact_ordering_verifiable_count": 0,
+  "trajectory_features_constructed": false,
+  "outcome_columns_read_for_stage2g": false,
+  "models_fitted": false,
+  "exact_replays_run": false,
+  "post_entry_observations_used": 0,
+  "reason": "Stored entry decisions and probability observations are date-normalized rather than exact timestamps; the majority of candidates also lack enough strictly earlier points for trajectory curvature.",
+  "safe_cutoff": "stored_probability_timestamp < normalized_entry_date",
+  "same_entry_day_policy": "excluded_as_ambiguous",
+  "later_observation_policy": "excluded",
+  "source_artifact_semantics": "one latest <=20:59 UTC probability per date, original hour discarded",
+  "entry_artifact_semantics": "entry_date normalized to 00:00 UTC by Stage 2E",
+  "adequacy_thresholds": {
+    "minimum_three_point_candidate_share": 0.9,
+    "minimum_five_point_candidate_share": 0.8,
+    "minimum_three_point_share_in_every_fold": 0.8
+  }
+}

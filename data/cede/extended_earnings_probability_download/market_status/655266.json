@@ -1,0 +1,23 @@
+{
+  "market_id": "655266",
+  "question": "Will AppLovin (APP) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-26 15:35:27.082299+00:00",
+  "requested_end_utc": "2025-10-29 15:35:27.082299+00:00",
+  "first_candidate_t0_utc": "2025-10-29 15:35:27.082299+00:00",
+  "latest_candidate_decision_utc": "2025-10-29 20:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "36865309194140786622407933879438050064932773984136148057248610843781735376346",
+  "condition_id": "0xfca66c1e69aa22101e65b0b32d5e22e36215a4350a23a68736f5843689f9eb77",
+  "api_question": "Will AppLovin (APP) beat quarterly earnings?",
+  "api_created_at": "2025-10-29T15:35:27.082299Z",
+  "api_end_date": "2025-11-05T22:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\655266.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

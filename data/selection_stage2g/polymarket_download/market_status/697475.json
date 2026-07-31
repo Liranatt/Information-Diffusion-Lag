@@ -1,0 +1,22 @@
+{
+  "market_id": "697475",
+  "question": "Will Kroger (KR) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-22 20:42:57.090520+00:00",
+  "requested_end_utc": "2025-11-24 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "84434ca1ad1a62a213003e50|9e4b4a42ffc306d72f979adc",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "61971445169288880760769720036880303879399698678131268305722453389288130190438",
+  "condition_id": "0xf024e728c043c2acb9c5e2640e34aa4aa188a74da767a85e202d20468cd67dc0",
+  "api_question": "Will Kroger (KR) beat quarterly earnings?",
+  "api_created_at": "2025-11-22T20:42:57.09052Z",
+  "api_end_date": "2025-12-04T14:00:00Z",
+  "status": "complete",
+  "row_count": 2878,
+  "first_source_ts_utc": "2025-11-22 21:02:07+00:00",
+  "last_source_ts_utc": "2025-11-24 20:59:07+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\697475.csv",
+  "fragment_sha256": "81f29b4576d7b859358cef56984f133dd481bdab3a8312ec70db8a36100d25e4",
+  "question_matches": true,
+  "error": null
+}

@@ -1,0 +1,23 @@
+{
+  "market_id": "642131",
+  "question": "Will Amazon.com (AMZN) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-18 00:37:47.623589+00:00",
+  "requested_end_utc": "2025-10-21 00:37:47.623589+00:00",
+  "first_candidate_t0_utc": "2025-10-21 00:37:47.623589+00:00",
+  "latest_candidate_decision_utc": "2025-10-21 20:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "17465547416139451345315099773016285820523770633743603457457313984311955480420",
+  "condition_id": "0x3b9907e435f8c9cae11ba55c60d86cf0f35e35e0d80aaa0a69f318fedcaad18d",
+  "api_question": "Will Amazon.com (AMZN) beat quarterly earnings?",
+  "api_created_at": "2025-10-21T00:37:47.623589Z",
+  "api_end_date": "2025-10-30T21:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\642131.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

@@ -1,0 +1,23 @@
+{
+  "market_id": "696247",
+  "question": "Will MongoDB (MDB) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-18 23:59:16.565985+00:00",
+  "requested_end_utc": "2025-11-21 23:59:16.565985+00:00",
+  "first_candidate_t0_utc": "2025-11-21 23:59:16.565985+00:00",
+  "latest_candidate_decision_utc": "2025-11-24 21:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "73968742873988075187326383361493221288740774483974039243723072416342183384565",
+  "condition_id": "0x73c95a75f53d66ab7fc174331c74407c02aadaacce95fa417601cdbf71d11c4e",
+  "api_question": "Will MongoDB (MDB) beat quarterly earnings?",
+  "api_created_at": "2025-11-21T23:59:16.565985Z",
+  "api_end_date": "2025-12-01T22:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\696247.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

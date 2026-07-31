@@ -1,0 +1,22 @@
+{
+  "market_id": "657080",
+  "question": "Will Dropbox (DBX) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-30 18:31:31.831380+00:00",
+  "requested_end_utc": "2025-10-30 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "6e0ec185b84a5573f805959f|96c242677ee9f5d5c763f7a0",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "97403779920796137164413329181149114259091046097999690172470117226272339216855",
+  "condition_id": "0x64cf9a65a2a9805c06e00cb087d5328f311dd71d2648f1166f6d6b372f52399f",
+  "api_question": "Will Dropbox (DBX) beat quarterly earnings?",
+  "api_created_at": "2025-10-30T18:31:31.83138Z",
+  "api_end_date": "2025-11-06T22:00:00Z",
+  "status": "complete",
+  "row_count": 72,
+  "first_source_ts_utc": "2025-10-30 18:48:06+00:00",
+  "last_source_ts_utc": "2025-10-30 19:59:05+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\657080.csv",
+  "fragment_sha256": "ebb1aaa4d225d87236924d79ff6f499776da6b6f9ca01049c4bc24ef96701693",
+  "question_matches": true,
+  "error": null
+}

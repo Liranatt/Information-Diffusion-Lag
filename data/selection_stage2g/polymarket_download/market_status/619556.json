@@ -1,0 +1,22 @@
+{
+  "market_id": "619556",
+  "question": "Will BlackRock (BLK) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-01 23:33:19.627280+00:00",
+  "requested_end_utc": "2025-10-06 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "2285d9c9df16a446c2e12703|822e7bb88ab004de8aeee0ea",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "105818134816492989857859675397661515589486426075774379468585464225118011364502",
+  "condition_id": "0xd67c63a0b0fec10ad997cb6f083a5657589758d2a2a0769313e13e6d9de19e98",
+  "api_question": "Will BlackRock (BLK) beat quarterly earnings?",
+  "api_created_at": "2025-10-01T23:33:19.62728Z",
+  "api_end_date": "2025-10-14T00:00:00Z",
+  "status": "complete",
+  "row_count": 4204,
+  "first_source_ts_utc": "2025-10-03 21:56:10+00:00",
+  "last_source_ts_utc": "2025-10-06 19:59:03+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\619556.csv",
+  "fragment_sha256": "2a6f367399632c576929593674377db42a4a4d49417b8e4a04d7abd0611e70f1",
+  "question_matches": true,
+  "error": null
+}

@@ -1,0 +1,22 @@
+{
+  "market_id": "627671",
+  "question": "Will Moody's (MCO) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-08 18:02:10.029675+00:00",
+  "requested_end_utc": "2025-10-09 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "65dc05c413986a4557049543|d89687b2d22cc11ff745df49",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "66680795724096314018734306248290897892682458336049246347652680104367081880566",
+  "condition_id": "0x2e532dae75fa1ae58eac865fa50491eafb15b727030d9c075cc4ddebe8232778",
+  "api_question": "Will Moody's (MCO) beat quarterly earnings?",
+  "api_created_at": "2025-10-08T18:02:10.029675Z",
+  "api_end_date": "2025-10-22T13:00:00Z",
+  "status": "complete",
+  "row_count": 1548,
+  "first_source_ts_utc": "2025-10-08 18:12:04+00:00",
+  "last_source_ts_utc": "2025-10-09 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\627671.csv",
+  "fragment_sha256": "50c11cc7c179cd347d0e6372f09f5c71988df1bad4efd952c8e5a08544a67256",
+  "question_matches": true,
+  "error": null
+}

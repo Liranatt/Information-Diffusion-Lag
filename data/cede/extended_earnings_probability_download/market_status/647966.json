@@ -1,0 +1,23 @@
+{
+  "market_id": "647966",
+  "question": "Will Roku (ROKU) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-21 14:50:53.445846+00:00",
+  "requested_end_utc": "2025-10-24 14:50:53.445846+00:00",
+  "first_candidate_t0_utc": "2025-10-24 14:50:53.445846+00:00",
+  "latest_candidate_decision_utc": "2025-10-27 20:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "41934142860202379420594738467742654795638159898421619385221181628285300408641",
+  "condition_id": "0x7eb418e2bb4e51042c2c5fe0d61755d7595e12ac254f84ed9a560ac9ee62f428",
+  "api_question": "Will Roku (ROKU) beat quarterly earnings?",
+  "api_created_at": "2025-10-24T14:50:53.445846Z",
+  "api_end_date": "2025-10-30T21:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\647966.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

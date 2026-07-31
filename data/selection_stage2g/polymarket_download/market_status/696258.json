@@ -1,0 +1,22 @@
+{
+  "market_id": "696258",
+  "question": "Will American Eagle Outfitters (AEO) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-22 00:05:52.429289+00:00",
+  "requested_end_utc": "2025-11-24 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "724d2f15815e7e8ee2dcab7f|f320986e1e34eeed8cedb56b",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "113853470496534485692759360592315742606998920914863702226630764032835077748764",
+  "condition_id": "0x962a951afed20b431e6de9a3b6449a3bbb37ed0aca0bd4291c16683dfb55ba0b",
+  "api_question": "Will American Eagle Outfitters (AEO) beat quarterly earnings?",
+  "api_created_at": "2025-11-22T00:05:52.429289Z",
+  "api_end_date": "2025-12-02T22:00:00Z",
+  "status": "complete",
+  "row_count": 4116,
+  "first_source_ts_utc": "2025-11-22 00:24:07+00:00",
+  "last_source_ts_utc": "2025-11-24 20:59:07+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\696258.csv",
+  "fragment_sha256": "9d158d720fc10302c5ba6b20aa65646be6db0b3e54f22b311991adb25e659638",
+  "question_matches": true,
+  "error": null
+}

@@ -1,0 +1,7 @@
+case, original_fill, open_aware_fill
+normal_intraday,100.0,100.0
+overnight_gap,100.0,94
+no_crossing,None,None
+gap_then_recovery,100.0,90
+same_bar_ordering,today_fill=None,tomorrow_stop=105.0
+all assertions passed

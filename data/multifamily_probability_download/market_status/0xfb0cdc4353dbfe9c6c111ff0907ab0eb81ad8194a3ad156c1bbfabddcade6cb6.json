@@ -1,0 +1,22 @@
+{
+  "market_id": "0xfb0cdc4353dbfe9c6c111ff0907ab0eb81ad8194a3ad156c1bbfabddcade6cb6",
+  "question": "Will Trump\u2019s Greenland Tariffs go into effect for Sweden by Feburary 1?",
+  "requested_start_utc": "2026-01-17 22:59:18.508876+00:00",
+  "requested_end_utc": "2026-01-19 21:00:00+00:00",
+  "candidate_count": 1,
+  "research_families": "macro",
+  "economic_event_ids": "171012",
+  "mapping_source": "clob_condition_id",
+  "yes_token_id": "19229944317459487892030148681651226912017395510663497698332037323195042649450",
+  "condition_id": "0xfb0cdc4353dbfe9c6c111ff0907ab0eb81ad8194a3ad156c1bbfabddcade6cb6",
+  "api_question": "Will Trump\u2019s Greenland Tariffs go into effect for Sweden by Feburary 1?",
+  "api_end_date": "2026-02-01T00:00:00Z",
+  "status": "complete",
+  "row_count": 2582,
+  "first_source_ts_utc": "2026-01-18 01:58:14+00:00",
+  "last_source_ts_utc": "2026-01-19 20:59:14+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\0xfb0cdc4353dbfe9c6c111ff0907ab0eb81ad8194a3ad156c1bbfabddcade6cb6.csv",
+  "fragment_sha256": "8db7febd11dfa045f06e788cd5c4d1a3de4118f1a4983c7d3df6058bc198f697",
+  "question_matches": true,
+  "error": null
+}

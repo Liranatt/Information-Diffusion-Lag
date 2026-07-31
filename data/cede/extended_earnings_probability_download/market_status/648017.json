@@ -1,0 +1,23 @@
+{
+  "market_id": "648017",
+  "question": "Will S&P Global (SPGI) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-21 15:13:44.520192+00:00",
+  "requested_end_utc": "2025-10-24 15:13:44.520192+00:00",
+  "first_candidate_t0_utc": "2025-10-24 15:13:44.520192+00:00",
+  "latest_candidate_decision_utc": "2025-10-27 20:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "29972019822617621151904166864447610141350536923343274914910263378608367102764",
+  "condition_id": "0xb3d24eb41b68f36e15d45bc5c9fc179baf4ba29aff52111ef5976658045d9863",
+  "api_question": "Will S&P Global (SPGI) beat quarterly earnings?",
+  "api_created_at": "2025-10-24T15:13:44.520192Z",
+  "api_end_date": "2025-10-30T13:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\648017.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

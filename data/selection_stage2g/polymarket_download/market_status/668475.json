@@ -1,0 +1,22 @@
+{
+  "market_id": "668475",
+  "question": "Will Pixelworks (PXLW) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-06 21:09:37.894751+00:00",
+  "requested_end_utc": "2025-11-07 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "687336970ec60b40f09960a8|7b3aabe5def9c54c913d11f4",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "69045848690115294712358705887245406383641338417330279162659101553940350110195",
+  "condition_id": "0xd8c64a03c894a23f8314a2591d42fa115fe834c27b50c2959a51035d15ab37ff",
+  "api_question": "Will Pixelworks (PXLW) beat quarterly earnings?",
+  "api_created_at": "2025-11-06T21:09:37.894751Z",
+  "api_end_date": "2025-11-11T22:00:00Z",
+  "status": "complete",
+  "row_count": 1368,
+  "first_source_ts_utc": "2025-11-06 22:12:05+00:00",
+  "last_source_ts_utc": "2025-11-07 20:59:05+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\668475.csv",
+  "fragment_sha256": "ba2fa338b849c175789e80b56edef8e62da681d58a24b4e6e929f2a1b021ec6b",
+  "question_matches": true,
+  "error": null
+}

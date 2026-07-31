@@ -1,0 +1,21 @@
+{
+  "market_id": "0x03af7b38eb9f47d4f014a5101c99841acae80009f18ce65b0c765fefd3e7b61b",
+  "question": "Will ZoomInfo Technologies (GTM) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-21 00:34:12.154450+00:00",
+  "requested_end_utc": "2025-10-22 20:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "7b1952740385d75b07907af4",
+  "mapping_source": "clob_condition_id",
+  "yes_token_id": "12587363674407208881966282989680893198256952865850607197418686530016714104104",
+  "condition_id": "0x03af7b38eb9f47d4f014a5101c99841acae80009f18ce65b0c765fefd3e7b61b",
+  "api_question": "Will ZoomInfo Technologies (GTM) beat quarterly earnings?",
+  "api_end_date": "2025-11-03T00:00:00Z",
+  "status": "complete",
+  "row_count": 2589,
+  "first_source_ts_utc": "2025-10-21 00:51:05+00:00",
+  "last_source_ts_utc": "2025-10-22 19:59:07+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\0x03af7b38eb9f47d4f014a5101c99841acae80009f18ce65b0c765fefd3e7b61b.csv",
+  "fragment_sha256": "e85dc9e416eb91fcbee9703545135bf996a129eae8df2032925e03098b40e115",
+  "question_matches": true,
+  "error": null
+}

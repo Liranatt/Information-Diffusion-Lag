@@ -1,0 +1,12 @@
+{
+  "source": "public Polymarket Gamma and CLOB APIs",
+  "fidelity_minutes": 1,
+  "availability_assumption": "public_CLOB_history_timestamp",
+  "semantic_sha256": "4fdcee3573ed8c575257a2db248fe094a6c5873c89fd742aa5caf576d20a1be0",
+  "tariff_sha256": "6a66f5583feb44919075753d2cb629ee08124e8da03da6ac9554e86458d949d1",
+  "requested_markets": 42,
+  "complete_markets": 42,
+  "failed_markets": 0,
+  "history_rows": 150762,
+  "downloaded_at_utc": "2026-07-17 17:13:22.664401+00:00"
+}

@@ -1,0 +1,23 @@
+{
+  "market_id": "657295",
+  "question": "Will ICU Medical (ICUI) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-27 19:37:06.171575+00:00",
+  "requested_end_utc": "2025-10-30 19:37:06.171575+00:00",
+  "first_candidate_t0_utc": "2025-10-30 19:37:06.171575+00:00",
+  "latest_candidate_decision_utc": "2025-10-31 20:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "78793098153593451329461723352302386304658236236822513546391458100529796481730",
+  "condition_id": "0x2d808f639bc283667e027a3f6f41a6c5d694841ab380922458d6a26b13c9c467",
+  "api_question": "Will ICU Medical (ICUI) beat quarterly earnings?",
+  "api_created_at": "2025-10-30T19:37:06.171575Z",
+  "api_end_date": "2025-11-06T22:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\657295.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

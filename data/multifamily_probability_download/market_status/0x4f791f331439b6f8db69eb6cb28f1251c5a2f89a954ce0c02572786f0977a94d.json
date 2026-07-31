@@ -1,0 +1,22 @@
+{
+  "market_id": "0x4f791f331439b6f8db69eb6cb28f1251c5a2f89a954ce0c02572786f0977a94d",
+  "question": "Will Iranian officials visit the White House in June?",
+  "requested_start_utc": "2025-06-18 15:17:29.640003+00:00",
+  "requested_end_utc": "2025-06-20 20:00:00+00:00",
+  "candidate_count": 6,
+  "research_families": "geopolitics",
+  "economic_event_ids": "27598",
+  "mapping_source": "clob_condition_id",
+  "yes_token_id": "78689974056290690109841302194048249093915502819120916817939194651202754315382",
+  "condition_id": "0x4f791f331439b6f8db69eb6cb28f1251c5a2f89a954ce0c02572786f0977a94d",
+  "api_question": "Will Iranian officials visit the White House in June?",
+  "api_end_date": "2025-06-30T00:00:00Z",
+  "status": "complete",
+  "row_count": 3148,
+  "first_source_ts_utc": "2025-06-18 15:32:07+00:00",
+  "last_source_ts_utc": "2025-06-20 19:59:08+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\0x4f791f331439b6f8db69eb6cb28f1251c5a2f89a954ce0c02572786f0977a94d.csv",
+  "fragment_sha256": "73dd59527b3ca9eb08f39066b63a42d0f867791b7c89aa3b1db3f9c52ce02c3d",
+  "question_matches": true,
+  "error": null
+}

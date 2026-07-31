@@ -1,0 +1,22 @@
+{
+  "market_id": "655451",
+  "question": "Will Atmos Energy (ATO) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-29 16:43:56.413796+00:00",
+  "requested_end_utc": "2025-10-31 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "ad09aec95887719b453a4aeb|c8f8de1ae946a3b964cf85d5",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "56309355226654361649000138302307184648124464472266846125691445016523817098603",
+  "condition_id": "0x5880d5ea3d38f4fc3dd68cbda0e82bf4fdd87240be6c823df98fadbbce097852",
+  "api_question": "Will Atmos Energy (ATO) beat quarterly earnings?",
+  "api_created_at": "2025-10-29T16:43:56.413796Z",
+  "api_end_date": "2025-11-05T22:00:00Z",
+  "status": "complete",
+  "row_count": 3050,
+  "first_source_ts_utc": "2025-10-29 17:10:06+00:00",
+  "last_source_ts_utc": "2025-10-31 19:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\655451.csv",
+  "fragment_sha256": "3776a62e7ef5aeeea018cc529316901015c04102b49cf5c957b33bf97e67da45",
+  "question_matches": true,
+  "error": null
+}

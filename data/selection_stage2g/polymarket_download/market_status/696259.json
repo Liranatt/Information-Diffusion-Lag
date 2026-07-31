@@ -1,0 +1,22 @@
+{
+  "market_id": "696259",
+  "question": "Will Asana (ASAN) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-22 00:07:51.070693+00:00",
+  "requested_end_utc": "2025-11-24 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "3c422c9ab4e0b9495dc39295|fe100ca593cef8fa0f7a253f",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "113030002990037083919926232602294538699272161927747973188242642883244538702851",
+  "condition_id": "0xa20cdd3bd8f1f51c4adafadd3882bb0bc143e684942e0b6199208cb0dce8a8d9",
+  "api_question": "Will Asana (ASAN) beat quarterly earnings?",
+  "api_created_at": "2025-11-22T00:07:51.070693Z",
+  "api_end_date": "2025-12-02T22:00:00Z",
+  "status": "complete",
+  "row_count": 4115,
+  "first_source_ts_utc": "2025-11-22 00:25:08+00:00",
+  "last_source_ts_utc": "2025-11-24 20:59:08+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\696259.csv",
+  "fragment_sha256": "8b0343d1c796f188370439785cbdc8873ef333904cd94df6ef25d7e971bd56fb",
+  "question_matches": true,
+  "error": null
+}

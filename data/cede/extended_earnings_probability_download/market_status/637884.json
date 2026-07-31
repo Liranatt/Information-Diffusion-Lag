@@ -1,0 +1,23 @@
+{
+  "market_id": "637884",
+  "question": "Will T-Mobile US (TMUS) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-13 22:50:04.525329+00:00",
+  "requested_end_utc": "2025-10-16 22:50:04.525329+00:00",
+  "first_candidate_t0_utc": "2025-10-16 22:50:04.525329+00:00",
+  "latest_candidate_decision_utc": "2025-10-20 20:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "16633757689346888876097848543186748986309809236139422489331072774537402528984",
+  "condition_id": "0x4a8f28b826b1b59a1f3c5b754b8abcc08765a5d97709ce3cbad6cf0048c4caea",
+  "api_question": "Will T-Mobile US (TMUS) beat quarterly earnings?",
+  "api_created_at": "2025-10-16T22:50:04.525329Z",
+  "api_end_date": "2025-10-23T13:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\637884.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

@@ -1,0 +1,269 @@
+\documentclass[sigconf,anonymous]{acmart}
+
+\settopmatter{printacmref=false}
+\renewcommand\footnotetextcopyrightpermission[1]{}
+\pagestyle{plain}
+\raggedbottom
+
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{array}
+\usepackage{tabularx}
+\setlength{\emergencystretch}{1.5em}
+
+\acmConference[Submission]{Under double-blind review}{2026}{Anonymous}
+\acmYear{2026}
+\copyrightyear{2026}
+\acmDOI{}
+\acmISBN{}
+
+\begin{document}
+
+\title{Polymarket-Conditioned Equity Returns: A Polarity-Aware Empirical Study}
+
+\begin{abstract}
+We test whether equities linked to Polymarket questions exhibit positive average net return after a probability-based eligibility signal and before the associated event deadline, and whether that signal can be converted into economically useful portfolio performance. The raw archive contains 1,293 question-asset candidate rows from August 2024 through June 2026; exact duplicate collapse and a targeted semantic audit produce a primary universe of 1,182 candidates with explicit contract polarity. A fixed-notional evaluation yields 887 tradable observations with mean net return $+1.208\%$ (median $+0.188\%$). The mean is positive under economic-event resampling but intervals cross zero under symbol and calendar dependence, and no interval excludes zero against matched, equal-notional SPY or sector-ETF positions over identical dates; the evidence is concentrated in oil-linked instruments and one month. We then test the portfolio question directly. A fixed reference policy with no parameter search (though informally informed by earlier fitted policies) historically outperformed both benchmarks (excess $+13.2$ SPY, $+5.2$ QQQ points over January--June 2026). One standard, low-dimensional Cross-Entropy Method (CEM) fit (a single frozen pre-2026 fit) improved on that reference in 8 of 10 optimizer seeds on both benchmarks (median excess $+16.5$ and $+8.6$ points). Decomposition shows the gain comes from selectivity and policy tightening as such: optimized selection and optimized execution are substitutes, and a matched random-selection test does not statistically establish that the optimizer's specific candidate choices beat arbitrary contemporaneous selection (86th percentile on SPY, 37th on QQQ). Additional treatments --- friction-aware fitness, walk-forward refitting, half-Kelly sizing, event-priority allocation --- do not add terminal value across seeds end to end; in a matched allocator experiment on a frozen stack, event-priority allocation consistently beats FIFO ordering (17 of 20 seed--benchmark cells) but is statistically indistinguishable from random ordering of the same competing candidates (median percentile 58--60, never above the random 95th percentile). No portfolio excess is statistically established on the short, repeatedly inspected test period (best block-bootstrap $p=0.068$). The evidence supports Polymarket probabilities as continuous crowd-belief variables whose value is selective rather than universal; it does not establish market-relative excess return or prospective profitability.
+\end{abstract}
+
+\ccsdesc[500]{Applied computing~Economics}
+\ccsdesc[300]{Computing methodologies~Model development and analysis}
+\keywords{prediction markets, event-driven equities, conditional expectation, semantic polarity, walk-forward backtesting}
+
+\maketitle
+
+\section{Introduction}
+
+Prediction markets provide continuously revised prices for discrete future events. Unlike a conventional news archive, a market price supplies a time-indexed state variable: the current crowd-implied probability of a contract resolving YES. This creates a practical link between event identification and equity timing when a contract can be mapped to an economically exposed asset. The link is not automatic. Contract wording, outcome direction, event deadlines, duplicated questions, and non-equity resolution rules must be interpreted before the probability can be used as a bullish or bearish signal.
+
+This paper studies two questions. First, within a Polymarket-identified and semantically cleaned opportunity set, is the average net equity return positive between probability-based signal eligibility and the final eligible pre-event close? Second, can a positive but heterogeneous and statistically weak conditional return distribution still be converted into useful portfolio performance by trading selectively --- choosing which questions and assets to trade while controlling entry, exit, costs, sizing, and capacity? The first estimand is deliberately narrower than abnormal return or alpha; a positive estimate can arise from risk compensation, common-news exposure, event selection, or delayed incorporation of information, and mechanism identification is outside the present test. The second question is answered by direct matched experiments, not asserted: statistical non-significance of the average effect is not treated as proof that no usable signal exists, and portfolio profitability is not treated as proof of a population-level predictive law.
+
+The paper distinguishes three objects throughout: (i) the unconditional historical return distribution among eligible candidates (H1); (ii) candidate \emph{selection} --- which eligible candidates a portfolio trades; and (iii) \emph{execution and portfolio construction} --- entry confirmation, exits, sizing, concurrency, and benchmark capital management. Its contributions are: explicit contract polarity; deterministic duplicate collapse plus a targeted semantic audit; dependence-aware expectation estimates, including matched benchmark controls; exact eligibility-rule provenance; and a portfolio study that separates a non-optimized reference, a standard (single-fit, frozen) CEM policy, selection-versus-execution decomposition, a matched random-selection test, fold-level walk-forward results, and seed-paired treatment attribution.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.74\textwidth]{fig_signal_window_v2.pdf}
+\Description{A two-lane schematic. The upper lane shows favorable-side Polymarket probability first crossing the fixed 0.55 screening threshold at T theta and later satisfying the policy entry threshold at T entry. The lower lane shows the mapped equity close with the shaded H1 holding interval running from the T entry close through the final eligible close at T e minus one, before the stored scheduled endpoint T e.}
+\caption{The H1 estimand and its chronology. $T_\theta$ is the fixed 0.55 screening cross that creates the candidate; $T_{entry}$ is the first stored close at which the walk-forward eligibility policy accepts it. H1 measures the mapped equity from the $T_{entry}$ close through the last eligible close before the scheduled endpoint $T_e$ stored in the research dataset; it does not impose an intervening take-profit or stop-loss. The paths are schematic and not data.}
+\label{fig:window}
+\end{figure*}
+
+\section{Related Work}
+
+Prediction-market prices are commonly interpreted as aggregators of dispersed beliefs \cite{Hayek1945,Wolfers2004}. Their empirical forecasting value is documented in both public and corporate settings \cite{Berg2008,Cowgill2015}. However, market prices need not be calibrated probabilities in every contract: liquidity, participant composition, resolution wording, and correlated information sources affect interpretation.
+
+The efficient-market benchmark predicts rapid incorporation of public information into asset prices \cite{Fama1970}, while costly information acquisition and trading frictions permit incomplete adjustment \cite{GrossmanStiglitz1980}. Delayed equity responses are documented in settings such as post-earnings-announcement drift \cite{BernardThomas1989}, and slow-moving capital supplies one possible frictional channel \cite{Duffie2010}. These literatures motivate the empirical design, but the present data do not distinguish delayed diffusion from alternative explanations. We therefore treat Polymarket as a continuous belief measurement system rather than assume a particular causal mechanism.
+
+\section{Data and Candidate Construction}
+
+\subsection{Observation unit and chronology}
+
+Each source row links one binary Polymarket contract to one U.S.-listed equity or exchange-traded fund. The stored data include the contract question, market and event identifiers, probability path, mapped symbol, scheduled endpoint, daily equity closes, and features available when the candidate is evaluated. The archive spans August 2024 through June 2026. Decisions are daily because a complete historical hourly equity panel is unavailable for every symbol.
+
+Let $p_{i,t}$ denote the probability assigned to the economically favorable side of candidate $i$. Screening time $T_{\theta,i}$ is the first time this probability crosses a fixed $0.55$ screening threshold; it is set at candidate construction and is not optimized. Entry acceptance is a separate, generally later event governed by the eligibility policy of Section~\ref{sec:provenance}: the favorable probability must reach a strong threshold immediately, or hold above a floor threshold for a required number of consecutive observations, with caps on the prior probability surge and on the pre-entry equity run-up. The entry time $T_{entry,i}$ is the first stored equity close on or after acceptance. The endpoint $T_{e,i}$ is the scheduled contract endpoint stored in the research dataset. H1 exits at the final stored equity close strictly before that endpoint. The holding interval is therefore $[T_{entry,i},T_{e,i}-1]$, as summarized in Figure~\ref{fig:window}.
+
+\subsection{Candidate generation and relevance scoring}
+\label{sec:gemini}
+
+Candidates are constructed by a deterministic-then-LLM pipeline. Deterministic prefilters remove structural noise (leaderboards, rankings, word-count and price-level ladders) without scoring economic relevance, and exact duplicates are normalized before any model call. A Gemini-family language model (the exact version is configured at runtime) is then applied in two structured passes whose outputs are validated against fixed JSON schemas. The first pass rates question-level relevance $R^q_i\in[0,1]$ --- how mechanically a YES resolution transmits to U.S.-listed equities --- and gates at $R^q_i\ge 0.60$, additionally requiring a positive-tone reading for the long-only book. The second pass maps each surviving question to exposed U.S.-listed stocks or ETFs and grades a per-asset connection strength $C_{i,a}\in[0,1]$. The stored pair relevance is $R_{i,a}=R^q_i\,C_{i,a}$, and all experiments require $R_{i,a}>0.50$. Signal polarity (Section~\ref{sec:polarity}) is labeled in a separate pass and resolved by precedence: hand-audited override, then LLM label, then keyword fallback. A targeted human audit reviewed 109 question-asset pairs (Section~\ref{sec:audit}); no accuracy claim is made for unaudited mappings.
+
+\subsection{Polarity}
+\label{sec:polarity}
+
+Raw Polymarket data record the probability of YES. That is insufficient for an equity mapping because YES is not universally favorable to the mapped asset. We assign
+\[
+s_i \in \{-1,0,+1\}, \qquad
+p_{i,t}^{+} =
+\begin{cases}
+p_{i,t}, & s_i=+1,\\
+1-p_{i,t}, & s_i=-1,
+\end{cases}
+\]
+where $s_i=+1$ denotes YES-bullish, $s_i=-1$ denotes NO-bullish, and $s_i=0$ denotes no stable long-equity interpretation. Deterministic rules cover simple contract classes; more complex questions use the audited semantic label. Polarity is an ontology decision, not a learned return forecast. The cleaned primary universe contains 1,071 YES-bullish candidates, 99 NO-bullish candidates, and 12 without a usable side; among valid H1 observations, 844 are YES-bullish and 43 NO-bullish.
+
+\subsection{Duplicate collapse and semantic audit}
+\label{sec:audit}
+
+Exact source duplicates are removed globally before any return calculation. The targeted audit then examines 109 unique question-asset pairs selected from macroeconomic, geopolitical, regulatory, process, and non-standard contracts. Contracts that are circular, resolve from the mapped stock price, have unusable endpoints, or do not define an equity exposure are excluded; process-only questions and contracts requiring an unavailable multi-contract probability transformation are marked secondary or quarantined rather than forced into H1.
+
+\begin{table}[t]
+\caption{Candidate cleaning reconciliation.}
+\label{tab:cleaning}
+\centering
+\small
+\begin{tabular}{lr}
+\toprule
+Stage & Rows \\
+\midrule
+Raw candidate rows & 1,293 \\
+Exact duplicate excess removed & 36 \\
+Rows after exact collapse & 1,257 \\
+Audited unique question-asset pairs & 109 \\
+Quarantined pending transformation & 54 \\
+Secondary-only & 11 \\
+Excluded or endpoint-invalid & 10 \\
+Primary cleaned output & 1,182 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:cleaning} reconciles the data flow. The audit is targeted rather than universe-complete: 1,148 rows pass through deterministic rules without manual question-level review, and this boundary is recorded explicitly.
+
+\section{H1 Expectation Design}
+
+\subsection{Estimand and execution}
+
+For each valid candidate, the primary net return is
+\[
+r^{net}_i = \frac{P_{i,T_e-1}-P_{i,T_{entry}}}{P_{i,T_{entry}}}
+-\frac{C_i}{N_i},
+\]
+where $P$ is the stored equity close, $N_i=\$10{,}000$ is fixed entry notional, and $C_i$ contains round-trip commissions, regulatory fees, and 5 basis points of slippage per transaction leg. Whole shares are used. Every candidate is evaluated independently; portfolio capital, concurrency, Kelly sizing, and event-priority allocation are absent from H1. The primary hypothesis is $H_1:\ \mu_{\mathcal O}=\mathbb{E}[r^{net}_i\mid i\in\mathcal O_{clean}]>0$. The expectation is reported at candidate, symbol-day, and equal-weight economic-event levels; the event view prevents a dense question family from being mistaken for independent evidence.
+
+\subsection{Eligibility provenance}
+\label{sec:provenance}
+
+The eligibility parameters (strong and floor entry thresholds, confirmation days, probability-surge cap, and run-up cap) are not fixed a priori. They are the walk-forward policy schedule fitted by the portfolio optimizer of Section~\ref{sec:cem} (the all-treatment SPY arm). Each fold's policy is fitted only on candidates whose outcomes completed before that fold began, so every 2026 observation is evaluated under parameters that were point-in-time legal at its own signal date; however, the schedule is refit as the test period progresses, and observations before the first fold reuse the first fold's policy retrospectively. Consequently, the full-sample H1 estimate is descriptive evidence about the opportunity set under the system's own selection rule, not an independent confirmatory hypothesis test, and the January--June 2026 subsample --- although its eligibility decisions use no future outcomes --- has been repeatedly inspected during research.
+
+\subsection{Inference and sensitivity analysis}
+
+An iid one-sided $t$-test is shown only as a reference. The primary uncertainty analysis resamples economic-event clusters; additional schemes use symbol, entry week, and entry month. Each bootstrap uses 20,000 replications with fixed seeds; $p$-values are null-centered and one-sided, and intervals are uncentered percentile intervals. Medians and positive-return frequencies are reported because a right-skewed mean can be positive when barely half of observations win. Sensitivity tests multiply modeled costs by up to three, shift entry to the next stored equity close, remove the largest positive observations, symmetrically trim both tails, and recompute estimates by calendar month and event family; a separate benchmark-relative analysis (Section~\ref{sec:benchmark}) compares every trade against a matched benchmark position.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.78\textwidth]{fig1_h1_evidence.pdf}
+\Description{Two dot-whisker panels. The first compares bootstrap intervals under event, symbol, and month dependence. The second compares event-clustered candidate means for earnings, geopolitical, and other event families.}
+\caption{Cleaned H1 estimates. Panel A holds the candidate mean fixed while changing the resampling unit; the equal-weight event estimate is shown separately. Panel B is descriptive event-family heterogeneity, with candidate-weighted means and event-clustered intervals.}
+\label{fig:h1}
+\end{figure*}
+
+\section{H1 Results}
+\label{sec:h1results}
+
+\subsection{Central estimate}
+
+Of 1,182 cleaned candidates, 934 satisfy the probability entry rules. Eight hundred eighty-seven have a valid entry before the final eligible pre-event close; the other 47 reach acceptance only at or after that close and are excluded (no candidate is lost to missing price data). The rejected remainder comprises 121 candidates below the entry thresholds, 108 exceeding the probability-surge cap, 12 without a clean signal side, and 7 exceeding the run-up cap. Table~\ref{tab:h1} reports the central results. Candidate observations have mean net return $+1.208\%$, median $+0.188\%$, and positive-return frequency $51.97\%$ across 750 economic events, 387 symbols, 46 entry weeks, and 16 entry months. The event-cluster bootstrap interval is $[+0.263\%,+2.200\%]$ with one-sided $p=0.0087$.
+
+The result weakens as dependence becomes coarser. The candidate-symbol interval is $[-0.184\%,+2.776\%]$ with $p=0.0652$, the entry-week block interval is $[-0.185\%,+2.834\%]$ with $p=0.0678$, and the entry-month block interval is $[-0.630\%,+3.651\%]$ with $p=0.1427$. After equal-weight event aggregation, the mean is $+0.631\%$ and the median is $+0.013\%$; its month-block interval is $[-0.417\%,+2.407\%]$ with $p=0.1935$. Restricting to the 528 candidates entered during January--June 2026 gives mean $+2.038\%$ and median $+0.557\%$, with event-cluster $p=0.0006$ but month-block $p=0.1083$ on only six months.
+
+\input{table_h1.tex}
+
+\subsection{Tail, cost, and timing sensitivity}
+
+The positive mean is upper-tail dependent. Removing the largest one percent of candidate returns lowers the candidate mean to $+0.662\%$; removing the largest five percent makes it $-0.260\%$. At the event level, removing the largest one percent reduces the mean from $+0.631\%$ to $+0.029\%$ ($p=0.4523$). Symmetric trimming is less destructive (five-percent trim: candidate $+0.584\%$, event $+0.070\%$). At three times modeled costs the candidate mean remains $+0.954\%$ ($p=0.0026$). Repricing entry at the next stored equity close yields candidate mean $+1.229\%$ and event mean $+0.550\%$ ($p=0.0550$). However, the stored daily data do not establish same-session ordering between the probability signal and the equity close (0 of 887 entries are verifiable), so the next-stored-close specification is the conservative timing sensitivity.
+
+\subsection{Polarity and event-family heterogeneity}
+
+A controlled ablation treats every YES probability as bullish while leaving the cleaned candidate file and policy unchanged: 882 observations, mean $+1.272\%$, median $+0.229\%$, versus 887, $+1.208\%$, $+0.188\%$ under resolved polarity. Polarity therefore does not improve aggregate return in this sample; its contribution is semantic validity. The 43 selected NO-bullish observations have mean $-2.100\%$ and require prospective review.
+
+Event-family results are more informative for candidate choice. Earnings observations ($N=692$) have mean $+0.020\%$ with event-clustered interval $[-0.476\%,+0.521\%]$ --- close to chance on average. Geopolitical observations ($N=172$, only 37 economic events) have mean $+4.794\%$, median $+2.443\%$, and event-clustered interval $[+0.936\%,+8.485\%]$. The family pattern is concentrated: removing the single most influential symbol (the oil ETF USO, 104 rows) lowers the full-sample candidate mean from $+1.208\%$ to $+0.313\%$, and removing March 2026 alone (116 rows) lowers it to $+0.206\%$ (event level, $+0.631\%$ to $+0.435\%$). The geopolitical result should be read as substantially oil-linked and period-specific. These subgroup results were not separately preregistered; they motivate family-aware allocation but do not establish causality.
+
+\subsection{Benchmark-relative inference}
+\label{sec:benchmark}
+
+The raw expectation could reflect common market exposure during a rising sample period. Each valid trade is therefore matched to an equal-notional benchmark trade over the identical entry and exit dates, with costs modeled independently on both legs: SPY for all 887 observations, and the candidate's actual sector ETF for the 680 observations with a real sector mapping (unknown-sector rows are excluded, not proxied). Table~\ref{tab:benchmark} and Figure~\ref{fig:benchmark} report the result: mean excess is positive but no 95\% interval excludes zero under any dependence scheme. Against SPY, the candidate mean excess is $+0.914\%$ with event-cluster $p=0.0508$; the equal-weight event excess is $+0.430\%$ ($p=0.1138$); against sector ETFs the candidate excess is $+0.191\%$ ($p=0.2644$). The H1 evidence is a positive raw conditional mean whose market-relative component is not statistically established; a substantial part of the raw headline coincides with market and sector movement over the same windows.
+
+\input{table_benchmark_v2.tex}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.78\textwidth]{fig2_benchmark_excess.pdf}
+\Description{Two dot-whisker panels showing mean excess return of stock trades over matched SPY trades and matched sector ETF trades, at candidate, symbol-day, and equal-event levels, under several dependence schemes. All intervals cross zero.}
+\caption{Benchmark-relative H1 inference: matched equal-notional benchmark trades over identical dates, after costs on both legs. Every 95\% interval crosses zero.}
+\label{fig:benchmark}
+\end{figure*}
+
+\section{Portfolio Experiments}
+\label{sec:cem}
+
+\subsection{Research question and policy class}
+
+The portfolio study asks: can a low-dimensional, interpretable policy extract portfolio value from a positive but noisy and heterogeneous prediction-market-conditioned return distribution? The policy class is a ten-parameter rule set: strong and floor entry thresholds, confirmation days, probability-surge cap $[0.20,0.80]$, run-up cap $[2\%,20\%]$ (these five govern which candidates are accepted and when), plus an ATR exit multiple $[1.5,4.0]$, profit-lock activation $[2\%,10\%]$, probability exit threshold $[0.45,0.60]$, base position size $[6\%,12\%]$, and maximum concurrency of 8--12 positions (these five govern exits, sizing, and capacity). CEM is a stochastic, derivative-free optimizer of this rule set --- it is not reinforcement learning and not a deterministic learning algorithm; once fitted and frozen, the deployed policy is deterministic given the observed state. The fitness is $J(\pi)=\operatorname{Sharpe}_{daily}(\pi)-0.30\,|\operatorname{MDD}_{\%}(\pi)|$, with daily-equity Sharpe annualized by $\sqrt{252}$; standard runs use six iterations, population 20, elite fraction 25\%, and a fixed seed.
+
+Portfolio mechanics are identical in every arm: \$100{,}000 starting capital; whole-share event positions; idle cash above \$100 swept into fractional SPY or QQQ; Interactive Brokers-style commissions, SEC fees, and 5 bp slippage per leg; per-trade profit net of all four rotation legs; portfolio return measured from terminal equity, never summed trade PnL.
+
+\subsection{Treatments T1--T4}
+
+T1 subtracts $2f_{fail}$ from the fitness, where $f_{fail}$ is the fraction of fitted trades with gross PnL below three times modeled cost; it rejects no trade at execution time. T2 replaces the single frozen fit with expanding three-month walk-forward folds: a fold fits only on candidates whose $T_e$ completed strictly before the fold start, evaluates the next block, and keeps refitting inside 2026 on completed outcomes only. T3 applies half-Kelly sizing clipped to 5--20\% after ten completed net trades (latest 30 trades; open positions never enter the history). T4 ranks same-day candidates by event family (geopolitical, macro, earnings, other), then entry probability and clipped run-up, collapses same-symbol duplicates, and may preempt the worst earnings position below $+3\%$ net when the roster is full.
+
+\subsection{Experimental design}
+\label{sec:design}
+
+The cleaned file contains 427 training rows (August 2024--December 2025) and 755 rows in 2026; after the relevance filter, 1,148 candidates enter, of which 721 fall in the single January--June 2026 test window. Fit eligibility is strict label completion ($T_e$ before the fit cutoff) and every simulation is truncated at its own horizon; both the frozen and walk-forward protocols are leakage-free for the test, differing only in whether the policy may adapt during it. The frozen arms' in-sample training paths are not reported as performance. No validation split is used; January--June 2026 is one test period.
+
+Five matched experiments isolate the contributions. (1) A \emph{fixed default policy} --- the repository's default rule set (entry 0.75/0.70, one confirmation day, surge cap 0.40, run-up cap 0.10, ATR 3.65, lock 3\%, $\theta_{out}$ 0.55, 10\% size, 10 slots, FIFO) --- provides the reference without any parameter search. Its values were fixed in code before these experiments but were informally chosen with knowledge of earlier fitted policies (they resemble typical CEM optima). The reference is therefore fixed but not hindsight-free: a \emph{conservative} comparator biased against finding a CEM improvement, whose own absolute performance overstates an uninformed operator. A \emph{fully permissive} variant trades every eligible candidate at its first $0.55$ cross (its execution rules share the same informal provenance). (2) The \emph{standard CEM} policy (one fit on completed pre-2026 data, frozen through the test) and the treatment ladder (T2-only, T1+T2, T1+T2+T3, T1+T2+T3+T4) are each run for seeds 42--51 at $6\times20$. (3) A \emph{selection/execution decomposition} crosses the standard CEM policy's five selection parameters with the default execution set and vice versa. (4) A \emph{matched random-selection test} redraws, 500 times, monthly-matched candidate sets from the contemporaneously eligible pool and applies the same fixed execution; sampling uses no information unavailable at the selection date. (5) Fold-level walk-forward results are reported individually. (6) An \emph{allocator experiment} freezes the fitted all-treatment stack per seed and varies only the rule that orders contemporaneously competing candidates (Section~
+ef{sec:t4alloc}). Because selection and confirmation timing are one mechanism (the entry gates), the decomposition attributes gate timing to ``selection''; this is the closest separation the architecture supports.
+
+\section{Portfolio Results}
+
+\subsection{Non-optimized reference versus standard CEM}
+
+Table~\ref{tab:cemmain} is the main comparison. The fixed default policy --- with no parameter search --- historically outperformed both benchmarks: excess $+13.21$ points on SPY and $+5.22$ on QQQ (recalling its informal provenance, this is not evidence that an uninformed rule set would have done the same). The standard CEM policy improved on it in \textbf{8 of 10 seeds on both benchmarks}, with median excess $+16.50$ [IQR 14.74, 17.84] on SPY and $+8.62$ [7.05, 11.85] on QQQ --- a median improvement near $+3.3$ points, smaller than the seed spread. The fully permissive arm (no selectivity) is the weakest on both benchmarks ($+8.22$ SPY, $+1.11$ QQQ). Selectivity as such is therefore the largest single contribution; explicit optimization adds a moderate, seed-consistent increment on top of a reference that was already informally informed. Given these results we treat standard CEM as the paper's primary configuration --- on protocol grounds (the simplest leakage-free deployment), not because it won this short test, which by itself cannot justify selecting it.
+
+\input{table_cem_main.tex}
+
+\subsection{Selection versus execution, and matched random selection}
+
+Figure~\ref{fig:contribution}A decomposes the standard CEM policy. CEM selection with fixed default execution reaches median excess $+17.67$ (SPY) and $+9.30$ (QQQ); default selection with CEM execution reaches $+17.14$ and $+9.34$; the fully optimized policy reaches $+16.50$ and $+8.62$. Either optimized half alone matches the full policy, and combining them adds nothing --- the two channels act as substitutes, consistent with a broadly profitable candidate stream in which any sane tightening of the rule box captures most of the available gain. There is no evidence of selection--execution synergy.
+
+Figure~\ref{fig:contribution}B tests whether the optimizer's specific candidate choices beat arbitrary choice. Holding execution fixed, the seed-42 CEM selection earned $+18.59$ SPY excess against a 500-draw matched random-selection distribution with median $+11.57$ and $[5\text{th},95\text{th}]=[+2.52,+22.21]$: the \textbf{86th percentile}, empirical one-sided $p=0.142$. On QQQ the observed $+6.22$ sits at the \textbf{37th percentile} ($p=0.633$): random selection is as good or better. Two documented caveats: random draws execute slightly fewer trades after capacity skips (an asymmetry flattering the observed arm), and even arbitrary selections come from the cleaned, screened pool. Selective question choice is therefore \emph{not statistically established} as the source of value --- what the data support is that trading this pool selectively, under disciplined rules, historically outperformed trading all of it. This test evaluates the CEM \emph{entry gates} within the cleaned pool; it says nothing about the T4 allocator, which is tested separately below.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.80\textwidth]{fig_cem_contribution.pdf}
+\Description{Two panels. Panel A shows full-test excess return for seven portfolio arms as median dots with interquartile and min-max bars across ten optimizer seeds, for SPY and QQQ; deterministic arms appear as diamonds. Panel B shows histograms of excess return for five hundred matched random candidate selections per benchmark, with vertical lines marking the observed CEM-selection arm at the 86th percentile for SPY and the 37th percentile for QQQ.}
+\caption{Portfolio contribution analysis, January--June 2026. A: selection/execution decomposition (median, IQR, min--max across seeds 42--51; diamonds are deterministic arms). B: matched random-selection test --- 500 monthly-matched draws from the eligible pool under identical fixed execution, versus the observed CEM-selection arm.}
+\label{fig:contribution}
+\end{figure*}
+
+\subsection{Walk-forward folds}
+
+Table~\ref{tab:folds} reports every chronological fold of the T2-only arm. Fold-level performance is heterogeneous and does not monotonically improve: the two late-2025 folds are flat to negative on both benchmarks, the 2026 SPY folds are strong, and QQQ fold 4 is negative; where later folds are better, this coincides with the richer 2026 candidate stream rather than demonstrable adaptation. Fitted parameters also vary substantially across folds --- the mean across-fold standard deviation is roughly 24\% of the bound width for the entry floor, 16\% for the ATR multiple, and 21\% for the surge cap and concurrency --- which we interpret as estimation instability rather than successful adaptation. Walk-forward evaluation still contains a training history and a subsequent evaluation block; it does not eliminate the training period. The all-treatment arm shows nearly the same fold profile (fold-excess correlation $0.86$ across the ten fold--benchmark cells; SPY folds 4--5: $+9.49$ and $+12.63$; QQQ fold 4: $-3.26$), so the late-fold strength reflects the 2026 candidate stream and regime, not any treatment.
+
+\input{table_folds.tex}
+
+\subsection{Treatment attribution across seeds}
+
+Paired adjacent steps of the ladder (same seed, $6\times20$, median $\Delta$ excess with wins out of ten): switching the frozen fit to walk-forward (T2-only $-$ standard CEM) gives $+2.42$ on SPY (6/10) but $\mathbf{-6.63}$ on QQQ (3/10); adding T1 gives $+1.05$ (6/10) and $-0.95$ (4/10); adding T3 gives $\mathbf{-6.33}$ on SPY (\textbf{1/10}) and $+4.67$ on QQQ (6/10); adding T4 gives $-2.20$ (3/10) and $+0.93$ (6/10). The only near-consistent effect is that half-Kelly sizing subtracts on SPY; every other step is inside seed noise and flips sign across benchmarks. End to end, the all-treatment arm underperforms standard CEM by median $-7.43$ points on SPY (0/10 wins) and $-3.44$ on QQQ (3/10), and beats the \emph{non-optimized} reference in only 1/10 (SPY) and 4/10 (QQQ) seeds. The treatments' value in this sample is operational realism --- label-complete chronology, bounded sizing, explainable allocation --- not terminal return.
+
+\subsection{Does event-priority allocation add value?}
+\label{sec:t4alloc}
+
+The ladder step above compares end-to-end pipelines, in which adding T4 also changes the fitted optimum. A matched allocator experiment isolates T4 itself: per seed, the fitted all-treatment schedule, frozen Kelly history, eligibility, exits, sizing, capacity, and costs are held fixed; only the ordering of contemporaneously competing candidates varies (T4, FIFO, or 1,000 seeded random orderings, each a full chronological simulation). The allocator has real scope: a median of ${\sim}43$ contested dates and ${\sim}90$ positions per run whose identity differs between T4 and FIFO, via priority ranking and same-symbol collapse; the preemption rule never fired in any of the 20 runs. Against FIFO, T4 wins consistently: median paired excess difference $+2.10$ points on SPY (9/10 seeds) and $+2.82$ on QQQ (8/10), with better maximum drawdown in 17/20 cells and similar trade counts. Against matched random ordering it is indistinguishable: median percentile 60.3 (SPY) and 58.0 (QQQ), no cell above the random 95th percentile, median empirical one-sided $p\approx0.40$; FIFO itself sits \emph{below} the random median (percentile 30.7 and 39.5), so much of T4's FIFO edge is escaping a below-random ordering rather than superior ranking. Retrospective contested-decision diagnostics agree: T4-selected candidates are no better than FIFO-selected or rejected alternatives (date- and event-clustered intervals crossing zero) and hold a mid-pack mean rank among ${\sim}7$ contemporaneous alternatives. The supported statement is therefore: T4 improves on FIFO under capacity constraints --- through portfolio-path and drawdown effects, not through picking retrospectively better candidates --- and is not shown to beat random allocation.
+
+\subsection{Seed and budget robustness; statistical evidence}
+
+Across the four CEM budgets of the pre-existing 40-run grid, the all-treatment arm's median excess over ten seeds is positive throughout: on SPY $+8.26$ ($6{\times}20$), $+6.69$ ($6{\times}30$), $+7.76$ ($10{\times}20$), and $+6.97$ ($10{\times}30$) points with 10/10 seeds positive in every budget; on QQQ $+3.89$, $+5.65$, $+4.65$, and $+6.44$ with 8--9/10 positive. Interquartile ranges overlap heavily; the budgets are robustness diagnostics and none is selected by test performance. Rerunning the all-treatment arm on the pre-cleaning universe changes its terminal return by $-2.96$ (SPY) and $-2.32$ (QQQ) points with block-bootstrap $p\approx0.34$--$0.39$: directionally favorable to cleaning, statistically inconclusive.
+
+Portfolio-level uncertainty uses a 5-day moving-block bootstrap (20,000 replications) on daily excess returns over the 111-day test. For the standard CEM policy (seed 42): mean daily excess $1.68\times10^{-3}$ on SPY, 95\% CI $[-0.18,+3.88]\times10^{-3}$, one-sided $p=0.068$; QQQ $p=0.266$. For the fixed default policy: SPY $p=0.166$, QQQ $p=0.372$. No arm's excess is statistically established; every portfolio claim in this paper is of the form ``historically outperformed the benchmark during the test period.''
+
+\section{Discussion}
+
+The two halves of the paper answer the central question jointly. The average candidate-level evidence is weak: intervals cross zero under coarse dependence, no benchmark-relative interval excludes zero, and the raw mean is concentrated in oil-linked assets and one month. Yet the matched portfolio experiments show this weak average distribution still supported economically meaningful historical portfolios: every selective arm outperformed both benchmarks in most or all seeds, the ordering (no selection $<$ fixed selectivity $<$ optimized policy) is stable across seeds, and one standard CEM fit reliably improved on the fixed reference --- the distinction between a weak average population result and a selectively useful, probability-triggered trading signal.
+
+The experiments also bound the claim. The optimizer's improvement is modest ($\approx+3$ points median) relative to seed dispersion; its candidate choices are not distinguishable from arbitrary choices within the same screened pool (86th percentile SPY, 37th QQQ); optimized selection and execution are substitutes; fold-level results are regime-dependent with unstable fitted parameters; no treatment adds terminal value end to end (half-Kelly consistently subtracts on SPY); and T4's ranking beats FIFO without demonstrably beating random ordering. Not all Polymarket questions carry useful equity information: earnings-linked candidates are near chance, and the exploitable component concentrates in geopolitical, oil-related, and calendar regimes. The relevant research object is the continuous crowd-implied probability stream --- level, direction, revisions, deadline proximity --- rather than the final binary outcome.
+
+Exploratory PPO reinforcement-learning experiments conducted during development did not learn a stable replacement for the low-dimensional CEM policy: the agent failed to produce consistently reliable entry, exit, stop-loss, sizing, and portfolio decisions. The roughly five hundred label-complete training candidates appear insufficient for estimating a high-capacity sequential policy, although those experiments cannot prove that sample size is the sole cause. Their artifacts were not retained in the cleaned repository, so we report this as preliminary negative evidence rather than a formal benchmark; it favors a low-capacity, interpretable policy for the present dataset, not a general claim that reinforcement learning is unsuitable for prediction-market trading. Whether such agents become viable as the universe of relevant, label-complete questions grows is a testable future research question.
+
+The principal limitations are the two-year venue history, one prediction-market source, a targeted rather than universe-complete semantic audit, daily historical equity decisions, and eligibility parameters inherited from the portfolio optimizer rather than fixed a priori. The event endpoint is the scheduled value stored in the research dataset: endpoint revisions and actual resolution timestamps are not versioned, so it cannot be proven that every event was still unresolved at the measured exit close. The random-selection test bundles gate timing with selection and does not equalize executed trade counts; the fixed reference is informally informed by earlier fitted policies; the RL evidence is unverifiable because its artifacts were not retained; and the allocator experiment evaluates the FIFO and random arms slightly off-policy (the schedules were fitted with T4 in the loop). The 2026 test period is short, repeatedly inspected, and not a pristine holdout; the walk-forward arms refit within it. Benchmark-relative statistical uncertainty remains material throughout, and prospective performance is not established.
+
+\section{Conclusion}
+
+The average polarity-aligned candidate return is positive, but dependence-aware and benchmark-relative inference does not establish a universal equity-return effect. Nevertheless, the matched portfolio experiments indicate that the signal has had selective economic value: a standard low-dimensional CEM policy concentrated capital in a tighter subset of questions and assets and coordinated entry, exit, and capacity decisions more effectively than an unoptimized reference --- in 8 of 10 optimizer seeds on both benchmarks --- and even the fixed reference rule set historically outperformed both buy-and-hold benchmarks. Three portfolio conclusions must be kept separate. First, the full T1+T2+T3+T4 stack historically outperformed SPY and QQQ across all ten optimizer seeds. Second, the CEM entry gates were not statistically distinguishable from matched random candidate selection within the same cleaned pool: the value came from disciplined selectivity as such, and optimized selection and optimized execution proved substitutable. Third, under matched frozen-stack conditions the T4 event-priority allocator consistently beat FIFO (17 of 20 seed--benchmark cells, mainly via portfolio-path and drawdown effects) but was not shown to beat random ordering of the same competing candidates; the additional treatments improved operational realism, not terminal return.
+
+These are historical statements about a short, repeatedly inspected window. No portfolio excess return is statistically established, the strongest raw evidence sits in oil-linked and calendar-specific regimes, earnings candidates are near chance, and prospective performance remains untested. Whether the selective value persists, and whether larger universes of label-complete candidates eventually support higher-capacity policies, are prospective questions that new events, not further optimization of this history, must answer.
+
+\begin{thebibliography}{9}
+\bibitem{Hayek1945} F. A. Hayek. 1945. The Use of Knowledge in Society. \emph{American Economic Review}.
+\bibitem{Fama1970} E. F. Fama. 1970. Efficient Capital Markets. \emph{Journal of Finance}.
+\bibitem{GrossmanStiglitz1980} S. J. Grossman and J. E. Stiglitz. 1980. On the Impossibility of Informationally Efficient Markets. \emph{American Economic Review}.
+\bibitem{Wolfers2004} J. Wolfers and E. Zitzewitz. 2004. Prediction Markets. \emph{Journal of Economic Perspectives}.
+\bibitem{Berg2008} J. E. Berg, F. D. Nelson, and T. A. Rietz. 2008. Prediction Market Accuracy in the Long Run. \emph{International Journal of Forecasting}.
+\bibitem{Duffie2010} D. Duffie. 2010. Asset Price Dynamics with Slow-Moving Capital. \emph{Journal of Finance}.
+\bibitem{Cowgill2015} B. Cowgill and E. Zitzewitz. 2015. Corporate Prediction Markets. \emph{Review of Economic Studies}.
+\bibitem{BernardThomas1989} V. L. Bernard and J. K. Thomas. 1989. Post-Earnings-Announcement Drift. \emph{Journal of Accounting Research}.
+\end{thebibliography}
+}
+
+\end{document}

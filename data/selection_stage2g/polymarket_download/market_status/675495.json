@@ -1,0 +1,22 @@
+{
+  "market_id": "675495",
+  "question": "Will Dolby Laboratories (DLB) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-10 22:31:42.763083+00:00",
+  "requested_end_utc": "2025-11-11 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "2f57bfc260bed29888bf557c|a640120b9cf975268f5b4a95",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "114353082542604476550838557279822443944108412205602629664268691417241243267311",
+  "condition_id": "0x62214a6ea3f07b771f70fd173b587b369793880af3b7cb51b7f50dd3f9a94b7b",
+  "api_question": "Will Dolby Laboratories (DLB) beat quarterly earnings?",
+  "api_created_at": "2025-11-10T22:31:42.763083Z",
+  "api_end_date": "2025-11-18T22:00:00Z",
+  "status": "complete",
+  "row_count": 1244,
+  "first_source_ts_utc": "2025-11-11 00:16:05+00:00",
+  "last_source_ts_utc": "2025-11-11 20:59:05+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\675495.csv",
+  "fragment_sha256": "19717e9de37a0eabc3911d731061e9ed349de787cdfa4cbfbb93e1a6311b9b3e",
+  "question_matches": true,
+  "error": null
+}

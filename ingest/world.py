@@ -117,6 +117,9 @@ class BatchedAssetWorld(AssetWorld):
     # Pass-1 score for the market question itself. Multiplied by each asset's connection_strength
     # to form the final relevance. Defaults to 1.0 for legacy one-pass worlds (unscored).
     question_relevance: float = 1.0
+    # Gate pass-1 tone judgment. Recorded for diagnostics only — it does NOT
+    # gate: polarity decides which resolution is the bullish side downstream.
+    positive_sentiment: bool = True
 
 
 class CompactAssetWorld(BaseModel):
@@ -464,6 +467,7 @@ def empty_world(
     reason: str | None = None,
     *,
     question_relevance: float = 0.0,
+    positive_sentiment: bool = True,
 ) -> BatchedAssetWorld:
     return BatchedAssetWorld(
         request_id=request_id,
@@ -474,6 +478,7 @@ def empty_world(
         ),
         assets=[],
         question_relevance=question_relevance,
+        positive_sentiment=positive_sentiment,
     )
 
 
@@ -483,6 +488,7 @@ def canonicalize_tight_gemini_world(
     catalog: IBAssetCatalogIndex,
     *,
     question_relevance: float = 1.0,
+    positive_sentiment: bool = True,
 ) -> BatchedAssetWorld:
     selected: list[AssetCandidate] = []
     seen: set[str] = set()
@@ -517,6 +523,7 @@ def canonicalize_tight_gemini_world(
             market,
             f"Mapped names are not IB-tradable: {[asset.symbol for asset in tight_world.assets]}",
             question_relevance=question_relevance,
+            positive_sentiment=positive_sentiment,
         )
     return BatchedAssetWorld(
         request_id=tight_world.request_id,
@@ -527,6 +534,7 @@ def canonicalize_tight_gemini_world(
         ),
         assets=selected,
         question_relevance=question_relevance,
+        positive_sentiment=positive_sentiment,
     )
 
 
@@ -559,22 +567,26 @@ async def build_gemini_asset_worlds(
     worlds: dict[str, BatchedAssetWorld] = {}
     relevant_requests: list[tuple[str, SourceMarket, datetime]] = []
     relevance_by_request: dict[str, float] = {}
+    sentiment_by_request: dict[str, bool] = {}
     for request_id, market, _ in requests:
         decision = decisions[request_id]
         relevance_by_request[request_id] = decision.question_relevance
-        if decision.question_relevance >= QUESTION_RELEVANCE_FLOOR and decision.positive_sentiment:
+        sentiment_by_request[request_id] = decision.positive_sentiment
+        if decision.question_relevance >= QUESTION_RELEVANCE_FLOOR:
+            # Tone does NOT gate. The strategy is long-only in equities, but
+            # polarity decides which market resolution is the bullish side for
+            # each mapped asset (-1 = trade the NO side), so negative-tone
+            # events are tradable. On the 2025 tariff wave the old tone skip
+            # discarded 47 of 135 relevant markets (data/tariff_run/gate.json).
+            # positive_sentiment is recorded on the world for diagnostics.
             relevant_requests.append((request_id, market, _))
         else:
-            reason = decision.reason
-            if decision.question_relevance >= QUESTION_RELEVANCE_FLOOR and not decision.positive_sentiment:
-                # This is a long-only strategy: skip events whose tone is negative/adverse,
-                # even when they are mechanically relevant to US equities.
-                reason = f"Negative-sentiment event, skipped for long-only strategy: {decision.reason}"
             worlds[request_id] = empty_world(
                 request_id,
                 market,
-                reason,
+                decision.reason,
                 question_relevance=decision.question_relevance,
+                positive_sentiment=decision.positive_sentiment,
             )
 
     if relevant_requests:
@@ -600,6 +612,7 @@ async def build_gemini_asset_worlds(
                 market,
                 catalog,
                 question_relevance=relevance_by_request[request_id],
+                positive_sentiment=sentiment_by_request[request_id],
             )
     return [worlds[request_id] for request_id, _, _ in requests]
 

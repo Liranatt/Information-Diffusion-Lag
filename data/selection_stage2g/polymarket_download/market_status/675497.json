@@ -1,0 +1,22 @@
+{
+  "market_id": "675497",
+  "question": "Will Powell Industries (POWL) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-10 22:31:46.941338+00:00",
+  "requested_end_utc": "2025-11-11 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "3fb92c1c5e4c4d36649c8848|dc19e8290762026be2a07570",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "37731594738555895783352819237861489474438191373773738173365431544762778823915",
+  "condition_id": "0x9094e56a0f9730656d72ea0884d507ff691c898fd10cea1f8e83273b94b4f386",
+  "api_question": "Will Powell Industries (POWL) beat quarterly earnings?",
+  "api_created_at": "2025-11-10T22:31:46.941338Z",
+  "api_end_date": "2025-11-18T22:00:00Z",
+  "status": "complete",
+  "row_count": 1243,
+  "first_source_ts_utc": "2025-11-11 00:17:07+00:00",
+  "last_source_ts_utc": "2025-11-11 20:59:07+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\675497.csv",
+  "fragment_sha256": "b9a95d317595a276414ef0fb072d95a7c43301e18afcfedb2560a9e1a56ee8e7",
+  "question_matches": true,
+  "error": null
+}

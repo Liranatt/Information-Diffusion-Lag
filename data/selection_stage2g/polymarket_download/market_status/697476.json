@@ -1,0 +1,22 @@
+{
+  "market_id": "697476",
+  "question": "Will Build-A-Bear Workshop (BBW) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-22 20:42:59.809754+00:00",
+  "requested_end_utc": "2025-11-26 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "f498107be8185c77d06ec15c|f73db8062dec68ed7d932978",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "27473414328818706944516646283916068221890510032631537345559314416363290969525",
+  "condition_id": "0x0ee57e4f64242ab442ce42814cb59258ad6d681e83c3cc9cc232caf262d0167a",
+  "api_question": "Will Build-A-Bear Workshop (BBW) beat quarterly earnings?",
+  "api_created_at": "2025-11-22T20:42:59.809754Z",
+  "api_end_date": "2025-12-04T14:00:00Z",
+  "status": "complete",
+  "row_count": 5758,
+  "first_source_ts_utc": "2025-11-22 21:02:08+00:00",
+  "last_source_ts_utc": "2025-11-26 20:59:08+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\697476.csv",
+  "fragment_sha256": "ea595bf3e8f8407ebdf045259f73aefd82e786124543676b42d2ae4828518fcd",
+  "question_matches": true,
+  "error": null
+}

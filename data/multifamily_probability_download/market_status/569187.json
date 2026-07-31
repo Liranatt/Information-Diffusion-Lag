@@ -1,0 +1,23 @@
+{
+  "market_id": "569187",
+  "question": "FDA approves Precigen\u2019s PRGN-2012 for recurrent respiratory papillomatosis?",
+  "requested_start_utc": "2025-07-28 14:09:26.965531+00:00",
+  "requested_end_utc": "2025-07-29 20:00:00+00:00",
+  "candidate_count": 1,
+  "research_families": "other",
+  "economic_event_ids": "34555",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "83585961018070944667069632146073634423958032165106614485948298639870203105115",
+  "condition_id": "0x39d843c0baa397863ef665f11c1ef3a36a78d17fee2ac6d8b750910d649a61fc",
+  "api_question": "FDA approves Precigen\u2019s PRGN-2012 for recurrent respiratory papillomatosis?",
+  "api_created_at": "2025-07-28T14:09:26.965531Z",
+  "api_end_date": "2025-08-27T16:00:00Z",
+  "status": "complete",
+  "row_count": 258,
+  "first_source_ts_utc": "2025-07-29 15:42:08+00:00",
+  "last_source_ts_utc": "2025-07-29 19:59:09+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\569187.csv",
+  "fragment_sha256": "690129e99bd6f20044331db45fb8d379474bc42c76d8df3edc04f09bd532aba1",
+  "question_matches": true,
+  "error": null
+}

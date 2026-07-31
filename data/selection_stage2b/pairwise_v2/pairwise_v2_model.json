@@ -1,0 +1,54 @@
+{
+  "features": [
+    "feat_connection_strength",
+    "entry_prob",
+    "connection_rank_pct",
+    "feat_time_to_resolution_days",
+    "feat_asset_2w_trend",
+    "feat_sector_1m_trend",
+    "stock_sector_extension"
+  ],
+  "excluded_features": [
+    "feat_prob_surge_since_t0"
+  ],
+  "not_available_in_source": [
+    "probability_price_disagreement",
+    "supporting_market_agreement",
+    "supporting_market_dispersion"
+  ],
+  "regularization_C": 0.1,
+  "regularization_candidates": [
+    0.03,
+    0.1,
+    0.3,
+    1.0
+  ],
+  "winsor_quantiles": [
+    0.01,
+    0.99
+  ],
+  "robust_scaler_quantile_range": [
+    10.0,
+    90.0
+  ],
+  "missingness_indicators": true,
+  "pair_weighting": "unit mass per benchmark/entry-date group and equal mass per left candidate",
+  "training_split": "train",
+  "coefficients_on_transformed_features": {
+    "feat_connection_strength": -0.06202714131074963,
+    "entry_prob": -0.034725360292060144,
+    "connection_rank_pct": 0.06611618888482565,
+    "feat_time_to_resolution_days": -0.07026893821633538,
+    "feat_asset_2w_trend": -0.062199926773630204,
+    "feat_sector_1m_trend": -0.11309555785026425,
+    "stock_sector_extension": -0.0552875247095252,
+    "missing_feat_connection_strength": 0.0,
+    "missing_entry_prob": 0.0,
+    "missing_connection_rank_pct": 0.0,
+    "missing_feat_time_to_resolution_days": 0.0,
+    "missing_feat_asset_2w_trend": 0.0,
+    "missing_feat_sector_1m_trend": 0.0,
+    "missing_stock_sector_extension": 0.0
+  },
+  "intercept": -0.05793130059479611
+}

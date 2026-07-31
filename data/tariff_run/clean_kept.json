@@ -1,0 +1,3230 @@
+[
+ {
+  "event_id": "17691",
+  "market_id": "0xc2977e9fb0745aca8fd1f6b8a30f57acde9bb1b1e1b9e51d2556a096e52a04e6",
+  "question": "Will Trump remove tariff on Mexico before May?",
+  "event_title": "Will Trump remove tariff on Mexico before May?",
+  "tags": [
+   "politics",
+   "trump",
+   "tariffs",
+   "trade-war",
+   "first-100-days",
+   "economy",
+   "uptspt-politics",
+   "world"
+  ],
+  "created_at": "2025-02-02T18:39:55.317520+00:00",
+  "end_at": "2025-04-30T12:00:00+00:00",
+  "yes_token_id": "113202571448039465818616439796721133669177383124241284048028412631113903065069",
+  "condition_id": "0xc2977e9fb0745aca8fd1f6b8a30f57acde9bb1b1e1b9e51d2556a096e52a04e6"
+ },
+ {
+  "event_id": "17692",
+  "market_id": "0x219c11d6f896e92af5f5947f8bebb41952cc55d9b764ee4a3171c4803203ec2b",
+  "question": "Will Trump remove tariff on Canada before May?",
+  "event_title": "Will Trump remove tariff on Canada before May?",
+  "tags": [
+   "politics",
+   "trump-100-days",
+   "trump-presidency",
+   "tariffs",
+   "canada",
+   "trade-war",
+   "first-100-days",
+   "trump",
+   "economy",
+   "poilievre",
+   "mark-carney",
+   "uptspt-politics",
+   "world"
+  ],
+  "created_at": "2025-02-02T18:42:15.821125+00:00",
+  "end_at": "2025-04-30T12:00:00+00:00",
+  "yes_token_id": "4083806172574081378159792608441740156320014060911513598850661100894129675698",
+  "condition_id": "0x219c11d6f896e92af5f5947f8bebb41952cc55d9b764ee4a3171c4803203ec2b"
+ },
+ {
+  "event_id": "17693",
+  "market_id": "0x53a5acfebe01d8a2dd73693dc7646e8144a6c611cac2a438b69c700dd979a911",
+  "question": "Will Trump remove tariff on China before May?",
+  "event_title": "Will Trump remove tariff on China before May?",
+  "tags": [
+   "china",
+   "politics",
+   "trump",
+   "trump-100-days",
+   "trump-presidency",
+   "trade-war",
+   "first-100-days",
+   "economy",
+   "world",
+   "uptspt-politics",
+   "tariffs"
+  ],
+  "created_at": "2025-02-02T18:45:01.143838+00:00",
+  "end_at": "2025-04-30T12:00:00+00:00",
+  "yes_token_id": "35704428311020513154119270428538891284102814863899944748082869812553214944911",
+  "condition_id": "0x53a5acfebe01d8a2dd73693dc7646e8144a6c611cac2a438b69c700dd979a911"
+ },
+ {
+  "event_id": "20378",
+  "market_id": "0x849134233b3e56ac04b6babf4117ad2398ebc1121c12dedabd30a12915ca7b92",
+  "question": "Will Canada remove retaliatory tariffs on USA in March?",
+  "event_title": "Will Canada remove retaliatory tariffs on USA in March?",
+  "tags": [
+   "trade-war",
+   "canada",
+   "economy",
+   "politics",
+   "poilievre",
+   "mark-carney",
+   "tariffs",
+   "uptspt-politics"
+  ],
+  "created_at": "2025-03-05T15:36:04.624437+00:00",
+  "end_at": "2025-03-31T12:00:00+00:00",
+  "yes_token_id": "43491995608391363113739068969825385242451387455855057395614520027176334249977",
+  "condition_id": "0x849134233b3e56ac04b6babf4117ad2398ebc1121c12dedabd30a12915ca7b92"
+ },
+ {
+  "event_id": "20817",
+  "market_id": "0x78e9d8bbef9010b1af25b77cc6fc84aaf7ae845367adb6699770df847ae1cf6a",
+  "question": "US tariffs on European cars before May?",
+  "event_title": "US tariffs on European cars before May?",
+  "tags": [
+   "trump",
+   "trump-presidency",
+   "politics",
+   "geopolitics",
+   "economy",
+   "economic-policy",
+   "taxes",
+   "trade-war",
+   "tariffs",
+   "uptspt-politics",
+   "breaking-news"
+  ],
+  "created_at": "2025-03-12T17:51:57.871847+00:00",
+  "end_at": "2025-04-30T12:00:00+00:00",
+  "yes_token_id": "107123065901330897862273206094253452754107076448215114114215554777532358901831",
+  "condition_id": "0x78e9d8bbef9010b1af25b77cc6fc84aaf7ae845367adb6699770df847ae1cf6a"
+ },
+ {
+  "event_id": "20831",
+  "market_id": "0xce6b35fbb92a12a166a60ba5ad7b5cc5f17c8d0933e52b0f7fa9b9855e3e76db",
+  "question": "Trump tariff on EU alcohol before May?",
+  "event_title": "Trump tariff on EU alcohol before May?",
+  "tags": [
+   "geopolitics",
+   "politics",
+   "trade-war",
+   "uptspt-politics",
+   "tariffs",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-13T16:04:33.115255+00:00",
+  "end_at": "2025-04-30T12:00:00+00:00",
+  "yes_token_id": "19223510497282584683435254603556901892770100136695928092241396389163828018312",
+  "condition_id": "0xce6b35fbb92a12a166a60ba5ad7b5cc5f17c8d0933e52b0f7fa9b9855e3e76db"
+ },
+ {
+  "event_id": "22174",
+  "market_id": "0xb3d517559b545c25b445e274cb53d5f24f1759d804f9adeec89f26c02dcf44e2",
+  "question": "Will Trump remove 10% blanket tariff in April?",
+  "event_title": "Will Trump remove 10% blanket tariff in April?",
+  "tags": [
+   "trade-war",
+   "economy",
+   "liberation-day-tariffs",
+   "trump-presidency",
+   "trump",
+   "tariffs"
+  ],
+  "created_at": "2025-04-03T00:09:57.827009+00:00",
+  "end_at": "2025-04-30T12:00:00+00:00",
+  "yes_token_id": "28125308131881825901006887485444801149060454614205616269818829301555267074681",
+  "condition_id": "0xb3d517559b545c25b445e274cb53d5f24f1759d804f9adeec89f26c02dcf44e2"
+ },
+ {
+  "event_id": "22176",
+  "market_id": "0xc94d1d7d260e2d8f0e46e39f0a400aefc70414291e25f42cf349cd5ed50fd1f8",
+  "question": "Will Trump lower tariffs on EU in April? ",
+  "event_title": "Will Trump lower tariffs on EU in April? ",
+  "tags": [
+   "politics",
+   "trade-war",
+   "trump",
+   "executive-actions",
+   "economy",
+   "liberation-day-tariffs",
+   "trump-presidency",
+   "tariffs"
+  ],
+  "created_at": "2025-04-03T00:26:03.622414+00:00",
+  "end_at": "2025-04-30T12:00:00+00:00",
+  "yes_token_id": "25179851854060128061736049577435470941101174075167041444059425689680883317960",
+  "condition_id": "0xc94d1d7d260e2d8f0e46e39f0a400aefc70414291e25f42cf349cd5ed50fd1f8"
+ },
+ {
+  "event_id": "22177",
+  "market_id": "0xbe5219d1c82daaa110a20c0b50dae77f681f05eb43094e05ea24fe833c5ec47f",
+  "question": "Will Trump lower tariffs on China in April? ",
+  "event_title": "Will Trump lower tariffs on China in April? ",
+  "tags": [
+   "trump-presidency",
+   "liberation-day-tariffs",
+   "trump",
+   "economy",
+   "politics",
+   "geopolitics",
+   "tariffs",
+   "china"
+  ],
+  "created_at": "2025-04-03T00:30:45.567401+00:00",
+  "end_at": "2025-04-30T12:00:00+00:00",
+  "yes_token_id": "113855018188629272815215854048561973882380218497310887470128856217081250720455",
+  "condition_id": "0xbe5219d1c82daaa110a20c0b50dae77f681f05eb43094e05ea24fe833c5ec47f"
+ },
+ {
+  "event_id": "22219",
+  "market_id": "0xf1cd536d805a98563a4c7221fd088dabdebdba500f32505b646a440c0a044e77",
+  "question": "Will Trump reduce majority of tariffs before July?",
+  "event_title": "Will Trump reduce majority of tariffs before July?",
+  "tags": [
+   "politics",
+   "trump",
+   "trade-war",
+   "trump-presidency",
+   "economy",
+   "tariffs"
+  ],
+  "created_at": "2025-04-03T20:34:59.475243+00:00",
+  "end_at": "2025-06-30T12:00:00+00:00",
+  "yes_token_id": "42683146560417010511630695445520024429293924859936943884250415736432421523975",
+  "condition_id": "0xf1cd536d805a98563a4c7221fd088dabdebdba500f32505b646a440c0a044e77"
+ },
+ {
+  "event_id": "22220",
+  "market_id": "0xb7ad06db4383aeccf99329bc835ccd87cb9cde8b1107727e9376a03a99185ac2",
+  "question": "Will Trump reduce or pause tariffs on Vietnam before June?",
+  "event_title": "Vietnam",
+  "tags": [
+   "trump-presidency",
+   "politics",
+   "trump",
+   "trade-war",
+   "economy",
+   "tariffs"
+  ],
+  "created_at": "2025-04-03T20:46:27.293095+00:00",
+  "end_at": "2025-05-31T12:00:00+00:00",
+  "yes_token_id": "105379024508304407950154052114227320601756923979101721804039696659284301941984",
+  "condition_id": "0xb7ad06db4383aeccf99329bc835ccd87cb9cde8b1107727e9376a03a99185ac2"
+ },
+ {
+  "event_id": "22220",
+  "market_id": "0xd3eab5cbba17e23590d8268f539660832e314880fa61eb5ce05f090ddc115938",
+  "question": "Will Trump reduce or pause tariffs on Cambodia before June?",
+  "event_title": "Cambodia",
+  "tags": [
+   "trump-presidency",
+   "politics",
+   "trump",
+   "trade-war",
+   "economy",
+   "tariffs"
+  ],
+  "created_at": "2025-04-03T20:46:27.808900+00:00",
+  "end_at": "2025-05-31T12:00:00+00:00",
+  "yes_token_id": "60103619247387722060182572029871540295009413772822342666296752906501567615369",
+  "condition_id": "0xd3eab5cbba17e23590d8268f539660832e314880fa61eb5ce05f090ddc115938"
+ },
+ {
+  "event_id": "22220",
+  "market_id": "0x837999ac0f7b37d3ebe8fb17fee9f5876648b43ffd0ce2067aeba138496b40fc",
+  "question": "Will Trump reduce or pause tariffs on Laos before June?",
+  "event_title": "Laos",
+  "tags": [
+   "trump-presidency",
+   "politics",
+   "trump",
+   "trade-war",
+   "economy",
+   "tariffs"
+  ],
+  "created_at": "2025-04-03T20:46:28.316088+00:00",
+  "end_at": "2025-05-31T12:00:00+00:00",
+  "yes_token_id": "101995456375288895726218889238436792930279339149693589541706488007756176329663",
+  "condition_id": "0x837999ac0f7b37d3ebe8fb17fee9f5876648b43ffd0ce2067aeba138496b40fc"
+ },
+ {
+  "event_id": "22220",
+  "market_id": "0xa4a9e7e3fe8d845e25449e9fd7ce4b3e31b4479298e5fb47e0bfa725470a21d5",
+  "question": "Will Trump reduce or pause tariffs on China before June?",
+  "event_title": "China",
+  "tags": [
+   "trump-presidency",
+   "politics",
+   "trump",
+   "trade-war",
+   "economy",
+   "tariffs"
+  ],
+  "created_at": "2025-04-03T20:46:28.852466+00:00",
+  "end_at": "2025-05-31T12:00:00+00:00",
+  "yes_token_id": "53378848011155266133343981652678388469594466786035925949053474575895995416567",
+  "condition_id": "0xa4a9e7e3fe8d845e25449e9fd7ce4b3e31b4479298e5fb47e0bfa725470a21d5"
+ },
+ {
+  "event_id": "22220",
+  "market_id": "0x6219a8271764af7c7297ecd8379478f86fbb25e1ab6a3f92d78e66c2013a6ab5",
+  "question": "Will Trump reduce or pause tariffs on Taiwan before June?",
+  "event_title": "Taiwan",
+  "tags": [
+   "trump-presidency",
+   "politics",
+   "trump",
+   "trade-war",
+   "economy",
+   "tariffs"
+  ],
+  "created_at": "2025-04-03T20:46:29.416598+00:00",
+  "end_at": "2025-05-31T12:00:00+00:00",
+  "yes_token_id": "16942400828137354210368238909150760160999010528057139023979854052498239178932",
+  "condition_id": "0x6219a8271764af7c7297ecd8379478f86fbb25e1ab6a3f92d78e66c2013a6ab5"
+ },
+ {
+  "event_id": "22220",
+  "market_id": "0x9e0d7d67a964c30c598770af8111e547bbbc50fc079de4edf3a9aee62166bf40",
+  "question": "Will Trump reduce or pause tariffs on the European Union before June?",
+  "event_title": "European Union",
+  "tags": [
+   "trump-presidency",
+   "politics",
+   "trump",
+   "trade-war",
+   "economy",
+   "tariffs"
+  ],
+  "created_at": "2025-04-03T20:46:30.011844+00:00",
+  "end_at": "2025-05-31T12:00:00+00:00",
+  "yes_token_id": "2913995725906330555690402256589389840228863835548324562143958571238832131842",
+  "condition_id": "0x9e0d7d67a964c30c598770af8111e547bbbc50fc079de4edf3a9aee62166bf40"
+ },
+ {
+  "event_id": "22220",
+  "market_id": "0x33085df7b4c5b27cea680625ed033192fc72c31065b038a87432cd37b65c2688",
+  "question": "Will Trump reduce or pause tariffs on Japan before June?",
+  "event_title": "Japan",
+  "tags": [
+   "trump-presidency",
+   "politics",
+   "trump",
+   "trade-war",
+   "economy",
+   "tariffs"
+  ],
+  "created_at": "2025-04-03T20:46:30.534584+00:00",
+  "end_at": "2025-05-31T12:00:00+00:00",
+  "yes_token_id": "9733703994310327180616413115882498003838575103666476073582655028195022210235",
+  "condition_id": "0x33085df7b4c5b27cea680625ed033192fc72c31065b038a87432cd37b65c2688"
+ },
+ {
+  "event_id": "22220",
+  "market_id": "0xfe3d831e7c0f6f9b14e54e01260a1be22e24aa8f8ddce487534a5d8fc48e1613",
+  "question": "Will Trump reduce or pause tariffs on South Korea before June?",
+  "event_title": "South Korea",
+  "tags": [
+   "trump-presidency",
+   "politics",
+   "trump",
+   "trade-war",
+   "economy",
+   "tariffs"
+  ],
+  "created_at": "2025-04-03T20:46:31.069534+00:00",
+  "end_at": "2025-05-31T12:00:00+00:00",
+  "yes_token_id": "35879356977382194894823016764143330983842246828444954024206752406120767143497",
+  "condition_id": "0xfe3d831e7c0f6f9b14e54e01260a1be22e24aa8f8ddce487534a5d8fc48e1613"
+ },
+ {
+  "event_id": "22220",
+  "market_id": "0xf1a63de027b2b62552a9ddae358ccf01542ac0bb71294f1f94f1665cc26e5402",
+  "question": "Will Trump reduce or pause tariffs on India before June?",
+  "event_title": "India",
+  "tags": [
+   "trump-presidency",
+   "politics",
+   "trump",
+   "trade-war",
+   "economy",
+   "tariffs"
+  ],
+  "created_at": "2025-04-03T20:46:31.612608+00:00",
+  "end_at": "2025-05-31T12:00:00+00:00",
+  "yes_token_id": "84667254975982135450449629009654909910625174745629594522595291907828933721803",
+  "condition_id": "0xf1a63de027b2b62552a9ddae358ccf01542ac0bb71294f1f94f1665cc26e5402"
+ },
+ {
+  "event_id": "22220",
+  "market_id": "0xad900367d22293246f9bc19949304b47ebb2dc7718ea9a6f3e5d642ca572d884",
+  "question": "Will Trump reduce or pause tariffs on Indonesia before June?",
+  "event_title": "Indonesia",
+  "tags": [
+   "trump-presidency",
+   "politics",
+   "trump",
+   "trade-war",
+   "economy",
+   "tariffs"
+  ],
+  "created_at": "2025-04-03T20:46:32.157383+00:00",
+  "end_at": "2025-05-31T12:00:00+00:00",
+  "yes_token_id": "85325659677620296169881250392596507379813477745418845403808213064869316445931",
+  "condition_id": "0xad900367d22293246f9bc19949304b47ebb2dc7718ea9a6f3e5d642ca572d884"
+ },
+ {
+  "event_id": "22220",
+  "market_id": "0xafa071681d587c17290fd143cf4e1764eb22be2a1831adb0572a313b26df5d0a",
+  "question": "Will Trump reduce or pause tariffs on Switzerland before June?",
+  "event_title": "Switzerland",
+  "tags": [
+   "trump-presidency",
+   "politics",
+   "trump",
+   "trade-war",
+   "economy",
+   "tariffs"
+  ],
+  "created_at": "2025-04-03T20:46:32.681818+00:00",
+  "end_at": "2025-05-31T12:00:00+00:00",
+  "yes_token_id": "89423752631268083887453261782096647601987556494829936028369246870792916730062",
+  "condition_id": "0xafa071681d587c17290fd143cf4e1764eb22be2a1831adb0572a313b26df5d0a"
+ },
+ {
+  "event_id": "22220",
+  "market_id": "0xbd044d36e858baef2fc7d809acc0c38109dc8e12a7b519e15ee18c8c5b55b938",
+  "question": "Will Trump reduce or pause tariffs on South Africa before June?",
+  "event_title": "South Africa",
+  "tags": [
+   "trump-presidency",
+   "politics",
+   "trump",
+   "trade-war",
+   "economy",
+   "tariffs"
+  ],
+  "created_at": "2025-04-03T20:46:33.181461+00:00",
+  "end_at": "2025-05-31T12:00:00+00:00",
+  "yes_token_id": "12131356509270215912376629058023001588902895072367597367159756427125799776648",
+  "condition_id": "0xbd044d36e858baef2fc7d809acc0c38109dc8e12a7b519e15ee18c8c5b55b938"
+ },
+ {
+  "event_id": "22220",
+  "market_id": "0xc98ddbc7a1e0250b2b67a0c932f709c1e4e7bddaef2347bccc6df4d46445464a",
+  "question": "Will Trump reduce or pause tariffs on Pakistan before June?",
+  "event_title": "Pakistan",
+  "tags": [
+   "trump-presidency",
+   "politics",
+   "trump",
+   "trade-war",
+   "economy",
+   "tariffs"
+  ],
+  "created_at": "2025-04-03T20:46:33.688246+00:00",
+  "end_at": "2025-05-31T12:00:00+00:00",
+  "yes_token_id": "40756105305894337060406347675454544061282197108091037320390818955487271880078",
+  "condition_id": "0xc98ddbc7a1e0250b2b67a0c932f709c1e4e7bddaef2347bccc6df4d46445464a"
+ },
+ {
+  "event_id": "22220",
+  "market_id": "0x3716257ffa7dc4723273ed2b5326e42a67b38c0b7160ce0e8256c4e52904376b",
+  "question": "Will Trump reduce or pause tariffs on Bangladesh before June?",
+  "event_title": "Bangladesh",
+  "tags": [
+   "trump-presidency",
+   "politics",
+   "trump",
+   "trade-war",
+   "economy",
+   "tariffs"
+  ],
+  "created_at": "2025-04-03T20:46:34.207393+00:00",
+  "end_at": "2025-05-31T12:00:00+00:00",
+  "yes_token_id": "39960873833944280855368190179259346743519366622168956468574672451381077599935",
+  "condition_id": "0x3716257ffa7dc4723273ed2b5326e42a67b38c0b7160ce0e8256c4e52904376b"
+ },
+ {
+  "event_id": "22472",
+  "market_id": "0xa757b564604c0abb02fcaf167d93130fe635c223021bfe9d6b95433ab8347d55",
+  "question": "US-China trade deal before June?",
+  "event_title": "US-China trade deal before June?",
+  "tags": [
+   "trump-presidency",
+   "politics",
+   "trade-war",
+   "tariffs",
+   "economy",
+   "china"
+  ],
+  "created_at": "2025-04-08T14:50:07.137967+00:00",
+  "end_at": "2025-05-31T12:00:00+00:00",
+  "yes_token_id": "43574888282240197675710510825990137104478048769278676395877833277398528952511",
+  "condition_id": "0xa757b564604c0abb02fcaf167d93130fe635c223021bfe9d6b95433ab8347d55"
+ },
+ {
+  "event_id": "22481",
+  "market_id": "0x0728f2000745d1a51c73223095eab42ca7737bd33f9288d78b36b2aa73c1b24f",
+  "question": "Will Trump reduce or pause tariffs on Vietnam in April?",
+  "event_title": "Vietnam",
+  "tags": [
+   "economy",
+   "trump",
+   "politics",
+   "trade-war",
+   "trump-presidency",
+   "tariffs"
+  ],
+  "created_at": "2025-04-08T15:54:25.067091+00:00",
+  "end_at": "2025-04-30T12:00:00+00:00",
+  "yes_token_id": "69237538500410111354710309225894583461406382476824223699278980982524471803644",
+  "condition_id": "0x0728f2000745d1a51c73223095eab42ca7737bd33f9288d78b36b2aa73c1b24f"
+ },
+ {
+  "event_id": "22481",
+  "market_id": "0x7f0a359fb77e8e016155d8e1bd6c75d06359f761fca0ba2586ecd688dbbc9c79",
+  "question": "Will Trump reduce or pause tariffs on South Korea in April?",
+  "event_title": "South Korea",
+  "tags": [
+   "economy",
+   "trump",
+   "politics",
+   "trade-war",
+   "trump-presidency",
+   "tariffs"
+  ],
+  "created_at": "2025-04-08T15:54:25.791533+00:00",
+  "end_at": "2025-04-30T12:00:00+00:00",
+  "yes_token_id": "1371244248653656782144435384747104692299993565697986723784963414662277958520",
+  "condition_id": "0x7f0a359fb77e8e016155d8e1bd6c75d06359f761fca0ba2586ecd688dbbc9c79"
+ },
+ {
+  "event_id": "22481",
+  "market_id": "0x80c235da21d3c64d05c8fdeff36f384b0f661850325d45b75b0be6f273018e58",
+  "question": "Will Trump reduce or pause tariffs on Japan in April?",
+  "event_title": "Japan",
+  "tags": [
+   "economy",
+   "trump",
+   "politics",
+   "trade-war",
+   "trump-presidency",
+   "tariffs"
+  ],
+  "created_at": "2025-04-08T15:54:26.527467+00:00",
+  "end_at": "2025-04-30T12:00:00+00:00",
+  "yes_token_id": "100615972116544542294206681839207649941110298281539763640374686600215660418312",
+  "condition_id": "0x80c235da21d3c64d05c8fdeff36f384b0f661850325d45b75b0be6f273018e58"
+ },
+ {
+  "event_id": "22481",
+  "market_id": "0xc3ad8026d7dbbad93b96ffd93b37bf6d7b2005c9ec1df5aae9090f96d5ecc7bc",
+  "question": "Will Trump reduce or pause tariffs on Cambodia in April?",
+  "event_title": "Cambodia",
+  "tags": [
+   "economy",
+   "trump",
+   "politics",
+   "trade-war",
+   "trump-presidency",
+   "tariffs"
+  ],
+  "created_at": "2025-04-08T15:54:27.270791+00:00",
+  "end_at": "2025-04-30T12:00:00+00:00",
+  "yes_token_id": "101328340782456375272899813811214790775175462992282140650885969266740617782912",
+  "condition_id": "0xc3ad8026d7dbbad93b96ffd93b37bf6d7b2005c9ec1df5aae9090f96d5ecc7bc"
+ },
+ {
+  "event_id": "22481",
+  "market_id": "0xdc0a9ceee611571059d73072bc3a9ccd9550a8437cf197516d2d8112fe47543f",
+  "question": "Will Trump reduce or pause tariffs on Taiwan in April?",
+  "event_title": "Taiwan",
+  "tags": [
+   "economy",
+   "trump",
+   "politics",
+   "trade-war",
+   "trump-presidency",
+   "tariffs"
+  ],
+  "created_at": "2025-04-08T15:54:28.019641+00:00",
+  "end_at": "2025-04-30T12:00:00+00:00",
+  "yes_token_id": "91230138537619646010404492404458028350009528547901800560337246614273062985403",
+  "condition_id": "0xdc0a9ceee611571059d73072bc3a9ccd9550a8437cf197516d2d8112fe47543f"
+ },
+ {
+  "event_id": "22481",
+  "market_id": "0xac382e0efb781abf66cc234015cc79fbd5cabfc9d730db296dcd34dae5de587b",
+  "question": "Will Trump reduce or pause tariffs on Indonesia in April?",
+  "event_title": "Indonesia",
+  "tags": [
+   "economy",
+   "trump",
+   "politics",
+   "trade-war",
+   "trump-presidency",
+   "tariffs"
+  ],
+  "created_at": "2025-04-08T15:54:28.818796+00:00",
+  "end_at": "2025-04-30T12:00:00+00:00",
+  "yes_token_id": "96782333570076662494138061108358110342826839551858345092275796151124531234657",
+  "condition_id": "0xac382e0efb781abf66cc234015cc79fbd5cabfc9d730db296dcd34dae5de587b"
+ },
+ {
+  "event_id": "22481",
+  "market_id": "0x075735f1775908870f8c6a9f1ddb1b5c4547506b8fddbfb5820a5ce062e5ad35",
+  "question": "Will Trump reduce or pause tariffs on Switzerland in April?",
+  "event_title": "Switzerland",
+  "tags": [
+   "economy",
+   "trump",
+   "politics",
+   "trade-war",
+   "trump-presidency",
+   "tariffs"
+  ],
+  "created_at": "2025-04-08T15:54:29.610012+00:00",
+  "end_at": "2025-04-30T12:00:00+00:00",
+  "yes_token_id": "51549956280404810698895781681169892940681238730000237468419963387235110491947",
+  "condition_id": "0x075735f1775908870f8c6a9f1ddb1b5c4547506b8fddbfb5820a5ce062e5ad35"
+ },
+ {
+  "event_id": "22481",
+  "market_id": "0x8fb6531d2874a37e58c7810a41e909d31f7181cff3d05b461cb59e88178d1b44",
+  "question": "Will Trump reduce or pause tariffs on Laos in April?",
+  "event_title": "Laos",
+  "tags": [
+   "economy",
+   "trump",
+   "politics",
+   "trade-war",
+   "trump-presidency",
+   "tariffs"
+  ],
+  "created_at": "2025-04-08T15:54:30.346997+00:00",
+  "end_at": "2025-04-30T12:00:00+00:00",
+  "yes_token_id": "82002632051022100735955507369566065150152914542535670014657237173893364891059",
+  "condition_id": "0x8fb6531d2874a37e58c7810a41e909d31f7181cff3d05b461cb59e88178d1b44"
+ },
+ {
+  "event_id": "22481",
+  "market_id": "0xbfd4016fd63a2aad121829ab5a63ba4caa35e649b107145caf88d7fe6719ff6e",
+  "question": "Will Trump reduce or pause tariffs on India in April?",
+  "event_title": "India",
+  "tags": [
+   "economy",
+   "trump",
+   "politics",
+   "trade-war",
+   "trump-presidency",
+   "tariffs"
+  ],
+  "created_at": "2025-04-08T15:54:31.092814+00:00",
+  "end_at": "2025-04-30T12:00:00+00:00",
+  "yes_token_id": "44705522764782032833936922409586876677457087196210444370280137491262010985432",
+  "condition_id": "0xbfd4016fd63a2aad121829ab5a63ba4caa35e649b107145caf88d7fe6719ff6e"
+ },
+ {
+  "event_id": "22481",
+  "market_id": "0xd7a488f12497203df12bb14ce1080861601aca56b592a4f64dfc812e79f4fe3e",
+  "question": "Will Trump reduce or pause tariffs on European Union in April?",
+  "event_title": "European Union",
+  "tags": [
+   "economy",
+   "trump",
+   "politics",
+   "trade-war",
+   "trump-presidency",
+   "tariffs"
+  ],
+  "created_at": "2025-04-08T15:54:31.830376+00:00",
+  "end_at": "2025-04-30T12:00:00+00:00",
+  "yes_token_id": "33619926759647351316420719572459915492501346241457348290957308938689588638550",
+  "condition_id": "0xd7a488f12497203df12bb14ce1080861601aca56b592a4f64dfc812e79f4fe3e"
+ },
+ {
+  "event_id": "22481",
+  "market_id": "0xa25c50909648567ac57f84f1145a9da33d2baad30f7b54e29fd7ab11e66d7c2b",
+  "question": "Will Trump reduce or pause tariffs on Bangladesh in April?",
+  "event_title": "Bangladesh",
+  "tags": [
+   "economy",
+   "trump",
+   "politics",
+   "trade-war",
+   "trump-presidency",
+   "tariffs"
+  ],
+  "created_at": "2025-04-08T15:54:32.702730+00:00",
+  "end_at": "2025-04-30T12:00:00+00:00",
+  "yes_token_id": "38054186160798254186857764376482144731152074492455944391496251768268209808908",
+  "condition_id": "0xa25c50909648567ac57f84f1145a9da33d2baad30f7b54e29fd7ab11e66d7c2b"
+ },
+ {
+  "event_id": "22481",
+  "market_id": "0x58eac425dc1f760a00a563573902649f8c6008cd3e45540735be6433efcc2518",
+  "question": "Will Trump reduce or pause tariffs on South Africa in April?",
+  "event_title": "South Africa",
+  "tags": [
+   "economy",
+   "trump",
+   "politics",
+   "trade-war",
+   "trump-presidency",
+   "tariffs"
+  ],
+  "created_at": "2025-04-08T15:54:33.426214+00:00",
+  "end_at": "2025-04-30T12:00:00+00:00",
+  "yes_token_id": "90170236972451603822042386828375639234988482603371815861318640092299009057035",
+  "condition_id": "0x58eac425dc1f760a00a563573902649f8c6008cd3e45540735be6433efcc2518"
+ },
+ {
+  "event_id": "22481",
+  "market_id": "0x68b9fe809c01ecd05e9a5c677a013abadf77016584864ac69e3d52d4d488f8d2",
+  "question": "Will Trump reduce or pause tariffs on China in April?",
+  "event_title": "China",
+  "tags": [
+   "economy",
+   "trump",
+   "politics",
+   "trade-war",
+   "trump-presidency",
+   "tariffs"
+  ],
+  "created_at": "2025-04-08T15:54:34.156498+00:00",
+  "end_at": "2025-04-30T12:00:00+00:00",
+  "yes_token_id": "93251208136214952299896613002293487725639364860908047110752525031789116916812",
+  "condition_id": "0x68b9fe809c01ecd05e9a5c677a013abadf77016584864ac69e3d52d4d488f8d2"
+ },
+ {
+  "event_id": "22481",
+  "market_id": "0xaba550f8e8f26177d391d7e67c0277d3ca601c32d7eedc8c62521b67f917bdbc",
+  "question": "Will Trump reduce or pause tariffs on Pakistan in April?",
+  "event_title": "Pakistan",
+  "tags": [
+   "economy",
+   "trump",
+   "politics",
+   "trade-war",
+   "trump-presidency",
+   "tariffs"
+  ],
+  "created_at": "2025-04-08T15:54:34.879866+00:00",
+  "end_at": "2025-04-30T12:00:00+00:00",
+  "yes_token_id": "217816687358306396105920985297361690464656861676006183806481507179880638641",
+  "condition_id": "0xaba550f8e8f26177d391d7e67c0277d3ca601c32d7eedc8c62521b67f917bdbc"
+ },
+ {
+  "event_id": "22481",
+  "market_id": "0xf69184816dad0403cb113dbf45496882056bb66b5bf059d56c9dd5fc9a6cd09d",
+  "question": "Will Trump reduce or pause tariffs on Syria in April?",
+  "event_title": "Syria",
+  "tags": [
+   "economy",
+   "trump",
+   "politics",
+   "trade-war",
+   "trump-presidency",
+   "tariffs"
+  ],
+  "created_at": "2025-04-08T15:54:35.613586+00:00",
+  "end_at": "2025-04-30T12:00:00+00:00",
+  "yes_token_id": "79746370309377123746485350565125288623178356101822106891074086665586873254236",
+  "condition_id": "0xf69184816dad0403cb113dbf45496882056bb66b5bf059d56c9dd5fc9a6cd09d"
+ },
+ {
+  "event_id": "22481",
+  "market_id": "0xbd18f7ae313a99de2a1886a66117dc33e33764da35da00b6437da3959544e34d",
+  "question": "Will Trump reduce or pause tariffs on Sri Lanka in April?",
+  "event_title": "Sri Lanka",
+  "tags": [
+   "economy",
+   "trump",
+   "politics",
+   "trade-war",
+   "trump-presidency",
+   "tariffs"
+  ],
+  "created_at": "2025-04-08T15:54:37.613360+00:00",
+  "end_at": "2025-04-30T12:00:00+00:00",
+  "yes_token_id": "58060627262780933358576967351455757553405461168400146550152852264681719040334",
+  "condition_id": "0xbd18f7ae313a99de2a1886a66117dc33e33764da35da00b6437da3959544e34d"
+ },
+ {
+  "event_id": "52680",
+  "market_id": "0x4b78f8b6648d53af3f68d088220e847a5e54776736d9baf4deb0677a8e10771c",
+  "question": "Will Trump agree to a tariff agreement with China in October?",
+  "event_title": "China",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "trump-presidency",
+   "world",
+   "geopolitics",
+   "trade-deal",
+   "politics",
+   "trump"
+  ],
+  "created_at": "2025-10-01T16:50:40.938689+00:00",
+  "end_at": "2025-10-31T00:00:00+00:00",
+  "yes_token_id": "11141035532409844747515335788743375357901727535526321420512269871919345872549",
+  "condition_id": "0x4b78f8b6648d53af3f68d088220e847a5e54776736d9baf4deb0677a8e10771c"
+ },
+ {
+  "event_id": "52680",
+  "market_id": "0xf3714b6a1b25b3bcbf2bee6fa820b018bec57bd006fdb8459a5e6f5bd97749a9",
+  "question": "Will Trump agree to a tariff agreement with Canada in October?",
+  "event_title": "Canada",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "trump-presidency",
+   "world",
+   "geopolitics",
+   "trade-deal",
+   "politics",
+   "trump"
+  ],
+  "created_at": "2025-10-01T16:50:41.796274+00:00",
+  "end_at": "2025-10-31T00:00:00+00:00",
+  "yes_token_id": "48133914044058927105538165127276097044962222806792496374093612007867933545498",
+  "condition_id": "0xf3714b6a1b25b3bcbf2bee6fa820b018bec57bd006fdb8459a5e6f5bd97749a9"
+ },
+ {
+  "event_id": "52680",
+  "market_id": "0x3eb1809c02cb66ca3d49857d47c50b8ccea26a0be970fa7af880a0d0ea08ca62",
+  "question": "Will Trump agree to a tariff agreement with South Korea in October?",
+  "event_title": "South Korea",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "trump-presidency",
+   "world",
+   "geopolitics",
+   "trade-deal",
+   "politics",
+   "trump"
+  ],
+  "created_at": "2025-10-01T16:50:42.746348+00:00",
+  "end_at": "2025-10-31T00:00:00+00:00",
+  "yes_token_id": "8827966403757158402356590053864765100547589188179708358447331830034586774670",
+  "condition_id": "0x3eb1809c02cb66ca3d49857d47c50b8ccea26a0be970fa7af880a0d0ea08ca62"
+ },
+ {
+  "event_id": "52680",
+  "market_id": "0x0481aee42d7679f91071834a4c001b79e28c26d6ecf0b0ff14444aad3f38cc2c",
+  "question": "Will Trump agree to a tariff agreement with Germany in October?",
+  "event_title": "Germany",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "trump-presidency",
+   "world",
+   "geopolitics",
+   "trade-deal",
+   "politics",
+   "trump"
+  ],
+  "created_at": "2025-10-01T16:50:43.880793+00:00",
+  "end_at": "2025-10-31T00:00:00+00:00",
+  "yes_token_id": "41588483957898753113665855488532165135900752199451115573470276032301651088513",
+  "condition_id": "0x0481aee42d7679f91071834a4c001b79e28c26d6ecf0b0ff14444aad3f38cc2c"
+ },
+ {
+  "event_id": "52680",
+  "market_id": "0x7f99d8d0221a775ca04249b00d86c02da178a897c7847c1c50972895758fcb8c",
+  "question": "Will Trump agree to a tariff agreement with Brazil in October?",
+  "event_title": "Brazil",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "trump-presidency",
+   "world",
+   "geopolitics",
+   "trade-deal",
+   "politics",
+   "trump"
+  ],
+  "created_at": "2025-10-01T16:50:44.923264+00:00",
+  "end_at": "2025-10-31T00:00:00+00:00",
+  "yes_token_id": "67008222746244413808191324384131839443982651847567967526859774837348458171433",
+  "condition_id": "0x7f99d8d0221a775ca04249b00d86c02da178a897c7847c1c50972895758fcb8c"
+ },
+ {
+  "event_id": "52680",
+  "market_id": "0x97c739bed00d60ed192e70500491d1a485c7c808d65cb131dd95a5d0b9d1f31c",
+  "question": "Will Trump agree to a tariff agreement with Israel in October?",
+  "event_title": "Israel",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "trump-presidency",
+   "world",
+   "geopolitics",
+   "trade-deal",
+   "politics",
+   "trump"
+  ],
+  "created_at": "2025-10-01T16:50:45.858772+00:00",
+  "end_at": "2025-10-31T00:00:00+00:00",
+  "yes_token_id": "55999662645346937853867659669731603713913195480399010757847013955896981138355",
+  "condition_id": "0x97c739bed00d60ed192e70500491d1a485c7c808d65cb131dd95a5d0b9d1f31c"
+ },
+ {
+  "event_id": "52680",
+  "market_id": "0xc05ab11d9d653f2a29310e6b6d7af2ed25f5437439ad7cd43eeadcc74f617758",
+  "question": "Will Trump agree to a tariff agreement with India in October?",
+  "event_title": "India",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "trump-presidency",
+   "world",
+   "geopolitics",
+   "trade-deal",
+   "politics",
+   "trump"
+  ],
+  "created_at": "2025-10-01T16:50:46.866737+00:00",
+  "end_at": "2025-10-31T00:00:00+00:00",
+  "yes_token_id": "49299625435006198321046440092611357806383088624288374163668554559447233955328",
+  "condition_id": "0xc05ab11d9d653f2a29310e6b6d7af2ed25f5437439ad7cd43eeadcc74f617758"
+ },
+ {
+  "event_id": "52680",
+  "market_id": "0x0366d1248b7414f3c0c59eb87eb2cc91ef4a5ff193c1c8513e4a07c9b46b76d2",
+  "question": "Will Trump agree to a tariff agreement with Mexico in October?",
+  "event_title": "Mexico",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "trump-presidency",
+   "world",
+   "geopolitics",
+   "trade-deal",
+   "politics",
+   "trump"
+  ],
+  "created_at": "2025-10-01T16:50:47.840333+00:00",
+  "end_at": "2025-10-31T00:00:00+00:00",
+  "yes_token_id": "40294143955107445763002252486312150792051531782601024597302379518504384972263",
+  "condition_id": "0x0366d1248b7414f3c0c59eb87eb2cc91ef4a5ff193c1c8513e4a07c9b46b76d2"
+ },
+ {
+  "event_id": "52680",
+  "market_id": "0x3b842c0c208f135cc349c5e1e5ed9ecc788e3e032783b10dcae5b4304182b516",
+  "question": "Will Trump agree to a tariff agreement with Australia in October?",
+  "event_title": "Australia",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "trump-presidency",
+   "world",
+   "geopolitics",
+   "trade-deal",
+   "politics",
+   "trump"
+  ],
+  "created_at": "2025-10-01T16:50:48.836396+00:00",
+  "end_at": "2025-10-31T00:00:00+00:00",
+  "yes_token_id": "115410835050167959020188592330122482187240533291436779028809518436681098907136",
+  "condition_id": "0x3b842c0c208f135cc349c5e1e5ed9ecc788e3e032783b10dcae5b4304182b516"
+ },
+ {
+  "event_id": "52680",
+  "market_id": "0x6de0ec6754431d05b6743998cd4698071b19167cbe1980c91591851ae5daea55",
+  "question": "Will Trump agree to a tariff agreement with France in October?",
+  "event_title": "France",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "trump-presidency",
+   "world",
+   "geopolitics",
+   "trade-deal",
+   "politics",
+   "trump"
+  ],
+  "created_at": "2025-10-01T16:50:49.732900+00:00",
+  "end_at": "2025-10-31T00:00:00+00:00",
+  "yes_token_id": "37359984408906331289194015947493260470650665801818257549780611004419401543762",
+  "condition_id": "0x6de0ec6754431d05b6743998cd4698071b19167cbe1980c91591851ae5daea55"
+ },
+ {
+  "event_id": "52680",
+  "market_id": "0xbd54d0ffce432ea816e0d359cea8bad132434db1f95ec6cf2379f98002b75e1b",
+  "question": "Will Trump agree to a tariff agreement with Argentina in October?",
+  "event_title": "Argentina",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "trump-presidency",
+   "world",
+   "geopolitics",
+   "trade-deal",
+   "politics",
+   "trump"
+  ],
+  "created_at": "2025-10-01T16:50:50.690718+00:00",
+  "end_at": "2025-10-31T00:00:00+00:00",
+  "yes_token_id": "12711419100186012672461995613860241123715838998225950735638708750659928216393",
+  "condition_id": "0xbd54d0ffce432ea816e0d359cea8bad132434db1f95ec6cf2379f98002b75e1b"
+ },
+ {
+  "event_id": "52680",
+  "market_id": "0x38ffbed82a0509c2b3b56135274f01c94ee2531d82104652efed754a613b31a3",
+  "question": "Will Trump agree to a tariff agreement with Switzerland in October?",
+  "event_title": "Switzerland",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "trump-presidency",
+   "world",
+   "geopolitics",
+   "trade-deal",
+   "politics",
+   "trump"
+  ],
+  "created_at": "2025-10-01T16:50:51.587585+00:00",
+  "end_at": "2025-10-31T00:00:00+00:00",
+  "yes_token_id": "4431132827239580245520631811651984941848419843257804800349600181478767037085",
+  "condition_id": "0x38ffbed82a0509c2b3b56135274f01c94ee2531d82104652efed754a613b31a3"
+ },
+ {
+  "event_id": "66387",
+  "market_id": "0x9c75d239061dc9b370cb4f6239e7960ae0ef29416b24bc920787f96023411998",
+  "question": "Will Trump agree to a tariff agreement with China by November 30?",
+  "event_title": "China",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "world",
+   "politics",
+   "trump",
+   "trade-deal",
+   "geopolitics"
+  ],
+  "created_at": "2025-10-27T18:34:47.197946+00:00",
+  "end_at": "2025-11-30T00:00:00+00:00",
+  "yes_token_id": "63807591601104530319793650017604181834839627404833635740411271872677318406401",
+  "condition_id": "0x9c75d239061dc9b370cb4f6239e7960ae0ef29416b24bc920787f96023411998"
+ },
+ {
+  "event_id": "66387",
+  "market_id": "0x031309633aec94c2975eb19f460d990271c6d22e60ee1031962b15e3c2c0d437",
+  "question": "Will Trump agree to a tariff agreement with Canada by November 30?",
+  "event_title": "Canada",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "world",
+   "politics",
+   "trump",
+   "trade-deal",
+   "geopolitics"
+  ],
+  "created_at": "2025-10-27T18:34:47.702777+00:00",
+  "end_at": "2025-11-30T00:00:00+00:00",
+  "yes_token_id": "115162448131791603931444258209332313568417000239867329027115625384439532449213",
+  "condition_id": "0x031309633aec94c2975eb19f460d990271c6d22e60ee1031962b15e3c2c0d437"
+ },
+ {
+  "event_id": "66387",
+  "market_id": "0xa6836247e67848c45574717fadc54185cb1784d9d0ed86e8d6f459b0be7d0105",
+  "question": "Will Trump agree to a tariff agreement with South Korea by November 30?",
+  "event_title": "South Korea",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "world",
+   "politics",
+   "trump",
+   "trade-deal",
+   "geopolitics"
+  ],
+  "created_at": "2025-10-27T18:34:48.231430+00:00",
+  "end_at": "2025-11-30T00:00:00+00:00",
+  "yes_token_id": "55480639377011340871965640224957160087641953072176172334046408376055783805932",
+  "condition_id": "0xa6836247e67848c45574717fadc54185cb1784d9d0ed86e8d6f459b0be7d0105"
+ },
+ {
+  "event_id": "66387",
+  "market_id": "0x93d2e07f954250296019471c8732a1ed8e2c77e14982816ab4b8ff3cae5af41d",
+  "question": "Will Trump agree to a tariff agreement with Germany by November 30?",
+  "event_title": "Germany",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "world",
+   "politics",
+   "trump",
+   "trade-deal",
+   "geopolitics"
+  ],
+  "created_at": "2025-10-27T18:34:48.758118+00:00",
+  "end_at": "2025-11-30T00:00:00+00:00",
+  "yes_token_id": "48996896652626198598432779814730734982717081722542004823704859605565601171109",
+  "condition_id": "0x93d2e07f954250296019471c8732a1ed8e2c77e14982816ab4b8ff3cae5af41d"
+ },
+ {
+  "event_id": "66387",
+  "market_id": "0x9212a79001e12288eb93d975f691265eea95e4d192f0a874e04b02d7dd587698",
+  "question": "Will Trump agree to a tariff agreement with Brazil by November 30?",
+  "event_title": "Brazil",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "world",
+   "politics",
+   "trump",
+   "trade-deal",
+   "geopolitics"
+  ],
+  "created_at": "2025-10-27T18:34:49.265527+00:00",
+  "end_at": "2025-11-30T00:00:00+00:00",
+  "yes_token_id": "29518780256522832820272966042119877472212722742159874551374112061867585329245",
+  "condition_id": "0x9212a79001e12288eb93d975f691265eea95e4d192f0a874e04b02d7dd587698"
+ },
+ {
+  "event_id": "66387",
+  "market_id": "0xb062856c372be52fc467891f890f515a3e38155f2322d706521ae8a72597a28a",
+  "question": "Will Trump agree to a tariff agreement with Israel by November 30?",
+  "event_title": "Israel",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "world",
+   "politics",
+   "trump",
+   "trade-deal",
+   "geopolitics"
+  ],
+  "created_at": "2025-10-27T18:34:49.771438+00:00",
+  "end_at": "2025-11-30T00:00:00+00:00",
+  "yes_token_id": "69019873981469710924327150310088515466912851914289071478635461951209219605024",
+  "condition_id": "0xb062856c372be52fc467891f890f515a3e38155f2322d706521ae8a72597a28a"
+ },
+ {
+  "event_id": "66387",
+  "market_id": "0x770059279b0e2cdf0e50a1f6c624368521ff0574219c506af3f737b1162a4912",
+  "question": "Will Trump agree to a tariff agreement with India by November 30?",
+  "event_title": "India",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "world",
+   "politics",
+   "trump",
+   "trade-deal",
+   "geopolitics"
+  ],
+  "created_at": "2025-10-27T18:34:50.294734+00:00",
+  "end_at": "2025-11-30T00:00:00+00:00",
+  "yes_token_id": "107477176385946420659644271203165746872645655237886222171738920683055325724658",
+  "condition_id": "0x770059279b0e2cdf0e50a1f6c624368521ff0574219c506af3f737b1162a4912"
+ },
+ {
+  "event_id": "66387",
+  "market_id": "0x863a698cc59a3fa77f3e17fc0d60ae4c32369055bb8181004154182bab5830c3",
+  "question": "Will Trump agree to a tariff agreement with Mexico by November 30?",
+  "event_title": "Mexico",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "world",
+   "politics",
+   "trump",
+   "trade-deal",
+   "geopolitics"
+  ],
+  "created_at": "2025-10-27T18:34:50.933821+00:00",
+  "end_at": "2025-11-30T00:00:00+00:00",
+  "yes_token_id": "56611114554075636562646471255170865412603734682591731603138591834109146178278",
+  "condition_id": "0x863a698cc59a3fa77f3e17fc0d60ae4c32369055bb8181004154182bab5830c3"
+ },
+ {
+  "event_id": "66387",
+  "market_id": "0x0b8e31839eea511a479a7c5a36de37bab8a18836a034176780ab7a5548f27c42",
+  "question": "Will Trump agree to a tariff agreement with Australia by November 30?",
+  "event_title": "Australia",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "world",
+   "politics",
+   "trump",
+   "trade-deal",
+   "geopolitics"
+  ],
+  "created_at": "2025-10-27T18:34:51.572846+00:00",
+  "end_at": "2025-11-30T00:00:00+00:00",
+  "yes_token_id": "108597622363245426975888999062673237474461700285516199697682645455370723443903",
+  "condition_id": "0x0b8e31839eea511a479a7c5a36de37bab8a18836a034176780ab7a5548f27c42"
+ },
+ {
+  "event_id": "66387",
+  "market_id": "0xe50cb9137eda089a6d2486974840788cf8aebca348049bc3fba8f70827b7a97c",
+  "question": "Will Trump agree to a tariff agreement with France by November 30?",
+  "event_title": "France",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "world",
+   "politics",
+   "trump",
+   "trade-deal",
+   "geopolitics"
+  ],
+  "created_at": "2025-10-27T18:34:52.277961+00:00",
+  "end_at": "2025-11-30T00:00:00+00:00",
+  "yes_token_id": "25780561413573602011490113689315044934666623225013620373136510379719960887322",
+  "condition_id": "0xe50cb9137eda089a6d2486974840788cf8aebca348049bc3fba8f70827b7a97c"
+ },
+ {
+  "event_id": "66387",
+  "market_id": "0x6e7eb5b82b4c25c2fd999c345e7f6b80a6488eaf5e453540a6379c6c5e277f2b",
+  "question": "Will Trump agree to a tariff agreement with Argentina by November 30?",
+  "event_title": "Argentina",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "world",
+   "politics",
+   "trump",
+   "trade-deal",
+   "geopolitics"
+  ],
+  "created_at": "2025-10-27T18:34:52.815579+00:00",
+  "end_at": "2025-11-30T00:00:00+00:00",
+  "yes_token_id": "103187253468505735278138140201304231778194160159605488988096896081240552781549",
+  "condition_id": "0x6e7eb5b82b4c25c2fd999c345e7f6b80a6488eaf5e453540a6379c6c5e277f2b"
+ },
+ {
+  "event_id": "66387",
+  "market_id": "0x26c759b38d7e4256a1ce639a4033819ac203571aadd6161c3cdfb4550ae6f093",
+  "question": "Will Trump agree to a tariff agreement with Switzerland by November 30?",
+  "event_title": "Switzerland",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "world",
+   "politics",
+   "trump",
+   "trade-deal",
+   "geopolitics"
+  ],
+  "created_at": "2025-10-27T18:34:53.324416+00:00",
+  "end_at": "2025-11-30T00:00:00+00:00",
+  "yes_token_id": "21783243248036167372014169285747818472150510054656233937795397515654120166239",
+  "condition_id": "0x26c759b38d7e4256a1ce639a4033819ac203571aadd6161c3cdfb4550ae6f093"
+ },
+ {
+  "event_id": "80897",
+  "market_id": "0x07a0819d15876d8566e6e252f8c74fa7a71d7baa6024cac65e572b82ef32f3df",
+  "question": "Will Americans receive tariff stimulus checks by December 31?",
+  "event_title": "Will Americans receive tariff stimulus checks by December 31?",
+  "tags": [
+   "tariffs",
+   "politics",
+   "trump",
+   "economy"
+  ],
+  "created_at": "2025-11-13T21:57:05.636161+00:00",
+  "end_at": "2025-12-31T00:00:00+00:00",
+  "yes_token_id": "38782951004918727961419735675505311393638573738058671434726107711044569087382",
+  "condition_id": "0x07a0819d15876d8566e6e252f8c74fa7a71d7baa6024cac65e572b82ef32f3df"
+ },
+ {
+  "event_id": "90940",
+  "market_id": "0x8205c44d36105c796e3ff64139a8e0991c4a3a2ea7e853363e7ac29666d0ec95",
+  "question": "Will Trump agree to a tariff agreement with India by December 31?",
+  "event_title": "India",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "world",
+   "trade-deal",
+   "trump"
+  ],
+  "created_at": "2025-11-26T14:26:52.606177+00:00",
+  "end_at": "2025-12-31T00:00:00+00:00",
+  "yes_token_id": "13764212359657030052813978166959964629140968578180590276428188908604607933461",
+  "condition_id": "0x8205c44d36105c796e3ff64139a8e0991c4a3a2ea7e853363e7ac29666d0ec95"
+ },
+ {
+  "event_id": "90940",
+  "market_id": "0x6a1d24b1256c9e78a590f7a524a982d0ccf8d5b0100c4bf96590bba0c9384eb0",
+  "question": "Will Trump agree to a tariff agreement with Mexico by December 31?",
+  "event_title": "Mexico",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "world",
+   "trade-deal",
+   "trump"
+  ],
+  "created_at": "2025-11-26T14:26:53.121365+00:00",
+  "end_at": "2025-12-31T00:00:00+00:00",
+  "yes_token_id": "57592105850345317003636387032505924191767426285295172231624202662459266202100",
+  "condition_id": "0x6a1d24b1256c9e78a590f7a524a982d0ccf8d5b0100c4bf96590bba0c9384eb0"
+ },
+ {
+  "event_id": "90940",
+  "market_id": "0xa7ccc51f92e39d269f66d7e8cbbbfba740b3968a15af64c330d1dea9f0ea768d",
+  "question": "Will Trump agree to a tariff agreement with China by December 31?",
+  "event_title": "China",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "world",
+   "trade-deal",
+   "trump"
+  ],
+  "created_at": "2025-11-26T14:26:53.617603+00:00",
+  "end_at": "2025-12-31T00:00:00+00:00",
+  "yes_token_id": "23943905205742465314514839909207969440895616795329897335608048817966293825826",
+  "condition_id": "0xa7ccc51f92e39d269f66d7e8cbbbfba740b3968a15af64c330d1dea9f0ea768d"
+ },
+ {
+  "event_id": "90940",
+  "market_id": "0x8bdf386505cf47594428bbc35878c6ca51bd27f83899aa0dc24de86e06700380",
+  "question": "Will Trump agree to a tariff agreement with Australia by December 31?",
+  "event_title": "Australia",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "world",
+   "trade-deal",
+   "trump"
+  ],
+  "created_at": "2025-11-26T14:26:54.081654+00:00",
+  "end_at": "2025-12-31T00:00:00+00:00",
+  "yes_token_id": "114034786940459676551997233981125356470248142967554800994705216582935585679716",
+  "condition_id": "0x8bdf386505cf47594428bbc35878c6ca51bd27f83899aa0dc24de86e06700380"
+ },
+ {
+  "event_id": "90940",
+  "market_id": "0x33b5112f7773f7d85611e8f412748e5100f3c3597f27f6111aae4a91b7e75406",
+  "question": "Will Trump agree to a tariff agreement with Israel by December 31?",
+  "event_title": "Israel",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "world",
+   "trade-deal",
+   "trump"
+  ],
+  "created_at": "2025-11-26T14:26:54.600536+00:00",
+  "end_at": "2025-12-31T00:00:00+00:00",
+  "yes_token_id": "68590572505182086598329060785083977024501498935535123769434729999433082877008",
+  "condition_id": "0x33b5112f7773f7d85611e8f412748e5100f3c3597f27f6111aae4a91b7e75406"
+ },
+ {
+  "event_id": "90940",
+  "market_id": "0x0e566fde797e07bcc3808d89dc4a5c5c56f73bfe149d863547a9fcd7e913f24f",
+  "question": "Will Trump agree to a tariff agreement with Canada by December 31?",
+  "event_title": "Canada",
+  "tags": [
+   "tariffs",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "world",
+   "trade-deal",
+   "trump"
+  ],
+  "created_at": "2025-11-26T14:26:55.058287+00:00",
+  "end_at": "2025-12-31T00:00:00+00:00",
+  "yes_token_id": "43119549129649656516264821649845558680471903833440136263660954116678409287785",
+  "condition_id": "0x0e566fde797e07bcc3808d89dc4a5c5c56f73bfe149d863547a9fcd7e913f24f"
+ },
+ {
+  "event_id": "170994",
+  "market_id": "0x9dcd97bd5da9af936d153284223ec823bb99cbdef6343548daccd477d8326a8d",
+  "question": "Will all of Trump’s Greenland Tariffs go into effect by Feb 1?",
+  "event_title": "Will all of Trump’s Greenland Tariffs go into effect by Feb 1?",
+  "tags": [
+   "trade-war",
+   "economy",
+   "geopolitics",
+   "politics",
+   "europe",
+   "trump",
+   "greenland",
+   "tariffs",
+   "davos"
+  ],
+  "created_at": "2026-01-17T22:45:50.665017+00:00",
+  "end_at": "2026-02-01T00:00:00+00:00",
+  "yes_token_id": "113337561189279980241552214638384167882347645896577589695443405798635825732446",
+  "condition_id": "0x9dcd97bd5da9af936d153284223ec823bb99cbdef6343548daccd477d8326a8d"
+ },
+ {
+  "event_id": "170999",
+  "market_id": "0x75ac86feeeda6cc683af948c4bda7b7d2579c2de8ae5a1f9a9773bdf161970ad",
+  "question": "Will any of Trump’s Greenland Tariffs go into effect by Feb 1?",
+  "event_title": "Will any of Trump’s Greenland Tariffs go into effect by Feb 1?",
+  "tags": [
+   "politics",
+   "trump",
+   "greenland",
+   "geopolitics",
+   "economy",
+   "trade-war",
+   "tariffs",
+   "davos"
+  ],
+  "created_at": "2026-01-17T22:48:16.722821+00:00",
+  "end_at": "2026-02-01T00:00:00+00:00",
+  "yes_token_id": "84375245842663558308399194125254935482530576825919338744760236672707319788658",
+  "condition_id": "0x75ac86feeeda6cc683af948c4bda7b7d2579c2de8ae5a1f9a9773bdf161970ad"
+ },
+ {
+  "event_id": "171012",
+  "market_id": "0x73013e75e41b45aa0c483059f78061f9d87b54f0392c1a77f2b80d70a311e259",
+  "question": "Will Trump’s Greenland Tariffs go into effect for Denmark by Feburary 1?",
+  "event_title": "Denmark",
+  "tags": [
+   "politics",
+   "greenland",
+   "geopolitics",
+   "economy",
+   "trump",
+   "tariffs",
+   "trade-war",
+   "europe",
+   "davos"
+  ],
+  "created_at": "2026-01-17T22:59:17.592784+00:00",
+  "end_at": "2026-02-01T00:00:00+00:00",
+  "yes_token_id": "47608914966388069726802890629104282619977114492151381024341410611637968527438",
+  "condition_id": "0x73013e75e41b45aa0c483059f78061f9d87b54f0392c1a77f2b80d70a311e259"
+ },
+ {
+  "event_id": "171012",
+  "market_id": "0x4ca8a590e2de2eb8994dca0020dbed5163d3ca71308f4234ff41e2a1bdde03a5",
+  "question": "Will Trump’s Greenland Tariffs go into effect for Norway by Feburary 1?",
+  "event_title": "Norway",
+  "tags": [
+   "politics",
+   "greenland",
+   "geopolitics",
+   "economy",
+   "trump",
+   "tariffs",
+   "trade-war",
+   "europe",
+   "davos"
+  ],
+  "created_at": "2026-01-17T22:59:18.006186+00:00",
+  "end_at": "2026-02-01T00:00:00+00:00",
+  "yes_token_id": "95790328756539116347681526859656324090296057032591426829506434906003298343026",
+  "condition_id": "0x4ca8a590e2de2eb8994dca0020dbed5163d3ca71308f4234ff41e2a1bdde03a5"
+ },
+ {
+  "event_id": "171012",
+  "market_id": "0xfb0cdc4353dbfe9c6c111ff0907ab0eb81ad8194a3ad156c1bbfabddcade6cb6",
+  "question": "Will Trump’s Greenland Tariffs go into effect for Sweden by Feburary 1?",
+  "event_title": "Sweden",
+  "tags": [
+   "politics",
+   "greenland",
+   "geopolitics",
+   "economy",
+   "trump",
+   "tariffs",
+   "trade-war",
+   "europe",
+   "davos"
+  ],
+  "created_at": "2026-01-17T22:59:18.508876+00:00",
+  "end_at": "2026-02-01T00:00:00+00:00",
+  "yes_token_id": "19229944317459487892030148681651226912017395510663497698332037323195042649450",
+  "condition_id": "0xfb0cdc4353dbfe9c6c111ff0907ab0eb81ad8194a3ad156c1bbfabddcade6cb6"
+ },
+ {
+  "event_id": "171012",
+  "market_id": "0xc1324cf80e97ad05452dfd9ebba972e7ac99b73d5d1ec16644309504571b8739",
+  "question": "Will Trump’s Greenland Tariffs go into effect for France by Feburary 1?",
+  "event_title": "France",
+  "tags": [
+   "politics",
+   "greenland",
+   "geopolitics",
+   "economy",
+   "trump",
+   "tariffs",
+   "trade-war",
+   "europe",
+   "davos"
+  ],
+  "created_at": "2026-01-17T22:59:19.097715+00:00",
+  "end_at": "2026-02-01T00:00:00+00:00",
+  "yes_token_id": "70921705564354215019035479835288544076348673872814820359711987128730057218034",
+  "condition_id": "0xc1324cf80e97ad05452dfd9ebba972e7ac99b73d5d1ec16644309504571b8739"
+ },
+ {
+  "event_id": "171012",
+  "market_id": "0x9999af27f191a5a8d142e9d7276a02915325c8b2545308cc928574122000fdec",
+  "question": "Will Trump’s Greenland Tariffs go into effect for Germany by Feburary 1?",
+  "event_title": "Germany",
+  "tags": [
+   "politics",
+   "greenland",
+   "geopolitics",
+   "economy",
+   "trump",
+   "tariffs",
+   "trade-war",
+   "europe",
+   "davos"
+  ],
+  "created_at": "2026-01-17T22:59:19.527659+00:00",
+  "end_at": "2026-02-01T00:00:00+00:00",
+  "yes_token_id": "46055279888829447372883911394368726901473534418071031676260833365065480683925",
+  "condition_id": "0x9999af27f191a5a8d142e9d7276a02915325c8b2545308cc928574122000fdec"
+ },
+ {
+  "event_id": "171012",
+  "market_id": "0xc9f62dd1c79f1878801718ad14b6751f48dbab9ddee6f24f722ff95c74982f6a",
+  "question": "Will Trump’s Greenland Tariffs go into effect for The United Kingdom by Feburary 1?",
+  "event_title": "United Kingdom",
+  "tags": [
+   "politics",
+   "greenland",
+   "geopolitics",
+   "economy",
+   "trump",
+   "tariffs",
+   "trade-war",
+   "europe",
+   "davos"
+  ],
+  "created_at": "2026-01-17T22:59:20.067419+00:00",
+  "end_at": "2026-02-01T00:00:00+00:00",
+  "yes_token_id": "55604645554165004383704128866484836487921388335434146053437366190399251550402",
+  "condition_id": "0xc9f62dd1c79f1878801718ad14b6751f48dbab9ddee6f24f722ff95c74982f6a"
+ },
+ {
+  "event_id": "171012",
+  "market_id": "0xb8a9a44a11b90fa26e85980d0450e6738796d71ea11bdd637d920fbdf36c9ac8",
+  "question": "Will Trump’s Greenland Tariffs go into effect for The Netherlands by Feburary 1?",
+  "event_title": "Netherlands",
+  "tags": [
+   "politics",
+   "greenland",
+   "geopolitics",
+   "economy",
+   "trump",
+   "tariffs",
+   "trade-war",
+   "europe",
+   "davos"
+  ],
+  "created_at": "2026-01-17T22:59:20.546572+00:00",
+  "end_at": "2026-02-01T00:00:00+00:00",
+  "yes_token_id": "70648101080090968373073364066521565369615174345142730341592550123854585734391",
+  "condition_id": "0xb8a9a44a11b90fa26e85980d0450e6738796d71ea11bdd637d920fbdf36c9ac8"
+ },
+ {
+  "event_id": "171012",
+  "market_id": "0x3d0e08e326fc030d9ec6880b1893038320cf20dbe129a9720c8b0e0dbb70abcf",
+  "question": "Will Trump’s Greenland Tariffs go into effect for Finland by Feburary 1?",
+  "event_title": "Finland",
+  "tags": [
+   "politics",
+   "greenland",
+   "geopolitics",
+   "economy",
+   "trump",
+   "tariffs",
+   "trade-war",
+   "europe",
+   "davos"
+  ],
+  "created_at": "2026-01-17T22:59:21.068095+00:00",
+  "end_at": "2026-02-01T00:00:00+00:00",
+  "yes_token_id": "43506104810952828029350451965068014927600021820676911344374579181605501253109",
+  "condition_id": "0x3d0e08e326fc030d9ec6880b1893038320cf20dbe129a9720c8b0e0dbb70abcf"
+ },
+ {
+  "event_id": "219547",
+  "market_id": "0x87f69e732ec786ddf90df72bad9184af94769a12fb617ba076552445528ce7e9",
+  "question": "Will Congress pass any tariffs by March 31?",
+  "event_title": "Will Congress pass any tariffs by March 31?",
+  "tags": [
+   "politics",
+   "congress",
+   "senate-elections",
+   "house",
+   "economy",
+   "tariffs",
+   "trump",
+   "scotus",
+   "trade-war"
+  ],
+  "created_at": "2026-02-20T18:14:24.569063+00:00",
+  "end_at": "2026-03-31T00:00:00+00:00",
+  "yes_token_id": "29790035841662772979527652381739849866972384214158517354182658494177814848125",
+  "condition_id": "0x87f69e732ec786ddf90df72bad9184af94769a12fb617ba076552445528ce7e9"
+ },
+ {
+  "event_id": "219682",
+  "market_id": "0x76ccc95393f89f2af45f7391661be540833d61da56a02a5bc36d561743fe486e",
+  "question": "New 10% US blanket tariff goes into effect by February 28?",
+  "event_title": "New 10% US blanket tariff goes into effect by February 28?",
+  "tags": [
+   "trump",
+   "scotus",
+   "supreme-court",
+   "world",
+   "trade-war",
+   "economy",
+   "tariffs",
+   "politics",
+   "general-tariff"
+  ],
+  "created_at": "2026-02-20T19:54:56.225681+00:00",
+  "end_at": "2026-02-28T00:00:00+00:00",
+  "yes_token_id": "90370569839866424531653479724484328005952461081158682667412148716448411031984",
+  "condition_id": "0x76ccc95393f89f2af45f7391661be540833d61da56a02a5bc36d561743fe486e"
+ },
+ {
+  "event_id": "17750",
+  "market_id": "0x5ed2d5142cb7bfdcb1ecdec342d73697d5d61b3ed5ab21c52cb34ed41b9b0a41",
+  "question": "Trump tariffs on Canada in effect by May 1?",
+  "event_title": "Trump tariffs on Canada in effect by May 1?",
+  "tags": [
+   "politics",
+   "geopolitics",
+   "canada",
+   "trudeau",
+   "trade-war",
+   "trump-presidency",
+   "trump-100-days",
+   "trump",
+   "breaking-news"
+  ],
+  "created_at": "2025-02-03T23:00:42.446691+00:00",
+  "end_at": "2025-05-01T12:00:00+00:00",
+  "yes_token_id": "66512073203239245363988518384886786994396997219910018086277285475948803787089",
+  "condition_id": "0x5ed2d5142cb7bfdcb1ecdec342d73697d5d61b3ed5ab21c52cb34ed41b9b0a41"
+ },
+ {
+  "event_id": "17781",
+  "market_id": "0x5b00ddea88e4ac439113b2f937f9f6ac93473f6fe946acd1af27295dcec0080c",
+  "question": "New Trump tariffs by Friday?",
+  "event_title": "New Trump tariffs by Friday?",
+  "tags": [
+   "trump",
+   "tariff",
+   "trade-war",
+   "politics",
+   "geopolitics"
+  ],
+  "created_at": "2025-02-04T18:16:08.571119+00:00",
+  "end_at": "2025-02-07T12:00:00+00:00",
+  "yes_token_id": "92321677634115329215021495539183929693504641630494483442505883225855734424121",
+  "condition_id": "0x5b00ddea88e4ac439113b2f937f9f6ac93473f6fe946acd1af27295dcec0080c"
+ },
+ {
+  "event_id": "20335",
+  "market_id": "0x26fd85f0907ff72bba2adefa47c9ab827ec51d7336f10021a46094c5413b6394",
+  "question": "Will Trump reduce tariffs on Mexico or Canada today?",
+  "event_title": "Will Trump reduce tariffs on Mexico or Canada today?",
+  "tags": [
+   "politics",
+   "trade-war",
+   "economy",
+   "economic-policy",
+   "canada"
+  ],
+  "created_at": "2025-03-04T21:54:40.385500+00:00",
+  "end_at": "2025-03-05T12:00:00+00:00",
+  "yes_token_id": "6365307450597307214488921583680050155933153401310880962065542966514553920633",
+  "condition_id": "0x26fd85f0907ff72bba2adefa47c9ab827ec51d7336f10021a46094c5413b6394"
+ },
+ {
+  "event_id": "21698",
+  "market_id": "0x63b445bd487e7c388a8c9b69606ae389547ae980adb3cb6efe3657e87e4c3820",
+  "question": "Will Trump announce tariffs on India on April 2?",
+  "event_title": "India",
+  "tags": [
+   "trade-war",
+   "trump-presidency",
+   "politics",
+   "economy",
+   "economic-policy",
+   "breaking-news",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T00:33:51.143734+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "67670048312047073065218817231214810657060537063821843371325682590531095493173",
+  "condition_id": "0x63b445bd487e7c388a8c9b69606ae389547ae980adb3cb6efe3657e87e4c3820"
+ },
+ {
+  "event_id": "21698",
+  "market_id": "0x8e12d56624f1161c0dd86a149e235ff5e62addc1ea384b34f8c7ec91e47a0511",
+  "question": "Will Trump announce tariffs on China on April 2?",
+  "event_title": "China",
+  "tags": [
+   "trade-war",
+   "trump-presidency",
+   "politics",
+   "economy",
+   "economic-policy",
+   "breaking-news",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T00:33:51.518131+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "53138117885263319441922556879892819414750263471939341445079150540934504550395",
+  "condition_id": "0x8e12d56624f1161c0dd86a149e235ff5e62addc1ea384b34f8c7ec91e47a0511"
+ },
+ {
+  "event_id": "21698",
+  "market_id": "0x3bd1994962e1192d97480ff92d44692876471f6fdd8337f084cbda83dc15ab5f",
+  "question": "Will Trump announce tariffs on Canada on April 2?",
+  "event_title": "Canada",
+  "tags": [
+   "trade-war",
+   "trump-presidency",
+   "politics",
+   "economy",
+   "economic-policy",
+   "breaking-news",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T00:33:51.877524+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "100003888064578786131451745175380657203208978218250264392082138066172966247077",
+  "condition_id": "0x3bd1994962e1192d97480ff92d44692876471f6fdd8337f084cbda83dc15ab5f"
+ },
+ {
+  "event_id": "21698",
+  "market_id": "0xd101273544277e19e469ad447032433dfc0a93d216a6a47994b7273cd1706e5d",
+  "question": "Will Trump announce tariffs on Mexico on April 2?",
+  "event_title": "Mexico",
+  "tags": [
+   "trade-war",
+   "trump-presidency",
+   "politics",
+   "economy",
+   "economic-policy",
+   "breaking-news",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T00:33:52.210881+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "112665534918379820065323279709503006964389864214183261377136569243303488814316",
+  "condition_id": "0xd101273544277e19e469ad447032433dfc0a93d216a6a47994b7273cd1706e5d"
+ },
+ {
+  "event_id": "21698",
+  "market_id": "0x4ee267cf2ea1509dd6a7e39a0eb167ef721cc62fe1f586d4f7f50c5b62021e3e",
+  "question": "Will Trump announce tariffs on Venezuela on April 2?",
+  "event_title": "Venezuela",
+  "tags": [
+   "trade-war",
+   "trump-presidency",
+   "politics",
+   "economy",
+   "economic-policy",
+   "breaking-news",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T00:33:52.535572+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "14376198920612519741466305995581813181881691985193345606094633671394891027227",
+  "condition_id": "0x4ee267cf2ea1509dd6a7e39a0eb167ef721cc62fe1f586d4f7f50c5b62021e3e"
+ },
+ {
+  "event_id": "21698",
+  "market_id": "0x49f6d75de66f9aa522d4a69f71d5f1cd80bc78e6434f22102f2ccdc3f39a3576",
+  "question": "Will Trump announce tariffs on Australia on April 2?",
+  "event_title": "Australia",
+  "tags": [
+   "trade-war",
+   "trump-presidency",
+   "politics",
+   "economy",
+   "economic-policy",
+   "breaking-news",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T00:33:52.849413+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "63220964538838000883976685404681329789947332663925302422785187883314833725817",
+  "condition_id": "0x49f6d75de66f9aa522d4a69f71d5f1cd80bc78e6434f22102f2ccdc3f39a3576"
+ },
+ {
+  "event_id": "21698",
+  "market_id": "0xc0d1bfa75a233deaaebfaf6440b70b148343469ad28ed817253b1e0239fd99db",
+  "question": "Will Trump announce tariffs on Brazil on April 2?",
+  "event_title": "Brazil",
+  "tags": [
+   "trade-war",
+   "trump-presidency",
+   "politics",
+   "economy",
+   "economic-policy",
+   "breaking-news",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T00:33:53.172018+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "113366463479569155631696465432165155258703076301804957561923674179816736135520",
+  "condition_id": "0xc0d1bfa75a233deaaebfaf6440b70b148343469ad28ed817253b1e0239fd99db"
+ },
+ {
+  "event_id": "21698",
+  "market_id": "0x776915f341a490466533b609107dc7b696f134180f5b1ba34f789aaa380b070c",
+  "question": "Will Trump announce tariffs on Japan on April 2?",
+  "event_title": "Japan",
+  "tags": [
+   "trade-war",
+   "trump-presidency",
+   "politics",
+   "economy",
+   "economic-policy",
+   "breaking-news",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T00:33:53.503970+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "77968565116072438709297587785946442608294322558459886650948384721741554352428",
+  "condition_id": "0x776915f341a490466533b609107dc7b696f134180f5b1ba34f789aaa380b070c"
+ },
+ {
+  "event_id": "21698",
+  "market_id": "0x64a4e508cc47b98475094691382277424dfcb3a98bf4492c22c92c4767596d0f",
+  "question": "Will Trump announce tariffs on South Korea on April 2?",
+  "event_title": "South Korea",
+  "tags": [
+   "trade-war",
+   "trump-presidency",
+   "politics",
+   "economy",
+   "economic-policy",
+   "breaking-news",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T00:33:53.815129+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "96213045191490085748771443389141149865953629777698446338677705636923184293034",
+  "condition_id": "0x64a4e508cc47b98475094691382277424dfcb3a98bf4492c22c92c4767596d0f"
+ },
+ {
+  "event_id": "21698",
+  "market_id": "0x530ec9ba2fab8e6130677e101be8bbdfcb59b255732f9cd3730860717509d47d",
+  "question": "Will Trump announce tariffs on Russia on April 2?",
+  "event_title": "Russia",
+  "tags": [
+   "trade-war",
+   "trump-presidency",
+   "politics",
+   "economy",
+   "economic-policy",
+   "breaking-news",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T00:33:54.152212+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "10639495252594292989925107004043482915453143044867669885718565810192584053409",
+  "condition_id": "0x530ec9ba2fab8e6130677e101be8bbdfcb59b255732f9cd3730860717509d47d"
+ },
+ {
+  "event_id": "21698",
+  "market_id": "0xfd52e19b299a869bf5bb36a9cbc29fefbdf2160e3acf56480d1c059ce42c1abf",
+  "question": "Will Trump announce tariffs on Vietnam on April 2?",
+  "event_title": "Vietnam",
+  "tags": [
+   "trade-war",
+   "trump-presidency",
+   "politics",
+   "economy",
+   "economic-policy",
+   "breaking-news",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T00:33:54.515322+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "34701193938758631163422689457162260966957267179442277757520080893059472638043",
+  "condition_id": "0xfd52e19b299a869bf5bb36a9cbc29fefbdf2160e3acf56480d1c059ce42c1abf"
+ },
+ {
+  "event_id": "21698",
+  "market_id": "0x2e28c5bb005502bde4d12029c2cc12537d70d8a2411dda2ad202544abf048574",
+  "question": "Will Trump announce tariffs on France on April 2?",
+  "event_title": "France",
+  "tags": [
+   "trade-war",
+   "trump-presidency",
+   "politics",
+   "economy",
+   "economic-policy",
+   "breaking-news",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T00:33:54.838214+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "61743347343918088926492784544953812527310122090637616114543838002024090136043",
+  "condition_id": "0x2e28c5bb005502bde4d12029c2cc12537d70d8a2411dda2ad202544abf048574"
+ },
+ {
+  "event_id": "21698",
+  "market_id": "0x03af958c2cc5095fe82d8840389177e72de113b97f7f67ea278dd20ed3be4c5b",
+  "question": "Will Trump announce tariffs on Germany on April 2?",
+  "event_title": "Germany",
+  "tags": [
+   "trade-war",
+   "trump-presidency",
+   "politics",
+   "economy",
+   "economic-policy",
+   "breaking-news",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T00:33:55.173137+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "34181997630863003264343765391396108667307140355235230121417043451175112192397",
+  "condition_id": "0x03af958c2cc5095fe82d8840389177e72de113b97f7f67ea278dd20ed3be4c5b"
+ },
+ {
+  "event_id": "22037",
+  "market_id": "0xa9570d097774e14c2ba95eac90077b41309ba10c01a7d0be1bcb81c892bfaaa7",
+  "question": "Will Trump announce a general Tariff on imports on April 2?",
+  "event_title": "Will Trump announce a general Tariff on imports on April 2?",
+  "tags": [
+   "trump-presidency",
+   "politics",
+   "trade-war",
+   "economy",
+   "trump",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-04-01T19:02:36.235730+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "64973240034947027330556976400304768924185893752143090417251798237922572299170",
+  "condition_id": "0xa9570d097774e14c2ba95eac90077b41309ba10c01a7d0be1bcb81c892bfaaa7"
+ },
+ {
+  "event_id": "22258",
+  "market_id": "0x66d418945091d2f4e3a517906ea6a8670abef60b71c33140de75314a20e46f9b",
+  "question": "54% tariff goes into effect on China by Wednesday?",
+  "event_title": "54% tariff goes into effect on China by Wednesday?",
+  "tags": [
+   "trade-war",
+   "trump",
+   "trump-presidency",
+   "economy",
+   "politics",
+   "china"
+  ],
+  "created_at": "2025-04-04T22:01:38.714493+00:00",
+  "end_at": "2025-04-09T12:00:00+00:00",
+  "yes_token_id": "18553905420685239423828453030472421027511655249333672846754020997198134282506",
+  "condition_id": "0x66d418945091d2f4e3a517906ea6a8670abef60b71c33140de75314a20e46f9b"
+ },
+ {
+  "event_id": "22260",
+  "market_id": "0xb6e892114540dad45ad54826b63f8c0e7523a52e017ba1355acc7462c3377cb6",
+  "question": "Will Trump increase tariffs on China before May?",
+  "event_title": "Will Trump increase tariffs on China before May?",
+  "tags": [
+   "politics",
+   "trump-presidency",
+   "trade-war",
+   "economy",
+   "china"
+  ],
+  "created_at": "2025-04-04T22:13:39.176045+00:00",
+  "end_at": "2025-04-30T12:00:00+00:00",
+  "yes_token_id": "26887480788394892713110538706543376887963459726553480761538830437637937190451",
+  "condition_id": "0xb6e892114540dad45ad54826b63f8c0e7523a52e017ba1355acc7462c3377cb6"
+ },
+ {
+  "event_id": "22416",
+  "market_id": "0xdbe0d0e7c1f0dcb8cbfb20c88ddd9f75d109748f4258f59609d124940c4adc57",
+  "question": "Trump pauses reciprocal tariffs on EU before Wednesday?",
+  "event_title": "Trump pauses reciprocal tariffs on EU before Wednesday?",
+  "tags": [
+   "trade-war",
+   "politics",
+   "trump-presidency",
+   "economy"
+  ],
+  "created_at": "2025-04-07T14:58:53.136718+00:00",
+  "end_at": "2025-04-09T12:00:00+00:00",
+  "yes_token_id": "66728924532592702993755641035427220647707041496494911311633792080604673900931",
+  "condition_id": "0xdbe0d0e7c1f0dcb8cbfb20c88ddd9f75d109748f4258f59609d124940c4adc57"
+ },
+ {
+  "event_id": "22432",
+  "market_id": "0x9c0376d7567e477376b557c4cf94a165c5bb6fb41439bac94d26339979e8f00b",
+  "question": "Will Trump remove 10% blanket tariff before July?",
+  "event_title": "Will Trump remove 10% blanket tariff before July?",
+  "tags": [
+   "trade-war",
+   "trump-presidency",
+   "economy",
+   "trump",
+   "politics"
+  ],
+  "created_at": "2025-04-07T17:18:07.240117+00:00",
+  "end_at": "2025-06-30T12:00:00+00:00",
+  "yes_token_id": "33714509216211120004329597477944997298460681257211528141117867139634115296069",
+  "condition_id": "0x9c0376d7567e477376b557c4cf94a165c5bb6fb41439bac94d26339979e8f00b"
+ },
+ {
+  "event_id": "22433",
+  "market_id": "0x19fabfe0526a4897c5da146c3f258cdc4d9219faffc276a7a4dcfb9567745922",
+  "question": "Will Trump lower tariffs on EU before July?",
+  "event_title": "Will Trump lower tariffs on EU before July?",
+  "tags": [
+   "trade-war",
+   "politics",
+   "trump",
+   "economy"
+  ],
+  "created_at": "2025-04-07T17:22:52.371105+00:00",
+  "end_at": "2025-06-30T12:00:00+00:00",
+  "yes_token_id": "105075642417787825352138212458415261157183570454999670688812097949494963633503",
+  "condition_id": "0x19fabfe0526a4897c5da146c3f258cdc4d9219faffc276a7a4dcfb9567745922"
+ },
+ {
+  "event_id": "22452",
+  "market_id": "0x246847d434dc502a05f64eb0b7c828cc2ed4dcb28e62383b9f288f66aab6b06c",
+  "question": "Will courts block Trump's tariffs by Friday?",
+  "event_title": "Will courts block Trump's tariffs by Friday?",
+  "tags": [
+   "trade-war",
+   "trump-presidency",
+   "economy",
+   "politics",
+   "courts"
+  ],
+  "created_at": "2025-04-07T22:07:27.889443+00:00",
+  "end_at": "2025-04-11T12:00:00+00:00",
+  "yes_token_id": "41084087133998003544534750330963587082385496424418115971165426415490449650997",
+  "condition_id": "0x246847d434dc502a05f64eb0b7c828cc2ed4dcb28e62383b9f288f66aab6b06c"
+ },
+ {
+  "event_id": "22524",
+  "market_id": "0x62777fa95acbc41a7c66df01f5db2e01d51f82b6916ec4257bd63b14e1690bbe",
+  "question": "Will Trump increase tariffs on China by Friday?",
+  "event_title": "Will Trump increase tariffs on China by Friday?",
+  "tags": [
+   "trade-war",
+   "world",
+   "china",
+   "geopolitics",
+   "trump",
+   "economy",
+   "world-affairs",
+   "politics"
+  ],
+  "created_at": "2025-04-09T18:28:26.095851+00:00",
+  "end_at": "2025-04-11T12:00:00+00:00",
+  "yes_token_id": "68091119300254218387424632884108822913497509579205252407524242580704321272029",
+  "condition_id": "0x62777fa95acbc41a7c66df01f5db2e01d51f82b6916ec4257bd63b14e1690bbe"
+ },
+ {
+  "event_id": "22533",
+  "market_id": "0x6d2b502ec35cbd35c891def7e2ee1a2515a47ef0a16b0517e37f2eaad88a9c0f",
+  "question": "Will China increase tariffs on US before May?",
+  "event_title": "Will China increase tariffs on US before May?",
+  "tags": [
+   "economy",
+   "politics",
+   "china",
+   "trade-war",
+   "world"
+  ],
+  "created_at": "2025-04-09T21:18:35.357769+00:00",
+  "end_at": "2025-04-30T12:00:00+00:00",
+  "yes_token_id": "75548907819842070130609838136346952754648255338436590171488840116518372376529",
+  "condition_id": "0x6d2b502ec35cbd35c891def7e2ee1a2515a47ef0a16b0517e37f2eaad88a9c0f"
+ },
+ {
+  "event_id": "22589",
+  "market_id": "0x0966d71b03a061516eb2f6566d7f70d94add56d1fb6a5b5d1e68d3d59fcb6322",
+  "question": "Will Trump impose large tariffs in 2025?",
+  "event_title": "Will Trump impose large tariffs in 2025?",
+  "tags": [
+   "trump",
+   "politics",
+   "economic-policy",
+   "trade-war",
+   "economy"
+  ],
+  "created_at": "2025-04-10T17:44:54.339440+00:00",
+  "end_at": "2025-12-31T12:00:00+00:00",
+  "yes_token_id": "19643366723066630324470249455451599092922235409855159144470290409938111289653",
+  "condition_id": "0x0966d71b03a061516eb2f6566d7f70d94add56d1fb6a5b5d1e68d3d59fcb6322"
+ },
+ {
+  "event_id": "22590",
+  "market_id": "0xb78982c5836f531ac38f6c5e9da073844864d2e4d7350156226145f3983dfb82",
+  "question": "Will Trump remove majority of reciprocal tariffs before 90 day deadline? ",
+  "event_title": "Will Trump remove majority of reciprocal tariffs before 90 day deadline? ",
+  "tags": [
+   "trade-war",
+   "politics",
+   "trump",
+   "economy",
+   "trump-presidency"
+  ],
+  "created_at": "2025-04-10T17:47:54.227391+00:00",
+  "end_at": "2025-07-08T12:00:00+00:00",
+  "yes_token_id": "41163156682515740606289957748826847676315193918083257621328749846404332709636",
+  "condition_id": "0xb78982c5836f531ac38f6c5e9da073844864d2e4d7350156226145f3983dfb82"
+ },
+ {
+  "event_id": "23946",
+  "market_id": "0x2f91477e922e33aa5a6b15ed24bbb42d9bd17662c23674f133d3b200372ff7dc",
+  "question": "US-China trade deal in 2025?",
+  "event_title": "US-China trade deal in 2025?",
+  "tags": [
+   "china",
+   "politics",
+   "trade-war",
+   "economy"
+  ],
+  "created_at": "2025-05-05T20:27:49.950862+00:00",
+  "end_at": "2025-12-31T12:00:00+00:00",
+  "yes_token_id": "113757900962881607767219551124329092895035669181413625897155072965550883493026",
+  "condition_id": "0x2f91477e922e33aa5a6b15ed24bbb42d9bd17662c23674f133d3b200372ff7dc"
+ },
+ {
+  "event_id": "24447",
+  "market_id": "0x8143ff1a26fbd70e7ff1dcd68da2bf2cef327a1be279a8f192a8e079902822aa",
+  "question": "Will the U.S. tariff rate on China be less than 25% on August 15?",
+  "event_title": "<25%",
+  "tags": [
+   "trump",
+   "politics",
+   "economy",
+   "trump-presidency",
+   "trade-war",
+   "china"
+  ],
+  "created_at": "2025-05-13T17:22:38.084626+00:00",
+  "end_at": "2025-08-15T12:00:00+00:00",
+  "yes_token_id": "62894892057652747159161857835481794400439837681003668649783386868036115486192",
+  "condition_id": "0x8143ff1a26fbd70e7ff1dcd68da2bf2cef327a1be279a8f192a8e079902822aa"
+ },
+ {
+  "event_id": "25102",
+  "market_id": "0x5a079f12d8375090ce002481c4b96e03bc3f9765fe334366460a0874752808c7",
+  "question": "Trump tariffs Apple before July?",
+  "event_title": "Trump tariffs Apple before July?",
+  "tags": [
+   "tech",
+   "politics",
+   "trade-war",
+   "trump",
+   "geopolitics",
+   "world",
+   "big-tech"
+  ],
+  "created_at": "2025-05-23T14:57:47.879453+00:00",
+  "end_at": "2025-06-30T12:00:00+00:00",
+  "yes_token_id": "34695121683378763932161298798194223895117649259299784917228739442667487532650",
+  "condition_id": "0x5a079f12d8375090ce002481c4b96e03bc3f9765fe334366460a0874752808c7"
+ },
+ {
+  "event_id": "28636",
+  "market_id": "0xe16ea0533ad398a6a54ef4350852bd67748f0cd18b4a0ed5a785914d344b396b",
+  "question": "Trump trade deal before August?",
+  "event_title": "Trump trade deal before August?",
+  "tags": [
+   "economy",
+   "politics",
+   "trade-war",
+   "trump"
+  ],
+  "created_at": "2025-06-24T20:13:40.743641+00:00",
+  "end_at": "2025-07-31T22:00:00+00:00",
+  "yes_token_id": "112201929431676163113201872593510709052039622171791500104345597199129121319130",
+  "condition_id": "0xe16ea0533ad398a6a54ef4350852bd67748f0cd18b4a0ed5a785914d344b396b"
+ },
+ {
+  "event_id": "28642",
+  "market_id": "0x43e11860c7c7a8c229975f678c1cfa0ae9521540f613229e22e82ee16681ab40",
+  "question": "Trump trade deal before July?",
+  "event_title": "Trump trade deal before July?",
+  "tags": [
+   "economy",
+   "usa",
+   "trump",
+   "trade-war"
+  ],
+  "created_at": "2025-06-24T20:40:12.805467+00:00",
+  "end_at": "2025-06-30T22:00:00+00:00",
+  "yes_token_id": "80967098748939517984579817405211618597406442691819250044772325797649129060112",
+  "condition_id": "0x43e11860c7c7a8c229975f678c1cfa0ae9521540f613229e22e82ee16681ab40"
+ },
+ {
+  "event_id": "33508",
+  "market_id": "0x661bd338d7caca6d0701360c27d4b43c832eba3856a8006640815273f1257140",
+  "question": "U.S. agrees to a new trade deal with \"European Union\"?",
+  "event_title": "European Union",
+  "tags": [
+   "world",
+   "geopolitics",
+   "world-affairs",
+   "trump-presidency",
+   "trade-war",
+   "politics",
+   "trump",
+   "trade-deal"
+  ],
+  "created_at": "2025-07-21T21:26:16.056395+00:00",
+  "end_at": "2025-12-31T23:55:00+00:00",
+  "yes_token_id": "65492287616821734888206674810623561566006459598018731369001386552250476952145",
+  "condition_id": "0x661bd338d7caca6d0701360c27d4b43c832eba3856a8006640815273f1257140"
+ },
+ {
+  "event_id": "33508",
+  "market_id": "0x5a3cd3fd25c29bace5628e71c958eab33f7ef2956e96fbbadd03b2083834fd3f",
+  "question": "U.S. agrees to a new trade deal with \"India\"?",
+  "event_title": "India",
+  "tags": [
+   "world",
+   "geopolitics",
+   "world-affairs",
+   "trump-presidency",
+   "trade-war",
+   "politics",
+   "trump",
+   "trade-deal"
+  ],
+  "created_at": "2025-07-21T21:26:16.588272+00:00",
+  "end_at": "2025-12-31T23:55:00+00:00",
+  "yes_token_id": "92096814616938690875765578186885157472992954411104466556012745815405115504329",
+  "condition_id": "0x5a3cd3fd25c29bace5628e71c958eab33f7ef2956e96fbbadd03b2083834fd3f"
+ },
+ {
+  "event_id": "33508",
+  "market_id": "0x9143e4e4a449229e3d63711df9ebc06c88993a402cea98cc0542197678250d43",
+  "question": "U.S. agrees to a new trade deal with \"Canada\"?",
+  "event_title": "Canada",
+  "tags": [
+   "world",
+   "geopolitics",
+   "world-affairs",
+   "trump-presidency",
+   "trade-war",
+   "politics",
+   "trump",
+   "trade-deal"
+  ],
+  "created_at": "2025-07-21T21:26:17.068756+00:00",
+  "end_at": "2025-12-31T23:55:00+00:00",
+  "yes_token_id": "87686789199659035990734645216040519787573705636693399875514256836650659126632",
+  "condition_id": "0x9143e4e4a449229e3d63711df9ebc06c88993a402cea98cc0542197678250d43"
+ },
+ {
+  "event_id": "33508",
+  "market_id": "0xf852ac4eeabed4f456a2805e5198bc944951f9a15ff6c9733f0cf5454fa33999",
+  "question": "U.S. agrees to a new trade deal with \"Brazil\"?",
+  "event_title": "Brazil",
+  "tags": [
+   "world",
+   "geopolitics",
+   "world-affairs",
+   "trump-presidency",
+   "trade-war",
+   "politics",
+   "trump",
+   "trade-deal"
+  ],
+  "created_at": "2025-07-21T21:26:17.549453+00:00",
+  "end_at": "2025-12-31T23:55:00+00:00",
+  "yes_token_id": "81483588702269676798287280593627381104639506118343513710916214077272925572842",
+  "condition_id": "0xf852ac4eeabed4f456a2805e5198bc944951f9a15ff6c9733f0cf5454fa33999"
+ },
+ {
+  "event_id": "33508",
+  "market_id": "0x3eff746919b5a4f793ba1da1f87107b5d6478de91c3cd76ab2f839325050b4b6",
+  "question": "U.S. agrees to a new trade deal with \"Japan\"?",
+  "event_title": "Japan",
+  "tags": [
+   "world",
+   "geopolitics",
+   "world-affairs",
+   "trump-presidency",
+   "trade-war",
+   "politics",
+   "trump",
+   "trade-deal"
+  ],
+  "created_at": "2025-07-21T21:26:18.060791+00:00",
+  "end_at": "2025-12-31T23:55:00+00:00",
+  "yes_token_id": "19449599212587469203947107397998655456684686969214942662750267144199672612934",
+  "condition_id": "0x3eff746919b5a4f793ba1da1f87107b5d6478de91c3cd76ab2f839325050b4b6"
+ },
+ {
+  "event_id": "33508",
+  "market_id": "0x282401d13e5bd089e789f23e36acd2f460b64ac04d64623180d80e1d59a2efa6",
+  "question": "U.S. agrees to a new trade deal with \"Indonesia\"?",
+  "event_title": "Indonesia",
+  "tags": [
+   "world",
+   "geopolitics",
+   "world-affairs",
+   "trump-presidency",
+   "trade-war",
+   "politics",
+   "trump",
+   "trade-deal"
+  ],
+  "created_at": "2025-07-21T21:26:18.536769+00:00",
+  "end_at": "2025-12-31T23:55:00+00:00",
+  "yes_token_id": "85735529248854483764413052192129416886481649472869874451170124781580265243789",
+  "condition_id": "0x282401d13e5bd089e789f23e36acd2f460b64ac04d64623180d80e1d59a2efa6"
+ },
+ {
+  "event_id": "33508",
+  "market_id": "0x7c9de7c10f6c844116abe7b47bd7c5dc4ca1c3da710813c02d3d388bc227f964",
+  "question": "U.S. agrees to a new trade deal with \"Argentina\"?",
+  "event_title": "Argentina",
+  "tags": [
+   "world",
+   "geopolitics",
+   "world-affairs",
+   "trump-presidency",
+   "trade-war",
+   "politics",
+   "trump",
+   "trade-deal"
+  ],
+  "created_at": "2025-07-21T21:26:19.018817+00:00",
+  "end_at": "2025-12-31T23:55:00+00:00",
+  "yes_token_id": "100404235594170548122052072738302998367185362089472368643936829706055185524427",
+  "condition_id": "0x7c9de7c10f6c844116abe7b47bd7c5dc4ca1c3da710813c02d3d388bc227f964"
+ },
+ {
+  "event_id": "33508",
+  "market_id": "0xdf0ee8c9f6e12c8438128c757199b3c2ac21954e6c00c0f19bac9bc030d40aa2",
+  "question": "U.S. agrees to a new trade deal with \"Vietnam\"?",
+  "event_title": "Vietnam",
+  "tags": [
+   "world",
+   "geopolitics",
+   "world-affairs",
+   "trump-presidency",
+   "trade-war",
+   "politics",
+   "trump",
+   "trade-deal"
+  ],
+  "created_at": "2025-07-21T21:26:19.461305+00:00",
+  "end_at": "2025-12-31T23:55:00+00:00",
+  "yes_token_id": "72386475461795238167157308069518115021316023416872795088558306749155676875439",
+  "condition_id": "0xdf0ee8c9f6e12c8438128c757199b3c2ac21954e6c00c0f19bac9bc030d40aa2"
+ },
+ {
+  "event_id": "33508",
+  "market_id": "0x81be9005a562b527a227e92defdcb87e138b6d1a603343cf097c53afbc06dba2",
+  "question": "U.S. agrees to a new trade deal with \"Australia\"?",
+  "event_title": "Australia",
+  "tags": [
+   "world",
+   "geopolitics",
+   "world-affairs",
+   "trump-presidency",
+   "trade-war",
+   "politics",
+   "trump",
+   "trade-deal"
+  ],
+  "created_at": "2025-07-21T21:26:19.935839+00:00",
+  "end_at": "2025-12-31T23:55:00+00:00",
+  "yes_token_id": "249235090389994305911332532932092731044696071417511377734989693672091093955",
+  "condition_id": "0x81be9005a562b527a227e92defdcb87e138b6d1a603343cf097c53afbc06dba2"
+ },
+ {
+  "event_id": "33508",
+  "market_id": "0xf7cbc94517b4b8a334aa4962dc8927157c00468b157043ba3d85effe60679a9e",
+  "question": "U.S. agrees to a new trade deal with \"Mexico\"?",
+  "event_title": "Mexico",
+  "tags": [
+   "world",
+   "geopolitics",
+   "world-affairs",
+   "trump-presidency",
+   "trade-war",
+   "politics",
+   "trump",
+   "trade-deal"
+  ],
+  "created_at": "2025-07-21T21:26:20.598826+00:00",
+  "end_at": "2025-12-31T23:55:00+00:00",
+  "yes_token_id": "80166197950831040585947374753282172714978647462800392721547199748671301216897",
+  "condition_id": "0xf7cbc94517b4b8a334aa4962dc8927157c00468b157043ba3d85effe60679a9e"
+ },
+ {
+  "event_id": "33508",
+  "market_id": "0x64ba1578a1351ede65fd74d8ad1ab7503da8b67f1bcf6f1a8068d86b1f40425b",
+  "question": "U.S. agrees to a new trade deal with \"South Korea\"?",
+  "event_title": "South Korea",
+  "tags": [
+   "world",
+   "geopolitics",
+   "world-affairs",
+   "trump-presidency",
+   "trade-war",
+   "politics",
+   "trump",
+   "trade-deal"
+  ],
+  "created_at": "2025-07-21T21:26:21.162658+00:00",
+  "end_at": "2025-12-31T23:55:00+00:00",
+  "yes_token_id": "5387225204087783518802178465274078547261862932574892838425263565124999003543",
+  "condition_id": "0x64ba1578a1351ede65fd74d8ad1ab7503da8b67f1bcf6f1a8068d86b1f40425b"
+ },
+ {
+  "event_id": "33508",
+  "market_id": "0x80b383b22f2177f5b3a1f8ecdd451789b77c0e0bae223055e3c489095a98f5ca",
+  "question": "U.S. agrees to a new trade deal with \"Israel\"?",
+  "event_title": "Israel",
+  "tags": [
+   "world",
+   "geopolitics",
+   "world-affairs",
+   "trump-presidency",
+   "trade-war",
+   "politics",
+   "trump",
+   "trade-deal"
+  ],
+  "created_at": "2025-07-21T21:26:21.660607+00:00",
+  "end_at": "2025-12-31T23:55:00+00:00",
+  "yes_token_id": "60839315234970592954085965197681515606046753644346722691587881265190088912306",
+  "condition_id": "0x80b383b22f2177f5b3a1f8ecdd451789b77c0e0bae223055e3c489095a98f5ca"
+ },
+ {
+  "event_id": "33508",
+  "market_id": "0x3b265abb3a519f178e98913156b8da1af7c93a53ba2f9bdf8b96bf042b5ba356",
+  "question": "U.S. agrees to a new trade deal with \"Pakistan\"?",
+  "event_title": "Pakistan",
+  "tags": [
+   "world",
+   "geopolitics",
+   "world-affairs",
+   "trump-presidency",
+   "trade-war",
+   "politics",
+   "trump",
+   "trade-deal"
+  ],
+  "created_at": "2025-07-21T21:26:22.125466+00:00",
+  "end_at": "2025-12-31T23:55:00+00:00",
+  "yes_token_id": "66497051345467027949834277430087203254761430378074923176597278885753004192308",
+  "condition_id": "0x3b265abb3a519f178e98913156b8da1af7c93a53ba2f9bdf8b96bf042b5ba356"
+ },
+ {
+  "event_id": "33508",
+  "market_id": "0x1dffcb382c0b47154705f073cfea22f43c61a95d93d0d002a4e022600f9092dc",
+  "question": "U.S. agrees to a new trade deal with \"United Kingdom\"?",
+  "event_title": "United Kingdom",
+  "tags": [
+   "world",
+   "geopolitics",
+   "world-affairs",
+   "trump-presidency",
+   "trade-war",
+   "politics",
+   "trump",
+   "trade-deal"
+  ],
+  "created_at": "2025-07-21T21:26:22.648851+00:00",
+  "end_at": "2025-12-31T23:55:00+00:00",
+  "yes_token_id": "41589809637477681084296090656346161233359877888582075796941134592335966342276",
+  "condition_id": "0x1dffcb382c0b47154705f073cfea22f43c61a95d93d0d002a4e022600f9092dc"
+ },
+ {
+  "event_id": "33508",
+  "market_id": "0xb577481ebe9339dae28b07fab30a0d2cf8cae6e26dbe524871d7ea5cff4f5a19",
+  "question": "U.S. agrees to a new trade deal with \"Russia\"?",
+  "event_title": "Russia",
+  "tags": [
+   "world",
+   "geopolitics",
+   "world-affairs",
+   "trump-presidency",
+   "trade-war",
+   "politics",
+   "trump",
+   "trade-deal"
+  ],
+  "created_at": "2025-07-21T21:26:23.113610+00:00",
+  "end_at": "2025-12-31T23:55:00+00:00",
+  "yes_token_id": "37478244274836628132435121285914717246617741002837311683904156313066731359356",
+  "condition_id": "0xb577481ebe9339dae28b07fab30a0d2cf8cae6e26dbe524871d7ea5cff4f5a19"
+ },
+ {
+  "event_id": "33508",
+  "market_id": "0xd0278c6f7fa4dd0e0bd070e467407bc378d36e682d4e12f2cf903339966da066",
+  "question": "U.S. agrees to a new trade deal with \"South Africa\"?",
+  "event_title": "South Africa",
+  "tags": [
+   "world",
+   "geopolitics",
+   "world-affairs",
+   "trump-presidency",
+   "trade-war",
+   "politics",
+   "trump",
+   "trade-deal"
+  ],
+  "created_at": "2025-07-21T21:26:23.599915+00:00",
+  "end_at": "2025-12-31T23:55:00+00:00",
+  "yes_token_id": "99507760258941848753269971654735037549582571206165650023379029040956630645283",
+  "condition_id": "0xd0278c6f7fa4dd0e0bd070e467407bc378d36e682d4e12f2cf903339966da066"
+ },
+ {
+  "event_id": "34870",
+  "market_id": "0x517d97c0e577d07f9ae2fd32e8d2b67a9dbfb9c9c13b64d60284fc002abb717f",
+  "question": "Will Trump agree to a tariff agreement with China in August?",
+  "event_title": "China",
+  "tags": [
+   "trade-war",
+   "geopolitics",
+   "trump",
+   "politics",
+   "trump-presidency",
+   "world",
+   "trade-deal"
+  ],
+  "created_at": "2025-07-30T15:23:41.146079+00:00",
+  "end_at": "2025-08-31T00:00:00+00:00",
+  "yes_token_id": "44129133022813048127727763453589833838552971156874323154176054290175902154875",
+  "condition_id": "0x517d97c0e577d07f9ae2fd32e8d2b67a9dbfb9c9c13b64d60284fc002abb717f"
+ },
+ {
+  "event_id": "34870",
+  "market_id": "0x7d7bd88b69fe605b4fd19f24ee631caf1bf605e650ad4435ead349fbef523c54",
+  "question": "Will Trump agree to a tariff agreement with India in August?",
+  "event_title": "India",
+  "tags": [
+   "trade-war",
+   "geopolitics",
+   "trump",
+   "politics",
+   "trump-presidency",
+   "world",
+   "trade-deal"
+  ],
+  "created_at": "2025-07-30T15:23:41.693977+00:00",
+  "end_at": "2025-08-31T00:00:00+00:00",
+  "yes_token_id": "59762793052870169673057352990527958534700546163537582461724363817849030067932",
+  "condition_id": "0x7d7bd88b69fe605b4fd19f24ee631caf1bf605e650ad4435ead349fbef523c54"
+ },
+ {
+  "event_id": "34870",
+  "market_id": "0xd854644bc73383a2737771b8c2b55aa43ac53c375b32ea7ff70fe17e8fc187da",
+  "question": "Will Trump agree to a tariff agreement with Canada in August?",
+  "event_title": "Canada",
+  "tags": [
+   "trade-war",
+   "geopolitics",
+   "trump",
+   "politics",
+   "trump-presidency",
+   "world",
+   "trade-deal"
+  ],
+  "created_at": "2025-07-30T15:23:42.150869+00:00",
+  "end_at": "2025-08-31T00:00:00+00:00",
+  "yes_token_id": "76922730281517190330826317299988282329721446585995787962720688622723411500181",
+  "condition_id": "0xd854644bc73383a2737771b8c2b55aa43ac53c375b32ea7ff70fe17e8fc187da"
+ },
+ {
+  "event_id": "34870",
+  "market_id": "0x531a5df549bc8ad4af764658d47a4a828d357a55621dda7e2af4101d485f0142",
+  "question": "Will Trump agree to a tariff agreement with Mexico in August?",
+  "event_title": "Mexico",
+  "tags": [
+   "trade-war",
+   "geopolitics",
+   "trump",
+   "politics",
+   "trump-presidency",
+   "world",
+   "trade-deal"
+  ],
+  "created_at": "2025-07-30T15:23:42.614585+00:00",
+  "end_at": "2025-08-31T00:00:00+00:00",
+  "yes_token_id": "36170854854296742468007637006705900457156601294446487352465298394483122459596",
+  "condition_id": "0x531a5df549bc8ad4af764658d47a4a828d357a55621dda7e2af4101d485f0142"
+ },
+ {
+  "event_id": "34870",
+  "market_id": "0xfb436051396382846c7b8bc14f8dd2f0e107c579f597f08f00f83fe7891a54d6",
+  "question": "Will Trump agree to a tariff agreement with South Korea in August?",
+  "event_title": "South Korea",
+  "tags": [
+   "trade-war",
+   "geopolitics",
+   "trump",
+   "politics",
+   "trump-presidency",
+   "world",
+   "trade-deal"
+  ],
+  "created_at": "2025-07-30T15:23:43.129644+00:00",
+  "end_at": "2025-08-31T00:00:00+00:00",
+  "yes_token_id": "36235799576399895435612002217852957439853018513898949112107062893935430133895",
+  "condition_id": "0xfb436051396382846c7b8bc14f8dd2f0e107c579f597f08f00f83fe7891a54d6"
+ },
+ {
+  "event_id": "34870",
+  "market_id": "0x5ba55bd98c73ba1deeaa5d6026a9061fe836a7b91063dded0d778382c83e6d2f",
+  "question": "Will Trump agree to a tariff agreement with Australia in August?",
+  "event_title": "Australia",
+  "tags": [
+   "trade-war",
+   "geopolitics",
+   "trump",
+   "politics",
+   "trump-presidency",
+   "world",
+   "trade-deal"
+  ],
+  "created_at": "2025-07-30T15:23:44.006184+00:00",
+  "end_at": "2025-08-31T00:00:00+00:00",
+  "yes_token_id": "106184508339155197675789098219629902914769244516014082223498142630636055867128",
+  "condition_id": "0x5ba55bd98c73ba1deeaa5d6026a9061fe836a7b91063dded0d778382c83e6d2f"
+ },
+ {
+  "event_id": "34870",
+  "market_id": "0xd43da03631521d9553dd156b726591b5d10a2a765c6df79356d42e250ba160b6",
+  "question": "Will Trump agree to a tariff agreement with Germany in August?",
+  "event_title": "Germany",
+  "tags": [
+   "trade-war",
+   "geopolitics",
+   "trump",
+   "politics",
+   "trump-presidency",
+   "world",
+   "trade-deal"
+  ],
+  "created_at": "2025-07-30T15:23:44.595534+00:00",
+  "end_at": "2025-08-31T00:00:00+00:00",
+  "yes_token_id": "99033012052466483528183497476161533379604198717439157330253730149761918586680",
+  "condition_id": "0xd43da03631521d9553dd156b726591b5d10a2a765c6df79356d42e250ba160b6"
+ },
+ {
+  "event_id": "34870",
+  "market_id": "0x5512f314f0292126038fb26e1fe93b8695f8d183e2b0608d9afec144f76fbd40",
+  "question": "Will Trump agree to a tariff agreement with France in August?",
+  "event_title": "France",
+  "tags": [
+   "trade-war",
+   "geopolitics",
+   "trump",
+   "politics",
+   "trump-presidency",
+   "world",
+   "trade-deal"
+  ],
+  "created_at": "2025-07-30T15:23:45.059067+00:00",
+  "end_at": "2025-08-31T00:00:00+00:00",
+  "yes_token_id": "88395973535667315347518967344845838134281760185536223183435169712924223868044",
+  "condition_id": "0x5512f314f0292126038fb26e1fe93b8695f8d183e2b0608d9afec144f76fbd40"
+ },
+ {
+  "event_id": "34870",
+  "market_id": "0xa1feeb2bb297314356299bacc411a5d1174d4e4df4ba8d408529f377f590f779",
+  "question": "Will Trump agree to a tariff agreement with Brazil in August?",
+  "event_title": "Brazil",
+  "tags": [
+   "trade-war",
+   "geopolitics",
+   "trump",
+   "politics",
+   "trump-presidency",
+   "world",
+   "trade-deal"
+  ],
+  "created_at": "2025-07-30T15:23:45.630691+00:00",
+  "end_at": "2025-08-31T00:00:00+00:00",
+  "yes_token_id": "59084224856552992744727834684355972329638568543001388571758041123245513941310",
+  "condition_id": "0xa1feeb2bb297314356299bacc411a5d1174d4e4df4ba8d408529f377f590f779"
+ },
+ {
+  "event_id": "34870",
+  "market_id": "0xba564ae78bf4ee1cac74a75ceb4fd626eaa63fb20e83c186e405c6750228abb0",
+  "question": "Will Trump agree to a tariff agreement with Argentina in August?",
+  "event_title": "Argentina",
+  "tags": [
+   "trade-war",
+   "geopolitics",
+   "trump",
+   "politics",
+   "trump-presidency",
+   "world",
+   "trade-deal"
+  ],
+  "created_at": "2025-07-30T15:23:46.106933+00:00",
+  "end_at": "2025-08-31T00:00:00+00:00",
+  "yes_token_id": "79775932580288168206911968312339954691904776529882212464362166997120848542224",
+  "condition_id": "0xba564ae78bf4ee1cac74a75ceb4fd626eaa63fb20e83c186e405c6750228abb0"
+ },
+ {
+  "event_id": "34870",
+  "market_id": "0x21f5c5fafd85053ba0aa144ea080ae89465fe2d42af3dab801b7c42e4afc056d",
+  "question": "Will Trump agree to a tariff agreement with Israel in August?",
+  "event_title": "Israel",
+  "tags": [
+   "trade-war",
+   "geopolitics",
+   "trump",
+   "politics",
+   "trump-presidency",
+   "world",
+   "trade-deal"
+  ],
+  "created_at": "2025-07-30T15:23:46.575502+00:00",
+  "end_at": "2025-08-31T00:00:00+00:00",
+  "yes_token_id": "106987403417636386582195860410958033283919053998524803011015923486553411731712",
+  "condition_id": "0x21f5c5fafd85053ba0aa144ea080ae89465fe2d42af3dab801b7c42e4afc056d"
+ },
+ {
+  "event_id": "34870",
+  "market_id": "0x5a348e5d07ae3601a84ff33acd8e90b7c3e368c22736fac1430641c88c488f87",
+  "question": "Will Trump agree to a tariff agreement with Switzerland in August?",
+  "event_title": "Switzerland",
+  "tags": [
+   "trade-war",
+   "geopolitics",
+   "trump",
+   "politics",
+   "trump-presidency",
+   "world",
+   "trade-deal"
+  ],
+  "created_at": "2025-08-04T18:57:40.233146+00:00",
+  "end_at": "2025-08-31T00:00:00+00:00",
+  "yes_token_id": "34078014997262760240751990113627219565800056837716739744963020062193139766853",
+  "condition_id": "0x5a348e5d07ae3601a84ff33acd8e90b7c3e368c22736fac1430641c88c488f87"
+ },
+ {
+  "event_id": "36075",
+  "market_id": "0x742a4343d891c74d092bcf7c5cd51aac2e7149045d0ea5edc84e52d49a135218",
+  "question": "50% India tariff in effect by August 27?",
+  "event_title": "50% India tariff in effect by August 27?",
+  "tags": [
+   "trump-presidency",
+   "trump",
+   "geopolitics",
+   "politics",
+   "trade-war",
+   "india"
+  ],
+  "created_at": "2025-08-06T15:10:23.320531+00:00",
+  "end_at": "2025-08-27T00:00:00+00:00",
+  "yes_token_id": "24952117405722758536800434306908283712128832089388834683011817614392254425454",
+  "condition_id": "0x742a4343d891c74d092bcf7c5cd51aac2e7149045d0ea5edc84e52d49a135218"
+ },
+ {
+  "event_id": "39878",
+  "market_id": "0x6ba01b84505b019e8c3ace62e85916535bdd950c0f7d78a6c1c6077fcb9b625c",
+  "question": "Will Trump agree to a tariff agreement with China in September?",
+  "event_title": "China ",
+  "tags": [
+   "trade-war",
+   "world",
+   "politics",
+   "geopolitics",
+   "trump",
+   "trump-presidency",
+   "trade-deal"
+  ],
+  "created_at": "2025-08-26T22:44:35.471192+00:00",
+  "end_at": "2025-09-30T00:00:00+00:00",
+  "yes_token_id": "115055188626133438800987045447179848834715154917989862925986391652525612314389",
+  "condition_id": "0x6ba01b84505b019e8c3ace62e85916535bdd950c0f7d78a6c1c6077fcb9b625c"
+ },
+ {
+  "event_id": "39878",
+  "market_id": "0x97dc62e0f3e72004bdd0c9fca9e7fb91a5b8cac56d57c5400b81a299b59593a7",
+  "question": "Will Trump agree to a tariff agreement with India in September?",
+  "event_title": "India ",
+  "tags": [
+   "trade-war",
+   "world",
+   "politics",
+   "geopolitics",
+   "trump",
+   "trump-presidency",
+   "trade-deal"
+  ],
+  "created_at": "2025-08-26T22:44:35.902172+00:00",
+  "end_at": "2025-09-30T00:00:00+00:00",
+  "yes_token_id": "66518331253598466365271691013349829932407953415953055312665315842089924419005",
+  "condition_id": "0x97dc62e0f3e72004bdd0c9fca9e7fb91a5b8cac56d57c5400b81a299b59593a7"
+ },
+ {
+  "event_id": "39878",
+  "market_id": "0x4f3bc6070b0e07f7fc9ba113da1fbee6b8206bbe3c1e4c96eff69b53071ce458",
+  "question": "Will Trump agree to a tariff agreement with Canada in September?",
+  "event_title": "Canada",
+  "tags": [
+   "trade-war",
+   "world",
+   "politics",
+   "geopolitics",
+   "trump",
+   "trump-presidency",
+   "trade-deal"
+  ],
+  "created_at": "2025-08-26T22:44:36.465218+00:00",
+  "end_at": "2025-09-30T00:00:00+00:00",
+  "yes_token_id": "28242638860871200676847566523304298035766720952389582774438524769867235028512",
+  "condition_id": "0x4f3bc6070b0e07f7fc9ba113da1fbee6b8206bbe3c1e4c96eff69b53071ce458"
+ },
+ {
+  "event_id": "39878",
+  "market_id": "0x39b4785798a25fa33ed9ce1cabfeb330f83afc8eb6a4d5f3ea8aff7c2e848b39",
+  "question": "Will Trump agree to a tariff agreement with Mexico in September?",
+  "event_title": "Mexico ",
+  "tags": [
+   "trade-war",
+   "world",
+   "politics",
+   "geopolitics",
+   "trump",
+   "trump-presidency",
+   "trade-deal"
+  ],
+  "created_at": "2025-08-26T22:44:36.905988+00:00",
+  "end_at": "2025-09-30T00:00:00+00:00",
+  "yes_token_id": "22837790384992837327383290043808599405631426769355876314051911533075003231889",
+  "condition_id": "0x39b4785798a25fa33ed9ce1cabfeb330f83afc8eb6a4d5f3ea8aff7c2e848b39"
+ },
+ {
+  "event_id": "39878",
+  "market_id": "0xf10a8e8bfbf162b4f4fc5a7cd990254785654b8c75b707db2d0f66a72a954855",
+  "question": "Will Trump agree to a tariff agreement with South Korea in September?",
+  "event_title": "South Korea ",
+  "tags": [
+   "trade-war",
+   "world",
+   "politics",
+   "geopolitics",
+   "trump",
+   "trump-presidency",
+   "trade-deal"
+  ],
+  "created_at": "2025-08-26T22:44:37.440908+00:00",
+  "end_at": "2025-09-30T00:00:00+00:00",
+  "yes_token_id": "79506884424450311491203024732630738844149400665451669037448613234625509441941",
+  "condition_id": "0xf10a8e8bfbf162b4f4fc5a7cd990254785654b8c75b707db2d0f66a72a954855"
+ },
+ {
+  "event_id": "39878",
+  "market_id": "0xe19c24c34f67e4c83398971c1f9f9a10fa7b30ddc0aca00da16c43d124ef2761",
+  "question": "Will Trump agree to a tariff agreement with Australia in September?",
+  "event_title": "Australia ",
+  "tags": [
+   "trade-war",
+   "world",
+   "politics",
+   "geopolitics",
+   "trump",
+   "trump-presidency",
+   "trade-deal"
+  ],
+  "created_at": "2025-08-26T22:44:37.882743+00:00",
+  "end_at": "2025-09-30T00:00:00+00:00",
+  "yes_token_id": "15564301332071946819690163928638461712134978397627402272917043992356763009124",
+  "condition_id": "0xe19c24c34f67e4c83398971c1f9f9a10fa7b30ddc0aca00da16c43d124ef2761"
+ },
+ {
+  "event_id": "39878",
+  "market_id": "0x3369c5c9bebc94b52d13743898ee1a977dd89f9e818975092c3bc4e6796ebffd",
+  "question": "Will Trump agree to a tariff agreement with Germany in September?",
+  "event_title": "Germany ",
+  "tags": [
+   "trade-war",
+   "world",
+   "politics",
+   "geopolitics",
+   "trump",
+   "trump-presidency",
+   "trade-deal"
+  ],
+  "created_at": "2025-08-26T22:44:38.339229+00:00",
+  "end_at": "2025-09-30T00:00:00+00:00",
+  "yes_token_id": "31065998518467205769222556472170746594866387237376708611562656619510651719850",
+  "condition_id": "0x3369c5c9bebc94b52d13743898ee1a977dd89f9e818975092c3bc4e6796ebffd"
+ },
+ {
+  "event_id": "39878",
+  "market_id": "0xe2a6c2e96d69394414534151b5e3a03cc0ff63788f00b3a99f0922c4b44f8a43",
+  "question": "Will Trump agree to a tariff agreement with France in September?",
+  "event_title": "France ",
+  "tags": [
+   "trade-war",
+   "world",
+   "politics",
+   "geopolitics",
+   "trump",
+   "trump-presidency",
+   "trade-deal"
+  ],
+  "created_at": "2025-08-26T22:44:38.771679+00:00",
+  "end_at": "2025-09-30T00:00:00+00:00",
+  "yes_token_id": "93237761729509122726368225607193049725867693848704902353964864276386208683283",
+  "condition_id": "0xe2a6c2e96d69394414534151b5e3a03cc0ff63788f00b3a99f0922c4b44f8a43"
+ },
+ {
+  "event_id": "39878",
+  "market_id": "0x648e3a8492cf009a8499b3e6beee6898006b5ae9caddebb1fcf7707c298d5eb0",
+  "question": "Will Trump agree to a tariff agreement with Brazil in September?",
+  "event_title": "Brazil ",
+  "tags": [
+   "trade-war",
+   "world",
+   "politics",
+   "geopolitics",
+   "trump",
+   "trump-presidency",
+   "trade-deal"
+  ],
+  "created_at": "2025-08-26T22:44:39.224612+00:00",
+  "end_at": "2025-09-30T00:00:00+00:00",
+  "yes_token_id": "7856654239188348959933773064608670791660979004905558640940924971775242519059",
+  "condition_id": "0x648e3a8492cf009a8499b3e6beee6898006b5ae9caddebb1fcf7707c298d5eb0"
+ },
+ {
+  "event_id": "39878",
+  "market_id": "0x3d4e35148cab511772ddb246a602ed406b0bdb211f2a58a697ff934693b572ae",
+  "question": "Will Trump agree to a tariff agreement with Argentina in September?",
+  "event_title": "Argentina ",
+  "tags": [
+   "trade-war",
+   "world",
+   "politics",
+   "geopolitics",
+   "trump",
+   "trump-presidency",
+   "trade-deal"
+  ],
+  "created_at": "2025-08-26T22:44:39.659870+00:00",
+  "end_at": "2025-09-30T00:00:00+00:00",
+  "yes_token_id": "43077142025160622606879813008417183318787864692968208763590991287130145003949",
+  "condition_id": "0x3d4e35148cab511772ddb246a602ed406b0bdb211f2a58a697ff934693b572ae"
+ },
+ {
+  "event_id": "39878",
+  "market_id": "0x899f3365b0ada5261985904cb2a7353258ced367c94156a3f90d65d1b13db9a0",
+  "question": "Will Trump agree to a tariff agreement with Israel in September?",
+  "event_title": "Israel ",
+  "tags": [
+   "trade-war",
+   "world",
+   "politics",
+   "geopolitics",
+   "trump",
+   "trump-presidency",
+   "trade-deal"
+  ],
+  "created_at": "2025-08-26T22:44:40.099711+00:00",
+  "end_at": "2025-09-30T00:00:00+00:00",
+  "yes_token_id": "8126659302833947694418377026997579956119126517951042586410506520795788679598",
+  "condition_id": "0x899f3365b0ada5261985904cb2a7353258ced367c94156a3f90d65d1b13db9a0"
+ },
+ {
+  "event_id": "39878",
+  "market_id": "0xbc2e621b54d0c3ef0303f80705c0e4ae1e4c584cfefb3d0eb53c555b3c92a311",
+  "question": "Will Trump agree to a tariff agreement with Switzerland in September?",
+  "event_title": "Switzerland",
+  "tags": [
+   "trade-war",
+   "world",
+   "politics",
+   "geopolitics",
+   "trump",
+   "trump-presidency",
+   "trade-deal"
+  ],
+  "created_at": "2025-08-26T22:44:40.613827+00:00",
+  "end_at": "2025-09-30T00:00:00+00:00",
+  "yes_token_id": "67364517263966194193059166615408305370281559627129401184780230488317266920981",
+  "condition_id": "0xbc2e621b54d0c3ef0303f80705c0e4ae1e4c584cfefb3d0eb53c555b3c92a311"
+ },
+ {
+  "event_id": "358304",
+  "market_id": "0x1077393906f25eb78b4fe469d8840c7950d0176ee05412b02a9e3df033a01b8b",
+  "question": "Trump announces tariff for Iran military cooperation by April 17?",
+  "event_title": "Trump announces tariff for Iran military cooperation by April 17?",
+  "tags": [
+   "trade-war",
+   "iran",
+   "trump-iran",
+   "economy",
+   "politics",
+   "geopolitics"
+  ],
+  "created_at": "2026-04-08T19:21:32.202090+00:00",
+  "end_at": "2026-04-17T00:00:00+00:00",
+  "yes_token_id": "24233438187846516100492647722781674294943738659821627546324681713503312230152",
+  "condition_id": "0x1077393906f25eb78b4fe469d8840c7950d0176ee05412b02a9e3df033a01b8b"
+ },
+ {
+  "event_id": "16996",
+  "market_id": "0x7decaf7834aa2fda896c60d72b0b41f487b34f04c4cd341e39a27402338585cd",
+  "question": " Trump imposes 25% tariff on Canada and Mexico before March?",
+  "event_title": " Trump imposes 25% tariff on Canada and Mexico before March?",
+  "tags": [
+   "trump",
+   "trade",
+   "politics",
+   "trump-presidency",
+   "economy",
+   "trump-week-1",
+   "canada",
+   "breaking-news"
+  ],
+  "created_at": "2025-01-21T01:44:38.577088+00:00",
+  "end_at": "2025-02-28T12:00:00+00:00",
+  "yes_token_id": "38496310182534323387697943866055474592329792458589577293700081094949395640177",
+  "condition_id": "0x7decaf7834aa2fda896c60d72b0b41f487b34f04c4cd341e39a27402338585cd"
+ },
+ {
+  "event_id": "16998",
+  "market_id": "0x759b1952d45228a6292726d5fdf628e3b7fa833151cd89e6ecbfbb0b1cfd96c5",
+  "question": "Will Trump impose tariffs on Mexico before March?",
+  "event_title": "Will Trump impose tariffs on Mexico before March?",
+  "tags": [
+   "politics",
+   "trump",
+   "trump-presidency",
+   "trade",
+   "economy",
+   "trump-week-1"
+  ],
+  "created_at": "2025-01-21T01:50:57.380958+00:00",
+  "end_at": "2025-02-28T12:00:00+00:00",
+  "yes_token_id": "5703027367962547008620499614473526003175499096852627455133834249524232832183",
+  "condition_id": "0x759b1952d45228a6292726d5fdf628e3b7fa833151cd89e6ecbfbb0b1cfd96c5"
+ },
+ {
+  "event_id": "17553",
+  "market_id": "0xa85516717dd49a6f88cb3364a1d272b47b952885a69721e647e116a44b7497a5",
+  "question": "Will Trump impose tariff on oil from Mexico or Canada by next Friday?",
+  "event_title": "Will Trump impose tariff on oil from Mexico or Canada by next Friday?",
+  "tags": [
+   "trump-presidency",
+   "trade",
+   "economy",
+   "politics",
+   "breaking-news"
+  ],
+  "created_at": "2025-01-31T01:24:10.884023+00:00",
+  "end_at": "2025-02-07T12:00:00+00:00",
+  "yes_token_id": "17012188261933552420827607693384442705392631367966422168879148133362630866239",
+  "condition_id": "0xa85516717dd49a6f88cb3364a1d272b47b952885a69721e647e116a44b7497a5"
+ },
+ {
+  "event_id": "33867",
+  "market_id": "0xcf8f5f0cb770c56eba2d5c86500c4589b9177f41eee944dc8c231d1f8384e946",
+  "question": "Will the EU impose new tariffs on US goods in 2025?",
+  "event_title": "Will the EU impose new tariffs on US goods in 2025?",
+  "tags": [
+   "economic-policy",
+   "world",
+   "world-affairs",
+   "economy"
+  ],
+  "created_at": "2025-07-23T19:16:33.124318+00:00",
+  "end_at": "2025-12-31T05:00:00+00:00",
+  "yes_token_id": "25811727168920417540859933508843969881988444197416629691450770208217893492235",
+  "condition_id": "0xcf8f5f0cb770c56eba2d5c86500c4589b9177f41eee944dc8c231d1f8384e946"
+ },
+ {
+  "event_id": "16495",
+  "market_id": "0x404737e79dbf827931f6c1c551c657431196c2d34b409938d00dea62417a0ef8",
+  "question": "Will Trump impose tariffs on China in his first week? ",
+  "event_title": "China",
+  "tags": [
+   "trump-presidency",
+   "trump",
+   "politics",
+   "economy",
+   "trump-week-1",
+   "deepseek",
+   "ai"
+  ],
+  "created_at": "2025-01-07T20:14:31.060962+00:00",
+  "end_at": "2025-01-27T12:00:00+00:00",
+  "yes_token_id": "84142367509501687503929473699346523870665627308632017535113305583016025978027",
+  "condition_id": "0x404737e79dbf827931f6c1c551c657431196c2d34b409938d00dea62417a0ef8"
+ },
+ {
+  "event_id": "16495",
+  "market_id": "0xc9724206fca7531faadd496d10721ef69d4c6bcd5007dbb5ca44eb795d4b9707",
+  "question": "Will Trump impose tariffs on Canada in his first week? ",
+  "event_title": "Canada",
+  "tags": [
+   "trump-presidency",
+   "trump",
+   "politics",
+   "economy",
+   "trump-week-1",
+   "deepseek",
+   "ai"
+  ],
+  "created_at": "2025-01-07T20:14:54.004771+00:00",
+  "end_at": "2025-01-27T12:00:00+00:00",
+  "yes_token_id": "38616017246124454352330398495306763178295241226020213222379608783144765998925",
+  "condition_id": "0xc9724206fca7531faadd496d10721ef69d4c6bcd5007dbb5ca44eb795d4b9707"
+ },
+ {
+  "event_id": "16495",
+  "market_id": "0xf281672b936cd0302b59fed987a5a5ddf5d85fc38a0d5e534578c85dee01a2b4",
+  "question": "Will Trump impose tariffs on Mexico in his first week? ",
+  "event_title": "Mexico",
+  "tags": [
+   "trump-presidency",
+   "trump",
+   "politics",
+   "economy",
+   "trump-week-1",
+   "deepseek",
+   "ai"
+  ],
+  "created_at": "2025-01-07T20:23:32.737081+00:00",
+  "end_at": "2025-01-27T12:00:00+00:00",
+  "yes_token_id": "58511753044975456708735919985716160631207826219324657179357396307352807426009",
+  "condition_id": "0xf281672b936cd0302b59fed987a5a5ddf5d85fc38a0d5e534578c85dee01a2b4"
+ },
+ {
+  "event_id": "16495",
+  "market_id": "0x64a52387ff320e58165b8b8092fbe4ba418a19549d902fd7a938a50f2fbdfae3",
+  "question": "Will Trump impose tariffs on the European Union  in his first week? ",
+  "event_title": "European Union",
+  "tags": [
+   "trump-presidency",
+   "trump",
+   "politics",
+   "economy",
+   "trump-week-1",
+   "deepseek",
+   "ai"
+  ],
+  "created_at": "2025-01-07T20:26:55.059748+00:00",
+  "end_at": "2025-01-27T12:00:00+00:00",
+  "yes_token_id": "58794162694387875552798247845769887880347521391121340125598299562545619193307",
+  "condition_id": "0x64a52387ff320e58165b8b8092fbe4ba418a19549d902fd7a938a50f2fbdfae3"
+ },
+ {
+  "event_id": "16495",
+  "market_id": "0xb2f5ef6a61b6dbc25602b09384d734c1a811086ed6d9a979ec13d4458999840b",
+  "question": "Will Trump impose tariffs on Japan in his first week? ",
+  "event_title": "Japan",
+  "tags": [
+   "trump-presidency",
+   "trump",
+   "politics",
+   "economy",
+   "trump-week-1",
+   "deepseek",
+   "ai"
+  ],
+  "created_at": "2025-01-07T20:28:58.693026+00:00",
+  "end_at": "2025-01-27T12:00:00+00:00",
+  "yes_token_id": "53891715003536947245970518338719789328385504350856707966125142993949925126427",
+  "condition_id": "0xb2f5ef6a61b6dbc25602b09384d734c1a811086ed6d9a979ec13d4458999840b"
+ },
+ {
+  "event_id": "16495",
+  "market_id": "0xa2c684ca2658fc7adf1e7b4fbae6e3e36836cfcc00dbeeb691b802c3fc0f6251",
+  "question": "Will Trump impose tariffs on the UK in his first week? ",
+  "event_title": "United Kingdom",
+  "tags": [
+   "trump-presidency",
+   "trump",
+   "politics",
+   "economy",
+   "trump-week-1",
+   "deepseek",
+   "ai"
+  ],
+  "created_at": "2025-01-07T20:29:32.109082+00:00",
+  "end_at": "2025-01-27T12:00:00+00:00",
+  "yes_token_id": "14103493891587332679859241360504527209622516486817497052727923258061653335232",
+  "condition_id": "0xa2c684ca2658fc7adf1e7b4fbae6e3e36836cfcc00dbeeb691b802c3fc0f6251"
+ },
+ {
+  "event_id": "17326",
+  "market_id": "0x1cf86e182d130ad9a730307fe919bcb18cd59c5bdad21bbdba6469d84e5cb242",
+  "question": "Will Trump impose tariffs on China before March?",
+  "event_title": "Will Trump impose tariffs on China before March?",
+  "tags": [
+   "trump",
+   "politics",
+   "geopolitics",
+   "taxes",
+   "trump-presidency"
+  ],
+  "created_at": "2025-01-27T17:01:32.710698+00:00",
+  "end_at": "2025-02-28T12:00:00+00:00",
+  "yes_token_id": "64410182590619269299557987410304229301968570920784931744941945313114176744103",
+  "condition_id": "0x1cf86e182d130ad9a730307fe919bcb18cd59c5bdad21bbdba6469d84e5cb242"
+ },
+ {
+  "event_id": "453131",
+  "market_id": "0x0cfac875e3fa84e292a97256b74432c236904d1a3e46fe8b489978122bdc663b",
+  "question": "Will Trump announce a tariff reduction on China?",
+  "event_title": "Tariff Reduction",
+  "tags": [
+   "politics",
+   "china",
+   "xi-jinping",
+   "trump-xi-summit",
+   "trump",
+   "xi",
+   "tariff",
+   "ai",
+   "taiwan",
+   "sanctions",
+   "sanction",
+   "weapons",
+   "arms"
+  ],
+  "created_at": "2026-05-05T23:09:48.340870+00:00",
+  "end_at": "2026-05-22T00:00:00+00:00",
+  "yes_token_id": "67500088822425193611028555717491802967214637594198331061571697869465035016178",
+  "condition_id": "0x0cfac875e3fa84e292a97256b74432c236904d1a3e46fe8b489978122bdc663b"
+ }
+]

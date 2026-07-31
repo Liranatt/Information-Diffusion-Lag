@@ -1,0 +1,22 @@
+{
+  "market_id": "656746",
+  "question": "Will Pfizer (PFE) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-30 13:17:13.206897+00:00",
+  "requested_end_utc": "2025-10-30 20:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "d71caf4c03c89cf959576803",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "15057455313534287967470992890921639846657213474278808229433449036380603359433",
+  "condition_id": "0x3ad41621ac40b27e84b3e8778bc9f73f26171b3321c5dc43e626169b72a670d4",
+  "api_question": "Will Pfizer (PFE) beat quarterly earnings?",
+  "api_created_at": "2025-10-30T13:17:13.206897Z",
+  "api_end_date": "2025-11-04T14:00:00Z",
+  "status": "complete",
+  "row_count": 387,
+  "first_source_ts_utc": "2025-10-30 13:33:05+00:00",
+  "last_source_ts_utc": "2025-10-30 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\656746.csv",
+  "fragment_sha256": "6495225de65683cf2fce3ff023328671f0f17937b604a4747e28e2d97b96f7f5",
+  "question_matches": true,
+  "error": null
+}

@@ -1,0 +1,23 @@
+{
+  "market_id": "647811",
+  "question": "Will eBay (EBAY) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-21 11:04:24.181986+00:00",
+  "requested_end_utc": "2025-10-24 11:04:24.181986+00:00",
+  "first_candidate_t0_utc": "2025-10-24 11:04:24.181986+00:00",
+  "latest_candidate_decision_utc": "2025-10-24 20:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "43674552801636885331007086805667822929727052867318767257287982075105417588572",
+  "condition_id": "0xc86f9fe2b22de273f0ea0360c28f972304015778382f171b40fe2c8634e31dc2",
+  "api_question": "Will eBay (EBAY) beat quarterly earnings?",
+  "api_created_at": "2025-10-24T11:04:24.181986Z",
+  "api_end_date": "2025-10-29T21:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\647811.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

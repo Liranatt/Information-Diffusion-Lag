@@ -1,0 +1,22 @@
+{
+  "market_id": "658488",
+  "question": "Will Tripadvisor (TRIP) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-31 18:30:34.267589+00:00",
+  "requested_end_utc": "2025-11-03 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "48839b541809b28280199d67|8ec3307345bc4f97badc5669",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "22111365232908126950494510504016916667123462209112916606827329172905305934904",
+  "condition_id": "0x77471ad1bdea9a9a19b157677d1fe0d8cac45249ae4c674f073ea3ca7a156a61",
+  "api_question": "Will Tripadvisor (TRIP) beat quarterly earnings?",
+  "api_created_at": "2025-10-31T18:30:34.267589Z",
+  "api_end_date": "2025-11-06T14:00:00Z",
+  "status": "complete",
+  "row_count": 4453,
+  "first_source_ts_utc": "2025-10-31 18:47:07+00:00",
+  "last_source_ts_utc": "2025-11-03 20:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\658488.csv",
+  "fragment_sha256": "6ad3d78a05e9fa07b0569c842cbfb97c92d72390a701731944e27007d52edc57",
+  "question_matches": true,
+  "error": null
+}

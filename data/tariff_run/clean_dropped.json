@@ -1,0 +1,1329 @@
+[
+ {
+  "event_id": "21725",
+  "market_id": "0x25a9c4e02963d1e3e892d995da31dd62b1bc648aad1c71541a03359a43be7497",
+  "question": "Will Trump say \"Billion\" 10+ times during tariff event on April 2?",
+  "event_title": "Billion 10+ times",
+  "tags": [
+   "mention-markets",
+   "trump",
+   "taxes",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T19:40:09.207940+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "65778092781991096081164448027136286984076660573837744540772441850668539304666",
+  "condition_id": "0x25a9c4e02963d1e3e892d995da31dd62b1bc648aad1c71541a03359a43be7497",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "21725",
+  "market_id": "0xf243d2a3a1e7a9054d037ebb5c640268b88669af2f043bc08a4bb0d6d0209989",
+  "question": "Will Trump say \"Percent\" 10+ times during tariff event on April 2?",
+  "event_title": "Percent 10+ times",
+  "tags": [
+   "mention-markets",
+   "trump",
+   "taxes",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T19:40:09.976974+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "72278576431197759506619028798333965386815570996328702864968605595301805287476",
+  "condition_id": "0xf243d2a3a1e7a9054d037ebb5c640268b88669af2f043bc08a4bb0d6d0209989",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "21725",
+  "market_id": "0x9a1c6d7162bfb128b0a78b299969bb9b473bb0c232902af603470a6fead5da7e",
+  "question": "Will Trump say \"Tariff\" 15+ times during tariff event on April 2?",
+  "event_title": "Tariff 15+ times",
+  "tags": [
+   "mention-markets",
+   "trump",
+   "taxes",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T19:40:10.716263+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "14464563912589965436457328782685964608371402206081509902953744935063523779861",
+  "condition_id": "0x9a1c6d7162bfb128b0a78b299969bb9b473bb0c232902af603470a6fead5da7e",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "21725",
+  "market_id": "0xb8ef2cbe61f2832104bfcd61f2b2b2b4b534531a5cc9f92ed505dcbf42027851",
+  "question": "Will Trump say \"China\" 3+ times during tariff event on April 2?",
+  "event_title": "China 3+ times",
+  "tags": [
+   "mention-markets",
+   "trump",
+   "taxes",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T19:40:11.454654+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "108701170291851552911207782309457477643452734232343197107602679019976567398346",
+  "condition_id": "0xb8ef2cbe61f2832104bfcd61f2b2b2b4b534531a5cc9f92ed505dcbf42027851",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "21725",
+  "market_id": "0xfceb27f08b4a9aa9655266ab10b0325c1a9978c63c7b3e003e12025767ad4bc0",
+  "question": "Will Trump say \"Made in America\" 2+ times during tariff event on April 2?",
+  "event_title": "Made in America 2+ times",
+  "tags": [
+   "mention-markets",
+   "trump",
+   "taxes",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T19:40:12.176290+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "102331581271306228373014639096389329455470659907932638095108511882111332032330",
+  "condition_id": "0xfceb27f08b4a9aa9655266ab10b0325c1a9978c63c7b3e003e12025767ad4bc0",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "21725",
+  "market_id": "0x2098b3289292460e95e4daf64d18f66a2cfea786683bf40c12fb6c065a463a38",
+  "question": "Will Trump say \"VAT\" or \"Value added tax\" during tariff event on April 2?",
+  "event_title": "VAT / Value added tax",
+  "tags": [
+   "mention-markets",
+   "trump",
+   "taxes",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T19:40:12.923192+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "11780097255247438544614589990793242401827678033751177227718204301651635359332",
+  "condition_id": "0x2098b3289292460e95e4daf64d18f66a2cfea786683bf40c12fb6c065a463a38",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "21725",
+  "market_id": "0x7145b98be9407087fb4482160328829efc1e16dc3e56fdc41238bda18fc9f784",
+  "question": "Will Trump say \"India\" during tariff event on April 2?",
+  "event_title": "India",
+  "tags": [
+   "mention-markets",
+   "trump",
+   "taxes",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T19:40:13.651820+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "93087403461647119260983610894263166096453897053317172981035232831993221106264",
+  "condition_id": "0x7145b98be9407087fb4482160328829efc1e16dc3e56fdc41238bda18fc9f784",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "21725",
+  "market_id": "0xd03bee5dd5e28df4ba07083483f6e7161c2dfdc2aabd5819566055101125df18",
+  "question": "Will Trump say \"Japan\" during tariff event on April 2?",
+  "event_title": "Japan",
+  "tags": [
+   "mention-markets",
+   "trump",
+   "taxes",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T19:40:14.392898+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "45568439485144623515682131170754303724624739833884669066802410401769021730044",
+  "condition_id": "0xd03bee5dd5e28df4ba07083483f6e7161c2dfdc2aabd5819566055101125df18",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "21725",
+  "market_id": "0xf459f2a4cf56425af7346fbeed3f9c78e35463539fe38afa70ff3d00c127c7ab",
+  "question": "Will Trump say \"Fantastic job\" during tariff event on April 2?",
+  "event_title": "Fantastic job",
+  "tags": [
+   "mention-markets",
+   "trump",
+   "taxes",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T19:40:15.137881+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "47777446372165023386169157251513163030521078877649350063502425979261591684665",
+  "condition_id": "0xf459f2a4cf56425af7346fbeed3f9c78e35463539fe38afa70ff3d00c127c7ab",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "21725",
+  "market_id": "0xd80524ef7bfe8e8ce7201f3d58a0a38345fc4e131b46c40ac1fc1dc6d073151d",
+  "question": "Will Trump say \"Deficit\" during tariff event on April 2?",
+  "event_title": "Deficit",
+  "tags": [
+   "mention-markets",
+   "trump",
+   "taxes",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T19:40:15.898704+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "82736392087144444909773512551637204897960551847694572920993402109464899996973",
+  "condition_id": "0xd80524ef7bfe8e8ce7201f3d58a0a38345fc4e131b46c40ac1fc1dc6d073151d",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "21725",
+  "market_id": "0xe5e9af08127fe33fb08339fa6295b448440640bd87388324bc88de3d6a2c32e2",
+  "question": "Will Trump say \"Apple\" during tariff event on April 2?",
+  "event_title": "Apple",
+  "tags": [
+   "mention-markets",
+   "trump",
+   "taxes",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T19:40:16.681707+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "74606601597415097883587808255568925513134663083807063270194099787417867525627",
+  "condition_id": "0xe5e9af08127fe33fb08339fa6295b448440640bd87388324bc88de3d6a2c32e2",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "21725",
+  "market_id": "0xaca36c03f22214d23d50e8da58a40c6608b1eedc67ec0cbc1e5840eb8c852677",
+  "question": "Will Trump say \"Mandate\" during tariff event on April 2?",
+  "event_title": "Mandate",
+  "tags": [
+   "mention-markets",
+   "trump",
+   "taxes",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T19:40:17.426424+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "67701114349750289452505126840738397630269482625874006801533863945716545223690",
+  "condition_id": "0xaca36c03f22214d23d50e8da58a40c6608b1eedc67ec0cbc1e5840eb8c852677",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "21725",
+  "market_id": "0x0b36c01be229e57d0159825a3e17f7c8a8673b737f0588ec1abd38c4bd64d4b5",
+  "question": "Will Trump say \"Mineral\" during tariff event on April 2?",
+  "event_title": "Mineral",
+  "tags": [
+   "mention-markets",
+   "trump",
+   "taxes",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T19:40:18.148179+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "38699607014245505409849320156177225468271819945557181284242074321937399945226",
+  "condition_id": "0x0b36c01be229e57d0159825a3e17f7c8a8673b737f0588ec1abd38c4bd64d4b5",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "21725",
+  "market_id": "0x75de3444248517ce2ed09964e5e7b238e82da315c8bc7964505ee5b0a7d3a031",
+  "question": "Will Trump say \"Farmer\" during tariff event on April 2?",
+  "event_title": "Farmer",
+  "tags": [
+   "mention-markets",
+   "trump",
+   "taxes",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T19:40:18.951562+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "107569681256101112312424484957755353734716927972277440223610490173946282722310",
+  "condition_id": "0x75de3444248517ce2ed09964e5e7b238e82da315c8bc7964505ee5b0a7d3a031",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "21725",
+  "market_id": "0x3ac0d2c7a2c3bcf477f4d1cf5ae3cd72610dc32e94c079c9fe7422bb81e7c250",
+  "question": "Will Trump say \"Electricity\" during tariff event on April 2?",
+  "event_title": "Electricity",
+  "tags": [
+   "mention-markets",
+   "trump",
+   "taxes",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T19:40:19.690816+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "56126092196898637768804131852012554879965500962551689594736760871670351939094",
+  "condition_id": "0x3ac0d2c7a2c3bcf477f4d1cf5ae3cd72610dc32e94c079c9fe7422bb81e7c250",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "21725",
+  "market_id": "0x675286617132d75ce6972619923bc99f97fbde044d1fcd9f77e44fb55bff94d5",
+  "question": "Will Trump say \"Elon\" during tariff event on April 2?",
+  "event_title": "Elon",
+  "tags": [
+   "mention-markets",
+   "trump",
+   "taxes",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T19:40:20.418301+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "48355008566161678432232438527515691350736691980819811722697022549129600348677",
+  "condition_id": "0x675286617132d75ce6972619923bc99f97fbde044d1fcd9f77e44fb55bff94d5",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "21725",
+  "market_id": "0xde9b976d9751b707ae35d6462d033757bc06746bd9d55c64e96352111cc7b149",
+  "question": "Will Trump say \"NAFTA\" during tariff event on April 2?",
+  "event_title": "NAFTA",
+  "tags": [
+   "mention-markets",
+   "trump",
+   "taxes",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T19:40:21.166821+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "62168854418010824724668987322835091817256976439547467154432467712807644462514",
+  "condition_id": "0xde9b976d9751b707ae35d6462d033757bc06746bd9d55c64e96352111cc7b149",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "21725",
+  "market_id": "0x9fe3b7415971e71e95d9c2c160776e3c778f0fe74b247dc09db5168b53c7964b",
+  "question": "Will Trump say \"AI\" or \"Artificial Intelligence\" during tariff event on April 2?",
+  "event_title": "AI / Artificial Intelligence",
+  "tags": [
+   "mention-markets",
+   "trump",
+   "taxes",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T19:40:22.823557+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "68371588022383347423958253555126382203789320579230275292369916526563341074705",
+  "condition_id": "0x9fe3b7415971e71e95d9c2c160776e3c778f0fe74b247dc09db5168b53c7964b",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "21725",
+  "market_id": "0x461548f981c05b9e27ac8c96d09dea1986392c9a61166a344fdc80e447aac499",
+  "question": "Will Trump say \"MAGA\" or \"Make America Great Again\" during tariff event on April 2?",
+  "event_title": "MAGA / Make America Great Again",
+  "tags": [
+   "mention-markets",
+   "trump",
+   "taxes",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T19:40:23.577273+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "56711521047774900211747079540666922162120691038919873378617197551231929880711",
+  "condition_id": "0x461548f981c05b9e27ac8c96d09dea1986392c9a61166a344fdc80e447aac499",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "21725",
+  "market_id": "0xecf42b41a25867c1a6fc8530a534f6938680a083efebc8adff09978b3f64762c",
+  "question": "Will Trump say \"Crypto\" or \"Bitcoin\" during tariff event on April 2?",
+  "event_title": "Crypto / Bitcoin",
+  "tags": [
+   "mention-markets",
+   "trump",
+   "taxes",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T19:40:24.388740+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "44595349942528738434247702816759321078011101641662274040176161899630924484854",
+  "condition_id": "0xecf42b41a25867c1a6fc8530a534f6938680a083efebc8adff09978b3f64762c",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "21725",
+  "market_id": "0xb0675395c1b27d1298af7470c687e94622eb5bd3293abebd26bf1871cd671da1",
+  "question": "Will Trump say \"Tesla\" during tariff event on April 2?",
+  "event_title": "Tesla",
+  "tags": [
+   "mention-markets",
+   "trump",
+   "taxes",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-03-27T21:52:31.598815+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "108155997631804079778812250291789689442465826281630542728951782307060741606943",
+  "condition_id": "0xb0675395c1b27d1298af7470c687e94622eb5bd3293abebd26bf1871cd671da1",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "21725",
+  "market_id": "0xebe64f82b4dc5b50a70f89916e22a0725b4dbb0440cf137ec028e3d8c8a9750f",
+  "question": "Will Trump say \"TikTok\" during tariff event on April 2?",
+  "event_title": "TikTok",
+  "tags": [
+   "mention-markets",
+   "trump",
+   "taxes",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-04-02T14:35:35.495244+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "58228175356964609550805449424457789017103735781587859995875219817762506955117",
+  "condition_id": "0xebe64f82b4dc5b50a70f89916e22a0725b4dbb0440cf137ec028e3d8c8a9750f",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "21725",
+  "market_id": "0x8655d53552c9651be8420fb2b17a15a2e3ab36188469f7b04c854918e940185d",
+  "question": "Will Trump say \"Piggy Bank\" during tariff event on April 2?",
+  "event_title": "Piggy Bank",
+  "tags": [
+   "mention-markets",
+   "trump",
+   "taxes",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-04-02T14:36:26.097996+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "7613451778287621126962993326752191880689280657339235126428280052388195887359",
+  "condition_id": "0x8655d53552c9651be8420fb2b17a15a2e3ab36188469f7b04c854918e940185d",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "21725",
+  "market_id": "0x670007824e0c9e6c07833b802cd2a1253207e7d63399f4a8c6da37e070bca021",
+  "question": "Will Trump say \"Hell\" 3+ times during tariff event on April 2?",
+  "event_title": "Hell 3+ times",
+  "tags": [
+   "mention-markets",
+   "trump",
+   "taxes",
+   "trade-war",
+   "politics",
+   "geopolitics",
+   "liberation-day-tariffs"
+  ],
+  "created_at": "2025-04-02T14:36:58.426152+00:00",
+  "end_at": "2025-04-02T12:00:00+00:00",
+  "yes_token_id": "29367396883508113214943805946745222882390945657461066010695940717226890022536",
+  "condition_id": "0x670007824e0c9e6c07833b802cd2a1253207e7d63399f4a8c6da37e070bca021",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "24447",
+  "market_id": "0x57ee125c6f5b57b1b0c537289443d791a604e2c9e8d2a7a37d626cb4118c92e4",
+  "question": "Will the U.S. tariff rate on China be between 25% and 40% on August 15?",
+  "event_title": "25-40%",
+  "tags": [
+   "trump",
+   "politics",
+   "economy",
+   "trump-presidency",
+   "trade-war",
+   "china"
+  ],
+  "created_at": "2025-05-13T17:22:38.438677+00:00",
+  "end_at": "2025-08-15T12:00:00+00:00",
+  "yes_token_id": "26494547383015857678084557394288070598738111674059710005374810077339628486403",
+  "condition_id": "0x57ee125c6f5b57b1b0c537289443d791a604e2c9e8d2a7a37d626cb4118c92e4",
+  "drop_reason": "bracket-ladder rung (China tariff rate 25-40% on Aug 15); one representative rung (<25%) kept, matching pipeline ladder-dedup policy"
+ },
+ {
+  "event_id": "24447",
+  "market_id": "0x21ec3fe21ce9e81b5fba4fb5ad333c399e5e5a9c433f581c87999a10e980cf6b",
+  "question": "Will the U.S. tariff rate on China be greater than 150% on August 15?",
+  "event_title": ">150%",
+  "tags": [
+   "trump",
+   "politics",
+   "economy",
+   "trump-presidency",
+   "trade-war",
+   "china"
+  ],
+  "created_at": "2025-05-13T17:22:39.463325+00:00",
+  "end_at": "2025-08-15T12:00:00+00:00",
+  "yes_token_id": "77337564790275783554372169000370591189886011128344819168131421033330255493258",
+  "condition_id": "0x21ec3fe21ce9e81b5fba4fb5ad333c399e5e5a9c433f581c87999a10e980cf6b",
+  "drop_reason": "bracket-ladder rung (China tariff rate >150% on Aug 15); one representative rung (<25%) kept, matching pipeline ladder-dedup policy"
+ },
+ {
+  "event_id": "19044",
+  "market_id": "0xe807086f85d8eb4a9252643874dff34eff2ccc946a4d313cbad951ab37fe993a",
+  "question": "Will Trump say \"Tariff\" 20 or more times during Miami investment conference?",
+  "event_title": "Tariff 20+ times",
+  "tags": [
+   "mention-markets",
+   "trump",
+   "economic-policy",
+   "economy",
+   "politics"
+  ],
+  "created_at": "2025-02-19T18:12:30.792802+00:00",
+  "end_at": "2025-02-19T12:00:00+00:00",
+  "yes_token_id": "94260142015632467946643339298570678576554078621500495661720367145219897018555",
+  "condition_id": "0xe807086f85d8eb4a9252643874dff34eff2ccc946a4d313cbad951ab37fe993a",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "24143",
+  "market_id": "0x1ffce6a1a34fb4c009b4d40a85ab26d98428116fc23980dfa19d4fe00acb5fc1",
+  "question": "Will Powell say \"Tariff\" 15+ times during June Press Conference?",
+  "event_title": "Tariff 15+",
+  "tags": [
+   "economy",
+   "economic-policy",
+   "powell",
+   "fomc",
+   "fed",
+   "mention-markets"
+  ],
+  "created_at": "2025-05-08T18:55:20.152664+00:00",
+  "end_at": "2025-06-18T12:00:00+00:00",
+  "yes_token_id": "23644441750218330571594142052782997906504834883476669972663250871103291122380",
+  "condition_id": "0x1ffce6a1a34fb4c009b4d40a85ab26d98428116fc23980dfa19d4fe00acb5fc1",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "24362",
+  "market_id": "0x78b8edd10f4ff3d7b7baae397cc3aea2e6364a036f20eab6c42702fd36e43424",
+  "question": "Will Powell say \"Tariff\" 15+ times during Framework Review speech on May 15?",
+  "event_title": "Tariff 15+ times",
+  "tags": [
+   "economy",
+   "mention-markets",
+   "economic-policy",
+   "politics",
+   "powell"
+  ],
+  "created_at": "2025-05-12T18:37:36.396832+00:00",
+  "end_at": "2025-05-15T12:00:00+00:00",
+  "yes_token_id": "68998708627813467804862552129381889223150100960907782893653708749379269534691",
+  "condition_id": "0x78b8edd10f4ff3d7b7baae397cc3aea2e6364a036f20eab6c42702fd36e43424",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "28201",
+  "market_id": "0x09ea24d2182a33f947e7b64fc5d46d8e3556d9630094bdda13457c8931b3ae39",
+  "question": "Will Powell say \"Tariff\" 15+ times during July Press Conference?",
+  "event_title": "Tariff 15+ times",
+  "tags": [
+   "economic-policy",
+   "economy",
+   "mention-markets",
+   "powell",
+   "fomc",
+   "fed",
+   "jerome-powell"
+  ],
+  "created_at": "2025-06-21T20:20:05.405667+00:00",
+  "end_at": "2025-07-30T00:00:00+00:00",
+  "yes_token_id": "59456351920623053309029880706481786153518246867442455856823664432498976770531",
+  "condition_id": "0x09ea24d2182a33f947e7b64fc5d46d8e3556d9630094bdda13457c8931b3ae39",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "35094",
+  "market_id": "0xe42f641143e0b22a1e19eb831c6ecd6b8b045ef26dbc532a75fac2a167591946",
+  "question": "Will Powell say \"Tariff\" 15+ times during September press conference?",
+  "event_title": "Tariff 15+ times",
+  "tags": [
+   "jerome-powell",
+   "economy",
+   "economic-policy",
+   "mention-markets",
+   "fomc",
+   "powell",
+   "fed"
+  ],
+  "created_at": "2025-07-31T19:48:05.946565+00:00",
+  "end_at": "2025-09-17T00:00:00+00:00",
+  "yes_token_id": "95976415296916752928325768062173940511229412852573755479725228730701189315916",
+  "condition_id": "0xe42f641143e0b22a1e19eb831c6ecd6b8b045ef26dbc532a75fac2a167591946",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "46321",
+  "market_id": "0xb8d81f25fa37b11782548e26aa2e2fb35b6f1c49964abbeb43761e19d962e012",
+  "question": "Will Powell say \"Tariff\" 15+ times during October press conference?",
+  "event_title": "Tariff 15+ times",
+  "tags": [
+   "jerome-powell",
+   "mention-markets",
+   "fomc",
+   "economy",
+   "fed",
+   "economic-policy"
+  ],
+  "created_at": "2025-09-18T21:26:49.796709+00:00",
+  "end_at": "2025-10-29T00:00:00+00:00",
+  "yes_token_id": "81711740244614701273042869113159861519058183101978908296090463422290605608826",
+  "condition_id": "0xb8d81f25fa37b11782548e26aa2e2fb35b6f1c49964abbeb43761e19d962e012",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "14467",
+  "market_id": "0xc3ad788d4943f76ed656d2f0d3485d5bf066877035596b0151fe1d614707dc4f",
+  "question": "Will Jerome Powell say \"tariff\" during December FOMC Press Conference?",
+  "event_title": "Tariff",
+  "tags": [
+   "fed-rates",
+   "business",
+   "economy",
+   "mention-markets"
+  ],
+  "created_at": "2024-11-15T21:17:48.744297+00:00",
+  "end_at": "2024-12-18T12:00:00+00:00",
+  "yes_token_id": "103472535125720210736528275428350168580446792061264144213114771709786350915733",
+  "condition_id": "0xc3ad788d4943f76ed656d2f0d3485d5bf066877035596b0151fe1d614707dc4f",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "14467",
+  "market_id": "0xcc6748fd7df73f8c13cca945c99806c2b5d0032db6a6de7eed32c91ca3814b89",
+  "question": "Will Jerome Powell say \"tariff\" 5 or more times during December FOMC Press Conference?",
+  "event_title": "Tariff 5+ times",
+  "tags": [
+   "fed-rates",
+   "business",
+   "economy",
+   "mention-markets"
+  ],
+  "created_at": "2024-11-15T21:22:20.353153+00:00",
+  "end_at": "2024-12-18T12:00:00+00:00",
+  "yes_token_id": "48169882679852221165289143628231409967828052955136764055138309183175570869051",
+  "condition_id": "0xcc6748fd7df73f8c13cca945c99806c2b5d0032db6a6de7eed32c91ca3814b89",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "15676",
+  "market_id": "0xee713b962d078edd60cc379ddeba60fb7762a95f667b3605b5eec187b638acf5",
+  "question": "Will Powell say \"tariff\" during January press conference?",
+  "event_title": "Tariff",
+  "tags": [
+   "mention-markets",
+   "jpow",
+   "jerome-powell",
+   "politics",
+   "economy",
+   "business",
+   "fed-rates"
+  ],
+  "created_at": "2024-12-19T15:54:50.806962+00:00",
+  "end_at": "2025-01-29T12:00:00+00:00",
+  "yes_token_id": "20445970199876058974302544818360183948233217699381589565687613324486333306657",
+  "condition_id": "0xee713b962d078edd60cc379ddeba60fb7762a95f667b3605b5eec187b638acf5",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "15676",
+  "market_id": "0x3dc7da0c46467e1617c5c5cb24a8f020937935064d414dbb9683c7a747190def",
+  "question": "Will Powell say \"tariff\" 5 or more times during January press conference?",
+  "event_title": "Tariff 5+ times",
+  "tags": [
+   "mention-markets",
+   "jpow",
+   "jerome-powell",
+   "politics",
+   "economy",
+   "business",
+   "fed-rates"
+  ],
+  "created_at": "2024-12-19T16:09:00.888049+00:00",
+  "end_at": "2025-01-29T12:00:00+00:00",
+  "yes_token_id": "71531614497236648795315847642209279295390296948425490545220487881006914067804",
+  "condition_id": "0x3dc7da0c46467e1617c5c5cb24a8f020937935064d414dbb9683c7a747190def",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "19575",
+  "market_id": "0x24203a1fe8c6a20a1a252942262644c707df4f6e2e1381966f7d5e52f2125a48",
+  "question": "Will Trump say \"Tariff\" 5+ times during Macron presser today?",
+  "event_title": "Tariff 5+ times",
+  "tags": [
+   "mention-markets",
+   "politics",
+   "geopolitics",
+   "trump",
+   "france"
+  ],
+  "created_at": "2025-02-24T16:17:12.571952+00:00",
+  "end_at": "2025-02-24T12:00:00+00:00",
+  "yes_token_id": "102171040326017012322944191200945500693348671258438783023308187969824732201750",
+  "condition_id": "0x24203a1fe8c6a20a1a252942262644c707df4f6e2e1381966f7d5e52f2125a48",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "19695",
+  "market_id": "0x8d728d111967e1a40026c4728c3a02e27f1f90e96466437a7275417979c7af71",
+  "question": "Will Donald Trump say Tariff 5+ times during his presser with Starmer on Feb 27?",
+  "event_title": "Tariff 5+ times",
+  "tags": [
+   "mention-markets",
+   "trump",
+   "politics",
+   "geopolitics",
+   "uk",
+   "united-kingdom"
+  ],
+  "created_at": "2025-02-26T18:10:41.609820+00:00",
+  "end_at": "2025-02-27T12:00:00+00:00",
+  "yes_token_id": "25006975262870820415740149778766627071536088378418927959567851592870372212611",
+  "condition_id": "0x8d728d111967e1a40026c4728c3a02e27f1f90e96466437a7275417979c7af71",
+  "drop_reason": "mention_market"
+ },
+ {
+  "event_id": "22789",
+  "market_id": "0x6b01aa4f4ce8d7f256a0b72ccff5b4a056d49f4ffa40665d90c3005a613a91de",
+  "question": "Will Musk say \"Tariff\" 5+ times during the Q1 2025 Tesla earnings call?",
+  "event_title": "Tariff 5+",
+  "tags": [
+   "economy",
+   "mention-markets",
+   "elon-musk",
+   "big-tech",
+   "tech",
+   "business"
+  ],
+  "created_at": "2025-04-14T15:32:53.662976+00:00",
+  "end_at": "2025-04-22T12:00:00+00:00",
+  "yes_token_id": "88503054776927972370545324724656375937059453650646116010429567298908564440039",
+  "condition_id": "0x6b01aa4f4ce8d7f256a0b72ccff5b4a056d49f4ffa40665d90c3005a613a91de",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "22436",
+  "market_id": "0xb48f2174cf28a7804665193a11cfa9a3dcfdf8f98b19740cc71ad0f764816a3e",
+  "question": "Will Buffett say \"Tariff\" 5+ times during May 3 Shareholders Meeting?",
+  "event_title": "Tariff 5+",
+  "tags": [
+   "economy",
+   "mention-markets",
+   "business"
+  ],
+  "created_at": "2025-04-07T17:58:53.504675+00:00",
+  "end_at": "2025-05-03T12:00:00+00:00",
+  "yes_token_id": "92165069990341045098177469659330415208303097402349370546632296678619658811780",
+  "condition_id": "0xb48f2174cf28a7804665193a11cfa9a3dcfdf8f98b19740cc71ad0f764816a3e",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "23249",
+  "market_id": "0x67db4224bbc86d1d6ba8859bc48b412bdbf8be0af3cc5e883a2c8418c55b9f7e",
+  "question": "Will Michael Saylor say \"Tariff\" 3+ times during the Q1 2025 Strategy earnings call?",
+  "event_title": "Tariff 3+",
+  "tags": [
+   "economy",
+   "mention-markets",
+   "tech",
+   "business"
+  ],
+  "created_at": "2025-04-22T15:59:25.406083+00:00",
+  "end_at": "2025-05-01T12:00:00+00:00",
+  "yes_token_id": "32135197390900161691195757360109812253256254375853344500892073904932038732473",
+  "condition_id": "0x67db4224bbc86d1d6ba8859bc48b412bdbf8be0af3cc5e883a2c8418c55b9f7e",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "23923",
+  "market_id": "0xcad2a3f05a23f95d5468ef74de0daeeb9c91f1e6c114519ccec152c3fcb47c50",
+  "question": "Will Saylor say \"Tariff\" during his Strategy World 2025 keynote?",
+  "event_title": "Tariff",
+  "tags": [
+   "bitcoin",
+   "crypto",
+   "tech",
+   "mention-markets"
+  ],
+  "created_at": "2025-05-05T15:04:33.000398+00:00",
+  "end_at": "2025-05-06T12:00:00+00:00",
+  "yes_token_id": "44531259408047367109432470101014938393506726403348045279852492652488846310916",
+  "condition_id": "0xcad2a3f05a23f95d5468ef74de0daeeb9c91f1e6c114519ccec152c3fcb47c50",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "24687",
+  "market_id": "0xde20089f1e09574e730123308d6116d197768d3247eadf18dc3b28dac7481242",
+  "question": "Will Trump say \"Tariff\" 5+ times during events with South African President on May 21?",
+  "event_title": "Tariff 5+ times",
+  "tags": [
+   "trump",
+   "mention-markets",
+   "geopolitics",
+   "politics"
+  ],
+  "created_at": "2025-05-16T20:54:09.317496+00:00",
+  "end_at": "2025-05-21T12:00:00+00:00",
+  "yes_token_id": "113815284484010005992132286176072503950656450649107022304207231364415283974882",
+  "condition_id": "0xde20089f1e09574e730123308d6116d197768d3247eadf18dc3b28dac7481242",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "25784",
+  "market_id": "0x740af375d3cda716a4b9521b7f5b4be12534fbe9ef16089c646dd8e4cd25d301",
+  "question": "Will Donald Trump say \"Tariff\" 7+ times during Merz events on June 5?",
+  "event_title": "Tariff 7+ times",
+  "tags": [
+   "mention-markets",
+   "politics",
+   "trump",
+   "geopolitics"
+  ],
+  "created_at": "2025-06-02T15:47:04.468589+00:00",
+  "end_at": "2025-06-05T12:00:00+00:00",
+  "yes_token_id": "56599459649574138396635800453760704541232320301230152739952730774230262718221",
+  "condition_id": "0x740af375d3cda716a4b9521b7f5b4be12534fbe9ef16089c646dd8e4cd25d301",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "31531",
+  "market_id": "0x19aa57955618ef66d647c4682edfc14e72e4bc56d3dfde88d9f080a06684eb32",
+  "question": "Will anyone say \"Tariff\" during the Q2 2025 Netflix earnings call?",
+  "event_title": "Tariff",
+  "tags": [
+   "mention-markets",
+   "pop-culture",
+   "business"
+  ],
+  "created_at": "2025-07-08T15:51:32.577311+00:00",
+  "end_at": "2025-07-17T00:00:00+00:00",
+  "yes_token_id": "49434307809384292868356364378411444834758573277914855873032450221880458502401",
+  "condition_id": "0x19aa57955618ef66d647c4682edfc14e72e4bc56d3dfde88d9f080a06684eb32",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "32954",
+  "market_id": "0xac8f82e3c4daa4904d3496bc1a47873174b296a688e5e89d14b6d53e2189f130",
+  "question": "Will anyone say \"Tariff\" during the Q2 2025 Amazon earnings call?",
+  "event_title": "Tariff",
+  "tags": [
+   "mention-markets",
+   "pop-culture",
+   "business",
+   "earnings-calls"
+  ],
+  "created_at": "2025-07-18T01:06:12.684086+00:00",
+  "end_at": "2025-07-31T00:00:00+00:00",
+  "yes_token_id": "99729652949834388609716406949491544183852402436554117675694792557639747151577",
+  "condition_id": "0xac8f82e3c4daa4904d3496bc1a47873174b296a688e5e89d14b6d53e2189f130",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "32955",
+  "market_id": "0x900a206d2d040a39e5652fecc96b3271c1b82e718c518b8c3cf0db2b24b4e4f3",
+  "question": "Will anyone say \"Tariff\" during the Q3 2025 Apple earnings call?",
+  "event_title": "Tariff",
+  "tags": [
+   "mention-markets",
+   "pop-culture",
+   "business",
+   "earnings-calls"
+  ],
+  "created_at": "2025-07-18T01:23:53.718920+00:00",
+  "end_at": "2025-07-31T00:00:00+00:00",
+  "yes_token_id": "96970648160814384012888691052744426098877061253862906518120579835308828586407",
+  "condition_id": "0x900a206d2d040a39e5652fecc96b3271c1b82e718c518b8c3cf0db2b24b4e4f3",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "36234",
+  "market_id": "0x0f603f9fe5485e9b73c7def2ca2b8523c6138a9618149994a6b1c0eb952b0a40",
+  "question": "Will Trump say \"Tariff\" 7+ times during the Armenian PM bilateral on August 8?",
+  "event_title": "Tariff 7+ times",
+  "tags": [
+   "trump",
+   "geopolitics",
+   "mention-markets",
+   "politics"
+  ],
+  "created_at": "2025-08-07T16:58:22.846333+00:00",
+  "end_at": "2025-08-08T00:00:00+00:00",
+  "yes_token_id": "68580027608774690079086073393773885854954900920548569645219062551958385940778",
+  "condition_id": "0x0f603f9fe5485e9b73c7def2ca2b8523c6138a9618149994a6b1c0eb952b0a40",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "37517",
+  "market_id": "0x95075412469cde181b363f43719c7aefbed6378f915ce1148c0be86c453407a5",
+  "question": "Will Trump say \"Secondary tariff\" or \"Sanction\" during conference with Putin on August 15?",
+  "event_title": "Secondary tariff / Sanction",
+  "tags": [
+   "trump",
+   "trump-putin",
+   "mention-markets",
+   "geopolitics",
+   "politics"
+  ],
+  "created_at": "2025-08-14T15:41:35.293943+00:00",
+  "end_at": "2025-08-15T00:00:00+00:00",
+  "yes_token_id": "74027718869505453158965210942485053366220791644702493484869428002362086763304",
+  "condition_id": "0x95075412469cde181b363f43719c7aefbed6378f915ce1148c0be86c453407a5",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "38534",
+  "market_id": "0xc7461fddcf1fb35b1d97fd8705097b19c0f084baeab8f51b9aa5077b7191fc20",
+  "question": "Will Trump say \"Tariff\" 5+ times during events with South Korean president on August 25?",
+  "event_title": "Tariff 5+ times",
+  "tags": [
+   "geopolitics",
+   "politics",
+   "mention-markets",
+   "trump",
+   "world"
+  ],
+  "created_at": "2025-08-19T17:27:47.569240+00:00",
+  "end_at": "2025-08-25T00:00:00+00:00",
+  "yes_token_id": "61477962111614682213409443579221924623214631798946610330282767271995725366817",
+  "condition_id": "0xc7461fddcf1fb35b1d97fd8705097b19c0f084baeab8f51b9aa5077b7191fc20",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "40272",
+  "market_id": "0x2116ec1afd123daa7b5dfcd7c5d1922e46181caedaca4bee9021f3aa4cd81dbd",
+  "question": "Will anyone say \"Tariffs\" during Apple launch event on September 9?",
+  "event_title": "Tariffs",
+  "tags": [
+   "apple",
+   "pop-culture",
+   "big-tech",
+   "tech",
+   "mention-markets"
+  ],
+  "created_at": "2025-08-28T17:06:28.329949+00:00",
+  "end_at": "2025-09-09T13:00:00+00:00",
+  "yes_token_id": "47545777540487605088084487020502958960769968728020087829602811869722882582251",
+  "condition_id": "0x2116ec1afd123daa7b5dfcd7c5d1922e46181caedaca4bee9021f3aa4cd81dbd",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "47610",
+  "market_id": "0x08acf129b993299ae5e20ed058db1188c2decff61687b1cf3ffbf6216f94f0f1",
+  "question": "Will Trump say \"Tariff\" 5+ times during events with Turkish president on September 25?",
+  "event_title": "Tariff 5+ times",
+  "tags": [
+   "mention-markets",
+   "politics",
+   "trump",
+   "geopolitics",
+   "world"
+  ],
+  "created_at": "2025-09-21T11:22:06.344050+00:00",
+  "end_at": "2025-09-25T00:00:00+00:00",
+  "yes_token_id": "13242339969392341262062913824678529557400758927993791918530227202886381357146",
+  "condition_id": "0x08acf129b993299ae5e20ed058db1188c2decff61687b1cf3ffbf6216f94f0f1",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "57570",
+  "market_id": "0x2e108c1eaae65fd9ae1b8e1d0b9b6799a96d3f27107699b9fc8634fbca6620b0",
+  "question": "Will Powell say \"Tariff\" 6+ times during speech on October 14?",
+  "event_title": "Tariff 6+ times",
+  "tags": [
+   "mention-markets",
+   "economy"
+  ],
+  "created_at": "2025-10-10T16:05:39.746428+00:00",
+  "end_at": "2025-10-14T00:00:00+00:00",
+  "yes_token_id": "29779403662825316876239539718936722083439934894258050385441024175716348890857",
+  "condition_id": "0x2e108c1eaae65fd9ae1b8e1d0b9b6799a96d3f27107699b9fc8634fbca6620b0",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "57462",
+  "market_id": "0x99ed6e405cc16c85fae74f2e19e4f6f702d097ed134f6fc401bbb73245e2395d",
+  "question": "Will Trump say \"Tariff\" during speech to Israeli Parliament on October 13?",
+  "event_title": "Tariff",
+  "tags": [
+   "trump",
+   "middle-east",
+   "gaza",
+   "geopolitics",
+   "israel",
+   "mention-markets"
+  ],
+  "created_at": "2025-10-10T15:34:17.813573+00:00",
+  "end_at": "2025-10-13T00:00:00+00:00",
+  "yes_token_id": "73856039293422282644960529486206591474003660068807922254080641003991508082982",
+  "condition_id": "0x99ed6e405cc16c85fae74f2e19e4f6f702d097ed134f6fc401bbb73245e2395d",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "60549",
+  "market_id": "0xafbc0950fd808684b00ce0273f2f84ca52b5971747daa639e91c313d7b09ddce",
+  "question": "Will Trump say \"Tariff\" 7+ times during Australia PM events on October 20?",
+  "event_title": "Tariff 7+ times",
+  "tags": [
+   "mention-markets",
+   "geopolitics",
+   "trump-presidency",
+   "politics"
+  ],
+  "created_at": "2025-10-16T16:42:56.971116+00:00",
+  "end_at": "2025-10-20T00:00:00+00:00",
+  "yes_token_id": "14930698217689480949896956221510083384007272399204223760091912712270751256604",
+  "condition_id": "0xafbc0950fd808684b00ce0273f2f84ca52b5971747daa639e91c313d7b09ddce",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "66288",
+  "market_id": "0x6366882c0489ca68313054ce309c4f04a9717ec89aaed92d1872fb406663d6df",
+  "question": "Will Trump say \"Tariff\" 4+ times during Japan troop visit on October 28?",
+  "event_title": "Tariff 4+ times",
+  "tags": [
+   "mention-markets",
+   "trump",
+   "japan",
+   "politics",
+   "geopolitics"
+  ],
+  "created_at": "2025-10-27T16:57:46.021239+00:00",
+  "end_at": "2025-10-28T00:00:00+00:00",
+  "yes_token_id": "8182745109142135711046053604216990903224169841582724907261050036373202444071",
+  "condition_id": "0x6366882c0489ca68313054ce309c4f04a9717ec89aaed92d1872fb406663d6df",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "67158",
+  "market_id": "0x629de479910eb6a6cffbef52c6c626abfbaab5ae0d39691975e9760776ccf4f3",
+  "question": "Will Trump say \"Tariff\" 10+ times during Korea CEOs Luncheon on October 28?",
+  "event_title": "Tariff 10+ times",
+  "tags": [
+   "trump",
+   "mention-markets",
+   "geopolitics",
+   "south-korea",
+   "politics"
+  ],
+  "created_at": "2025-10-28T16:18:27.569654+00:00",
+  "end_at": "2025-10-28T00:00:00+00:00",
+  "yes_token_id": "78115111521974355731431437605748320548981475374859886341187077463704350439740",
+  "condition_id": "0x629de479910eb6a6cffbef52c6c626abfbaab5ae0d39691975e9760776ccf4f3",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "67748",
+  "market_id": "0x142220af5e5297d96da62660b37720ac39e29b10214ca103a518b626bc1ee855",
+  "question": "Will Trump say \"Tariff\" 3+ times during Xi events on October 29?",
+  "event_title": "Tariff 3+ times",
+  "tags": [
+   "mention-markets",
+   "politics",
+   "geopolitics",
+   "china",
+   "trump",
+   "trump-xi"
+  ],
+  "created_at": "2025-10-29T14:19:44.558595+00:00",
+  "end_at": "2025-10-29T00:00:00+00:00",
+  "yes_token_id": "16047280230452528784907296585377450543613346469581099103327459277203690761953",
+  "condition_id": "0x142220af5e5297d96da62660b37720ac39e29b10214ca103a518b626bc1ee855",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "53229",
+  "market_id": "0x2e0f453f689a2fb835ef4985b082754713734018781bd93aca919248ec76d305",
+  "question": "Will Tesla (TSLA) say \"Tariff\" during earnings call?",
+  "event_title": "Tariff",
+  "tags": [
+   "stocks",
+   "mention-markets",
+   "tesla"
+  ],
+  "created_at": "2025-10-02T21:08:59.279899+00:00",
+  "end_at": "2025-10-22T00:00:00+00:00",
+  "yes_token_id": "60948479738178764457631454653180233901188814505582184416759193241507906843813",
+  "condition_id": "0x2e0f453f689a2fb835ef4985b082754713734018781bd93aca919248ec76d305",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "69719",
+  "market_id": "0x0a303ec1501237248fc59ac90e27a9536dbb909102b306e977d4b1a51fe36f3f",
+  "question": "Will Powell say \"Tariff\" 13+ times during December press conference?",
+  "event_title": "Tariff 13+ times",
+  "tags": [
+   "mention-markets",
+   "politics",
+   "powell",
+   "economy",
+   "fed",
+   "jerome"
+  ],
+  "created_at": "2025-10-31T14:47:03.339351+00:00",
+  "end_at": "2025-12-10T00:00:00+00:00",
+  "yes_token_id": "68649488513239992801489255773948423489823814706200902152348056980173897709229",
+  "condition_id": "0x0a303ec1501237248fc59ac90e27a9536dbb909102b306e977d4b1a51fe36f3f",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "69719",
+  "market_id": "0xc7a84699bb3988e6146d3ffa26c673b7c9a7e1844f4c0123184513b95ca5a976",
+  "question": "Will Powell say \"Tariff inflation\" during December press conference?",
+  "event_title": "Tariff inflation",
+  "tags": [
+   "mention-markets",
+   "politics",
+   "powell",
+   "economy",
+   "fed",
+   "jerome"
+  ],
+  "created_at": "2025-10-31T14:47:07.322760+00:00",
+  "end_at": "2025-12-10T00:00:00+00:00",
+  "yes_token_id": "88678459360622342927015855878231660171579216363033079255966900007224267834789",
+  "condition_id": "0xc7a84699bb3988e6146d3ffa26c673b7c9a7e1844f4c0123184513b95ca5a976",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "82203",
+  "market_id": "0x5efab0d599e589f910c77904329c8254aa81c3f24cd7617f91038bcbf39dbbc1",
+  "question": "Will Trump say \"Tariff\" 5+ times during Saudi Investment Forum on November 19?",
+  "event_title": "Tariff 5+ times",
+  "tags": [
+   "mention-markets",
+   "geopolitics",
+   "politics",
+   "trump",
+   "middle-east",
+   "trump-x-saudi"
+  ],
+  "created_at": "2025-11-15T15:45:01.187726+00:00",
+  "end_at": "2025-11-19T00:00:00+00:00",
+  "yes_token_id": "115159387580604710326407605230276881218368886569852384119300264279541772542299",
+  "condition_id": "0x5efab0d599e589f910c77904329c8254aa81c3f24cd7617f91038bcbf39dbbc1",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "145453",
+  "market_id": "0xe84da0dc6b64ddd569f3ab3a4593b5ad6dac2537fadd587162259a87e502495b",
+  "question": "Will \"Tariff\" be said during the next episode of the All-In Podcast?",
+  "event_title": "Tariff",
+  "tags": [
+   "pop-culture",
+   "tech",
+   "big-tech",
+   "mention-markets",
+   "finance"
+  ],
+  "created_at": "2026-01-05T16:48:20.382126+00:00",
+  "end_at": "2026-01-09T00:00:00+00:00",
+  "yes_token_id": "39578962164192152979782668881263373585018184384666422139183757398810625604954",
+  "condition_id": "0xe84da0dc6b64ddd569f3ab3a4593b5ad6dac2537fadd587162259a87e502495b",
+  "drop_reason": "podcast mention market (passive voice dodges speech_wordcount regex): 'Will Tariff be said during the next episode of the All-In Podcast?'"
+ },
+ {
+  "event_id": "140798",
+  "market_id": "0x638e0706f1f3c2ae291a7fb99b4a7347614512301835c039e5f7eadc1c5e6b96",
+  "question": "Will Donald Trump say \"tariff\" during his Mar-a-Lago press conference on Venezuela on Saturday?",
+  "event_title": "Tariff",
+  "tags": [
+   "maduro",
+   "mention-markets",
+   "trump",
+   "venezuela",
+   "politics",
+   "geopolitics"
+  ],
+  "created_at": "2026-01-03T13:35:24.728185+00:00",
+  "end_at": "2026-01-03T00:00:00+00:00",
+  "yes_token_id": "63858945887307939553544985903575963613886239821557229134870511043374887202602",
+  "condition_id": "0x638e0706f1f3c2ae291a7fb99b4a7347614512301835c039e5f7eadc1c5e6b96",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "63532",
+  "market_id": "0x54910913c013485162c5375078b6312852792d69c236b071e4d57043c2285216",
+  "question": "Will the Liberation Day tariff policy be the #1 searched news on Google this year?",
+  "event_title": "Liberation Day tariffs",
+  "tags": [
+   "pop-culture",
+   "tech",
+   "google",
+   "google-search",
+   "best-of-2025"
+  ],
+  "created_at": "2025-10-22T16:13:17.210830+00:00",
+  "end_at": "2025-12-31T00:00:00+00:00",
+  "yes_token_id": "90941689499012994207144252515511498875980785447077405910342884648406054873362",
+  "condition_id": "0x54910913c013485162c5375078b6312852792d69c236b071e4d57043c2285216",
+  "drop_reason": "structural_noise:search_popularity"
+ },
+ {
+  "event_id": "102638",
+  "market_id": "0x705da1dbd94ec1d5ded60e8bccb130b076e21682f82f33272e3e53fe9ea50806",
+  "question": "Will Powell say \"Tariff\" 13+ times during January press conference?",
+  "event_title": "Tariff 13+ times",
+  "tags": [
+   "mention-markets",
+   "politics",
+   "powell",
+   "economy"
+  ],
+  "created_at": "2025-12-11T18:30:48.231327+00:00",
+  "end_at": "2026-01-28T00:00:00+00:00",
+  "yes_token_id": "73497428712381752316397316343508163824232370161920219559733101080600368627622",
+  "condition_id": "0x705da1dbd94ec1d5ded60e8bccb130b076e21682f82f33272e3e53fe9ea50806",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "162281",
+  "market_id": "0xfc75315adb66fe2eec2c932772d588348c83a8cb3a5ede078a3d3c520a3b0ac9",
+  "question": "Will Trump say \"Tariff\" or \"Inflation\" during CBS Evening News interview?",
+  "event_title": "Tariff / Inflation",
+  "tags": [
+   "trump",
+   "mention-markets",
+   "politics",
+   "geopolitics"
+  ],
+  "created_at": "2026-01-13T22:53:00.643098+00:00",
+  "end_at": "2026-01-13T00:00:00+00:00",
+  "yes_token_id": "39129729639455472975822957363351639612874060004005510201611100760239836357323",
+  "condition_id": "0xfc75315adb66fe2eec2c932772d588348c83a8cb3a5ede078a3d3c520a3b0ac9",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "244407",
+  "market_id": "0x0bf9ca9c6f8c550583709388a28414748add6edff15e6c8a29561eefc739199a",
+  "question": "Will Trump say \"Tariff\" during tech signing event on Wednesday?",
+  "event_title": "Tariff",
+  "tags": [
+   "mention-markets",
+   "politics",
+   "tech",
+   "trump",
+   "big-tech"
+  ],
+  "created_at": "2026-03-03T21:28:04.299155+00:00",
+  "end_at": "2026-03-04T00:00:00+00:00",
+  "yes_token_id": "31704511297361881977956744505920942477656470487387965513812973914771560028908",
+  "condition_id": "0x0bf9ca9c6f8c550583709388a28414748add6edff15e6c8a29561eefc739199a",
+  "drop_reason": "structural_noise:speech_wordcount"
+ },
+ {
+  "event_id": "276697",
+  "market_id": "0x5fe76d29912c05acc5b427dfff14b51ee8f563a181549bbd219b92fe49e9e5ee",
+  "question": "Will \"Tariff\" be said 3+ times during the next episode of the All-In Podcast?",
+  "event_title": "Tariff 3+ times",
+  "tags": [
+   "tech",
+   "mention-markets",
+   "finance",
+   "big-tech"
+  ],
+  "created_at": "2026-03-16T16:52:18.999092+00:00",
+  "end_at": "2026-03-20T00:00:00+00:00",
+  "yes_token_id": "79095410324912548568594596146387220793699014243162110119589344973780745558834",
+  "condition_id": "0x5fe76d29912c05acc5b427dfff14b51ee8f563a181549bbd219b92fe49e9e5ee",
+  "drop_reason": "mention_market"
+ },
+ {
+  "event_id": "424229",
+  "market_id": "0xa605bf09d84f83a108a5970e940359eb129d811ffe73ab5088361f495c5766e3",
+  "question": "Will \"Tariff\" be said during the next episode of the Lemonade Stand Podcast?",
+  "event_title": "Tariff",
+  "tags": [
+   "big-tech",
+   "finance",
+   "mention-markets",
+   "pop-culture",
+   "youtube"
+  ],
+  "created_at": "2026-04-27T14:30:53.226265+00:00",
+  "end_at": "2026-04-29T00:00:00+00:00",
+  "yes_token_id": "93076576023419811128313989659010618222956778753622501053026444272559917424106",
+  "condition_id": "0xa605bf09d84f83a108a5970e940359eb129d811ffe73ab5088361f495c5766e3",
+  "drop_reason": "podcast mention market (passive voice): 'Will Tariff be said during the next episode of the Lemonade Stand Podcast?'"
+ },
+ {
+  "event_id": "340398",
+  "market_id": "0xb577df08d819ba1982d3deee20b5e87450837c942bc120671a1aaf5da5aacbea",
+  "question": "Will Powell say \"Tariff inflation\" during April press conference?",
+  "event_title": "Tariff inflation",
+  "tags": [
+   "politics",
+   "inflation",
+   "economy",
+   "powell",
+   "mention-markets",
+   "fomc",
+   "trump",
+   "jerome-powell"
+  ],
+  "created_at": "2026-04-03T18:25:56.995523+00:00",
+  "end_at": "2026-04-29T00:00:00+00:00",
+  "yes_token_id": "102814129225247156019042248853815870354402823534585185079283337322173122392632",
+  "condition_id": "0xb577df08d819ba1982d3deee20b5e87450837c942bc120671a1aaf5da5aacbea",
+  "drop_reason": "structural_noise:speech_wordcount"
+ }
+]

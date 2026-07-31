@@ -1,0 +1,23 @@
+{
+  "market_id": "656730",
+  "question": "Will Toast (TOST) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-27 13:00:49.850651+00:00",
+  "requested_end_utc": "2025-10-30 13:00:49.850651+00:00",
+  "first_candidate_t0_utc": "2025-10-30 13:00:49.850651+00:00",
+  "latest_candidate_decision_utc": "2025-10-30 20:00:00+00:00",
+  "candidate_count": 1,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "8565049369413752047236383260767915314153856302087992438533239482760602419452",
+  "condition_id": "0x27b52a955b2c87e8f7fff0b820c9948bcaeb45c8ed28ee19053e65814d321c90",
+  "api_question": "Will Toast (TOST) beat quarterly earnings?",
+  "api_created_at": "2025-10-30T13:00:49.850651Z",
+  "api_end_date": "2025-11-04T22:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\656730.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

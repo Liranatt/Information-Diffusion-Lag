@@ -1,0 +1,22 @@
+{
+  "market_id": "598111",
+  "question": "Will Jabil (JBL) beat its quarterly EPS estimate?",
+  "requested_start_utc": "2025-09-15 01:54:09.839564+00:00",
+  "requested_end_utc": "2025-09-17 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "134f2ffe6742c81d325f013b|dd238154b0014a8bec28e56d",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "54634698221067722123362423154980687800320129357182085984159101716550890731260",
+  "condition_id": "0xb89baccda5af9c6cbc15c029df25e26ba5bbcc515563e85f15fa50790cc0ec6f",
+  "api_question": "Will Jabil (JBL) beat its quarterly EPS estimate?",
+  "api_created_at": "2025-09-15T01:54:09.839564Z",
+  "api_end_date": "2025-10-02T11:00:00Z",
+  "status": "complete",
+  "row_count": 3941,
+  "first_source_ts_utc": "2025-09-15 02:10:11+00:00",
+  "last_source_ts_utc": "2025-09-17 19:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\598111.csv",
+  "fragment_sha256": "377a34ffaa4e28cf824a44c8b6b0223b35c2e5c750b3b04294bff116f64d0840",
+  "question_matches": true,
+  "error": null
+}

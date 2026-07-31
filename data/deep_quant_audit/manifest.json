@@ -1,0 +1,115 @@
+{
+  "csv_files_profiled": 7014,
+  "csv_rows_scanned": 3008383,
+  "csv_bytes_scanned": 703576972,
+  "families": {
+    "raw_probability_history": {
+      "files": 276,
+      "rows": 2037097,
+      "bytes": 426420026,
+      "read_errors": 0
+    },
+    "selection_research": {
+      "files": 4404,
+      "rows": 394397,
+      "bytes": 127281838,
+      "read_errors": 0
+    },
+    "optimizer_or_seed_log": {
+      "files": 1579,
+      "rows": 359622,
+      "bytes": 75554504,
+      "read_errors": 0
+    },
+    "other": {
+      "files": 595,
+      "rows": 169998,
+      "bytes": 58142434,
+      "read_errors": 0
+    },
+    "corrected_execution": {
+      "files": 128,
+      "rows": 33952,
+      "bytes": 12914753,
+      "read_errors": 0
+    },
+    "h1_protocol": {
+      "files": 29,
+      "rows": 13164,
+      "bytes": 3212645,
+      "read_errors": 0
+    },
+    "exit_research": {
+      "files": 3,
+      "rows": 153,
+      "bytes": 50772,
+      "read_errors": 0
+    }
+  },
+  "key_tables": [
+    {
+      "label": "execution_corrected",
+      "path": "assistant_generated_all_artifacts\\assistant_generated_research_core\\proper_execution_rerun\\proper_execution_summary_full.csv",
+      "status": "read",
+      "rows": 10,
+      "columns": 21
+    },
+    {
+      "label": "execution_exit_attribution",
+      "path": "assistant_generated_all_artifacts\\assistant_generated_research_core\\proper_execution_rerun\\oos_exit_attribution.csv",
+      "status": "read",
+      "rows": 133,
+      "columns": 8
+    },
+    {
+      "label": "local_quant_fix",
+      "path": "assistant_generated_all_artifacts\\assistant_generated_research_core\\local_quant_fix_summary.csv",
+      "status": "read",
+      "rows": 8,
+      "columns": 17
+    },
+    {
+      "label": "local_quant_seed_robustness",
+      "path": "assistant_generated_all_artifacts\\assistant_generated_research_core\\local_quant_fix_variant_seed_aggregate.csv",
+      "status": "read",
+      "rows": 8,
+      "columns": 14
+    },
+    {
+      "label": "selection_stage2b",
+      "path": "data\\selection_stage2b\\nested_final_validation\\threshold_stability_outer_fold.csv",
+      "status": "read",
+      "rows": 100,
+      "columns": 15
+    },
+    {
+      "label": "selection_stage2e",
+      "path": "data\\selection_stage2e\\selector_exit_matrix\\selector_exit_combined_exact_results.csv",
+      "status": "read",
+      "rows": 80,
+      "columns": 61
+    },
+    {
+      "label": "selection_stage2f",
+      "path": "data\\selection_stage2f\\exact_replay\\selector_exit_combined_exact_results.csv",
+      "status": "read",
+      "rows": 80,
+      "columns": 62
+    },
+    {
+      "label": "selection_stage2g",
+      "path": "data\\selection_stage2g\\polymarket_rerun\\exact_replay\\selector_exit_combined_exact_results.csv",
+      "status": "read",
+      "rows": 48,
+      "columns": 61
+    },
+    {
+      "label": "stage3a",
+      "path": "data\\selection_stage3a_execution_safe\\combined_exact_results.csv",
+      "status": "read",
+      "rows": 4,
+      "columns": 58
+    }
+  ],
+  "known_invalid_rule": "Files labelled original_flawed/flawed are ledgered but excluded from performance inference."
+}

@@ -1,0 +1,22 @@
+{
+  "market_id": "627451",
+  "question": "Will American Express (AXP) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-08 15:41:53.867937+00:00",
+  "requested_end_utc": "2025-10-08 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "37e7a3e369ec24530ed60220|ae5e468618fd78e470c31acf",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "68423193747771748632243602858250996130915752965090783266405358056563157845337",
+  "condition_id": "0xfe1169bc73a4d54074e6856e7c4f56d49403940bc03ea31a46b404a2fa58aa31",
+  "api_question": "Will American Express (AXP) beat quarterly earnings?",
+  "api_created_at": "2025-10-08T15:41:53.867937Z",
+  "api_end_date": "2025-10-17T13:00:00Z",
+  "status": "complete",
+  "row_count": 239,
+  "first_source_ts_utc": "2025-10-08 16:01:02+00:00",
+  "last_source_ts_utc": "2025-10-08 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\627451.csv",
+  "fragment_sha256": "5338902f22c06047758d5f14eea902336d3e60effa9c301620f1d53c9f8afebb",
+  "question_matches": true,
+  "error": null
+}

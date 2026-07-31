@@ -1,0 +1,42 @@
+{
+  "label": "stage3_exit_research_development_only",
+  "frozen_selector_path": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\nested_final_validation\\research_frozen_selector.json",
+  "frozen_selector": {
+    "label": "research_frozen_selector",
+    "ranker": "connection_strength_descending",
+    "tie_breaker": "expected_slot_days",
+    "admission_threshold": 1.0,
+    "admission_threshold_label": "1.00",
+    "selection_rule": "maximize the minimum of SPY and QQQ outer-fold mean excess; tie-break mean excess, active IR, then less-negative mean active drawdown",
+    "selection_source": "full_nested_chronological_outer_evaluation_on_training_development_data",
+    "outer_fold_count": 5,
+    "mean_excess_return": 0.73573,
+    "min_benchmark_excess_return": 0.70914,
+    "spy_mean_excess_return": 0.70914,
+    "qqq_mean_excess_return": 0.76232,
+    "mean_active_information_ratio": 1.1157268719112428,
+    "mean_active_max_drawdown_pct": -1.2667230367024684,
+    "lockbox_opened": false,
+    "lockbox_reserved_for_final_modular_pipeline_evaluation": true,
+    "do_not_change_during_exit_research": true,
+    "te_is_never_exit": true
+  },
+  "source_candidates_sha256": "96833cd225bf846d7d46a2bb0efa3b8d5f20fffc33e15718cbcb37c6fb121046",
+  "prices_sha256": "559baa811114d9975d13f96872073d3580bcbe4e9df875eb0d4631c1a0d345dc",
+  "stage2_nested_manifest_sha256": "6de3253f763a3ab57a252429051d726a14cec6310c1a03ce63c4a7c7763da697",
+  "development_outer_fold_count": 5,
+  "development_trade_count": 184,
+  "terminal_te1_label_coverage": 0.782608695652174,
+  "legal_te1_date_coverage": 1.0,
+  "all_legal_te1_dates_before_te": true,
+  "te_is_never_exit": true,
+  "all_development_exits_before_te": true,
+  "lockbox_opened": false,
+  "lockbox_reserved_for_final_modular_pipeline_evaluation": true,
+  "selector_changes_allowed": false,
+  "outputs": {
+    "trades": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2c\\baselines\\stage3_raw_global_connection_baseline\\stage3_exit_development_trades.csv",
+    "folds": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2c\\baselines\\stage3_raw_global_connection_baseline\\stage3_development_folds.csv",
+    "plan": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2c\\baselines\\stage3_raw_global_connection_baseline\\stage3_exit_research_plan.md"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "market_id": "566029",
+  "question": "Will the FDA approve Odronextamab/Ordspono Resubmitted BLA?",
+  "requested_start_utc": "2025-07-21 16:39:49.760990+00:00",
+  "requested_end_utc": "2025-07-23 20:00:00+00:00",
+  "candidate_count": 2,
+  "research_families": "other",
+  "economic_event_ids": "33476",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "54048754518935832828133467607450295591305553669609033477286981734117816195542",
+  "condition_id": "0xa219a82b4e3f56567ee30d8bdbc562db8578d35a2a6c4fb68e78743279cee573",
+  "api_question": "Will the FDA approve Odronextamab/Ordspono Resubmitted BLA?",
+  "api_created_at": "2025-07-21T16:39:49.76099Z",
+  "api_end_date": "2025-07-31T23:55:00Z",
+  "status": "complete",
+  "row_count": 2643,
+  "first_source_ts_utc": "2025-07-21 23:57:08+00:00",
+  "last_source_ts_utc": "2025-07-23 19:59:08+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\566029.csv",
+  "fragment_sha256": "679d704039094c72d6b4f524d6eec6d476a1e879c09d3172347ed74dec2b1eee",
+  "question_matches": true,
+  "error": null
+}

@@ -1,0 +1,22 @@
+{
+  "market_id": "674910",
+  "question": "Will Woodward (WWD) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-10 18:57:42.007202+00:00",
+  "requested_end_utc": "2025-11-12 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "3350bda95979494ad306409c|8b432da338559e2d65613e46",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "61688008557875107541858896201368351033550413522222265333580476341935589880757",
+  "condition_id": "0x97264c8249d9d7218da0f022abbfe512d61e338df0279c6ec905aa46bd1f0aec",
+  "api_question": "Will Woodward (WWD) beat quarterly earnings?",
+  "api_created_at": "2025-11-10T18:57:42.007202Z",
+  "api_end_date": "2025-11-24T22:00:00Z",
+  "status": "complete",
+  "row_count": 2952,
+  "first_source_ts_utc": "2025-11-10 19:48:20+00:00",
+  "last_source_ts_utc": "2025-11-12 20:59:07+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\674910.csv",
+  "fragment_sha256": "24c0db0e2281aad20dabd81fe607baa9e54709f8ba2bc31da8a1a6c08ecc2b42",
+  "question_matches": true,
+  "error": null
+}

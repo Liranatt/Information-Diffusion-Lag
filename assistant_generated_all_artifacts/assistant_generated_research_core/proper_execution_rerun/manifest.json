@@ -1,0 +1,21 @@
+{
+  "probability_surge_filter": "removed from policy and execution",
+  "price_runup": "recomputed at actual entry close relative to first close on/after t0",
+  "exposure_constraint": "gross_event_exposure <= 95%; position_size = gross_event_exposure/max_concurrent",
+  "partial_fill_rule": "reject if asset notional < 90% of desired allocation",
+  "objective": "benchmark-relative log-return information ratio with chronological-fold robustness, active drawdown and relative terminal return",
+  "exit_variants": [
+    "baseline",
+    "hard_cap",
+    "no_follow",
+    "combined"
+  ],
+  "hard_cap": "standing stop at max(existing protective stop, entry*(1-hard_loss_cap)); gaps fill at Open",
+  "no_follow": "close exit after N trading bars when MFE below threshold and stock return has not beaten benchmark",
+  "search": {
+    "screen": "192 scrambled Sobol points per benchmark/variant",
+    "hybrid": "384 Sobol + 5x80 CEM refinement, two seeds for baseline and combined",
+    "pure_cem_comparison": "10x80 matched-budget CEM for combined"
+  },
+  "selection_rule": "policies chosen on training objective only; OOS is never used for parameter selection"
+}

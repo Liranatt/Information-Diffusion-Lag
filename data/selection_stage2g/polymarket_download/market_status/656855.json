@@ -1,0 +1,22 @@
+{
+  "market_id": "656855",
+  "question": "Will ConocoPhillips (COP) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-30 15:46:17.062569+00:00",
+  "requested_end_utc": "2025-11-03 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "46620a44f51bc34710b508fc|575771476bbb4d08401e4744",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "101313788932427822350879919005448029407227343978835235751837463801814156220039",
+  "condition_id": "0x331539b3f07089195167e3fbfd7255e14d672839d0f85f7c8b8dcd9d1e9a1869",
+  "api_question": "Will ConocoPhillips (COP) beat quarterly earnings?",
+  "api_created_at": "2025-10-30T15:46:17.062569Z",
+  "api_end_date": "2025-11-06T14:00:00Z",
+  "status": "complete",
+  "row_count": 6057,
+  "first_source_ts_utc": "2025-10-30 16:03:05+00:00",
+  "last_source_ts_utc": "2025-11-03 20:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\656855.csv",
+  "fragment_sha256": "46860d775c8e732aaf26d3fab56423304fa4847670f1b8c915583ca61a585a48",
+  "question_matches": true,
+  "error": null
+}

@@ -1,0 +1,23 @@
+{
+  "market_id": "647822",
+  "question": "Will MGM Resorts International (MGM) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-21 11:35:03.138860+00:00",
+  "requested_end_utc": "2025-10-24 11:35:03.138860+00:00",
+  "first_candidate_t0_utc": "2025-10-24 11:35:03.138860+00:00",
+  "latest_candidate_decision_utc": "2025-10-27 20:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "47384251801448398286399231482039401052772263674887005817309702965265207867705",
+  "condition_id": "0x3a87743b2f49fe43f1da2eaff89597621b1ba2b3a80ec982da2fae5c9697eb5b",
+  "api_question": "Will MGM Resorts International (MGM) beat quarterly earnings?",
+  "api_created_at": "2025-10-24T11:35:03.13886Z",
+  "api_end_date": "2025-10-29T21:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\647822.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

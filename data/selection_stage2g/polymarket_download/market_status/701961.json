@@ -1,0 +1,22 @@
+{
+  "market_id": "701961",
+  "question": "Will Adobe (ADBE) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-24 23:10:03.214876+00:00",
+  "requested_end_utc": "2025-11-25 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "136e886e25f49d18341a8d27|402e61b025f2bb58f4ee22d5",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "99332336564883207239535014730048377396460727713209803835145315026590821641795",
+  "condition_id": "0x3f936ab5f413b4dcce95895b5943f7396de43e0877c882e865a2d9cdc6020fda",
+  "api_question": "Will Adobe (ADBE) beat quarterly earnings?",
+  "api_created_at": "2025-11-24T23:10:03.214876Z",
+  "api_end_date": "2025-12-10T22:00:00Z",
+  "status": "complete",
+  "row_count": 1274,
+  "first_source_ts_utc": "2025-11-24 23:46:08+00:00",
+  "last_source_ts_utc": "2025-11-25 20:59:08+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\701961.csv",
+  "fragment_sha256": "8794f1155c2285a93a1c81de839e23495b25d25f59093fdbd1fd4dc1fb4eb9f0",
+  "question_matches": true,
+  "error": null
+}

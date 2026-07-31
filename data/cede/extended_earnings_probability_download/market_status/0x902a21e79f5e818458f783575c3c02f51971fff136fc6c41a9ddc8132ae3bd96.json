@@ -1,0 +1,22 @@
+{
+  "market_id": "0x902a21e79f5e818458f783575c3c02f51971fff136fc6c41a9ddc8132ae3bd96",
+  "question": "Will Strategy (MSTR) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-21 17:37:49.346181+00:00",
+  "requested_end_utc": "2025-10-24 17:37:49.346181+00:00",
+  "first_candidate_t0_utc": "2025-10-24 17:37:49.346181+00:00",
+  "latest_candidate_decision_utc": "2025-10-27 20:00:00+00:00",
+  "candidate_count": 1,
+  "mapping_source": "clob_condition_id",
+  "yes_token_id": "72783919974472530377609149047673808221022022047589900673180432660910263095307",
+  "condition_id": "0x902a21e79f5e818458f783575c3c02f51971fff136fc6c41a9ddc8132ae3bd96",
+  "api_question": "Will Strategy (MSTR) beat quarterly earnings?",
+  "api_end_date": "2025-10-30T00:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\0x902a21e79f5e818458f783575c3c02f51971fff136fc6c41a9ddc8132ae3bd96.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

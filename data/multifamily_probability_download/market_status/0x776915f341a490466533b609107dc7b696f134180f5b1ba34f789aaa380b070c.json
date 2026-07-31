@@ -1,0 +1,22 @@
+{
+  "market_id": "0x776915f341a490466533b609107dc7b696f134180f5b1ba34f789aaa380b070c",
+  "question": "Will Trump announce tariffs on Japan on April 2?",
+  "requested_start_utc": "2025-03-27 00:33:53.503970+00:00",
+  "requested_end_utc": "2025-03-28 20:00:00+00:00",
+  "candidate_count": 1,
+  "research_families": "macro",
+  "economic_event_ids": "21698",
+  "mapping_source": "clob_condition_id",
+  "yes_token_id": "77968565116072438709297587785946442608294322558459886650948384721741554352428",
+  "condition_id": "0x776915f341a490466533b609107dc7b696f134180f5b1ba34f789aaa380b070c",
+  "api_question": "Will Trump announce tariffs on Japan on April 2?",
+  "api_end_date": "2025-04-02T00:00:00Z",
+  "status": "complete",
+  "row_count": 2583,
+  "first_source_ts_utc": "2025-03-27 00:57:06+00:00",
+  "last_source_ts_utc": "2025-03-28 19:59:05+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\0x776915f341a490466533b609107dc7b696f134180f5b1ba34f789aaa380b070c.csv",
+  "fragment_sha256": "ea6d24c5cb0b1a45135d775c73cdf5a41920c489a87dc80a5ce5f7f03d277d35",
+  "question_matches": true,
+  "error": null
+}

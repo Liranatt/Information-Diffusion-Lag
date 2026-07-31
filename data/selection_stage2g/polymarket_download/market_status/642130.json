@@ -1,0 +1,22 @@
+{
+  "market_id": "642130",
+  "question": "Will Alphabet (GOOGL) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-21 00:36:27.917292+00:00",
+  "requested_end_utc": "2025-10-21 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "9308b614b7a22ef8c79f2040|e225ccacb9da485bf52ccd80",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "2799033142236479388758275236680243599232013794067529394859975467252052006244",
+  "condition_id": "0xfd68c1b4d0811626043f6ebed62b2a23e8c48ef37746fbe0390e3c03e7e89970",
+  "api_question": "Will Alphabet (GOOGL) beat quarterly earnings?",
+  "api_created_at": "2025-10-21T00:36:27.917292Z",
+  "api_end_date": "2025-10-29T21:00:00Z",
+  "status": "complete",
+  "row_count": 1147,
+  "first_source_ts_utc": "2025-10-21 00:53:05+00:00",
+  "last_source_ts_utc": "2025-10-21 19:59:03+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\642130.csv",
+  "fragment_sha256": "cae665e436562a32a62e7548339ad9ac967e82d301aa12139c741c655aa72c7c",
+  "question_matches": true,
+  "error": null
+}

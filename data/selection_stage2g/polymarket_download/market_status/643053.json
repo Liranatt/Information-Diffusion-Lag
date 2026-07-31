@@ -1,0 +1,22 @@
+{
+  "market_id": "643053",
+  "question": "Will Penske Automotive Group (PAG) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-21 22:25:08.143603+00:00",
+  "requested_end_utc": "2025-10-22 20:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "00b3ee0a67c5697e6e1e3670",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "106870747428036598251475992549302198789451374640711908297185236998470974069051",
+  "condition_id": "0xfdf3a1ae0c405d6c515647b30080dd20936b44cdc9848fbec75e933e30b3bd27",
+  "api_question": "Will Penske Automotive Group (PAG) beat quarterly earnings?",
+  "api_created_at": "2025-10-21T22:25:08.143603Z",
+  "api_end_date": "2025-10-29T13:00:00Z",
+  "status": "complete",
+  "row_count": 1259,
+  "first_source_ts_utc": "2025-10-21 23:01:04+00:00",
+  "last_source_ts_utc": "2025-10-22 19:59:05+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\643053.csv",
+  "fragment_sha256": "1101d5adf46570493d4350c29ce45624024d549c9ffdbe9b30deaaeddf27750e",
+  "question_matches": true,
+  "error": null
+}

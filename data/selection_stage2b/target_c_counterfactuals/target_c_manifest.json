@@ -1,0 +1,18 @@
+{
+  "label": "target_c_policy_conditioned_counterfactual_value",
+  "continuation_policies": [
+    "connection_strength",
+    "legacy"
+  ],
+  "competition_source": "exact replay rows with skip_reason=max_concurrent",
+  "test_period_used_for_choice": false,
+  "current_2026_test_is_exploratory": true,
+  "includes_benchmark_opportunity_cost_future_capacity_costs": true,
+  "is_absolute_ground_truth": false,
+  "te_is_never_exit": true,
+  "terminal_horizon": "every generated trade asserts exit_date < candidate_t_e",
+  "outputs": {
+    "detail": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\target_c_counterfactuals\\target_c_policy_conditioned_counterfactuals.csv",
+    "summary": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\target_c_counterfactuals\\target_c_summary.csv"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "label": "sequential_admission_stage2b",
+  "oof_sha256": "b94f0e7c0638918df26f20af75eaf7d5fbef826b1e5be7c08adb949df8776914",
+  "full_candidate_sha256": "96833cd225bf846d7d46a2bb0efa3b8d5f20fffc33e15718cbcb37c6fb121046",
+  "policies": [
+    "always_fill",
+    "min_connection_strength",
+    "min_predicted_target_a",
+    "min_predicted_target_b_slot",
+    "min_predicted_target_b_sqrt"
+  ],
+  "primary_target": "te1_active_net_return_pct",
+  "reported_target_b": [
+    "active_return_per_slot_day_pct",
+    "active_return_per_sqrt_slot_day"
+  ],
+  "threshold_selection": "chronological training OOF only; current 2026 test excluded",
+  "minimum_fill_rule": "at least 20 percent of always-fill accepted rows",
+  "te_is_never_exit": true,
+  "terminal_horizon_assertion": true,
+  "outputs": {
+    "oof_detail": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\admission\\admission_oof_detail.csv",
+    "oof_summary": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\admission\\admission_oof_summary.csv",
+    "choices": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\admission\\admission_choices.json",
+    "decisions": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\admission\\admission_decisions.csv"
+  }
+}

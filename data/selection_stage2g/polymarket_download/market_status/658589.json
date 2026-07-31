@@ -1,0 +1,22 @@
+{
+  "market_id": "658589",
+  "question": "Will Celsius Holdings (CELH) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-31 20:59:16.425601+00:00",
+  "requested_end_utc": "2025-11-03 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "4b5639491994d3764d6b7d11|e2a63a3be19f0f91391a2292",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "39983624264315382082595625901862045913839738248492150793940133142356043574895",
+  "condition_id": "0xcb74afc97c95488d4dd4ff84065358ae0c3428abd8d1f465c276eb91b85e0263",
+  "api_question": "Will Celsius Holdings (CELH) beat quarterly earnings?",
+  "api_created_at": "2025-10-31T20:59:16.425601Z",
+  "api_end_date": "2025-11-06T14:00:00Z",
+  "status": "complete",
+  "row_count": 4285,
+  "first_source_ts_utc": "2025-10-31 21:35:04+00:00",
+  "last_source_ts_utc": "2025-11-03 20:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\658589.csv",
+  "fragment_sha256": "de10978bf10cc83f37519f60271566c9b9a310d2fb720dffa27080000302f5c1",
+  "question_matches": true,
+  "error": null
+}

@@ -1,0 +1,39 @@
+{
+  "label": "stage2b_robustness_diagnostics",
+  "capacity_grid": [
+    8,
+    10,
+    12
+  ],
+  "random_legal_allocator_seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19
+  ],
+  "random_allocator_scope": "connection tie groups with deterministic final keys",
+  "test_period_used_for_choice": false,
+  "current_2026_test_is_exploratory": true,
+  "cost_model": "frozen corrected simulator; cost stress not used to tune selector",
+  "te_is_never_exit": true,
+  "outputs": {
+    "capacity": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\robustness\\capacity_robustness.csv",
+    "random_allocator": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\robustness\\random_legal_allocator.csv"
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "mapping_type_definitions": {
+    "direct_issuer": "event directly concerns the same listed issuer",
+    "direct_underlying": "asset directly tracks the affected economic variable",
+    "first_order_sector": "asset represents the directly affected industry/sector",
+    "second_order_company": "company is exposed through sector, input, demand, geography, or regulation",
+    "broad_macro_proxy": "broad or indirect macro proxy",
+    "unclear_or_invalid": "economic path cannot be defended clearly"
+  },
+  "ordinal_rubrics": {
+    "mapping_confidence": {
+      "1": "economic path is absent or cannot be defended",
+      "2": "plausible but materially ambiguous or weakly documented path",
+      "3": "defensible indirect path with meaningful basis risk",
+      "4": "clear economic relationship with limited mapping ambiguity",
+      "5": "direct issuer/underlying relationship established by construction"
+    },
+    "impact_materiality": {
+      "1": "unlikely to matter to the asset's economic value",
+      "2": "small or highly diluted exposure",
+      "3": "meaningful but not dominant exposure",
+      "4": "major earnings, cash-flow, or valuation catalyst",
+      "5": "the event directly defines the tracked economic variable or issuer outcome"
+    },
+    "direction_confidence": {
+      "1": "direction cannot be defended",
+      "2": "several competing channels make the sign fragile",
+      "3": "expected sign is plausible but basis risk is material",
+      "4": "strong expected sign with ordinary market-expectation uncertainty",
+      "5": "mechanically directional exposure"
+    },
+    "exposure_purity": {
+      "1": "broad/noisy proxy dominated by unrelated exposures",
+      "2": "individual company with a material second-order channel",
+      "3": "sector basket with direct industry exposure",
+      "4": "commodity or thematic vehicle closely tracking the affected variable",
+      "5": "same issuer or uniquely direct underlying exposure"
+    }
+  },
+  "backward_compatibility_aliases": {
+    "legacy_gemini_relevance_score": "canonical Stage 2C diagnostic name; original value is unchanged",
+    "feat_connection_strength": "backward-compatible engine/input alias",
+    "connection_strength": "backward-compatible decision-table alias",
+    "relevance": "backward-compatible simulator/source alias"
+  },
+  "label_inputs_only": [
+    "question",
+    "symbol",
+    "event_family",
+    "feat_archetype",
+    "feat_sector"
+  ],
+  "forbidden_label_inputs": [
+    "returns",
+    "post_entry_prices",
+    "selected_outcomes",
+    "portfolio_results"
+  ],
+  "lockbox_opened": false
+}

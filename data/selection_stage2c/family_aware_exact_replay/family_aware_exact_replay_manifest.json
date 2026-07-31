@@ -1,0 +1,20 @@
+{
+  "label": "combined_all_family_oof_modular_selector_exact_replay",
+  "oof_panels": 11,
+  "panel_family_composition": {
+    "direct_earnings": 5,
+    "indirect_geo_macro": 3,
+    "direct_company_catalyst": 3
+  },
+  "combined_stream_rows": 496,
+  "shared_portfolio_allocator": "one chronological corrected allocator over the concatenated OOF stream",
+  "direct_quality_rule": "predicted_target_a_positive",
+  "indirect_minimum_mapping_confidence": 3,
+  "hard_geo_quota": false,
+  "unconditional_geo_priority": false,
+  "probability_price_response_available": false,
+  "supporting_market_agreement_available": false,
+  "test_rows_read": 0,
+  "lockbox_opened": false,
+  "te_is_never_exit": true
+}

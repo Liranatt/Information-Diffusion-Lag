@@ -1,0 +1,22 @@
+{
+  "market_id": "637886",
+  "question": "Will Union Pacific (UNP) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-16 22:53:35.876074+00:00",
+  "requested_end_utc": "2025-10-17 20:00:00+00:00",
+  "candidate_count": 1,
+  "candidate_ids": "b6f54d24bae84392c26626f9",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "29937724506582002803830305323126034202224353700997984411790900165794119397758",
+  "condition_id": "0x558f9bfcb8f2382db5379e0bb4ed094041a2a7846bf30ed2b01c9648a4d20532",
+  "api_question": "Will Union Pacific (UNP) beat quarterly earnings?",
+  "api_created_at": "2025-10-16T22:53:35.876074Z",
+  "api_end_date": "2025-10-23T13:00:00Z",
+  "status": "complete",
+  "row_count": 1250,
+  "first_source_ts_utc": "2025-10-16 23:10:06+00:00",
+  "last_source_ts_utc": "2025-10-17 19:59:04+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\637886.csv",
+  "fragment_sha256": "ab7383b8de9fa1d2d9c88ec92b9fdedbff4a17ea622366fd55313573036e17f2",
+  "question_matches": true,
+  "error": null
+}

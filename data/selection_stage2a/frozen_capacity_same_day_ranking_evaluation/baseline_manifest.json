@@ -1,0 +1,93 @@
+{
+  "candidate_sha256": "541832daebe8429dc0859150be2661838ebf1f7311fd23d878d7879ccf207094",
+  "pairs_sha256": "7acdb18b82651ac79c914d57c603efdb9fb41cf7ad3db480a046317ca9dc185c",
+  "capacity_sha256": "cbc994d59ed72f52eac7c3a4c617b94ef03bbdb0bac2defceebff32e6314ae39",
+  "terminal_horizon": "te1_exit_date, strictly before t_e",
+  "te_is_never_exit": true,
+  "feature_columns": [
+    "feat_connection_strength",
+    "entry_prob",
+    "feat_prob_at_trigger",
+    "feat_prob_slope_24h",
+    "feat_prob_volatility",
+    "feat_prob_surge_since_t0",
+    "feat_time_to_resolution_days",
+    "feat_crossing_latency_days",
+    "feat_pre_entry_volume_log",
+    "feat_runup_since_t0",
+    "feat_asset_2w_trend",
+    "feat_sector_1m_trend",
+    "feat_spy_2w_trend",
+    "feat_ytd_change",
+    "feat_beta",
+    "feat_profit_margin",
+    "feat_log_market_cap"
+  ],
+  "baselines": {
+    "connection": {
+      "score": "connection_rank_pct",
+      "fit": false
+    },
+    "fixed_monotonic": {
+      "score": "mean(connection_rank_pct, entry_prob_rank_pct, runup_rank_pct)",
+      "weights": "equal",
+      "fit": false
+    },
+    "pairwise_logistic": {
+      "features": [
+        "feat_connection_strength",
+        "entry_prob",
+        "feat_prob_at_trigger",
+        "feat_prob_slope_24h",
+        "feat_prob_volatility",
+        "feat_prob_surge_since_t0",
+        "feat_time_to_resolution_days",
+        "feat_crossing_latency_days",
+        "feat_pre_entry_volume_log",
+        "feat_runup_since_t0",
+        "feat_asset_2w_trend",
+        "feat_sector_1m_trend",
+        "feat_spy_2w_trend",
+        "feat_ytd_change",
+        "feat_beta",
+        "feat_profit_margin",
+        "feat_log_market_cap"
+      ],
+      "target": "right_beats_left_active",
+      "regularization_C": 0.1,
+      "train_rows": 830,
+      "train_positive_rate": 0.4734939759036145,
+      "fit_split": "train",
+      "coefficients_on_standardized_features": {
+        "feat_connection_strength": -0.03549911690377781,
+        "entry_prob": -0.15151705819337177,
+        "feat_prob_at_trigger": -0.15187247434636092,
+        "feat_prob_slope_24h": -0.16442593296281358,
+        "feat_prob_volatility": -0.1639100223334379,
+        "feat_prob_surge_since_t0": -0.16405912355396118,
+        "feat_time_to_resolution_days": -0.27170573757010175,
+        "feat_crossing_latency_days": 0.3398054514756388,
+        "feat_pre_entry_volume_log": 0.0,
+        "feat_runup_since_t0": 0.34757689600358244,
+        "feat_asset_2w_trend": -0.04364074878175764,
+        "feat_sector_1m_trend": -0.0540386037495367,
+        "feat_spy_2w_trend": -0.07917298789314453,
+        "feat_ytd_change": -0.020503533602205543,
+        "feat_beta": 0.2076170538977296,
+        "feat_profit_margin": 0.1125081436951496,
+        "feat_log_market_cap": 0.047711516675578845
+      },
+      "intercept": -0.12322016979343463
+    },
+    "oracle_te1": {
+      "diagnostic_only": true,
+      "score": "te1_active_net_return_pct"
+    }
+  },
+  "capacity_rule": "top score per benchmark/split/entry_date, k=free_slots_before; missing capacity selects none",
+  "outputs": {
+    "scores": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage1\\selection_scores.csv",
+    "summary": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage1\\selection_summary.csv",
+    "pairwise_model": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage1\\pairwise_model.json"
+  }
+}

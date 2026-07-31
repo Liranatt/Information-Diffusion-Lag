@@ -1,0 +1,22 @@
+{
+  "market_id": "703111",
+  "question": "Will General Mills (GIS) beat quarterly earnings?",
+  "requested_start_utc": "2025-11-25 13:28:04.885743+00:00",
+  "requested_end_utc": "2025-12-02 21:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "3c498980f539a314b140b95f|e895a99de2df1492dc8743a5",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "280395810385585286276358694682008830994484356722603160825999603993560526048",
+  "condition_id": "0xdd2db1de97992c0c91941560e0e101537167835f5b0ea67fd6697350b3e76c7a",
+  "api_question": "Will General Mills (GIS) beat quarterly earnings?",
+  "api_created_at": "2025-11-25T13:28:04.885743Z",
+  "api_end_date": "2025-12-17T14:00:00Z",
+  "status": "complete",
+  "row_count": 10515,
+  "first_source_ts_utc": "2025-11-25 13:45:07+00:00",
+  "last_source_ts_utc": "2025-12-02 20:59:06+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\703111.csv",
+  "fragment_sha256": "881293a91d4142157b0d7e0d56d331821d7215911b44e093d498dfd3ca87ecf1",
+  "question_matches": true,
+  "error": null
+}

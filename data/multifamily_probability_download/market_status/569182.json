@@ -1,0 +1,23 @@
+{
+  "market_id": "569182",
+  "question": "FDA approves Tonix Pharmaceuticals\u2019 TNX-102 SL for fibromyalgia?",
+  "requested_start_utc": "2025-07-28 13:57:51.740323+00:00",
+  "requested_end_utc": "2025-07-29 20:00:00+00:00",
+  "candidate_count": 2,
+  "research_families": "other",
+  "economic_event_ids": "34550",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "81099528736644917415469844895895949507847030424039865673941868457711573185841",
+  "condition_id": "0x200439a7855c3552f9bec7518f41d4849716d3b504fe83bd530323f967bcf301",
+  "api_question": "FDA approves Tonix Pharmaceuticals\u2019 TNX-102 SL for fibromyalgia?",
+  "api_created_at": "2025-07-28T13:57:51.740323Z",
+  "api_end_date": "2025-08-15T16:00:00Z",
+  "status": "complete",
+  "row_count": 262,
+  "first_source_ts_utc": "2025-07-29 15:38:09+00:00",
+  "last_source_ts_utc": "2025-07-29 19:59:09+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\569182.csv",
+  "fragment_sha256": "4a7a4cdd604ea4dd26e5eedae80a83539a0aae70fddd3fd68c1c132a55f0b81f",
+  "question_matches": true,
+  "error": null
+}

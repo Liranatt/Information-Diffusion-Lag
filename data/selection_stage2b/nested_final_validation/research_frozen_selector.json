@@ -1,0 +1,20 @@
+{
+  "label": "research_frozen_selector",
+  "ranker": "connection_strength_descending",
+  "tie_breaker": "expected_slot_days",
+  "admission_threshold": 1.0,
+  "admission_threshold_label": "1.00",
+  "selection_rule": "maximize the minimum of SPY and QQQ outer-fold mean excess; tie-break mean excess, active IR, then less-negative mean active drawdown",
+  "selection_source": "full_nested_chronological_outer_evaluation_on_training_development_data",
+  "outer_fold_count": 5,
+  "mean_excess_return": 0.73573,
+  "min_benchmark_excess_return": 0.70914,
+  "spy_mean_excess_return": 0.70914,
+  "qqq_mean_excess_return": 0.76232,
+  "mean_active_information_ratio": 1.1157268719112428,
+  "mean_active_max_drawdown_pct": -1.2667230367024684,
+  "lockbox_opened": false,
+  "lockbox_reserved_for_final_modular_pipeline_evaluation": true,
+  "do_not_change_during_exit_research": true,
+  "te_is_never_exit": true
+}

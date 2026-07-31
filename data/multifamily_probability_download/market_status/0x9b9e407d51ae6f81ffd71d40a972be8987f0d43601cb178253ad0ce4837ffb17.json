@@ -1,0 +1,22 @@
+{
+  "market_id": "0x9b9e407d51ae6f81ffd71d40a972be8987f0d43601cb178253ad0ce4837ffb17",
+  "question": "Israel x Hezbollah Ceasefire in September?",
+  "requested_start_utc": "2024-09-25 17:25:05.849597+00:00",
+  "requested_end_utc": "2024-09-26 20:00:00+00:00",
+  "candidate_count": 6,
+  "research_families": "geopolitics",
+  "economic_event_ids": "12844",
+  "mapping_source": "clob_condition_id",
+  "yes_token_id": "6079463323950898103412824920895334024369830994799750351334330094182588128828",
+  "condition_id": "0x9b9e407d51ae6f81ffd71d40a972be8987f0d43601cb178253ad0ce4837ffb17",
+  "api_question": "Israel x Hezbollah Ceasefire in September?",
+  "api_end_date": "2024-09-30T00:00:00Z",
+  "status": "complete",
+  "row_count": 1584,
+  "first_source_ts_utc": "2024-09-25 17:36:02+00:00",
+  "last_source_ts_utc": "2024-09-26 19:59:02+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\0x9b9e407d51ae6f81ffd71d40a972be8987f0d43601cb178253ad0ce4837ffb17.csv",
+  "fragment_sha256": "99ddb873e8c40a0c649bb4b1331a6cd72421bc7b339fc12d9b3f3dae1c46563c",
+  "question_matches": true,
+  "error": null
+}

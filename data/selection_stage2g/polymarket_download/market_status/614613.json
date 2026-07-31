@@ -1,0 +1,22 @@
+{
+  "market_id": "614613",
+  "question": "Will Bank of America (BAC) beat quarterly earnings?",
+  "requested_start_utc": "2025-09-26 18:23:12.388829+00:00",
+  "requested_end_utc": "2025-09-29 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "1150f9e3908d33835969c15c|3e2fca93aab3dd6f4638a2ca",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "23063948016349961277405303474692594349590587363280879193534307731927248381377",
+  "condition_id": "0xc274f712e56f0be1fa161557c773897784f77fa0cffd238e5561917a9f58b863",
+  "api_question": "Will Bank of America (BAC) beat quarterly earnings?",
+  "api_created_at": "2025-09-26T18:23:12.388829Z",
+  "api_end_date": "2025-10-15T00:00:00Z",
+  "status": "complete",
+  "row_count": 4335,
+  "first_source_ts_utc": "2025-09-26 19:45:09+00:00",
+  "last_source_ts_utc": "2025-09-29 19:59:03+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\614613.csv",
+  "fragment_sha256": "af3507a268263de23053a82d9e36bbcf98634257e31e022eb9701bfe643bdfaf",
+  "question_matches": true,
+  "error": null
+}

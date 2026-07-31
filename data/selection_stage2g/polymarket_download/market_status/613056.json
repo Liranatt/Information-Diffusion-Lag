@@ -1,0 +1,22 @@
+{
+  "market_id": "613056",
+  "question": "Will Goldman Sachs (GS) beat quarterly earnings?",
+  "requested_start_utc": "2025-09-25 23:37:33.348478+00:00",
+  "requested_end_utc": "2025-09-29 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "77bc23e9fa5271cb4eb486e5|abfc927103258dacbc6eda94",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "55874799563926381698021159934362538264948675244469542439845035540057028953210",
+  "condition_id": "0x90e3d9debdf680213bd15218b2071aba5cbaa3ed5c937dc5fd88330a07561e1b",
+  "api_question": "Will Goldman Sachs (GS) beat quarterly earnings?",
+  "api_created_at": "2025-09-25T23:37:33.348478Z",
+  "api_end_date": "2025-10-14T00:00:00Z",
+  "status": "complete",
+  "row_count": 4653,
+  "first_source_ts_utc": "2025-09-26 14:27:02+00:00",
+  "last_source_ts_utc": "2025-09-29 19:59:03+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\613056.csv",
+  "fragment_sha256": "32bcbb29828acc56d7e0f9cdaa37bb1c766f33fcee387c648fa0e4317a27a26e",
+  "question_matches": true,
+  "error": null
+}

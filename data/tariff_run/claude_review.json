@@ -1,0 +1,27 @@
+{
+  "reviewed_by": "Claude (Fable 5), 2026-07-15, full read of for_review.json (174 questions)",
+  "keep_notes": [
+    "Monthly 'tariff agreement with X' families kept: legitimate repeated economic events, same structure as Fed/CPI repeats; audit-level economic_event grouping handles the correlation.",
+    "Foreign-actor questions kept (China/Canada/EU retaliation): direct US-equity channel.",
+    "'Tariff stimulus checks', 'Congress pass any tariffs', 'Trump tariffs Apple' kept: real policy catalysts; Gemini grades them.",
+    "Sub-5-day horizon markets kept for the experiment; the live 5-60d window is applied at adoption time, not here."
+  ],
+  "drop": [
+    {
+      "market_id": "0xe84da0dc6b64ddd569f3ab3a4593b5ad6dac2537fadd587162259a87e502495b",
+      "reason": "podcast mention market (passive voice dodges speech_wordcount regex): 'Will Tariff be said during the next episode of the All-In Podcast?'"
+    },
+    {
+      "market_id": "0xa605bf09d84f83a108a5970e940359eb129d811ffe73ab5088361f495c5766e3",
+      "reason": "podcast mention market (passive voice): 'Will Tariff be said during the next episode of the Lemonade Stand Podcast?'"
+    },
+    {
+      "market_id": "0x57ee125c6f5b57b1b0c537289443d791a604e2c9e8d2a7a37d626cb4118c92e4",
+      "reason": "bracket-ladder rung (China tariff rate 25-40% on Aug 15); one representative rung (<25%) kept, matching pipeline ladder-dedup policy"
+    },
+    {
+      "market_id": "0x21ec3fe21ce9e81b5fba4fb5ad333c399e5e5a9c433f581c87999a10e980cf6b",
+      "reason": "bracket-ladder rung (China tariff rate >150% on Aug 15); one representative rung (<25%) kept, matching pipeline ladder-dedup policy"
+    }
+  ]
+}

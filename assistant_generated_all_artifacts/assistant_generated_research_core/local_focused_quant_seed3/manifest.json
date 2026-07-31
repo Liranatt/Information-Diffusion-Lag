@@ -1,0 +1,33 @@
+{
+  "inputs": "uploaded local files only",
+  "probability_surge": "removed",
+  "gross_exposure": "<=95%, position_size=gross/max_concurrent, reject <90% target fill",
+  "objective": "active log-return IR + four chronological-block robustness + active drawdown + terminal relative return",
+  "optimizer_test": "24-evaluation local/global Sobol versus 24-evaluation CEM per independent seed; training-only selection",
+  "exit_grid": {
+    "hard_caps": [
+      0.04,
+      0.06,
+      0.08,
+      0.1,
+      0.12
+    ],
+    "no_follow_days": [
+      3,
+      5,
+      7,
+      10
+    ],
+    "no_follow_mfe": [
+      0.01,
+      0.02,
+      0.03
+    ],
+    "combined_caps": [
+      0.06,
+      0.08,
+      0.1
+    ]
+  },
+  "oos_selection": "none; all selections made using train objective only"
+}

@@ -1,0 +1,50 @@
+{
+  "label": "frozen_capacity_same_day_ranking_evaluation",
+  "source_dir": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage1",
+  "source_hashes": {
+    "decision_candidates.csv": "541832daebe8429dc0859150be2661838ebf1f7311fd23d878d7879ccf207094",
+    "decision_candidates_all.csv": "cf745562e00cebfbb46d8b7aef05711d44805dbcaad2f25b3f9ec5da4e732e86",
+    "competition_pairs.csv": "7acdb18b82651ac79c914d57c603efdb9fb41cf7ad3db480a046317ca9dc185c",
+    "selection_scores.csv": "07b6aee31e3138cf8d66e6d5b9de9da9bba8d87bb13b429e5d0a36c4fcc756c0",
+    "selection_summary.csv": "f10706a5597b39defd04279576e7ea73e75a2b697bd479b7917e7b26fb8bebeb",
+    "pairwise_model.json": "d3fe5bce53e178fb643407ba8eefec989d4f84491613d75d1f3b95c4a1bd7d25",
+    "manifest.json": "4b16403887388f9936776aade0a1f6a7fb639c0beac17f4fc96d63aa85798f04",
+    "baseline_manifest.json": "0b8957ceace851cbf75a377c2b01acc47b4ea320a1468578ab66e658f92a12fe"
+  },
+  "frozen_files": [
+    "decision_candidates.csv",
+    "decision_candidates_all.csv",
+    "competition_pairs.csv",
+    "selection_scores.csv",
+    "selection_summary.csv",
+    "pairwise_model.json",
+    "manifest.json",
+    "baseline_manifest.json",
+    "selected_rows.csv"
+  ],
+  "date_ranges": {
+    "train": {
+      "entry_date_min": "2024-09-26",
+      "entry_date_max": "2025-12-11"
+    },
+    "test": {
+      "entry_date_min": "2026-01-05",
+      "entry_date_max": "2026-06-15"
+    }
+  },
+  "target_definitions": {
+    "target_a": "te1_active_net_return_pct through te1_exit_date, strictly before t_e",
+    "target_b": "active_return_per_slot_day_pct",
+    "oracle": "oracle_te1 is retrospective diagnostic only"
+  },
+  "evaluation_label": "frozen_capacity_same_day_ranking_evaluation",
+  "dynamic_portfolio_replay": false,
+  "exact_intraday_ordering_known": false,
+  "random_seeds": [
+    0
+  ],
+  "preprocessing": {
+    "stage_2a_pairwise": "median imputation plus standard scaling, C=0.1",
+    "selection_capacity": "free_slots_before from same_day_capacity_summary"
+  }
+}

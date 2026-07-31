@@ -1,0 +1,23 @@
+{
+  "market_id": "647860",
+  "question": "Will Clorox (CLX) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-21 13:08:52.940239+00:00",
+  "requested_end_utc": "2025-10-24 13:08:52.940239+00:00",
+  "first_candidate_t0_utc": "2025-10-24 13:08:52.940239+00:00",
+  "latest_candidate_decision_utc": "2025-10-24 20:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "91946407989581018826281588779390465509686573486810584148633916447863975933819",
+  "condition_id": "0xf7d9c0dd323675e1e0f6d1151c98e19b4dfb7856408fd2e64b512f5aaf30de69",
+  "api_question": "Will Clorox (CLX) beat quarterly earnings?",
+  "api_created_at": "2025-10-24T13:08:52.940239Z",
+  "api_end_date": "2025-11-03T22:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\647860.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

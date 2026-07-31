@@ -1,0 +1,17 @@
+{
+  "label": "stage2b_target_a_b_diagnostics",
+  "candidate_sha256": "96833cd225bf846d7d46a2bb0efa3b8d5f20fffc33e15718cbcb37c6fb121046",
+  "target_a": "te1_active_net_return_pct",
+  "target_b": [
+    "active_return / slot_days",
+    "active_return / sqrt(slot_days)"
+  ],
+  "target_selection_formula_tuning": "none; formulas predeclared",
+  "evaluation_scope": "frozen_capacity_same_day_ranking_evaluation",
+  "current_2026_test_is_exploratory": true,
+  "te_is_never_exit": true,
+  "outputs": {
+    "labels": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\target_diagnostics\\target_labels.csv",
+    "comparison": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\target_diagnostics\\target_ab_comparison.csv"
+  }
+}

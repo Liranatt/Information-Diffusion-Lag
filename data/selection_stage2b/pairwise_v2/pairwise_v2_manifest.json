@@ -1,0 +1,28 @@
+{
+  "label": "pairwise_logistic_v2",
+  "candidate_sha256": "96833cd225bf846d7d46a2bb0efa3b8d5f20fffc33e15718cbcb37c6fb121046",
+  "pairs_sha256": "a1cc413b1561e8fc4ab8d13135395e286f5d0e69cf1d171deea11efb462e22d5",
+  "capacity_sha256": "cbc994d59ed72f52eac7c3a4c617b94ef03bbdb0bac2defceebff32e6314ae39",
+  "terminal_horizon": "te1_exit_date, strictly before t_e",
+  "te_is_never_exit": true,
+  "dynamic_portfolio_replay": false,
+  "model": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\pairwise_v2\\pairwise_v2_model.json",
+  "metrics": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\pairwise_v2\\pairwise_v2_metrics.csv",
+  "oof_folds": 5,
+  "outputs": {
+    "scores": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\pairwise_v2\\pairwise_v2_scores.csv",
+    "selected": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\pairwise_v2\\pairwise_v2_selected_rows.csv",
+    "oof_pairs": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\pairwise_v2\\pairwise_v2_oof_pairs.csv",
+    "metrics": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\pairwise_v2\\pairwise_v2_metrics.csv",
+    "calibration": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\pairwise_v2\\pairwise_v2_calibration.csv",
+    "regularization_search": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\pairwise_v2\\pairwise_v2_regularization_search.csv",
+    "fold_coefficients": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\pairwise_v2\\pairwise_v2_fold_coefficients.csv",
+    "fold_preprocessing": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\pairwise_v2\\pairwise_v2_fold_preprocessing.csv",
+    "score_deciles": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\pairwise_v2\\pairwise_v2_oof_score_deciles.csv",
+    "attribution": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\pairwise_v2\\pairwise_v2_score_extremes.csv",
+    "largest_contributions": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\pairwise_v2\\pairwise_v2_largest_contributions.csv",
+    "summary": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\pairwise_v2\\pairwise_v2_summary.csv",
+    "model": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\pairwise_v2\\pairwise_v2_model.json",
+    "manifest": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2b\\pairwise_v2\\pairwise_v2_manifest.json"
+  }
+}

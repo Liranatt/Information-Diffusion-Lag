@@ -1,0 +1,22 @@
+{
+  "market_id": "0x4ca8a590e2de2eb8994dca0020dbed5163d3ca71308f4234ff41e2a1bdde03a5",
+  "question": "Will Trump\u2019s Greenland Tariffs go into effect for Norway by Feburary 1?",
+  "requested_start_utc": "2026-01-17 22:59:18.006186+00:00",
+  "requested_end_utc": "2026-01-19 21:00:00+00:00",
+  "candidate_count": 1,
+  "research_families": "macro",
+  "economic_event_ids": "171012",
+  "mapping_source": "clob_condition_id",
+  "yes_token_id": "95790328756539116347681526859656324090296057032591426829506434906003298343026",
+  "condition_id": "0x4ca8a590e2de2eb8994dca0020dbed5163d3ca71308f4234ff41e2a1bdde03a5",
+  "api_question": "Will Trump\u2019s Greenland Tariffs go into effect for Norway by Feburary 1?",
+  "api_end_date": "2026-02-01T00:00:00Z",
+  "status": "complete",
+  "row_count": 2583,
+  "first_source_ts_utc": "2026-01-18 01:57:14+00:00",
+  "last_source_ts_utc": "2026-01-19 20:59:14+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\multifamily_probability_download\\market_fragments\\0x4ca8a590e2de2eb8994dca0020dbed5163d3ca71308f4234ff41e2a1bdde03a5.csv",
+  "fragment_sha256": "c1121e7fa531d7043befad76d59360feda5da7dbe6d2a28fd4a02dd7f77de7f2",
+  "question_matches": true,
+  "error": null
+}

@@ -1,0 +1,22 @@
+{
+  "market_id": "657013",
+  "question": "Will Ralph Lauren (RL) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-30 16:46:48.215190+00:00",
+  "requested_end_utc": "2025-10-31 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "80c6c0f4e660bfbd4dd926a8|e057b4c900ca20a1f4b1dbb9",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "21435736435568196620950354534505825245535651730803293975073703581433087887633",
+  "condition_id": "0xeccac2fb9981c6702515b1d7a58f4482917c16c68d831321f683351b930f3fe5",
+  "api_question": "Will Ralph Lauren (RL) beat quarterly earnings?",
+  "api_created_at": "2025-10-30T16:46:48.21519Z",
+  "api_end_date": "2025-11-06T14:00:00Z",
+  "status": "complete",
+  "row_count": 1617,
+  "first_source_ts_utc": "2025-10-30 17:03:07+00:00",
+  "last_source_ts_utc": "2025-10-31 19:59:07+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\657013.csv",
+  "fragment_sha256": "1fe27b44c0be01fb03f6d06362433c5e8cc9f3c5d080b1ce2d6814d9e990667b",
+  "question_matches": true,
+  "error": null
+}

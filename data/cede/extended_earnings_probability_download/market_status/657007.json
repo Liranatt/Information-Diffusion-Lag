@@ -1,0 +1,23 @@
+{
+  "market_id": "657007",
+  "question": "Will Expedia Group (EXPE) beat quarterly earnings?",
+  "requested_start_utc": "2025-10-27 16:26:27.797857+00:00",
+  "requested_end_utc": "2025-10-30 16:26:27.797857+00:00",
+  "first_candidate_t0_utc": "2025-10-30 16:26:27.797857+00:00",
+  "latest_candidate_decision_utc": "2025-10-31 20:00:00+00:00",
+  "candidate_count": 2,
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "50017823175853354261920916677899051083346432372683510341363776877695828348707",
+  "condition_id": "0x0812be9adc5030e38f7b5fbcd227beeea3b07a0fedccc7f69c0cff039d22c5e1",
+  "api_question": "Will Expedia Group (EXPE) beat quarterly earnings?",
+  "api_created_at": "2025-10-30T16:26:27.797857Z",
+  "api_end_date": "2025-11-06T22:00:00Z",
+  "status": "complete",
+  "row_count": 0,
+  "first_source_ts_utc": null,
+  "last_source_ts_utc": null,
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\cede\\extended_earnings_probability_download\\market_fragments\\657007.csv",
+  "fragment_sha256": "d9547e720cb1372bd5a8a21c6be0c423c3177857ad0d39278667b93a22b411f8",
+  "question_matches": true,
+  "error": null
+}

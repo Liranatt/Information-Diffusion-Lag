@@ -1,0 +1,22 @@
+{
+  "market_id": "599652",
+  "question": "Will Progress Software (PRGS) beat its quarterly EPS estimate?",
+  "requested_start_utc": "2025-09-16 00:24:04.127419+00:00",
+  "requested_end_utc": "2025-09-18 20:00:00+00:00",
+  "candidate_count": 2,
+  "candidate_ids": "ac3b434809f94fbb08580772|eb42f4bd7b742a0e433e7522",
+  "mapping_source": "gamma_market_id",
+  "yes_token_id": "47948095477719754810740483026453923256520502857844101824743811583085761444217",
+  "condition_id": "0x70536feb531c08c7bbe808959246ba5f4eaf07ed045f532fe41d404e93e3809f",
+  "api_question": "Will Progress Software (PRGS) beat its quarterly EPS estimate?",
+  "api_created_at": "2025-09-16T00:24:04.127419Z",
+  "api_end_date": "2025-10-06T20:00:00Z",
+  "status": "complete",
+  "row_count": 4031,
+  "first_source_ts_utc": "2025-09-16 00:40:02+00:00",
+  "last_source_ts_utc": "2025-09-18 19:59:02+00:00",
+  "fragment": "C:\\Users\\Liran\\PycharmProjects\\cem_clean_repo\\data\\selection_stage2g\\polymarket_download\\market_fragments\\599652.csv",
+  "fragment_sha256": "c70495e2959c9bf7316b360c4fae1285bd73833253b81e2cb121cae8f97a07f7",
+  "question_matches": true,
+  "error": null
+}
