@@ -126,6 +126,17 @@ def _f(v):
     return float(v) if v is not None else None
 
 
+def _json_data(value, default):
+    if value is None:
+        return default
+    if isinstance(value, str):
+        try:
+            return json.loads(value)
+        except json.JSONDecodeError:
+            return default
+    return value
+
+
 def _broker_series(eq_series, broker_latest, passive_latest=None, observed_at=None):
     """IB-only NAV curve with a same-timestamp current broker point."""
     series = [
@@ -143,6 +154,15 @@ def _broker_series(eq_series, broker_latest, passive_latest=None, observed_at=No
             series[-1] = point
         else:
             series.append(point)
+    series.sort(key=lambda point: point["ts"])
+    previous = None
+    for point in series:
+        point_ts = datetime.fromisoformat(point["ts"].replace("Z", "+00:00"))
+        point["gap_before"] = bool(
+            previous is not None
+            and (point_ts - previous).total_seconds() > 4 * 86400
+        )
+        previous = point_ts
     return series
 
 
@@ -262,7 +282,8 @@ async def gather_metrics() -> dict:
             f"""SELECT ts, equity, cash, benchmark_shares, benchmark_price,
                        open_positions, passive_equity, source, broker_observed_at
                 FROM {SCHEMA}.live_equity_snapshots
-                WHERE source='IB_same_snapshot_v2'
+                WHERE source LIKE 'IB_%'
+                  AND baseline_key='primary'
                   AND baseline_verified=TRUE
                 ORDER BY ts DESC LIMIT 600""")
         broker_account = await conn.fetchrow(
@@ -295,6 +316,14 @@ async def gather_metrics() -> dict:
             f"""SELECT COUNT(*) AS fills,
                        COALESCE(SUM(commission), 0) AS commission_total
                 FROM {SCHEMA}.live_execution_fills""")
+        policy_exit_rows = await conn.fetch(
+            f"""SELECT * FROM {SCHEMA}.live_policy_exit_audit
+                ORDER BY triggered_at, symbol"""
+        )
+        policy_target = await conn.fetchrow(
+            f"""SELECT * FROM {SCHEMA}.live_policy_target_snapshots
+                WHERE snapshot_key='latest'"""
+        )
         trades = await conn.fetch(
             f"""SELECT symbol, pnl, pnl_pct, exit_reason, exit_ts, pnl_source, pnl_verified
                 FROM {SCHEMA}.live_positions WHERE status='closed' AND pnl_verified
@@ -334,6 +363,7 @@ async def gather_metrics() -> dict:
             sync_value = {}
     metadata_gaps = list((sync_value or {}).get("metadata_gaps") or [])
     broker_map = {str(row["symbol"]): row for row in broker_pos}
+    policy_exit_map = {int(row["position_id"]): dict(row) for row in policy_exit_rows}
 
     equity = _f(eq["equity"]) if eq else None
     passive = None
@@ -469,6 +499,20 @@ async def gather_metrics() -> dict:
             "is_earnings": bool(p["is_earnings"]),
             "question": p["question"], "entry_ts": _iso(p["entry_ts"]),
             "resolution_ts": _iso(resolution_at),
+            "policy_exit": (
+                {
+                    "reason": policy_exit_map[int(p["position_id"])]["expected_exit_reason"],
+                    "triggered_at": _iso(policy_exit_map[int(p["position_id"])]["triggered_at"]),
+                    "first_executable_at": _iso(policy_exit_map[int(p["position_id"])]["first_executable_at"]),
+                    "model_exit_price": _f(policy_exit_map[int(p["position_id"])]["model_exit_price"]),
+                    "expected_net_before_exit_cost": _f(policy_exit_map[int(p["position_id"])]["expected_net_before_exit_cost"]),
+                    "current_ib_unrealized_pnl": _f(policy_exit_map[int(p["position_id"])]["current_ib_unrealized_pnl"]),
+                    "post_exit_opportunity_delta": _f(policy_exit_map[int(p["position_id"])]["post_exit_opportunity_delta"]),
+                    "status": policy_exit_map[int(p["position_id"])]["actual_ib_status"],
+                    "price_source": policy_exit_map[int(p["position_id"])]["model_price_source"],
+                }
+                if int(p["position_id"]) in policy_exit_map else None
+            ),
         })
 
     strategy_symbols = {str(p["symbol"]) for p in open_pos}
@@ -554,7 +598,10 @@ async def gather_metrics() -> dict:
                 observed_at=broker_account["observed_at"],
             )
             performance_status = "verified"
-            performance_detail = "Account NAV and benchmark price are from the same IB snapshot."
+            performance_detail = (
+                "Current NAV/benchmark are from the same IB snapshot; "
+                "the baseline is preserved broker evidence."
+            )
         else:
             performance_status = "provisional_baseline"
             performance_detail = (
@@ -621,6 +668,9 @@ async def gather_metrics() -> dict:
     broker_series_data = _broker_series(
         eq_series, equity, passive, broker_observed_at,
     )
+    history_gaps = sum(1 for point in broker_series_data if point.get("gap_before"))
+    history_start = broker_series_data[0]["ts"] if broker_series_data else None
+    history_end = broker_series_data[-1]["ts"] if broker_series_data else None
     equity_curve = [r["equity"] for r in broker_series_data if r["equity"] is not None]
     peak = max(equity_curve, default=total) if equity_curve else total
     dd_pct = round((total / peak - 1.0) * 100.0, 2) if peak > 0 and total < peak else 0.0
@@ -709,6 +759,36 @@ async def gather_metrics() -> dict:
         warning_alerts.append({
             "title": "Performance baseline is provisional",
             "detail": performance_detail,
+        })
+    if history_gaps:
+        warning_alerts.append({
+            "title": "Verified IB NAV history has a data gap",
+            "detail": (
+                f"The chart has {len(broker_series_data)} verified broker points from "
+                f"{history_start[:10]} and does not invent values across "
+                f"{history_gaps} missing interval(s)."
+            ),
+        })
+    missed_policy_exits = [
+        dict(row) for row in policy_exit_rows
+        if str(row["actual_ib_status"]).startswith("missed_exit")
+    ]
+    pending_policy_exits = [
+        dict(row) for row in policy_exit_rows
+        if row["actual_ib_status"] == "pending_next_market_session"
+    ]
+    if missed_policy_exits:
+        critical_alerts.append({
+            "title": "Policy exits were missed; IB positions remain open",
+            "detail": ", ".join(
+                f"{row['symbol']}:{row['expected_exit_reason']}"
+                for row in missed_policy_exits[:8]
+            ),
+        })
+    if pending_policy_exits:
+        warning_alerts.append({
+            "title": "Policy exits pending the next market session",
+            "detail": ", ".join(str(row["symbol"]) for row in pending_policy_exits[:8]),
         })
     if failed_24h:
         warning_alerts.append({
@@ -854,6 +934,52 @@ async def gather_metrics() -> dict:
                 "verified": bool(baseline["verified"]) if baseline else False,
                 "cumulative_cash_flows": round(cumulative_cash_flows, 2),
             },
+        },
+        "equity_history": {
+            "start": history_start,
+            "end": history_end,
+            "verified_points": len(broker_series_data),
+            "gap_count": history_gaps,
+            "continuous": history_gaps == 0,
+            "source": "IB_only",
+        },
+        "policy_audit": {
+            "required_exits": [
+                {
+                    "position_id": int(row["position_id"]),
+                    "symbol": row["symbol"],
+                    "qty": round(float(row["qty"]), 4),
+                    "reason": row["expected_exit_reason"],
+                    "triggered_at": _iso(row["triggered_at"]),
+                    "first_executable_at": _iso(row["first_executable_at"]),
+                    "model_exit_price": round(float(row["model_exit_price"]), 4)
+                        if row["model_exit_price"] is not None else None,
+                    "expected_net_before_exit_cost": round(float(row["expected_net_before_exit_cost"]), 2)
+                        if row["expected_net_before_exit_cost"] is not None else None,
+                    "current_ib_unrealized_pnl": round(float(row["current_ib_unrealized_pnl"]), 2)
+                        if row["current_ib_unrealized_pnl"] is not None else None,
+                    "post_exit_opportunity_delta": round(float(row["post_exit_opportunity_delta"]), 2)
+                        if row["post_exit_opportunity_delta"] is not None else None,
+                    "status": row["actual_ib_status"],
+                    "price_source": row["model_price_source"],
+                }
+                for row in policy_exit_rows
+            ],
+            "target": (
+                {
+                    "as_of": _iso(policy_target["as_of"]),
+                    "retained_positions": _json_data(policy_target["retained_positions"], []),
+                    "required_exits": _json_data(policy_target["required_exits"], []),
+                    "replacement_candidates": _json_data(policy_target["replacement_candidates"], []),
+                    "target_positions": _json_data(policy_target["target_positions"], []),
+                    "benchmark_residual": _f(policy_target["benchmark_residual"]),
+                    "method": policy_target["method"],
+                    "note": policy_target["note"],
+                }
+                if policy_target else None
+            ),
+            "actual_source_of_truth": "IB",
+            "executes_orders": False,
         },
         "exec": {
             "filled": filled, "recent": len(orders), "failed": failed,

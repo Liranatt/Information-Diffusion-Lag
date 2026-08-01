@@ -17,6 +17,7 @@ All access goes through one shared asyncpg pool.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 from datetime import datetime, timedelta, timezone
@@ -214,6 +215,61 @@ CREATE TABLE IF NOT EXISTS {SCHEMA}.live_reconciliation_events (
     created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Policy truth is deliberately separate from broker truth.  A row here says
+-- the deterministic policy required an exit while IB still owned the shares;
+-- it never pretends that a fill occurred and never closes live_positions.
+CREATE TABLE IF NOT EXISTS {SCHEMA}.live_policy_exit_audit (
+    position_id         BIGINT PRIMARY KEY,
+    symbol              TEXT NOT NULL,
+    market_id           TEXT,
+    qty                 DOUBLE PRECISION NOT NULL,
+    entry_ts            TIMESTAMPTZ NOT NULL,
+    entry_price         DOUBLE PRECISION NOT NULL,
+    expected_exit_reason TEXT NOT NULL,
+    triggered_at        TIMESTAMPTZ NOT NULL,
+    first_executable_at TIMESTAMPTZ,
+    model_exit_price    DOUBLE PRECISION,
+    model_price_source  TEXT,
+    expected_gross_pnl  DOUBLE PRECISION,
+    expected_net_before_exit_cost DOUBLE PRECISION,
+    current_ib_unrealized_pnl DOUBLE PRECISION,
+    post_exit_opportunity_delta DOUBLE PRECISION,
+    actual_ib_status    TEXT NOT NULL DEFAULT 'still_open_at_IB',
+    calculation_note    TEXT,
+    details             JSONB NOT NULL DEFAULT '{{}}'::JSONB,
+    first_observed_at   TIMESTAMPTZ NOT NULL,
+    last_observed_at    TIMESTAMPTZ NOT NULL,
+    calculated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Latest deterministic target is an explanatory snapshot only.  It is not an
+-- order queue and the trader never consumes it.
+CREATE TABLE IF NOT EXISTS {SCHEMA}.live_policy_target_snapshots (
+    snapshot_key        TEXT PRIMARY KEY DEFAULT 'latest',
+    as_of               TIMESTAMPTZ NOT NULL,
+    policy              JSONB NOT NULL,
+    retained_positions  JSONB NOT NULL DEFAULT '[]'::JSONB,
+    required_exits      JSONB NOT NULL DEFAULT '[]'::JSONB,
+    replacement_candidates JSONB NOT NULL DEFAULT '[]'::JSONB,
+    target_positions    JSONB NOT NULL DEFAULT '[]'::JSONB,
+    benchmark_residual  DOUBLE PRECISION,
+    method              TEXT NOT NULL,
+    note                TEXT,
+    calculated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Future counterfactuals must use the policy that was actually active at the
+-- time, not whichever policy happens to be deployed when an audit is run.
+CREATE TABLE IF NOT EXISTS {SCHEMA}.live_policy_versions (
+    policy_hash         TEXT PRIMARY KEY,
+    policy              JSONB NOT NULL,
+    experiment          TEXT NOT NULL,
+    benchmark           TEXT NOT NULL,
+    first_seen_at       TIMESTAMPTZ NOT NULL,
+    last_seen_at        TIMESTAMPTZ NOT NULL,
+    source              TEXT NOT NULL DEFAULT 'live_tick'
+);
+
 -- Space/disk telemetry so DB growth is observable, not just pruned blindly.
 CREATE TABLE IF NOT EXISTS {SCHEMA}.live_system_metrics (
     ts                  TIMESTAMPTZ PRIMARY KEY,
@@ -303,6 +359,8 @@ CREATE INDEX IF NOT EXISTS idx_live_cash_flows_ts
     ON {SCHEMA}.live_account_cash_flows(flow_ts);
 CREATE INDEX IF NOT EXISTS idx_live_reconciliation_observed
     ON {SCHEMA}.live_reconciliation_events(observed_at DESC);
+CREATE INDEX IF NOT EXISTS idx_live_policy_exit_triggered
+    ON {SCHEMA}.live_policy_exit_audit(triggered_at DESC);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_live_positions_one_open_recovery
     ON {SCHEMA}.live_positions(recovered_from_position_id)
     WHERE status='open' AND recovered_from_position_id IS NOT NULL;
@@ -723,19 +781,214 @@ class LiveStore:
                              pnl: float, pnl_pct: float,
                              pnl_source: str = "IB_execution") -> None:
         async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                await conn.execute(
+                    f"""UPDATE {SCHEMA}.live_positions
+                        SET status='closed', exit_ts=$2, exit_price=$3, exit_reason=$4,
+                            exit_costs=$5, pnl=$6, pnl_pct=$7,
+                            pnl_source=CASE
+                                WHEN entry_costs_verified THEN $8
+                                ELSE 'IB_exit_with_unverified_entry_costs'
+                            END,
+                            pnl_verified=entry_costs_verified
+                        WHERE position_id=$1""",
+                    position_id, exit_ts, exit_price, exit_reason, exit_costs, pnl, pnl_pct,
+                    pnl_source,
+                )
+                await conn.execute(
+                    f"""UPDATE {SCHEMA}.live_policy_exit_audit
+                        SET actual_ib_status='executed_at_IB',
+                            details=details || jsonb_build_object(
+                                'actual_exit_ts',$2::text,
+                                'actual_exit_price',$3,
+                                'actual_exit_costs',$4,
+                                'actual_pnl',$5
+                            ),
+                            last_observed_at=$2,
+                            calculated_at=NOW()
+                        WHERE position_id=$1""",
+                    position_id, exit_ts, exit_price, exit_costs, pnl,
+                )
+
+    async def upsert_policy_exit_audit(
+        self,
+        *,
+        position: dict[str, Any],
+        reason: str,
+        triggered_at: datetime,
+        model_exit_price: float | None,
+        model_price_source: str | None,
+        observed_at: datetime,
+        current_ib_unrealized_pnl: float | None = None,
+        first_executable_at: datetime | None = None,
+        actual_ib_status: str = "still_open_at_IB",
+        details: dict[str, Any] | None = None,
+    ) -> None:
+        """Persist a missed/pending policy exit without fabricating an IB fill."""
+        qty = float(position.get("qty") or 0.0)
+        entry_price = float(position.get("entry_price") or 0.0)
+        entry_costs = float(position.get("entry_costs") or 0.0)
+        gross = (
+            qty * (float(model_exit_price) - entry_price)
+            if model_exit_price is not None else None
+        )
+        net_before_exit = gross - entry_costs if gross is not None else None
+        opportunity_delta = (
+            float(current_ib_unrealized_pnl) - net_before_exit
+            if current_ib_unrealized_pnl is not None and net_before_exit is not None
+            else None
+        )
+        note = (
+            "Deterministic policy valuation only; no IB sell/fill is claimed. "
+            "Expected net includes known entry costs but excludes hypothetical "
+            "exit commission and slippage."
+        )
+        async with self.pool.acquire() as conn:
             await conn.execute(
-                f"""UPDATE {SCHEMA}.live_positions
-                    SET status='closed', exit_ts=$2, exit_price=$3, exit_reason=$4,
-                        exit_costs=$5, pnl=$6, pnl_pct=$7,
-                        pnl_source=CASE
-                            WHEN entry_costs_verified THEN $8
-                            ELSE 'IB_exit_with_unverified_entry_costs'
-                        END,
-                        pnl_verified=entry_costs_verified
-                    WHERE position_id=$1""",
-                position_id, exit_ts, exit_price, exit_reason, exit_costs, pnl, pnl_pct,
-                pnl_source,
+                f"""INSERT INTO {SCHEMA}.live_policy_exit_audit
+                    (position_id,symbol,market_id,qty,entry_ts,entry_price,
+                     expected_exit_reason,triggered_at,first_executable_at,model_exit_price,
+                     model_price_source,expected_gross_pnl,
+                     expected_net_before_exit_cost,current_ib_unrealized_pnl,
+                     post_exit_opportunity_delta,actual_ib_status,
+                     calculation_note,details,first_observed_at,last_observed_at)
+                    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,
+                            $15,$16,$17,$18::jsonb,$19,$19)
+                    ON CONFLICT (position_id) DO UPDATE SET
+                        qty=EXCLUDED.qty,
+                        expected_exit_reason=EXCLUDED.expected_exit_reason,
+                        triggered_at=LEAST(
+                            {SCHEMA}.live_policy_exit_audit.triggered_at,
+                            EXCLUDED.triggered_at
+                        ),
+                        first_executable_at=COALESCE(
+                            {SCHEMA}.live_policy_exit_audit.first_executable_at,
+                            EXCLUDED.first_executable_at
+                        ),
+                        model_exit_price=COALESCE(
+                            EXCLUDED.model_exit_price,
+                            {SCHEMA}.live_policy_exit_audit.model_exit_price
+                        ),
+                        model_price_source=COALESCE(
+                            EXCLUDED.model_price_source,
+                            {SCHEMA}.live_policy_exit_audit.model_price_source
+                        ),
+                        expected_gross_pnl=COALESCE(
+                            EXCLUDED.expected_gross_pnl,
+                            {SCHEMA}.live_policy_exit_audit.expected_gross_pnl
+                        ),
+                        expected_net_before_exit_cost=COALESCE(
+                            EXCLUDED.expected_net_before_exit_cost,
+                            {SCHEMA}.live_policy_exit_audit.expected_net_before_exit_cost
+                        ),
+                        current_ib_unrealized_pnl=COALESCE(
+                            EXCLUDED.current_ib_unrealized_pnl,
+                            {SCHEMA}.live_policy_exit_audit.current_ib_unrealized_pnl
+                        ),
+                        post_exit_opportunity_delta=COALESCE(
+                            EXCLUDED.post_exit_opportunity_delta,
+                            {SCHEMA}.live_policy_exit_audit.post_exit_opportunity_delta
+                        ),
+                        actual_ib_status=EXCLUDED.actual_ib_status,
+                        calculation_note=EXCLUDED.calculation_note,
+                        details={SCHEMA}.live_policy_exit_audit.details || EXCLUDED.details,
+                        last_observed_at=EXCLUDED.last_observed_at,
+                        calculated_at=NOW()""",
+                int(position["position_id"]), position["symbol"],
+                position.get("market_id"), qty, position["entry_ts"], entry_price,
+                reason, triggered_at, first_executable_at,
+                model_exit_price, model_price_source,
+                gross, net_before_exit, current_ib_unrealized_pnl,
+                opportunity_delta, actual_ib_status, note,
+                json.dumps(details or {}), observed_at,
             )
+
+    async def save_policy_target_snapshot(
+        self,
+        *,
+        as_of: datetime,
+        policy: dict[str, Any],
+        retained_positions: list[dict[str, Any]],
+        required_exits: list[dict[str, Any]],
+        replacement_candidates: list[dict[str, Any]],
+        target_positions: list[dict[str, Any]],
+        benchmark_residual: float | None,
+        method: str,
+        note: str,
+    ) -> None:
+        """Save a read-only explanatory target; this table is never executed."""
+        async with self.pool.acquire() as conn:
+            await conn.execute(
+                f"""INSERT INTO {SCHEMA}.live_policy_target_snapshots
+                    (snapshot_key,as_of,policy,retained_positions,required_exits,
+                     replacement_candidates,target_positions,benchmark_residual,
+                     method,note)
+                    VALUES ('latest',$1,$2::jsonb,$3::jsonb,$4::jsonb,$5::jsonb,
+                            $6::jsonb,$7,$8,$9)
+                    ON CONFLICT (snapshot_key) DO UPDATE SET
+                        as_of=EXCLUDED.as_of,policy=EXCLUDED.policy,
+                        retained_positions=EXCLUDED.retained_positions,
+                        required_exits=EXCLUDED.required_exits,
+                        replacement_candidates=EXCLUDED.replacement_candidates,
+                        target_positions=EXCLUDED.target_positions,
+                        benchmark_residual=EXCLUDED.benchmark_residual,
+                        method=EXCLUDED.method,note=EXCLUDED.note,
+                        calculated_at=NOW()""",
+                as_of, json.dumps(policy), json.dumps(retained_positions),
+                json.dumps(required_exits), json.dumps(replacement_candidates),
+                json.dumps(target_positions), benchmark_residual, method, note,
+            )
+
+    async def record_policy_version(
+        self,
+        *,
+        policy: dict[str, Any],
+        experiment: str,
+        benchmark: str,
+        observed_at: datetime,
+    ) -> str:
+        """Persist the exact deterministic policy active for this tick."""
+        canonical = json.dumps(policy, sort_keys=True, separators=(",", ":"))
+        policy_hash = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+        async with self.pool.acquire() as conn:
+            await conn.execute(
+                f"""INSERT INTO {SCHEMA}.live_policy_versions
+                    (policy_hash,policy,experiment,benchmark,first_seen_at,last_seen_at)
+                    VALUES ($1,$2::jsonb,$3,$4,$5,$5)
+                    ON CONFLICT (policy_hash) DO UPDATE SET
+                        last_seen_at=GREATEST(
+                            {SCHEMA}.live_policy_versions.last_seen_at,
+                            EXCLUDED.last_seen_at
+                        )""",
+                policy_hash, canonical, experiment, benchmark, observed_at,
+            )
+        return policy_hash
+
+    async def position_exit_fill_summary(self, position_id: int) -> dict[str, float] | None:
+        """Aggregate every executed exit slice for one cached position.
+
+        A broker order can partially fill, be cancelled, and finish on a later
+        tick under a new IB order id.  ``live_orders.qty`` is the quantity that
+        actually executed, so summing all priced SELL/exit rows prevents the
+        final retry from calculating P&L on only the last remainder.
+        """
+        async with self.pool.acquire() as conn:
+            row = await conn.fetchrow(
+                f"""SELECT SUM(qty) AS qty,
+                           SUM(qty * fill_price) / NULLIF(SUM(qty), 0) AS avg_price,
+                           SUM(COALESCE(commission, 0)) AS commission
+                    FROM {SCHEMA}.live_orders
+                    WHERE position_id=$1 AND kind='exit' AND action='SELL'
+                      AND fill_price IS NOT NULL AND qty > 0""",
+                position_id,
+            )
+        if not row or row["qty"] is None or float(row["qty"]) <= 0:
+            return None
+        return {
+            "qty": float(row["qty"]),
+            "avg_price": float(row["avg_price"]),
+            "commission": float(row["commission"] or 0.0),
+        }
 
     async def realized_trades(self, limit: int = 50) -> list[dict]:
         """Latest closed trades, oldest-first, for half-Kelly sizing."""
@@ -907,10 +1160,22 @@ class LiveStore:
                     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,
                             $14,$15,$16,'IB')
                     ON CONFLICT (exec_id) DO UPDATE SET
-                        commission=COALESCE(EXCLUDED.commission,
-                                            {SCHEMA}.live_execution_fills.commission),
-                        realized_pnl=COALESCE(EXCLUDED.realized_pnl,
-                                             {SCHEMA}.live_execution_fills.realized_pnl),
+                        commission=CASE
+                            WHEN EXCLUDED.commission IS NULL THEN
+                                {SCHEMA}.live_execution_fills.commission
+                            WHEN EXCLUDED.commission = 0
+                                 AND COALESCE({SCHEMA}.live_execution_fills.commission, 0) <> 0 THEN
+                                {SCHEMA}.live_execution_fills.commission
+                            ELSE EXCLUDED.commission
+                        END,
+                        realized_pnl=CASE
+                            WHEN EXCLUDED.realized_pnl IS NULL THEN
+                                {SCHEMA}.live_execution_fills.realized_pnl
+                            WHEN EXCLUDED.realized_pnl = 0
+                                 AND COALESCE({SCHEMA}.live_execution_fills.realized_pnl, 0) <> 0 THEN
+                                {SCHEMA}.live_execution_fills.realized_pnl
+                            ELSE EXCLUDED.realized_pnl
+                        END,
                         order_ref=COALESCE(EXCLUDED.order_ref,
                                            {SCHEMA}.live_execution_fills.order_ref),
                         kind=COALESCE(EXCLUDED.kind,
@@ -982,9 +1247,9 @@ class LiveStore:
             async with conn.transaction():
                 first_ib = await conn.fetchrow(
                     f"""SELECT broker_observed_at AS start_ts, equity AS start_nav,
-                               benchmark_price AS start_price
+                               benchmark_price AS start_price, source
                         FROM {SCHEMA}.live_equity_snapshots
-                        WHERE source='IB_same_snapshot_v2'
+                        WHERE source LIKE 'IB_%'
                           AND broker_observed_at IS NOT NULL
                           AND benchmark_observed_at IS NOT NULL
                           AND ABS(EXTRACT(EPOCH FROM
@@ -999,9 +1264,9 @@ class LiveStore:
                     row = await conn.fetchrow(
                         f"""UPDATE {SCHEMA}.live_performance_baselines
                             SET start_ts=$1, start_nav=$2, benchmark_symbol=$3,
-                                benchmark_start_price=$4, source='IB_same_snapshot_v2',
+                                benchmark_start_price=$4, source='IB_verified_history',
                                 verified=TRUE,
-                                note='Reset from the earliest same-timestamp IB NAV and benchmark snapshot; legacy baseline archived.',
+                                note='Reset from the earliest preserved same-timestamp IB NAV and benchmark snapshot; legacy baseline archived.',
                                 updated_at=NOW()
                             WHERE baseline_key='primary'
                             RETURNING *""",
@@ -1010,7 +1275,7 @@ class LiveStore:
                     snapshots = await conn.fetch(
                         f"""SELECT ts, broker_observed_at, benchmark_price
                             FROM {SCHEMA}.live_equity_snapshots
-                            WHERE source='IB_same_snapshot_v2'
+                            WHERE source LIKE 'IB_%'
                               AND broker_observed_at >= $1
                               AND benchmark_price > 0
                             ORDER BY broker_observed_at""",

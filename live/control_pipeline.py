@@ -80,6 +80,12 @@ class ControlPipeline:
             return
 
         policy = load_live_policy(self.cfg)
+        await self.store.record_policy_version(
+            policy=policy,
+            experiment=self.cfg.experiment,
+            benchmark=self.cfg.benchmark,
+            observed_at=now,
+        )
         engine = StrategyEngine(policy)
         
         # 0. Cancel any leftover ghost limit orders from previous ticks/crashes

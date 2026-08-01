@@ -63,6 +63,121 @@ class ExitSignal:
     symbol: str
     qty: int
     reason: str
+    triggered_at: datetime | None = None
+    model_exit_price: float | None = None
+    model_price_source: str | None = None
+
+
+@dataclass(frozen=True)
+class ExitDecision:
+    """Auditable policy result for a position that IB still owns.
+
+    ``model_exit_price`` is the shared daily-policy valuation, not a claimed IB
+    fill.  The broker remains the source of truth for whether an order actually
+    filled and for its final price, commission and slippage.
+    """
+
+    reason: str | None
+    peak_ret: float
+    triggered_at: datetime | None = None
+    model_exit_price: float | None = None
+    model_price_source: str | None = None
+
+
+def _utc_timestamp(value) -> pd.Timestamp:
+    ts = pd.Timestamp(value)
+    return ts.tz_localize("UTC") if ts.tzinfo is None else ts.tz_convert("UTC")
+
+
+def _decision_bar(bar: tuple) -> tuple[pd.Timestamp, float, float, float, float]:
+    """Accept the live four-field path and the kernel five-field OHLC path."""
+    if len(bar) == 5:
+        ts, open_price, high, low, close = bar
+    elif len(bar) == 4:
+        ts, high, low, close = bar
+        open_price = close
+    else:
+        raise ValueError(f"Unsupported price bar shape: {len(bar)}")
+    return (
+        _utc_timestamp(ts), float(open_price), float(high), float(low), float(close),
+    )
+
+
+def _existing_position_exit_decision(
+    pos: dict,
+    price_path: list[tuple],
+    prob_path: list[tuple],
+    policy: dict,
+    now: datetime,
+) -> ExitDecision:
+    """Return the first exit already triggered for an actual IB position."""
+    entry_ts = _utc_timestamp(pos["entry_ts"])
+    if now.date() <= entry_ts.date():
+        return ExitDecision(None, 0.0)
+
+    t_e = _utc_timestamp(pos["t_e"])
+    cutoff = t_e - RESOLUTION_CUT
+    now_ts = _utc_timestamp(now)
+
+    entry_price = float(pos.get("entry_price") or 0.0)
+    atr_pct = float(pos.get("atr_pct") or 0.0)
+    atr_mult = float(policy.get("atr_mult") or 0.0)
+    lock_activate = float(policy.get("lock_activate") or 0.0)
+    theta_out = float(policy.get("theta_out") or 0.0)
+
+    polarity, _source = resolve_polarity(pos.get("question", ""), pos.get("symbol"))
+    effective_by_day: dict[object, float] = {}
+    if polarity in {-1, 1}:
+        for ts, probability in effective_prob_path(prob_path, polarity):
+            effective_by_day[_utc_timestamp(ts).date()] = float(probability)
+
+    peak = 0.0
+    entry_date = entry_ts.date()
+    last_eligible_close: tuple[pd.Timestamp, float] | None = None
+    for raw_bar in price_path:
+        bar_time, open_price, high, low, close = _decision_bar(raw_bar)
+        if bar_time.date() <= entry_date:
+            continue
+        if bar_time >= cutoff or bar_time.normalize() > now_ts.normalize():
+            break
+        last_eligible_close = (bar_time, close)
+
+        if entry_price > 0 and atr_pct > 0 and atr_mult > 0:
+            stop_dist = atr_mult * atr_pct
+            active_stop = entry_price * (1.0 + peak - stop_dist)
+            reason = "trailing-ATR"
+            if peak >= lock_activate:
+                hard_floor = int(peak * 100.0) / 100.0
+                lock_stop = entry_price * (1.0 + hard_floor)
+                if lock_stop >= active_stop:
+                    active_stop = lock_stop
+                    reason = "profit-lock"
+            if low <= active_stop:
+                model_price = open_price if open_price <= active_stop else active_stop
+                return ExitDecision(
+                    reason, peak, bar_time.to_pydatetime(), model_price,
+                    "daily_policy_stop",
+                )
+
+        probability = effective_by_day.get(bar_time.date())
+        if theta_out > 0 and probability is not None and probability < theta_out:
+            return ExitDecision(
+                "probability-out", peak, bar_time.to_pydatetime(), close,
+                "daily_close_after_probability_signal",
+            )
+
+        if entry_price > 0:
+            peak = max(peak, high / entry_price - 1.0)
+
+    # This lifecycle check deliberately does not depend on bars, probabilities
+    # or the ability to reproduce the old entry decision.
+    if now_ts >= cutoff:
+        model_price = last_eligible_close[1] if last_eligible_close else None
+        return ExitDecision(
+            "resolution-1d", peak, cutoff.to_pydatetime(), model_price,
+            "last_daily_close_before_resolution_cutoff" if model_price is not None else None,
+        )
+    return ExitDecision(None, peak)
 
 
 def _existing_position_exit(
@@ -80,77 +195,10 @@ def _existing_position_exit(
     rules only need the actual fill, ATR and event metadata already persisted
     for that position, so evaluate those facts directly and chronologically.
     """
-    entry_ts = pd.Timestamp(pos["entry_ts"])
-    if entry_ts.tzinfo is None:
-        entry_ts = entry_ts.tz_localize("UTC")
-    else:
-        entry_ts = entry_ts.tz_convert("UTC")
-    if now.date() <= entry_ts.date():
-        return None, 0.0
-
-    t_e = pd.Timestamp(pos["t_e"])
-    if t_e.tzinfo is None:
-        t_e = t_e.tz_localize("UTC")
-    else:
-        t_e = t_e.tz_convert("UTC")
-    cutoff = t_e - RESOLUTION_CUT
-    now_ts = pd.Timestamp(now)
-    if now_ts.tzinfo is None:
-        now_ts = now_ts.tz_localize("UTC")
-    else:
-        now_ts = now_ts.tz_convert("UTC")
-
-    entry_price = float(pos.get("entry_price") or 0.0)
-    atr_pct = float(pos.get("atr_pct") or 0.0)
-    atr_mult = float(policy.get("atr_mult") or 0.0)
-    lock_activate = float(policy.get("lock_activate") or 0.0)
-    theta_out = float(policy.get("theta_out") or 0.0)
-
-    polarity, _source = resolve_polarity(pos.get("question", ""), pos.get("symbol"))
-    effective_by_day: dict[object, float] = {}
-    if polarity in {-1, 1}:
-        for ts, probability in effective_prob_path(prob_path, polarity):
-            effective_by_day[pd.Timestamp(ts).date()] = float(probability)
-
-    peak = 0.0
-    entry_day = entry_ts.date()
-    for bar_ts, high, low, _close in price_path:
-        bar_time = pd.Timestamp(bar_ts)
-        if bar_time.tzinfo is None:
-            bar_time = bar_time.tz_localize("UTC")
-        else:
-            bar_time = bar_time.tz_convert("UTC")
-        if bar_time.date() <= entry_day:
-            continue
-        if bar_time >= cutoff or bar_time.normalize() > now_ts.normalize():
-            break
-
-        if entry_price > 0 and atr_pct > 0 and atr_mult > 0:
-            stop_dist = atr_mult * atr_pct
-            active_stop = entry_price * (1.0 + peak - stop_dist)
-            reason = "trailing-ATR"
-            if peak >= lock_activate:
-                hard_floor = int(peak * 100.0) / 100.0
-                lock_stop = entry_price * (1.0 + hard_floor)
-                if lock_stop >= active_stop:
-                    active_stop = lock_stop
-                    reason = "profit-lock"
-            if float(low) <= active_stop:
-                return reason, peak
-
-        probability = effective_by_day.get(bar_time.date())
-        if theta_out > 0 and probability is not None and probability < theta_out:
-            return "probability-out", peak
-
-        if entry_price > 0:
-            peak = max(peak, float(high) / entry_price - 1.0)
-
-    # Resolution is an unconditional lifecycle exit.  Missing probability,
-    # bars, polarity labels, or a no-longer-reproducible entry can never keep an
-    # IB holding alive beyond the strategy's one-day-before-resolution cutoff.
-    if now_ts >= cutoff:
-        return "resolution-1d", peak
-    return None, peak
+    decision = _existing_position_exit_decision(
+        pos, price_path, prob_path, policy, now,
+    )
+    return decision.reason, decision.peak_ret
 
 
 def _prob_path(prob_rows: list[tuple]) -> list[tuple]:
@@ -230,6 +278,11 @@ class StrategyEngine:
                            now: datetime | None = None) -> list[EntrySignal]:
         now = now or datetime.now(timezone.utc)
         signals: list[EntrySignal] = []
+        # Reserve within this scan as well as against IB.  Without this, two
+        # different markets mapped to the same stock could both be returned in
+        # one tick before run_entries had a chance to update open_symbols.
+        reserved_symbols = set(open_symbols)
+        reserved_market_assets = set(open_market_assets)
 
         for market in markets:
             t_e = market["end_at"]
@@ -238,9 +291,9 @@ class StrategyEngine:
 
             for asset in market["assets"]:
                 symbol = asset["symbol"]
-                if symbol in open_symbols:
+                if symbol in reserved_symbols:
                     continue  # duplicate-symbol guard, as in the backtest
-                if (market["market_id"], symbol) in open_market_assets:
+                if (market["market_id"], symbol) in reserved_market_assets:
                     continue
 
                 built = await self._candidate(
@@ -304,6 +357,8 @@ class StrategyEngine:
                     question=market["question"], is_earnings=bool(market["is_earnings"]),
                     prob=float(entry_prob), t_e=t_e, atr_pct=atr_pct,
                 ))
+                reserved_symbols.add(symbol)
+                reserved_market_assets.add((market["market_id"], symbol))
         return signals
 
     # ── Exits ────────────────────────────────────────────────────────────
@@ -325,14 +380,27 @@ class StrategyEngine:
                 )
             )
             prob_path = _prob_path(await store.daily_prob_closes(pos["market_id"]))
-            reason, peak_ret = _existing_position_exit(
+            decision = _existing_position_exit_decision(
                 pos, price_path, prob_path, self.policy, now,
             )
+            reason, peak_ret = decision.reason, decision.peak_ret
             if abs(peak_ret - float(pos.get("peak_ret") or 0.0)) > 1e-9:
                 await store.update_peak(pos["position_id"], peak_ret)
             if reason is not None:
+                if hasattr(store, "upsert_policy_exit_audit"):
+                    await store.upsert_policy_exit_audit(
+                        position=pos,
+                        reason=reason,
+                        triggered_at=decision.triggered_at or now,
+                        model_exit_price=decision.model_exit_price,
+                        model_price_source=decision.model_price_source,
+                        observed_at=now,
+                    )
                 signals.append(ExitSignal(
                     position_id=pos["position_id"], symbol=pos["symbol"],
                     qty=int(pos["qty"]), reason=reason,
+                    triggered_at=decision.triggered_at,
+                    model_exit_price=decision.model_exit_price,
+                    model_price_source=decision.model_price_source,
                 ))
         return signals

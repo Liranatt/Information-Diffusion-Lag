@@ -2,13 +2,15 @@ from __future__ import annotations
 
 import asyncio
 from datetime import datetime, timedelta, timezone
+import pandas as pd
 import pytest
 
 from live.performance import excess_performance, passive_equity, passive_units
 from live.config import LiveConfig
 from live.control_pipeline import ControlPipeline
 from live.data_fetcher import _partition_session_rows
-from live.strategy_engine import StrategyEngine
+from live.dashboard import _broker_series
+from live.strategy_engine import StrategyEngine, _existing_position_exit_decision
 
 
 def test_passive_benchmark_applies_external_flows_at_their_own_spy_price():
@@ -56,6 +58,7 @@ class _ExitStore:
         self.bars = bars or []
         self.probs = probs or []
         self.peaks = []
+        self.audits = []
 
     async def daily_bars_since(self, _symbol, _since):
         return self.bars
@@ -65,6 +68,9 @@ class _ExitStore:
 
     async def update_peak(self, position_id, peak):
         self.peaks.append((position_id, peak))
+
+    async def upsert_policy_exit_audit(self, **kwargs):
+        self.audits.append(kwargs)
 
 
 def test_live_position_without_an_exit_remains_open_before_resolution():
@@ -110,6 +116,114 @@ def test_live_probability_exit_uses_actual_position_not_reconstructed_entry():
 
     assert len(exits) == 1
     assert exits[0].reason == "probability-out"
+    assert store.audits[0]["reason"] == "probability-out"
+    assert store.audits[0]["model_exit_price"] == pytest.approx(101.0)
+
+
+def test_exit_audit_models_gap_through_stop_at_daily_open():
+    now = datetime(2026, 7, 31, 21, 0, tzinfo=timezone.utc)
+    position = _position(now)
+    decision = _existing_position_exit_decision(
+        position,
+        [(
+            now.replace(hour=0), 80.0, 90.0, 79.0, 85.0,
+        )],
+        [(now.replace(hour=0), 0.8)],
+        _exit_policy(),
+        now,
+    )
+
+    assert decision.reason == "trailing-ATR"
+    assert decision.model_exit_price == pytest.approx(80.0)
+    assert decision.model_price_source == "daily_policy_stop"
+
+
+def test_resolution_audit_survives_total_price_and_probability_outage():
+    now = datetime(2026, 7, 31, 14, 0, tzinfo=timezone.utc)
+    cutoff = now - timedelta(minutes=5)
+    position = _position(now, t_e=cutoff + timedelta(days=1))
+
+    decision = _existing_position_exit_decision(
+        position, [], [], _exit_policy(), now,
+    )
+
+    assert decision.reason == "resolution-1d"
+    assert decision.triggered_at == cutoff
+    assert decision.model_exit_price is None
+
+
+def test_verified_broker_series_marks_long_missing_interval_without_fake_line():
+    rows = [
+        {
+            "ts": datetime(2026, 7, 31, tzinfo=timezone.utc),
+            "broker_observed_at": datetime(2026, 7, 31, tzinfo=timezone.utc),
+            "equity": 249_500.0,
+            "passive_equity": 251_400.0,
+        },
+        {
+            "ts": datetime(2026, 7, 9, tzinfo=timezone.utc),
+            "broker_observed_at": datetime(2026, 7, 9, tzinfo=timezone.utc),
+            "equity": 251_760.0,
+            "passive_equity": 251_760.0,
+        },
+    ]
+
+    series = _broker_series(rows, None)
+
+    assert series[0]["gap_before"] is False
+    assert series[1]["gap_before"] is True
+
+
+def test_entry_scan_reserves_symbol_after_first_signal(monkeypatch):
+    now = datetime(2026, 7, 31, 21, 0, tzinfo=timezone.utc)
+    day = pd.Timestamp(now).normalize()
+    policy = {
+        **_exit_policy(),
+        "enter_strong": 0.7,
+        "enter_floor": 0.7,
+        "hold_days": 1,
+        "max_prob_surge": 1.0,
+        "max_price_runup": 1.0,
+    }
+    engine = StrategyEngine(policy)
+
+    async def candidate(_store, **kwargs):
+        market_id = kwargs["market_id"]
+        path = [
+            (day - pd.Timedelta(days=1), 101.0, 99.0, 100.0),
+            (day, 102.0, 100.0, 101.0),
+        ]
+        row = {
+            "feat_prob_surge_since_t0": 0.0,
+            "feat_runup_since_t0": 0.0,
+        }
+        probs = {market_id: [(day, 0.8)]}
+        return row, {}, probs, path, day
+
+    monkeypatch.setattr(engine, "_candidate", candidate)
+    monkeypatch.setattr("live.strategy_engine.entry_day", lambda *_args: (day, 0.8))
+    monkeypatch.setattr("live.strategy_engine.calc_atr", lambda *_args: 1.0)
+    monkeypatch.setattr(
+        "live.strategy_engine.resolve_polarity", lambda *_args: (1, "test"),
+    )
+    markets = [
+        {
+            "market_id": "m1", "end_at": now + timedelta(days=10),
+            "question": "Will Apple beat earnings?", "is_earnings": True,
+            "assets": [{"symbol": "AAPL", "connection_strength": 1.0}],
+            "created_at": now - timedelta(days=5),
+        },
+        {
+            "market_id": "m2", "end_at": now + timedelta(days=11),
+            "question": "Will Apple release a product?", "is_earnings": False,
+            "assets": [{"symbol": "AAPL", "connection_strength": 1.0}],
+            "created_at": now - timedelta(days=5),
+        },
+    ]
+
+    signals = asyncio.run(engine.scan_entries(None, markets, set(), set(), now=now))
+
+    assert [(signal.market_id, signal.symbol) for signal in signals] == [("m1", "AAPL")]
 
 
 def test_live_probability_exit_applies_bearish_signal_polarity(monkeypatch):

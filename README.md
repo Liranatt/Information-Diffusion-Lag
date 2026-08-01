@@ -158,9 +158,11 @@ pytest testing/
 `--backfill` and `--live` make paid Gemini calls (catalyst gate + asset mapping);
 `--rebuild` is free (DB reads + file writes only).
 
-The live NAV is reconciled from a **cash ledger** (`start equity − net filled
-buys − commissions + market value`), not IB's `NetLiquidation`, so it is immune
-to IB paper-account ghost-fill inflation (`live/database.py:reconciled_cash`).
+Live NAV, cash, holdings, marks, fills, slippage, and commissions come from
+**Interactive Brokers**. Postgres is only a cache/audit trail and never
+overrules the broker for sizing or execution. Performance uses a preserved IB
+NAV/SPY baseline plus dated external cash flows; legacy internal-ledger NAV
+rows remain available for audit but are excluded from verified performance.
 
 ## Working hours
 

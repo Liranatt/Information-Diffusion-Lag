@@ -589,8 +589,8 @@ class OrderManager:
         if fill_price is None:
             return False
 
-        sell_cost = float(self.last_commission or 0.0)
-        proceeds = qty * fill_price - sell_cost
+        current_sell_cost = float(self.last_commission or 0.0)
+        proceeds = qty * fill_price - current_sell_cost
         rebuy_budget = proceeds
         if cash < 0:
             rebuy_budget = max(0.0, proceeds + cash)
@@ -615,22 +615,42 @@ class OrderManager:
                 if rebuy_fill is not None:
                     rebuy_cost = float(self.last_commission or 0.0)
 
-        gross_pnl = qty * (fill_price - float(pos["entry_price"]))
-        exit_costs = sell_cost + rebuy_cost
+        # A previous tick may have sold part of this position before IB
+        # confirmed the cancellation.  Closing on only today's remainder would
+        # understate both proceeds and P&L, so aggregate every executed exit
+        # slice recorded for this position.
+        aggregate = None
+        summary_method = getattr(self.store, "position_exit_fill_summary", None)
+        if summary_method is not None:
+            aggregate = await summary_method(int(pos["position_id"]))
+        closed_qty = float(aggregate["qty"]) if aggregate else float(qty)
+        aggregate_exit_price = (
+            float(aggregate["avg_price"]) if aggregate else float(fill_price)
+        )
+        aggregate_sell_cost = (
+            float(aggregate["commission"]) if aggregate else current_sell_cost
+        )
+        gross_pnl = closed_qty * (
+            aggregate_exit_price - float(pos["entry_price"])
+        )
+        exit_costs = aggregate_sell_cost + rebuy_cost
         net_pnl = gross_pnl - float(pos["entry_costs"] or 0.0) - exit_costs
-        exposure = max(qty * float(pos["entry_price"]), 1e-12)
+        exposure = max(closed_qty * float(pos["entry_price"]), 1e-12)
 
         await self.store.close_position(
             int(pos["position_id"]),
             exit_ts=datetime.now(timezone.utc),
-            exit_price=fill_price,
+            exit_price=aggregate_exit_price,
             exit_reason=reason,
             exit_costs=exit_costs,
             pnl=round(net_pnl, 2),
             pnl_pct=round(net_pnl / exposure * 100.0, 4),
+            pnl_source="IB_execution_aggregate",
         )
-        log.info("EXIT %s x%g @ %.2f (%s) pnl=%.2f", pos["symbol"], qty, fill_price,
-                 reason, net_pnl)
+        log.info(
+            "EXIT %s x%g @ %.2f (%s) pnl=%.2f",
+            pos["symbol"], closed_qty, aggregate_exit_price, reason, net_pnl,
+        )
         await self.confirm_broker_cash()
         return True
 

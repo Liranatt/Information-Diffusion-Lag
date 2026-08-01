@@ -258,3 +258,65 @@ def test_execution_audit_copies_fill_price_quantity_and_commission_from_ib():
         "operation_id": None,
     }]
     assert OrderManager._fill_commission(trade) == pytest.approx(0.35)
+
+
+class _PartialExitStore:
+    def __init__(self):
+        self.closed = None
+
+    async def latest_close(self, _symbol: str):
+        return 58.80
+
+    async def position_exit_fill_summary(self, _position_id: int):
+        return {
+            "qty": 318.0,
+            "avg_price": (230.0 * 58.75 + 88.0 * 58.79) / 318.0,
+            "commission": 1.473898 + 1.123999,
+        }
+
+    async def close_position(self, position_id: int, **kwargs):
+        self.closed = {"position_id": position_id, **kwargs}
+
+
+class _PartialExitIB:
+    async def portfolio_positions(self):
+        return {"UNTY": 88.0}
+
+
+class _CompletingPartialExitManager(OrderManager):
+    async def _execute(self, _symbol: str, _action: str, _qty: float, **_kwargs):
+        self.last_commission = 1.123999
+        return 58.79
+
+
+def test_completed_partial_exit_aggregates_all_prior_fill_slices_for_pnl():
+    async def run():
+        store = _PartialExitStore()
+        manager = _CompletingPartialExitManager(
+            LiveConfig(dry_run=True), _PartialExitIB(), store
+        )
+        manager.seed_broker_state({
+            "cash": 0.0,
+            "ib_positions": {"UNTY": 88.0},
+        })
+        closed = await manager.exit_position(
+            {
+                "position_id": 64,
+                "symbol": "UNTY",
+                "entry_price": 56.71356225,
+                "entry_costs": 0.0,
+            },
+            "resolution-1d",
+            None,
+        )
+        return store, closed
+
+    store, closed = asyncio.run(run())
+
+    assert closed is True
+    assert store.closed["position_id"] == 64
+    assert store.closed["exit_price"] == pytest.approx(58.7610691824)
+    assert store.closed["exit_costs"] == pytest.approx(2.597897)
+    assert store.closed["pnl"] == pytest.approx(648.51)
+    assert store.closed["pnl_pct"] == pytest.approx(3.5959)
+    assert store.closed["pnl_source"] == "IB_execution_aggregate"

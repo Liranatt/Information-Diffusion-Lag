@@ -81,7 +81,7 @@ function renderShell(){
         <div id="alerts"></div>
         <div class="row commandStrip" id="commandStrip"></div>
         <div class="row c2">
-          <div class="card"><h3>Verified IB NAV vs passive benchmark</h3><div class="chartWrap"><div id="chart"></div><div class="chartTip" id="chartTip"></div></div>
+          <div class="card"><h3>Verified IB NAV vs passive benchmark</h3><div class="hint" id="historyCoverage">Loading verified broker history...</div><div class="chartWrap"><div id="chart"></div><div class="chartTip" id="chartTip"></div></div>
             <div class="legrow"><span><i style="border-color:var(--brand)"></i>Strategy equity</span><span><i style="border-color:var(--faint);border-top-style:dashed"></i>Passive benchmark</span></div></div>
           <div class="card"><h3>Capital allocation</h3><div class="alloc"><div class="donut"><div id="donut"></div><div class="ctr"><b id="invpct">-</b><span>invested</span></div></div><div class="leg" id="alloclegend"></div></div></div>
         </div>
@@ -93,6 +93,10 @@ function renderShell(){
 
       <section class="view" id="portfolio">
         <div id="palerts"></div>
+        <div class="row c2b">
+          <div class="card"><h3>Policy exits vs actual IB holdings</h3><div class="hint">Explanatory audit only. A modeled exit is never presented as an IB fill.</div><div class="tw" id="policyExits"></div></div>
+          <div class="card"><h3>Policy target now, no orders sent</h3><div class="hint" id="policyTargetNote">Calculated from IB inventory and recorded strategy data.</div><div class="tw" id="policyTarget"></div></div>
+        </div>
         <div class="card" style="margin-bottom:16px"><h3>Open positions, runup, Kelly & exits</h3>
           <div class="hint">T0 is the first tracked baseline. Entry diagnostics compare probability and stock movement before the live policy fired.</div>
           <div class="tw" id="positions"></div></div>
@@ -197,7 +201,23 @@ function areaChart(el, series, tipId="chartTip"){
   const times=pts.map(p=>new Date(p.ts).getTime()), tlo=Math.min(...times), thi=Math.max(...times), tsp=thi-tlo;
   const X=i=>tsp ? pl+(times[i]-tlo)*(W-pl-pr)/tsp : pl+i*(W-pl-pr)/(pts.length-1), Y=v=>H-pb-(v-lo)/sp*(H-pt-pb);
   const pe=pts.map((p,i)=>[X(i),Y(p.equity)]), pp=pts.map((p,i)=>[X(i),Y(p.passive == null ? p.equity : p.passive)]);
-  const area=smooth(pe)+` L ${X(pts.length-1)} ${H-pb} L ${pl} ${H-pb} Z`;
+  const segmentIndexes=[];
+  pts.forEach((p,i)=>{
+    if(i===0 || p.gap_before) segmentIndexes.push([]);
+    segmentIndexes[segmentIndexes.length-1].push(i);
+  });
+  const eqPaths=segmentIndexes.map(ids=>smooth(ids.map(i=>pe[i]))).filter(Boolean);
+  const passivePaths=segmentIndexes.map(ids=>smooth(ids.map(i=>pp[i]))).filter(Boolean);
+  const areas=segmentIndexes.map(ids=>{
+    if(ids.length<2) return "";
+    const line=smooth(ids.map(i=>pe[i])), first=ids[0], last=ids[ids.length-1];
+    return `<path d="${line} L ${X(last)} ${H-pb} L ${X(first)} ${H-pb} Z" fill="url(#navArea)"/>`;
+  }).join("");
+  const gaps=segmentIndexes.slice(1).map((ids,segNo)=>{
+    const prev=segmentIndexes[segNo], left=X(prev[prev.length-1]), right=X(ids[0]);
+    const width=Math.max(2,right-left);
+    return `<rect x="${left}" y="${pt}" width="${width}" height="${H-pt-pb}" fill="#F3EEE4" opacity=".78"/><line x1="${left}" y1="${pt}" x2="${left}" y2="${H-pb}" stroke="${C.warn}" stroke-dasharray="3 4"/><line x1="${right}" y1="${pt}" x2="${right}" y2="${H-pb}" stroke="${C.warn}" stroke-dasharray="3 4"/><text x="${(left+right)/2}" y="${pt+14}" text-anchor="middle" fill="${C.warn}" font-size="10.5" font-family="var(--num)">NO VERIFIED IB NAV DATA</text>`;
+  }).join("");
   const grid=[0,.25,.5,.75,1].map(f=>{const y=pt+f*(H-pt-pb), v=hi-f*sp;
     return `<line x1="${pl}" y1="${y.toFixed(1)}" x2="${W-pr}" y2="${y.toFixed(1)}" stroke="${C.grid}"/><text x="${pl-8}" y="${y+4}" fill="${C.faint}" font-size="10.5" text-anchor="end" font-family="var(--num)">${(v/1000).toFixed(1)}k</text>`;
   }).join("");
@@ -206,8 +226,8 @@ function areaChart(el, series, tipId="chartTip"){
   const axisLabel = s => sameDay ? new Date(s).toLocaleTimeString(LOCALE,{hour:"2-digit",minute:"2-digit"}) : dday(s);
   el.innerHTML = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Strategy equity versus passive benchmark chart">
     <defs><linearGradient id="navArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${C.brand}" stop-opacity=".18"/><stop offset="1" stop-color="${C.brand}" stop-opacity="0"/></linearGradient></defs>
-    ${grid}<path d="${area}" fill="url(#navArea)"/><path d="${smooth(pp)}" fill="none" stroke="${C.faint}" stroke-width="1.8" stroke-dasharray="5 4"/>
-    <path d="${smooth(pe)}" fill="none" stroke="${C.brand}" stroke-width="2.6" stroke-linecap="round"/>
+    ${grid}${gaps}${areas}${passivePaths.map(path=>`<path d="${path}" fill="none" stroke="${C.faint}" stroke-width="1.8" stroke-dasharray="5 4"/>`).join("")}
+    ${eqPaths.map(path=>`<path d="${path}" fill="none" stroke="${C.brand}" stroke-width="2.6" stroke-linecap="round"/>`).join("")}
     <circle cx="${X(pts.length-1)}" cy="${lastY}" r="4" fill="${C.brand}"/><text x="${W-pr+8}" y="${lastY+4}" fill="${C.brand}" font-size="11" font-family="var(--num)">${usd0(last.equity)}</text>
     <text x="${pl}" y="${H-8}" fill="${C.faint}" font-size="10.5" font-family="var(--num)">${axisLabel(pts[0].ts)}</text><text x="${W-pr}" y="${H-8}" fill="${C.faint}" font-size="10.5" text-anchor="end" font-family="var(--num)">${axisLabel(pts[pts.length-1].ts)}</text>
   </svg>`;
@@ -215,7 +235,8 @@ function areaChart(el, series, tipId="chartTip"){
   svg.onmousemove = (ev) => {
     const r = svg.getBoundingClientRect();
     const rel = Math.min(1, Math.max(0, (ev.clientX-r.left) / r.width));
-    const i = Math.min(pts.length-1, Math.max(0, Math.round(rel*(pts.length-1))));
+    const wanted=tlo+rel*tsp;
+    const i=times.reduce((best,t,idx)=>Math.abs(t-wanted)<Math.abs(times[best]-wanted)?idx:best,0);
     const p = pts[i], passive = p.passive == null ? null : p.passive;
     tip.style.display = "block"; tip.style.left = (ev.clientX-r.left+14) + "px"; tip.style.top = (ev.clientY-r.top+10) + "px";
     tip.innerHTML = `${dt(p.ts)}<br>Strategy ${usd(p.equity)}${passive == null ? "" : `<br>Passive ${usd(passive)}<br>Excess ${susd(p.equity-passive)}`}`;
@@ -402,12 +423,44 @@ async function refresh(){
   const li=(c,nm,v,pc)=>`<div class="it"><span class="sw" style="background:${c}"></span><span class="nm">${esc(nm)}</span><span class="vl">${usd0(v)}</span><span class="pc">${nn(pc,1)}%</span></div>`;
   $("#alloclegend").innerHTML = li(C.brand,d.benchmark+" index",a.spy_value,a.spy_pct) + li(C.sky,`Event trades (${p.open_positions})`,a.trades_value,a.trades_pct) + li("#cbd5e1","Idle cash",a.cash,a.cash_pct) + `<div class="it"><span class="nm mut" style="font-size:11.5px">${nn(a.bench_shares,3)} ${esc(d.benchmark)} @ ${usd(a.bench_price)}</span></div>`;
   areaChart($("#chart"), d.equity_series, "chartTip");
+  const hist=d.equity_history || {};
+  $("#historyCoverage").innerHTML = hist.verified_points
+    ? `${hist.verified_points} verified IB snapshots from ${dday(hist.start)} to ${dday(hist.end)}${hist.gap_count ? ` | <span class="warn">${hist.gap_count} missing interval shown explicitly</span>` : " | continuous coverage"}`
+    : "No verified IB NAV history is available.";
 
   renderPositions(d.open_positions || []);
+  renderPolicyAudit(d.policy_audit || {});
   renderOrdersTrades(d);
   renderWatchlist(d);
   renderDiagnostics(d, openPnl);
   loadAllPositionHistories(); // async, fire-and-forget — charts load after DOM is ready
+}
+
+function renderPolicyAudit(audit){
+  const exits=audit.required_exits || [];
+  $("#policyExits").innerHTML = table(exits, [
+    {h:"Sym",f:r=>esc(r.symbol)},
+    {h:"Rule",f:r=>esc(r.reason)},
+    {h:"Executable",n:1,f:r=>r.first_executable_at ? dt(r.first_executable_at) : "Next session"},
+    {h:"Model exit",n:1,f:r=>r.model_exit_price==null ? "-" : usd(r.model_exit_price)},
+    {h:"PnL then",n:1,f:r=>susd(r.expected_net_before_exit_cost),cl:r=>cl(r.expected_net_before_exit_cost)},
+    {h:"IB PnL now",n:1,f:r=>susd(r.current_ib_unrealized_pnl),cl:r=>cl(r.current_ib_unrealized_pnl)},
+    {h:"Status",f:r=>`<span class="tag ${String(r.status).startsWith("missed")?"bad":r.status==="pending_next_market_session"?"warn":"ok"}">${esc(String(r.status).replaceAll("_"," "))}</span>`}
+  ]);
+  const target=audit.target;
+  if(!target){
+    $("#policyTarget").innerHTML = `<div class="empty">Target calculation has not been rebuilt yet.</div>`;
+    return;
+  }
+  const rows=target.target_positions || [];
+  $("#policyTargetNote").textContent = `As of ${dt(target.as_of)}. Residual ${usd0(target.benchmark_residual)} belongs in ${"SPY"}. No order was sent.`;
+  $("#policyTarget").innerHTML = table(rows, [
+    {h:"Role",f:r=>`<span class="tag ${r.role==="retain_IB_position"?"ok":"brand"}">${r.role==="retain_IB_position"?"Retain":"Candidate"}</span>`},
+    {h:"Sym",f:r=>esc(r.symbol)},
+    {h:"Qty",n:1,f:r=>nn(r.qty==null?r.model_qty:r.qty,0)},
+    {h:"Reference",n:1,f:r=>usd(r.last==null?r.reference_price:r.last)},
+    {h:"Why",f:r=>esc(r.question || r.source || "IB position has no exit signal"),cl:()=>"q"}
+  ]);
 }
 
 function renderPositions(rows){
@@ -431,11 +484,12 @@ function renderPositions(rows){
   });
 }
 function positionDetail(r){
+  const audit=r.policy_exit ? `<div class="detailBlock"><div class="k">Policy exit audit (not an IB fill)</div><div class="v">${esc(r.policy_exit.reason)} | Trigger ${dt(r.policy_exit.triggered_at)} | Model ${usd(r.policy_exit.model_exit_price)} | PnL then ${susd(r.policy_exit.expected_net_before_exit_cost)} | ${esc(r.policy_exit.status)}</div></div>` : "";
   return `<tr class="detailRow"><td colspan="15"><div class="positionDetail">
     <div class="detailBlock"><div class="k">Why this trade exists</div><div class="v">${esc(r.question)}</div></div>
     <div class="detailBlock"><div class="k">Signal probability (${r.polarity===-1 ? "NO side" : "YES side"})</div><div class="v">T0 ${nn(r.t0_prob,3)} | Entry ${nn(r.entry_prob,3)} | Now ${nn(r.prob_now,3)} | d ${r.prob_runup_pp==null ? "-" : sg(r.prob_runup_pp,1)+"pp"}</div></div>
     <div class="detailBlock"><div class="k">Stock path</div><div class="v">T0 ${usd(r.stock_t0)} | T0->entry ${r.stock_entry_runup_pct==null ? "-" : pct(r.stock_entry_runup_pct,2)} | T0->now ${r.stock_runup_pct==null ? "-" : pct(r.stock_runup_pct,2)}</div></div>
-    <div class="detailBlock"><div class="k">Exit pressure</div><div class="v">Stop dist ${r.stop_distance_pct==null ? "-" : pct(r.stop_distance_pct,2)} | Theta dist ${r.theta_distance_pp==null ? "-" : sg(r.theta_distance_pp,1)+"pp"} | Exit cutoff ${r.days_to_exit==null ? "-" : nn(r.days_to_exit,1)+"d"} | Resolves ${dt(r.resolution_ts)}</div></div>
+    <div class="detailBlock"><div class="k">Exit pressure</div><div class="v">Stop dist ${r.stop_distance_pct==null ? "-" : pct(r.stop_distance_pct,2)} | Theta dist ${r.theta_distance_pp==null ? "-" : sg(r.theta_distance_pp,1)+"pp"} | Exit cutoff ${r.days_to_exit==null ? "-" : nn(r.days_to_exit,1)+"d"} | Resolves ${dt(r.resolution_ts)}</div></div>${audit}
   </div>
   <div id="pos-history-${r.position_id}" class="chartWrap" style="margin-top:12px;min-height:52px"></div>
   </td></tr>`;
