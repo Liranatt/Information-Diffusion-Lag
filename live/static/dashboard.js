@@ -93,10 +93,6 @@ function renderShell(){
 
       <section class="view" id="portfolio">
         <div id="palerts"></div>
-        <div class="row c2b">
-          <div class="card"><h3>Policy exits vs actual IB holdings</h3><div class="hint">Explanatory audit only. A modeled exit is never presented as an IB fill.</div><div class="tw" id="policyExits"></div></div>
-          <div class="card"><h3>Policy target now, no orders sent</h3><div class="hint" id="policyTargetNote">Calculated from IB inventory and recorded strategy data.</div><div class="tw" id="policyTarget"></div></div>
-        </div>
         <div class="card" style="margin-bottom:16px"><h3>Open positions, runup, Kelly & exits</h3>
           <div class="hint">T0 is the first tracked baseline. Entry diagnostics compare probability and stock movement before the live policy fired.</div>
           <div class="tw" id="positions"></div></div>
@@ -429,38 +425,10 @@ async function refresh(){
     : "No verified IB NAV history is available.";
 
   renderPositions(d.open_positions || []);
-  renderPolicyAudit(d.policy_audit || {});
   renderOrdersTrades(d);
   renderWatchlist(d);
   renderDiagnostics(d, openPnl);
   loadAllPositionHistories(); // async, fire-and-forget — charts load after DOM is ready
-}
-
-function renderPolicyAudit(audit){
-  const exits=audit.required_exits || [];
-  $("#policyExits").innerHTML = table(exits, [
-    {h:"Sym",f:r=>esc(r.symbol)},
-    {h:"Rule",f:r=>esc(r.reason)},
-    {h:"Executable",n:1,f:r=>r.first_executable_at ? dt(r.first_executable_at) : "Next session"},
-    {h:"Model exit",n:1,f:r=>r.model_exit_price==null ? "-" : usd(r.model_exit_price)},
-    {h:"PnL then",n:1,f:r=>susd(r.expected_net_before_exit_cost),cl:r=>cl(r.expected_net_before_exit_cost)},
-    {h:"IB PnL now",n:1,f:r=>susd(r.current_ib_unrealized_pnl),cl:r=>cl(r.current_ib_unrealized_pnl)},
-    {h:"Status",f:r=>`<span class="tag ${String(r.status).startsWith("missed")?"bad":r.status==="pending_next_market_session"?"warn":"ok"}">${esc(String(r.status).replaceAll("_"," "))}</span>`}
-  ]);
-  const target=audit.target;
-  if(!target){
-    $("#policyTarget").innerHTML = `<div class="empty">Target calculation has not been rebuilt yet.</div>`;
-    return;
-  }
-  const rows=target.target_positions || [];
-  $("#policyTargetNote").textContent = `As of ${dt(target.as_of)}. Residual ${usd0(target.benchmark_residual)} belongs in ${"SPY"}. No order was sent.`;
-  $("#policyTarget").innerHTML = table(rows, [
-    {h:"Role",f:r=>`<span class="tag ${r.role==="retain_IB_position"?"ok":"brand"}">${r.role==="retain_IB_position"?"Retain":"Candidate"}</span>`},
-    {h:"Sym",f:r=>esc(r.symbol)},
-    {h:"Qty",n:1,f:r=>nn(r.qty==null?r.model_qty:r.qty,0)},
-    {h:"Reference",n:1,f:r=>usd(r.last==null?r.reference_price:r.last)},
-    {h:"Why",f:r=>esc(r.question || r.source || "IB position has no exit signal"),cl:()=>"q"}
-  ]);
 }
 
 function renderPositions(rows){

@@ -320,10 +320,6 @@ async def gather_metrics() -> dict:
             f"""SELECT * FROM {SCHEMA}.live_policy_exit_audit
                 ORDER BY triggered_at, symbol"""
         )
-        policy_target = await conn.fetchrow(
-            f"""SELECT * FROM {SCHEMA}.live_policy_target_snapshots
-                WHERE snapshot_key='latest'"""
-        )
         trades = await conn.fetch(
             f"""SELECT symbol, pnl, pnl_pct, exit_reason, exit_ts, pnl_source, pnl_verified
                 FROM {SCHEMA}.live_positions WHERE status='closed' AND pnl_verified
@@ -942,44 +938,6 @@ async def gather_metrics() -> dict:
             "gap_count": history_gaps,
             "continuous": history_gaps == 0,
             "source": "IB_only",
-        },
-        "policy_audit": {
-            "required_exits": [
-                {
-                    "position_id": int(row["position_id"]),
-                    "symbol": row["symbol"],
-                    "qty": round(float(row["qty"]), 4),
-                    "reason": row["expected_exit_reason"],
-                    "triggered_at": _iso(row["triggered_at"]),
-                    "first_executable_at": _iso(row["first_executable_at"]),
-                    "model_exit_price": round(float(row["model_exit_price"]), 4)
-                        if row["model_exit_price"] is not None else None,
-                    "expected_net_before_exit_cost": round(float(row["expected_net_before_exit_cost"]), 2)
-                        if row["expected_net_before_exit_cost"] is not None else None,
-                    "current_ib_unrealized_pnl": round(float(row["current_ib_unrealized_pnl"]), 2)
-                        if row["current_ib_unrealized_pnl"] is not None else None,
-                    "post_exit_opportunity_delta": round(float(row["post_exit_opportunity_delta"]), 2)
-                        if row["post_exit_opportunity_delta"] is not None else None,
-                    "status": row["actual_ib_status"],
-                    "price_source": row["model_price_source"],
-                }
-                for row in policy_exit_rows
-            ],
-            "target": (
-                {
-                    "as_of": _iso(policy_target["as_of"]),
-                    "retained_positions": _json_data(policy_target["retained_positions"], []),
-                    "required_exits": _json_data(policy_target["required_exits"], []),
-                    "replacement_candidates": _json_data(policy_target["replacement_candidates"], []),
-                    "target_positions": _json_data(policy_target["target_positions"], []),
-                    "benchmark_residual": _f(policy_target["benchmark_residual"]),
-                    "method": policy_target["method"],
-                    "note": policy_target["note"],
-                }
-                if policy_target else None
-            ),
-            "actual_source_of_truth": "IB",
-            "executes_orders": False,
         },
         "exec": {
             "filled": filled, "recent": len(orders), "failed": failed,
