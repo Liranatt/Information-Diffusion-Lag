@@ -175,6 +175,8 @@ class ControlPipeline:
             )
             await self.sync_ib_executions()
             await self.record_reconciliation(snapshot, snapshot["observed_at"])
+            if await self.settle_broker_closed_positions(snapshot):
+                snapshot = await positions.snapshot()
             if snapshot.get("metadata_gaps"):
                 log.warning(
                     "IB positions without strategy metadata (still authoritative): %s",
@@ -304,10 +306,23 @@ class ControlPipeline:
         current_snapshot = snapshot
         for signal in exits:
             pos = by_id[signal.position_id]
-            closed = await orders.exit_position(
-                pos, signal.reason, current_snapshot["benchmark_price"],
-                cash=float(current_snapshot.get("cash") or 0.0),
-            )
+            try:
+                closed = await orders.exit_position(
+                    pos, signal.reason, current_snapshot["benchmark_price"],
+                    cash=float(current_snapshot.get("cash") or 0.0),
+                )
+            except Exception as error:  # noqa: BLE001 - a sell may already be filled
+                # The IB leg can be executed before the failure (bookkeeping,
+                # DB outage). Never let that abort the whole tick: stop placing
+                # dependent orders, and let the next tick settle the position
+                # from IB's own fills (settle_broker_closed_positions).
+                orders.execution_anomaly = True
+                log.exception(
+                    "exit bookkeeping failed for %s (position %s); stopping the "
+                    "exit chain, IB fills remain the source of truth: %s",
+                    pos["symbol"], pos["position_id"], error,
+                )
+                break
             if orders.execution_anomaly:
                 break
             if closed:
@@ -478,6 +493,69 @@ class ControlPipeline:
                 log.info("synced %d IB executions", len(fills))
         except Exception as error:  # noqa: BLE001 - audit sync must not trade
             log.warning("IB execution sync failed: %s", error)
+
+    async def settle_broker_closed_positions(self, snapshot: dict) -> int:
+        """Close DB rows for positions IB no longer holds, from IB's own fills.
+
+        ``PositionManager.snapshot`` only exposes positions the broker actually
+        owns, so a row left ``open`` after IB is already flat is invisible to the
+        exit scan forever: it shows up on the dashboard as a permanently
+        "exit overdue" position with quantity 0 and its P&L is never realised.
+        That happens whenever the sell filled at IB but the close bookkeeping did
+        not complete.  Settle those rows from the executed exit orders recorded
+        for the position; never fabricate a fill when no execution exists.
+        """
+        assert self.store is not None
+        ib_qty = {
+            str(symbol): float(qty)
+            for symbol, qty in snapshot.get("ib_positions", {}).items()
+        }
+        settled = 0
+        for pos in snapshot.get("db_open_positions", []):
+            symbol = str(pos["symbol"])
+            if abs(ib_qty.get(symbol, 0.0)) > 1e-6:
+                continue
+            aggregate = await self.store.position_exit_fill_summary(
+                int(pos["position_id"])
+            )
+            if aggregate is None:
+                log.warning(
+                    "position %s (%s) is open in the DB but flat at IB with no "
+                    "recorded exit fill -- leaving it for manual review",
+                    pos["position_id"], symbol,
+                )
+                continue
+            closed_qty = float(aggregate["qty"])
+            exit_price = float(aggregate["avg_price"])
+            exit_costs = float(aggregate["commission"]) + float(
+                aggregate.get("rebuy_commission") or 0.0
+            )
+            entry_price = float(pos["entry_price"])
+            gross_pnl = closed_qty * (exit_price - entry_price)
+            net_pnl = gross_pnl - float(pos["entry_costs"] or 0.0) - exit_costs
+            exposure = max(closed_qty * entry_price, 1e-12)
+            exit_ts = aggregate.get("last_exit_ts") or snapshot["observed_at"]
+            await self.store.close_position(
+                int(pos["position_id"]),
+                exit_ts=exit_ts,
+                exit_price=exit_price,
+                exit_reason=str(
+                    aggregate.get("exit_reason")
+                    or pos.get("exit_reason")
+                    or "settled-from-IB-fills"
+                ),
+                exit_costs=exit_costs,
+                pnl=round(net_pnl, 2),
+                pnl_pct=round(net_pnl / exposure * 100.0, 4),
+                pnl_source="IB_execution_aggregate_reconciled",
+            )
+            settled += 1
+            log.warning(
+                "SETTLED %s x%g @ %.2f from IB fills (position %s was open in the "
+                "DB after IB was already flat) pnl=%.2f",
+                symbol, closed_qty, exit_price, pos["position_id"], net_pnl,
+            )
+        return settled
 
     async def record_reconciliation(self, snapshot: dict, observed_at: datetime) -> None:
         """Audit DB metadata gaps against IB without blocking or trading."""

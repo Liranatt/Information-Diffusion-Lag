@@ -781,33 +781,43 @@ class LiveStore:
                              pnl: float, pnl_pct: float,
                              pnl_source: str = "IB_execution") -> None:
         async with self.pool.acquire() as conn:
-            async with conn.transaction():
-                await conn.execute(
-                    f"""UPDATE {SCHEMA}.live_positions
-                        SET status='closed', exit_ts=$2, exit_price=$3, exit_reason=$4,
-                            exit_costs=$5, pnl=$6, pnl_pct=$7,
-                            pnl_source=CASE
-                                WHEN entry_costs_verified THEN $8
-                                ELSE 'IB_exit_with_unverified_entry_costs'
-                            END,
-                            pnl_verified=entry_costs_verified
-                        WHERE position_id=$1""",
-                    position_id, exit_ts, exit_price, exit_reason, exit_costs, pnl, pnl_pct,
-                    pnl_source,
-                )
+            await conn.execute(
+                f"""UPDATE {SCHEMA}.live_positions
+                    SET status='closed', exit_ts=$2, exit_price=$3, exit_reason=$4,
+                        exit_costs=$5, pnl=$6, pnl_pct=$7,
+                        pnl_source=CASE
+                            WHEN entry_costs_verified THEN $8
+                            ELSE 'IB_exit_with_unverified_entry_costs'
+                        END,
+                        pnl_verified=entry_costs_verified
+                    WHERE position_id=$1""",
+                position_id, exit_ts, exit_price, exit_reason, exit_costs, pnl, pnl_pct,
+                pnl_source,
+            )
+            # The audit table is explanatory only. IB has already executed this
+            # exit, so the authoritative close above must never be rolled back
+            # (or the tick aborted) because an explanatory row failed to update.
+            # $2 is cast to timestamptz before ::text so the same parameter can
+            # also feed the timestamptz column below.
+            try:
                 await conn.execute(
                     f"""UPDATE {SCHEMA}.live_policy_exit_audit
                         SET actual_ib_status='executed_at_IB',
                             details=details || jsonb_build_object(
-                                'actual_exit_ts',$2::text,
-                                'actual_exit_price',$3,
-                                'actual_exit_costs',$4,
-                                'actual_pnl',$5
+                                'actual_exit_ts',($2::timestamptz)::text,
+                                'actual_exit_price',$3::double precision,
+                                'actual_exit_costs',$4::double precision,
+                                'actual_pnl',$5::double precision
                             ),
                             last_observed_at=$2,
                             calculated_at=NOW()
                         WHERE position_id=$1""",
                     position_id, exit_ts, exit_price, exit_costs, pnl,
+                )
+            except Exception as error:  # noqa: BLE001 - audit must not undo a close
+                log.warning(
+                    "policy-exit audit update failed for position %s (the close "
+                    "itself is committed): %s", position_id, error,
                 )
 
     async def upsert_policy_exit_audit(
@@ -976,9 +986,18 @@ class LiveStore:
             row = await conn.fetchrow(
                 f"""SELECT SUM(qty) AS qty,
                            SUM(qty * fill_price) / NULLIF(SUM(qty), 0) AS avg_price,
-                           SUM(COALESCE(commission, 0)) AS commission
+                           SUM(COALESCE(commission, 0)) AS commission,
+                           MAX(ts) AS last_exit_ts,
+                           (ARRAY_AGG(note ORDER BY ts DESC))[1] AS exit_reason
                     FROM {SCHEMA}.live_orders
                     WHERE position_id=$1 AND kind='exit' AND action='SELL'
+                      AND fill_price IS NOT NULL AND qty > 0""",
+                position_id,
+            )
+            rebuy = await conn.fetchrow(
+                f"""SELECT SUM(COALESCE(commission, 0)) AS commission
+                    FROM {SCHEMA}.live_orders
+                    WHERE position_id=$1 AND kind='rotation_rebuy'
                       AND fill_price IS NOT NULL AND qty > 0""",
                 position_id,
             )
@@ -988,6 +1007,9 @@ class LiveStore:
             "qty": float(row["qty"]),
             "avg_price": float(row["avg_price"]),
             "commission": float(row["commission"] or 0.0),
+            "rebuy_commission": float((rebuy["commission"] if rebuy else 0.0) or 0.0),
+            "last_exit_ts": row["last_exit_ts"],
+            "exit_reason": row["exit_reason"],
         }
 
     async def realized_trades(self, limit: int = 50) -> list[dict]:
