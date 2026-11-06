@@ -121,8 +121,9 @@ async def build_plan_track(pool, cfg: LiveConfig = CONFIG) -> dict | None:
                 post = await conn.fetch(
                     f"""SELECT ts, broker_observed_at, equity, benchmark_price
                         FROM {SCHEMA}.live_equity_snapshots
-                        WHERE source='IB_same_snapshot_v2' AND ts > $1
-                        ORDER BY ts""",
+                        WHERE source='IB_same_snapshot_v2'
+                          AND COALESCE(broker_observed_at, ts) > $1
+                        ORDER BY COALESCE(broker_observed_at, ts)""",
                     sync["ts"],
                 )
                 live_closed = await conn.fetch(
