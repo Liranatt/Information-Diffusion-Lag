@@ -83,6 +83,9 @@ def _from_results(path: Path, experiment: str, benchmark: str) -> dict | None:
 
 def kelly_size(completed_history: list[dict], base: float) -> float:
     """Half-Kelly from the latest fully net realised trades (backtest parity)."""
+    # A closed row whose P&L could not be established must not size new trades
+    # (and must never crash the tick).
+    completed_history = [t for t in completed_history if t.get("pnl_pct") is not None]
     if len(completed_history) < KELLY_MIN_N:
         return base
 
