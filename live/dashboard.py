@@ -33,6 +33,7 @@ from core.polarity import resolve_polarity
 
 from .config import CONFIG
 from .database import LiveStore
+from .plan_track import apply_plan_track, build_plan_track
 from .policy import load_live_policy
 from .utils import market_session_status
 
@@ -837,7 +838,7 @@ async def gather_metrics() -> dict:
     live_stats = {**_eqstats(equity_curve), "excess_pct": active_return_pct,
                   "trades": _retstats(live_trade_returns)}
 
-    return {
+    result = {
         "live_stats": live_stats,
         "generated_at": _iso(datetime.now(timezone.utc)), "benchmark": BENCH,
         "experiment": CONFIG.experiment, "tick_seconds": CONFIG.tick_seconds,
@@ -979,6 +980,12 @@ async def gather_metrics() -> dict:
             "total_usd": round(float(cost["total"] or 0.0), 4),
             "today_calls": int(cost["today_calls"] or 0), "total_calls": int(cost["calls"] or 0)},
     }
+    try:
+        plan = await build_plan_track(pool)
+    except Exception as error:  # noqa: BLE001 - fall back to the plain IB view
+        print(f"[dashboard] plan track unavailable: {error}")
+        plan = None
+    return apply_plan_track(result, plan)
 
 
 async def _build_markets_payload(store: LiveStore, markets, upcoming) -> dict:

@@ -81,7 +81,7 @@ function renderShell(){
         <div id="alerts"></div>
         <div class="row commandStrip" id="commandStrip"></div>
         <div class="row c2">
-          <div class="card"><h3>Verified IB NAV vs passive benchmark</h3><div class="hint" id="historyCoverage">Loading verified broker history...</div><div class="chartWrap"><div id="chart"></div><div class="chartTip" id="chartTip"></div></div>
+          <div class="card"><h3 id="navTitle">NAV vs passive benchmark</h3><div class="hint" id="historyCoverage">Loading NAV history...</div><div class="chartWrap"><div id="chart"></div><div class="chartTip" id="chartTip"></div></div>
             <div class="legrow"><span><i style="border-color:var(--brand)"></i>Strategy equity</span><span><i style="border-color:var(--faint);border-top-style:dashed"></i>Passive benchmark</span></div></div>
           <div class="card"><h3>Capital allocation</h3><div class="alloc"><div class="donut"><div id="donut"></div><div class="ctr"><b id="invpct">-</b><span>invested</span></div></div><div class="leg" id="alloclegend"></div></div></div>
         </div>
@@ -388,7 +388,9 @@ async function refresh(){
   renderAlerts($("#alerts"), d.alerts, false);
   renderAlerts($("#palerts"), d.alerts, false);
   const openPnl=(d.open_positions||[]).reduce((s,x)=>s+(x.unrealized||0),0);
-  const excessBasis = p.performance_status === "verified"
+  const excessBasis = p.performance_status === "plan"
+    ? "Plan vs passive benchmark"
+    : p.performance_status === "verified"
     ? "IB snapshot + verified baseline"
     : p.performance_status === "provisional_baseline"
       ? "IB snapshot + provisional baseline"
@@ -420,7 +422,10 @@ async function refresh(){
   $("#alloclegend").innerHTML = li(C.brand,d.benchmark+" index",a.spy_value,a.spy_pct) + li(C.sky,`Event trades (${p.open_positions})`,a.trades_value,a.trades_pct) + li("#cbd5e1","Idle cash",a.cash,a.cash_pct) + `<div class="it"><span class="nm mut" style="font-size:11.5px">${nn(a.bench_shares,3)} ${esc(d.benchmark)} @ ${usd(a.bench_price)}</span></div>`;
   areaChart($("#chart"), d.equity_series, "chartTip");
   const hist=d.equity_history || {};
-  $("#historyCoverage").innerHTML = hist.verified_points
+  $("#navTitle").textContent = hist.source === "plan" ? "Plan NAV vs passive benchmark" : "Verified IB NAV vs passive benchmark";
+  $("#historyCoverage").innerHTML = hist.source === "plan"
+    ? `IB NAV to ${dday(new Date(new Date(hist.plan_start).getTime() - 864e5).toISOString())} | plan from ${dday(hist.plan_start)}: policy fitted on events resolved before that day${hist.synced_at ? ` | IB-tracked since ${dday(hist.synced_at)}` : ""} | through ${dday(hist.end)}`
+    : hist.verified_points
     ? `${hist.verified_points} verified IB snapshots from ${dday(hist.start)} to ${dday(hist.end)}${hist.gap_count ? ` | <span class="warn">${hist.gap_count} missing interval shown explicitly</span>` : " | continuous coverage"}`
     : "No verified IB NAV history is available.";
 
