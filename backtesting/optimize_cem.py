@@ -219,6 +219,9 @@ WF_MIN_FOLDS = 2
 # WF_STEP_MON steps, so one fold starts exactly at the OOS boundary and the
 # policy trading the OOS period is fitted only on t_e < that boundary.
 WF_ANCHOR: pd.Timestamp | None = None
+# When set, no fold starts after this day: the policy fitted at the OOS
+# boundary trades the whole OOS period unchanged (a frozen-policy test).
+WF_FREEZE_AT: pd.Timestamp | None = None
 
 # Every CEM fit is clipped at the next fold/stage boundary. The t_e rule decides
 # whether a row is eligible to fit; the horizon rule prevents path-level leaks.
@@ -2100,6 +2103,8 @@ def cem_search(
 
     max_t = as_utc_day(train_split_df["t_theta"].max()) + pd.Timedelta(days=1)
     folds = create_expanding_wf_folds(train_split_df, max_t)
+    if WF_FREEZE_AT is not None:
+        folds = [fold for fold in folds if fold["eval_start"] <= WF_FREEZE_AT]
     if len(folds) < WF_MIN_FOLDS:
         raise RuntimeError(
             "T2 needs at least "
@@ -2591,6 +2596,14 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--freeze-at-oos-start",
+        action="store_true",
+        help=(
+            "Do not refit inside the OOS period: the policy fitted on events resolved "
+            "before --oos-start trades the entire OOS window."
+        ),
+    )
+    parser.add_argument(
         "--oos-initial-capital",
         type=float,
         default=INITIAL_CAPITAL,
@@ -2615,10 +2628,11 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 
 def main(argv: list[str] | None = None) -> None:
-    global DD_PENALTY, WF_ANCHOR
+    global DD_PENALTY, WF_ANCHOR, WF_FREEZE_AT
     args = _parse_args(argv)
     DD_PENALTY = float(args.dd_penalty)
     WF_ANCHOR = pd.Timestamp(args.oos_start, tz="UTC")
+    WF_FREEZE_AT = WF_ANCHOR if args.freeze_at_oos_start else None
     experiments = _select_experiments(args.experiments)
     benchmarks = tuple(args.benchmarks)
     paths = resolve_output_paths(args.run_id)
@@ -2689,6 +2703,8 @@ def main(argv: list[str] | None = None) -> None:
     )
     max_t = as_utc_day(df["t_theta"].max()) + pd.Timedelta(days=1)
     preview_folds = create_expanding_wf_folds(df, max_t)
+    if WF_FREEZE_AT is not None:
+        preview_folds = [fold for fold in preview_folds if fold["eval_start"] <= WF_FREEZE_AT]
     if not preview_folds:
         raise ValueError("Not enough data to create any Walk-Forward folds.")
     
