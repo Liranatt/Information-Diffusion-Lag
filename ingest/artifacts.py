@@ -12,7 +12,7 @@ that no longer exists, which is why the artifacts had become unreproducible.
 
 The candidate features come from the single `core.features` definitions (via
 `data_loader.build_dataset_from_db`). The split is the fixed OOS boundary
-(t_theta < 2026-01-01 => train, else test); optimize_cem re-derives the actual
+(t_theta < core.policy.PLAN_OOS_START => train, else test); optimize_cem re-derives the actual
 train/OOS partition from that same boundary, so the column is a label.
 
 NOTE: legacy fundamentals / LLM columns that were present in the old parquet
@@ -37,6 +37,7 @@ from ingest.clean_candidates import (
     build_clean_candidate_artifacts,
 )
 from ingest.scanner import MIN_RESOLUTION_DAYS, MAX_RESOLUTION_DAYS
+from core.policy import PLAN_OOS_START
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "data"
@@ -44,7 +45,7 @@ PARQUET = DATA_DIR / "candidates.parquet"
 PRICES_PKL = DATA_DIR / "prices.pkl"
 PROBS_PKL = DATA_DIR / "probs.pkl"
 
-OOS_START = pd.Timestamp("2026-01-01", tz="UTC")
+OOS_START = pd.Timestamp(PLAN_OOS_START, tz="UTC")
 RELEVANCE_FLOOR = 0.5
 
 

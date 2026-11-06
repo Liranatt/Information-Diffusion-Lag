@@ -63,7 +63,7 @@ import matplotlib.pyplot as plt
 if hasattr(sys.stdout, "reconfigure"):  # absent under Jupyter's OutStream
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-from core.policy import DEFAULT_POLICY
+from core.policy import DEFAULT_POLICY, PLAN_OOS_START
 from core.kernel import (
     clear_kernel_caches,
     _bar_ohlc,
@@ -215,6 +215,10 @@ WF_STEP_MON = 3
 WF_MIN_TRAIN_CANDS = 8
 WF_MIN_EVAL_CANDS = 8
 WF_MIN_FOLDS = 2
+# Fold grid anchor. When set, fold eval-starts fall on this day +/- whole
+# WF_STEP_MON steps, so one fold starts exactly at the OOS boundary and the
+# policy trading the OOS period is fitted only on t_e < that boundary.
+WF_ANCHOR: pd.Timestamp | None = None
 
 # Every CEM fit is clipped at the next fold/stage boundary. The t_e rule decides
 # whether a row is eligible to fit; the horizon rule prevents path-level leaks.
@@ -842,6 +846,12 @@ def create_expanding_wf_folds(
 
     folds: list[dict[str, Any]] = []
     eval_start = first_candidate_day
+    if WF_ANCHOR is not None:
+        # Walk the anchor back in whole steps to the first grid day on/after the
+        # first candidate, so the grid passes exactly through WF_ANCHOR.
+        eval_start = as_utc_day(WF_ANCHOR)
+        while as_utc_day(eval_start - pd.DateOffset(months=WF_STEP_MON)) >= first_candidate_day:
+            eval_start = as_utc_day(eval_start - pd.DateOffset(months=WF_STEP_MON))
 
     while eval_start < last_eval_exclusive:
         eval_end_exclusive = min(
@@ -2573,6 +2583,20 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Probability pickle.",
     )
     parser.add_argument(
+        "--oos-start",
+        default=PLAN_OOS_START,
+        help=(
+            "First out-of-sample day (YYYY-MM-DD). Policies are fitted only on events "
+            f"with t_e before it; walk-forward folds are anchored on it. Default {PLAN_OOS_START}."
+        ),
+    )
+    parser.add_argument(
+        "--oos-initial-capital",
+        type=float,
+        default=INITIAL_CAPITAL,
+        help="Starting capital of the out-of-sample portfolio simulation.",
+    )
+    parser.add_argument(
         "--no-forensics-log",
         action="store_true",
         help="Skip the derived trade-forensics CSV (faster, smaller output).",
@@ -2591,9 +2615,10 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 
 def main(argv: list[str] | None = None) -> None:
-    global DD_PENALTY
+    global DD_PENALTY, WF_ANCHOR
     args = _parse_args(argv)
     DD_PENALTY = float(args.dd_penalty)
+    WF_ANCHOR = pd.Timestamp(args.oos_start, tz="UTC")
     experiments = _select_experiments(args.experiments)
     benchmarks = tuple(args.benchmarks)
     paths = resolve_output_paths(args.run_id)
@@ -2667,7 +2692,7 @@ def main(argv: list[str] | None = None) -> None:
     if not preview_folds:
         raise ValueError("Not enough data to create any Walk-Forward folds.")
     
-    oos_start = pd.Timestamp("2026-01-01", tz="UTC")
+    oos_start = WF_ANCHOR
     oos_end = max_t - pd.Timedelta(days=1)
 
     train_df = rows_completed_before(df, oos_start)
@@ -2691,6 +2716,15 @@ def main(argv: list[str] | None = None) -> None:
     probs_path = args.probs_path if args.probs_path.is_absolute() else PROJECT / args.probs_path
     prices, probs = asyncio.run(load_paths(df, prices_path=prices_path, probs_path=probs_path))
     print(f"  {len(prices)} symbols, {len(probs)} markets loaded", flush=True)
+    # Run the OOS portfolio through the last priced session, not just the last
+    # candidate day, so the track covers every day the plan would have been live.
+    last_bench_days = [
+        as_utc_day(bars[-1][0]) for sym, bars in prices.items()
+        if sym in set(benchmarks) and bars
+    ]
+    if last_bench_days:
+        oos_end = max(oos_end, min(last_bench_days))
+    print(f"  OOS simulation window = {oos_start.date()} to {oos_end.date()}", flush=True)
 
     _print_folds(preview_folds)
 
@@ -2800,7 +2834,7 @@ def main(argv: list[str] | None = None) -> None:
                 probs,
                 dynamic_policy,
                 bench_sym=benchmark,
-                initial=INITIAL_CAPITAL,
+                initial=float(args.oos_initial_capital),
                 use_kelly=use_kelly,
                 start_date=oos_start,
                 end_date=oos_end,

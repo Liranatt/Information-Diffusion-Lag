@@ -8,6 +8,7 @@ to that math.
 from __future__ import annotations
 
 import asyncio
+from pathlib import Path
 
 import pandas as pd
 
@@ -23,6 +24,43 @@ from core.features import (
     compute_features,
     find_t_theta,
 )
+
+
+_DATA_DIR = Path(__file__).resolve().parents[2] / "data"
+
+
+def _fill_questions_from_artifacts(dates: dict[str, dict]) -> None:
+    """Fill question text the DB lacks from the frozen audit / prior candidates.
+
+    Markets backfilled by the multi-family probability download are keyed by
+    their 0x condition id and have no row in historical_market_decisions, so the
+    DB join yields no question. Polarity resolution needs the text, and the
+    treatment audit pins the canonical wording per market, so reuse it (then the
+    previously built candidates.parquet) instead of leaving the question blank.
+    """
+    missing = {mid for mid, d in dates.items() if not str(d.get("question") or "").strip()}
+    if not missing:
+        return
+    found: dict[str, str] = {}
+    audit_path = _DATA_DIR / "candidate_treatment_audit.csv"
+    prior_path = _DATA_DIR / "candidates.parquet"
+    try:
+        if audit_path.exists():
+            audit = pd.read_csv(audit_path, usecols=["market_id", "question"], dtype=str)
+            for mid, q in zip(audit["market_id"].str.strip(), audit["question"]):
+                if mid in missing and isinstance(q, str) and q.strip():
+                    found.setdefault(mid, q)
+        if prior_path.exists():
+            prior = pd.read_parquet(prior_path, columns=["market_id", "question"])
+            for mid, q in zip(prior["market_id"].astype(str), prior["question"]):
+                if mid in missing and isinstance(q, str) and q.strip():
+                    found.setdefault(mid, q)
+    except Exception as error:  # noqa: BLE001 - best effort; blanks stay blank
+        print(f"[data_loader] question fallback unavailable: {error}")
+    for mid, q in found.items():
+        dates[mid]["question"] = q
+    print(f"[data_loader] questions: {len(found)} of {len(missing)} blank markets "
+          f"filled from the audit / prior candidates")
 
 
 async def load_prices_from_db(symbols: list[str]) -> dict[str, list[tuple]]:
@@ -136,9 +174,35 @@ async def build_dataset_from_db(
                 ON md.market_id = pc.market_id
             WHERE pc.market_id = ANY($1::text[])
         """, df_cands["market_id"].unique().tolist())
+        dates = {r["market_id"]: dict(r) for r in date_rows}
+        # Markets found by the live discovery loop never get a historical
+        # coverage row; their creation/end dates live in live_tracked_markets.
+        # Without this fallback every market discovered after the last paid
+        # backfill silently drops out of the training and test sets.
+        missing = [mid for mid in df_cands["market_id"].unique().tolist() if mid not in dates]
+        if missing:
+            live_rows = await conn.fetch(f"""
+                SELECT market_id, created_at AS requested_start,
+                       end_at AS requested_end, question
+                FROM {SCHEMA}.live_tracked_markets
+                WHERE market_id = ANY($1::text[])
+            """, missing)
+            for r in live_rows:
+                dates[r["market_id"]] = dict(r)
+            print(f"[data_loader] {len(live_rows)} live-discovered markets dated "
+                  f"from live_tracked_markets")
+        no_question = [mid for mid, d in dates.items() if not str(d.get("question") or "").strip()]
+        if no_question:
+            q_rows = await conn.fetch(f"""
+                SELECT market_id, question FROM {SCHEMA}.live_tracked_markets
+                WHERE market_id = ANY($1::text[])
+            """, no_question)
+            for r in q_rows:
+                if r["question"]:
+                    dates[r["market_id"]]["question"] = r["question"]
     finally:
         await conn.close()
-    dates = {r["market_id"]: r for r in date_rows}
+    _fill_questions_from_artifacts(dates)
 
     symbols = df_cands["symbol"].unique().tolist()
     market_ids = df_cands["market_id"].unique().tolist()
@@ -161,7 +225,7 @@ async def build_dataset_from_db(
 
         t0 = pd.Timestamp(date_info["requested_start"]).tz_convert("UTC")
         t_e = pd.Timestamp(date_info["requested_end"]).tz_convert("UTC")
-        question = date_info.get("question", "")
+        question = date_info.get("question") or ""
 
         mkt_probs = probs.get(mid, [])
         t_theta = find_t_theta(mkt_probs)

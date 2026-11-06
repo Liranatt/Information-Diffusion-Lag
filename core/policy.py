@@ -39,6 +39,11 @@ CEM_BOUNDS = dict(
     max_price_runup=(0.02, 0.20),
 )
 
+# Train / out-of-sample boundary of the deployed plan. Every hyperparameter of
+# the live policy is fitted only on events whose outcome was known before this
+# day (t_e < PLAN_OOS_START); the plan's out-of-sample track starts here.
+PLAN_OOS_START = "2026-09-01"
+
 # Half-Kelly sizing bounds — the backtest values, now shared with live.
 KELLY_MIN_N = 10
 KELLY_LOOKBACK_N = 30

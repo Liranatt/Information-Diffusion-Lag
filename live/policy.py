@@ -27,9 +27,13 @@ log = logging.getLogger("live.policy")
 
 REQUIRED_KEYS = (
     "atr_mult", "lock_activate", "theta_out", "enter_strong", "enter_floor",
-    "hold_days", "max_prob_surge", "max_price_runup",
+    "hold_days", "max_price_runup",
     "position_size_pct", "max_concurrent",
 )
+# The backtest kernel has no probability-surge gate, so policies fitted by the
+# current optimizer carry no `max_prob_surge`. Live keeps parity by treating a
+# missing value as "gate off" instead of refusing the fitted policy.
+SURGE_GATE_OFF = 999.0
 
 
 def load_live_policy(cfg: LiveConfig) -> dict:
@@ -45,6 +49,7 @@ def load_live_policy(cfg: LiveConfig) -> dict:
     missing = [k for k in REQUIRED_KEYS if k not in policy]
     if missing:
         raise RuntimeError(f"Policy is missing keys: {missing}")
+    policy.setdefault("max_prob_surge", SURGE_GATE_OFF)
     policy["hold_days"] = int(policy["hold_days"])
     policy["max_concurrent"] = int(policy["max_concurrent"])
     return policy
